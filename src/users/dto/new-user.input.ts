@@ -1,6 +1,6 @@
 import { IsDefined, IsOptional, IsUUID } from 'class-validator';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { Field, InputType } from 'type-graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { UserRoles } from '../types';
 
 @InputType()

@@ -1,8 +1,9 @@
-import { UseGuards, Logger } from '@nestjs/common';
-import { Args, Mutation, Resolver, Subscription, Context } from '@nestjs/graphql';
+import { NotFoundException, UseGuards } from '@nestjs/common';
+import { Args, Query, Mutation, Resolver, Subscription, Context } from '@nestjs/graphql';
 // DEPRECATED docs now use graphql-subscriptions 
-// import { PubSub } from 'apollo-server-express';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from 'apollo-server-express';
+// TODO: remove after finish subscriptions
+// import { PubSub } from 'graphql-subscriptions';
 import { AuthService } from './auth.service';
 import { AccessToken, UserLoginResponse } from './models';
 import { GqlLocalAuthGuard } from './guards';
@@ -11,6 +12,8 @@ import { UsersService } from '../users/users.service';
 import { SubscriptionEvent } from '../common/types';
 import { LoginUserInput } from '../users/dto';
 import { User } from '../users/models';
+import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import { PaginationArgs } from '../common/dto';
 
 const pubSub = new PubSub();
 
@@ -20,7 +23,26 @@ export class AuthResolver {
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
   ) { }
-  
+  @UseGuards(GqlAuthGuard)
+  @Query(returns => [User])
+  async users(
+    @Args() paginationArgs: PaginationArgs,
+  ): Promise<User[]> {
+    return this.usersService.findAll(paginationArgs);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(returns => User)
+  async userById(
+    @Args('id') id: string,
+  ): Promise<User> {
+    const user = await this.usersService.findOneByField('id', id);
+    if (!user) {
+      throw new NotFoundException(id);
+    }
+    return user;
+  }
+
   @UseGuards(GqlLocalAuthGuard)
   @Mutation(returns => UserLoginResponse)
   async userLogin(

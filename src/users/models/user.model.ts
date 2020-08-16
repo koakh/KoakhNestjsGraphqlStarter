@@ -1,7 +1,7 @@
 import { UserRoles } from '../types';
 import { IsDefined, Validate } from 'class-validator';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { Field, ID, ObjectType } from 'type-graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import * as yup from 'yup';
 
 @ObjectType()

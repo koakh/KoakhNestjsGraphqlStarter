@@ -8,11 +8,13 @@ import { envVariables as e } from './env';
 import { GqlContext, GqlContextPayload } from './types';
 import { UsersModule } from './users/users.module';
 import { mapKeysToLowerCase } from './utils';
+import { RecipesModule } from './recipes/recipes.module';
 
 @Module({
   imports: [
     AuthModule,
     UsersModule,
+    RecipesModule,
     // apolloServer config: use forRootAsync to import AuthModule and inject AuthService
     GraphQLModule.forRootAsync({
       // import AuthModule

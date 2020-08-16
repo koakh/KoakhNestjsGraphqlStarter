@@ -2,7 +2,7 @@ import { UserData } from './types';
 
 // https://www.mockaroo.com/
 
-export const userDate: UserData[] = [{
+export const userData: UserData[] = [{
   id: 'efeed3eb-c0a2-4b3e-816f-2a42ca8451b3',
   username: 'admin',
   password: '12345678',
