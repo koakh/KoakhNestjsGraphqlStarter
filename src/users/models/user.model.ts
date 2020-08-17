@@ -28,7 +28,7 @@ export class User {
   @Field()
   email?: string;
 
-  @Field(type => [String], { defaultValue: UserRoles.User })
+  @Field(type => [String], { defaultValue: [UserRoles.User] })
   roles: string[];
 
   @Field()

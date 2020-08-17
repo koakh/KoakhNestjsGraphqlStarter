@@ -1,0 +1,22 @@
+version: '3.6'
+
+# used to build production image and serve as a template for deploy to nodes
+
+services:
+  koakh-nestjs-graphql-starter:
+    build:
+      context: .
+      target: production
+    # used to tag image:version
+    image: koakh/koakh-nestjs-graphql-starter
+    domainname: solidarychain
+    hostname: koakh-nestjs-graphql-starter
+    container_name: koakh-nestjs-graphql-starter
+    restart: unless-stopped
+    ports:
+      - 443:443
+    volumes:
+      - ./volumes/config:/usr/src/app/config
+    # command: npm run start:prod
+    env_file:
+      - .env

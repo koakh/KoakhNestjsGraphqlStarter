@@ -18,11 +18,20 @@ export class NewUserInput {
   @IsDefined()
   password: string;
 
-  @Field(type => [String], { defaultValue: UserRoles.User })
-  roles: string[];
+  @Field()
+  @IsDefined()
+  firstName: string;
+
+  @Field()
+  @IsDefined()
+  lastName: string;
 
   @Field({ nullable: true })
   email: string;
+
+  // proptect register from use roles, else we can't have a security problem here, uncoment to enable
+  // @Field(type => [String], { defaultValue: [UserRoles.User] })
+  // roles: string[];
 
   @Field(type => GraphQLJSONObject, { nullable: true })
   @IsOptional()

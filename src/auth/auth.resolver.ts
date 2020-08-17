@@ -1,4 +1,4 @@
-import { NotFoundException, UseGuards } from '@nestjs/common';
+import { ConflictException, NotFoundException, UseGuards } from '@nestjs/common';
 import { Args, Query, Mutation, Resolver, Subscription, Context } from '@nestjs/graphql';
 // DEPRECATED docs now use graphql-subscriptions 
 import { PubSub } from 'apollo-server-express';
@@ -10,7 +10,7 @@ import { GqlLocalAuthGuard } from './guards';
 import { GqlContext } from '../types';
 import { UsersService } from '../users/users.service';
 import { SubscriptionEvent } from '../common/types';
-import { LoginUserInput } from '../users/dto';
+import { LoginUserInput, NewUserInput } from '../users/dto';
 import { User } from '../users/models';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { PaginationArgs } from '../common/dto';
@@ -23,23 +23,21 @@ export class AuthResolver {
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
   ) { }
-  @UseGuards(GqlAuthGuard)
-  @Query(returns => [User])
-  async users(
-    @Args() paginationArgs: PaginationArgs,
-  ): Promise<User[]> {
-    return this.usersService.findAll(paginationArgs);
-  }
-
-  @UseGuards(GqlAuthGuard)
-  @Query(returns => User)
-  async userById(
-    @Args('id') id: string,
+  // unprotected method, person register don't use createdByUserId
+  @Mutation(returns => User)
+  async userRegister(
+    @Args('newUserData') newUserData: NewUserInput,
   ): Promise<User> {
-    const user = await this.usersService.findOneByField('id', id);
-    if (!user) {
-      throw new NotFoundException(id);
+    const checkUsername = await this.usersService.findOneByField('username', newUserData.username);
+    if (checkUsername) {
+      throw new ConflictException(`this username is already been taken by other user, please try another`);
     }
+    const checkEmail = await this.usersService.findOneByField('email', newUserData.email);
+    if (checkEmail) {
+      throw new ConflictException(`this email is already been taken by other user, please try another`);
+    }
+    const user = await this.usersService.create(newUserData);
+    pubSub.publish(SubscriptionEvent.userAdded, { [SubscriptionEvent.userAdded]: user });
     return user;
   }
 

@@ -1,37 +1,28 @@
-# FROM node:14.4.0-alpine3.10
-FROM jameskyburz/node:8.16.0-alpine
+FROM node:12.13-alpine As development
 
 WORKDIR /usr/src/app
 
-# require to buil native modules on alpine
-# RUN apk --no-cache add --virtual native-deps \
-#   g++ gcc libgcc libstdc++ linux-headers make python && \
-#   npm install --quiet node-gyp -g &&\
-#   # npm install --quiet && \
-#   apk del native-deps
+COPY package*.json ./
 
-RUN apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python
-RUN npm install --quiet node-gyp -g  
+RUN npm install --only=development
 
-# install Lerna globally
-RUN npm i lerna -g --loglevel notice
+COPY . .
 
-# copy the root package.json and install, then copy the relevant packages.
-COPY package.json .
-# COPY package.json package-lock*.json /usr/src/app/
-RUN npm install --loglevel notice
+RUN npm run build
 
-# copy relevant packages
-COPY \
-  packages/server-graphql/ ./packages/server-graphql/ \
-  packages/common-cc/ ./packages/common-cc/ \
-  packages/asset-cc/ ./packages/asset-cc/ \
-  packages/cause-cc/ ./packages/cause-cc/ \
-  packages/participant-cc/ ./packages/participant-cc \
-  packages/person-cc/ ./packages/person-cc/ \
-  packages/transaction-cc/ ./packages/transaction-cc/
+FROM node:12.13-alpine as production
 
-COPY lerna.json .
-RUN lerna bootstrap
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
 
-CMD [ "npm", "run", "--prefix", "packages/server-graphql", "start:container" ]
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install --only=production
+
+COPY . .
+
+COPY --from=development /usr/src/app/dist ./dist
+
+CMD ["node", "dist/main"]

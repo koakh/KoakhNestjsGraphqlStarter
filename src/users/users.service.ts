@@ -2,10 +2,12 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { UsersStore } from './users.store';
 import { appConstants as c } from '../constants';
 import { User } from './models';
-import { UserData } from './types';
+import { UserData, UserRoles } from './types';
 import { userData } from './user.data';
 import { PaginationArgs } from '../common/dto';
-
+import { NewUserInput } from './dto/new-user.input';
+import { hashPassword } from '../auth/utils';
+import { newUuid } from '../common/utils';
 
 @Injectable()
 export class UsersService {
@@ -15,13 +17,29 @@ export class UsersService {
   constructor() { }
 
   async findAll(paginationArgs: PaginationArgs): Promise<User[]> {
+    // clone array before slice it
+    const data = userData.slice();
     return (paginationArgs)
-      ? userData.splice(paginationArgs.skip, paginationArgs.take)
-      : userData;
+      ? data.splice(paginationArgs.skip, paginationArgs.take)
+      : data;
   }
 
   async findOneByField(field: string, value: string): Promise<User> {
     return userData.find((e: UserData) => e[field] === value);
+  }
+
+  async create(data: NewUserInput): Promise<User> {
+    const password = hashPassword(data.password);
+    const user = {
+      ...data,
+      id: data.id || newUuid(),
+      password,
+      roles: [UserRoles.User],
+      // add date in epoch unix time
+      createdDate: new Date().getTime(),
+    };
+    userData.push(user);
+    return user;
   }
 
   async findOneByUsername(username: string): Promise<User> {

@@ -23,30 +23,26 @@ type UserLoginResponse {
   accessToken: String!
 }
 
-type Recipe {
-  id: ID!
-  title: String!
-  description: String
-  creationDate: Date!
-  ingredients: [String!]!
-}
-
-"""Date custom scalar type"""
-scalar Date
-
 type Query {
   users(skip: Int = 0, take: Int = 25): [User!]!
   userById(id: String!): User!
-  recipe(id: String!): Recipe!
-  recipes(skip: Int = 0, take: Int = 25): [Recipe!]!
 }
 
 type Mutation {
+  userRegister(newUserData: NewUserInput!): User!
   userLogin(loginUserData: LoginUserInput!): UserLoginResponse!
   userLogout: Boolean!
   revokeUserRefreshTokens(username: String!): Boolean!
-  addRecipe(newRecipeData: NewRecipeInput!): Recipe!
-  removeRecipe(id: String!): Boolean!
+}
+
+input NewUserInput {
+  id: String
+  username: String!
+  password: String!
+  firstName: String!
+  lastName: String!
+  email: String
+  metaData: JSONObject
 }
 
 input LoginUserInput {
@@ -54,13 +50,6 @@ input LoginUserInput {
   password: String!
 }
 
-input NewRecipeInput {
-  title: String!
-  description: String
-  ingredients: [String!]!
-}
-
 type Subscription {
   userLogged: String!
-  recipeAdded: Recipe!
 }

@@ -1,11 +1,12 @@
 import { UserData } from './types';
 
 // https://www.mockaroo.com/
+// https://bcrypt-generator.com/
 
 export const userData: UserData[] = [{
   id: 'efeed3eb-c0a2-4b3e-816f-2a42ca8451b3',
   username: 'admin',
-  password: '12345678',
+  password: '$2b$10$U9AVUdkRnFsrMjPg/XyTeOWmF.gu73gd1hJGR1s1OnKTshjJYdGpW',
   firstName: 'Pietra',
   lastName: 'Heine',
   email: 'pheine0@illinois.edu',
@@ -14,8 +15,8 @@ export const userData: UserData[] = [{
   metaData: null
 }, {
   id: '520c2eb5-e83b-4ef5-a343-85756bcce149',
-  username: 'ktrett1',
-  password: 'yP6L58ju8H',
+  username: 'johndoe',
+  password: '$2b$10$U9AVUdkRnFsrMjPg/XyTeOWmF.gu73gd1hJGR1s1OnKTshjJYdGpW',
   firstName: 'Katinka',
   lastName: 'Trett',
   email: 'ktrett1@livejournal.com',
