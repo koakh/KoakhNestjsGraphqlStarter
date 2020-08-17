@@ -1,6 +1,6 @@
 import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver,  } from '@nestjs/graphql';
-import { UsersService } from './users.service';
+import { UsersService } from './user.service';
 import { User } from './models';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { PaginationArgs } from '../common/dto';

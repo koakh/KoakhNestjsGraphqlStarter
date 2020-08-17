@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsDefined } from 'class-validator';
-import { User } from '../../users/models';
+import { User } from '../../user/models';
 
 @ObjectType()
 export class UserLoginResponse {

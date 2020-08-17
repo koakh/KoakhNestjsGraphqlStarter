@@ -78,24 +78,4 @@ Query root type must be provided.
 
 we can confirm that we need a `Query` when we comment both Query resolvers `@Query(returns => Recipe)` and `@Query(returns => [Recipe])`, its start show same error `GraphQLError: Query root type must be provided.`
 
-the root of the problem is that reflection can find any `Root Query` in injected modules
-
-
-
-
-
-
-
-2. Integrating Neo4j with NestJS | Building Web Applications with Neo4j and TypeScript
-https://www.youtube.com/watch?v=9sNgCiPnhZE
-
-
-add subscriptions to react monorepo (hlf) from react 3d project
-
-upgrade monorepo graphql to nest js 7,  with fresh mem
-upgrade
-    const { v4: uuidv4 } = require('uuid');
-    uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
-
-- [Fauxton](http://192.168.1.31:5084/_utils/#database/)
-
+the root of the problem is that reflection can find any `Root Query` in injected modules, the reason is we only have `mutations` and `subscriptions` and don't have any `queries`

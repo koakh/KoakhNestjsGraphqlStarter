@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { UsersStore } from './users.store';
+import { UserStore } from './user.store';
 import { appConstants as c } from '../constants';
 import { User } from './models';
 import { UserData, UserRoles } from './types';
@@ -12,7 +12,7 @@ import { newUuid } from '../common/utils';
 @Injectable()
 export class UsersService {
   // init usersStore
-  usersStore: UsersStore = new UsersStore();
+  usersStore: UserStore = new UserStore();
 
   constructor() { }
 

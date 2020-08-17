@@ -5,7 +5,7 @@ import { Response } from 'express';
 import { SignOptions } from 'jsonwebtoken';
 import { envVariables as e } from '../env';
 import { GqlContextPayload } from '../types';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../user/user.service';
 import AccessToken from './types/access-token';
 
 @Injectable()

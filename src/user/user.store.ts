@@ -5,7 +5,7 @@ interface User {
   tokenVersion: number;
 }
 
-export class UsersStore {
+export class UserStore {
   store: User[];
 
   constructor() {

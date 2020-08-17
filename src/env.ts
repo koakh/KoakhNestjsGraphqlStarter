@@ -1,6 +1,6 @@
 export const envVariables: any = {
   // http/s server
-  httpsPort: process.env.HTTPS_SERVER_PORT || 443,
+  httpsPort: process.env.HTTPS_SERVER_PORT || 4443,
   httpsKeyFile: process.env.HTTPS_KEY_FILE || 'config/server.key',
   httpsCertFile: process.env.HTTPS_CERT_FILE || 'config/server.crt',
   // jwt

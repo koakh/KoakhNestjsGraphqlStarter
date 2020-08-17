@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { LoginUserInput } from '../../users/dto';
+import { LoginUserInput } from '../../user/dto';
 import { AuthService } from '../auth.service';
 
 @Injectable()

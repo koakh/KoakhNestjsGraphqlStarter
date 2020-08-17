@@ -6,7 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { envVariables as e } from './env';
 import { GqlContext, GqlContextPayload } from './types';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './user/user.module';
 import { mapKeysToLowerCase } from './utils';
 
 @Module({

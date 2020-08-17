@@ -2,11 +2,11 @@ import { Controller, HttpStatus, Post, Request, Response } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt';
 import { GqlContextPayload } from '../types';
 import { envVariables as e } from '../env';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { AccessToken } from './models';
-import { LoginUserInput } from '../users/dto';
-import { User } from '../users/models';
+import { LoginUserInput } from '../user/dto';
+import { User } from '../user/models';
 
 @Controller()
 export class AuthController {

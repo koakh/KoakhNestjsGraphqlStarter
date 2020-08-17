@@ -8,10 +8,10 @@ import { AuthService } from './auth.service';
 import { AccessToken, UserLoginResponse } from './models';
 import { GqlLocalAuthGuard } from './guards';
 import { GqlContext } from '../types';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../user/user.service';
 import { SubscriptionEvent } from '../common/types';
-import { LoginUserInput, NewUserInput } from '../users/dto';
-import { User } from '../users/models';
+import { LoginUserInput, NewUserInput } from '../user/dto';
+import { User } from '../user/models';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { PaginationArgs } from '../common/dto';
 
