@@ -46,6 +46,23 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Docker commands
+
+> use -f `docker-compose-production.yml` to work with `production`
+
+```shell
+# start dev stack
+$ docker-compose up
+# start dev stack daemon
+$ docker-compose up -d
+# enter container dev
+$ docker exec -it koakh-nestjs-graphql-starter sh
+# teardown/ clean
+$ docker-compose down --remove-orphans
+# logs
+$ docker-compose logs -f
+```
+
 ## Stay in touch
 
 - Author - [koakh](https://koakh.com)

@@ -21,6 +21,8 @@ $ npm i \
   apollo-server-express graphql graphql-tools graphql-type-json graphql-subscriptions \
   passport passport-jwt passport-local \
   reflect-metadata class-transformer class-validator yup bcrypt uuid \
+
+$ npm i -D @types/passport-jwt @types/passport-local
 ```
 
 ## Add to tsconfig.json
@@ -79,3 +81,28 @@ Query root type must be provided.
 we can confirm that we need a `Query` when we comment both Query resolvers `@Query(returns => Recipe)` and `@Query(returns => [Recipe])`, its start show same error `GraphQLError: Query root type must be provided.`
 
 the root of the problem is that reflection can find any `Root Query` in injected modules, the reason is we only have `mutations` and `subscriptions` and don't have any `queries`
+
+## Debug Docker image problems
+
+seems the problem is operations that use bcrypt
+
+- [Help: Segmentation fault (core dumped) #708](https://github.com/kelektiv/node.bcrypt.js/issues/708)
+
+- [bcrypt installation docker](https://github.com/kelektiv/node.bcrypt.js/wiki/Installation-Instructions#docker)
+
+> I think you are copying node_modules from the host into the docker. This occurs when there is a mismatch between libC runtimes. Alpine uses musl-libc and the host probably uses glibc.
+Make sure you have node_modules in .dockerignore and perform an npm install inside the docker. Also, bcrypt in alpine-node will require a source compile. So you need python, make and gcc as well.
+
+```shell
+koakh-nestjs-graphql-starter    | [nodemon] app crashed - waiting for file changes before starting...
+```
+
+```shell
+# enter container dev
+$ docker exec -it koakh-nestjs-graphql-starter sh
+$ NODE_DEBUG=myapp node dist/main.js
+```
+
+changed
+"bcrypt": "^5.0.0",
+"bcrypt": "3.0.3",

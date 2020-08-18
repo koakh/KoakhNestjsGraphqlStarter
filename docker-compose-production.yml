@@ -14,7 +14,7 @@ services:
     container_name: koakh-nestjs-graphql-starter
     restart: unless-stopped
     ports:
-      - 443:443
+      - ${HTTPS_SERVER_PORT}:${HTTPS_SERVER_PORT}
     volumes:
       - ./volumes/config:/usr/src/app/config
     # command: npm run start:prod
