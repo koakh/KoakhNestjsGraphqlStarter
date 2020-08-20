@@ -1,5 +1,5 @@
-dist
-node_modules
-config/koakh.com
-config/solidarychain.com
+dist/
+node_modules/
+config/koakh.com/
+config/solidarychain.com/
 core
