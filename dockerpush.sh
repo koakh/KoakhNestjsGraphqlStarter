@@ -3,11 +3,11 @@
 # [[ $EUID -ne 0 ]] && echo "This script must be run as root." && exit 1
 
 # declare common vars
-DOMAIN_PROJECT_NAME=solidarychain
+DOMAIN_PROJECT_NAME=koakh
 
 if [ -z "$1" ] || [ -z "$2" ]; then
 	echo "missing require paramameters 'docker-image-name' and 'docker-image-version'"
-  echo "ex '${0} ${DOMAIN_PROJECT_NAME}-server-graphdb-events 1.0.0'"
+  echo "ex '${0} ${DOMAIN_PROJECT_NAME}-nestjs-graphql-starter 1.0.0'"
 	exit 0
 else
   DOCKER_IMAGE_NAME=$1
@@ -21,4 +21,8 @@ else
   echo push : [${DOCKER_IMAGE_PATH}:${DOCKER_IMAGE_VERSION}]
   docker tag ${DOCKER_IMAGE_PATH} ${DOCKER_IMAGE_PATH}:${DOCKER_IMAGE_VERSION}
   docker push ${DOCKER_IMAGE_PATH}:${DOCKER_IMAGE_VERSION}
+  echo ""
+  echo "use command to update node"
+  echo "docker-compose down && docker image rm $(docker images ${DOCKER_IMAGE_PATH} -q) && docker-compose up -d && docker-compose logs -f"
+  exit 0
 fi

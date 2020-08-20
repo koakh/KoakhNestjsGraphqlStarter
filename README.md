@@ -46,6 +46,12 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Docker build and push image
+
+# 
+$ npm run docker:build
+
+
 ## Docker commands
 
 > use -f `docker-compose-production.yml` to work with `production`
