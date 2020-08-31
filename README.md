@@ -14,6 +14,10 @@ Koakh minimal GraphQL Starter boilerplate
 - rest client operations (require vscode extension REST Client)
 - docker image
 
+## Node versions
+
+used node version v12.8.1
+
 ## Installation
 
 ```bash
