@@ -33,6 +33,36 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Operations
+
+### Queries
+
+- users(...): [User!]!
+- userById(...): User!
+
+### Mutations 
+
+- userRegister(...): User!
+- userLogin(...): UserLoginResponse!
+- userLogout: Boolean!
+- revokeUserRefreshTokens(...): Boolean!
+
+### Subscriptions
+
+- userLogged: String!
+
+## Invoke Operations
+
+use `client.http` and subsriptions with
+
+- <https://127.0.0.1:4443/graphql>
+
+```graphql
+subscription{
+  userLogged
+}
+```
+
 ## Test
 
 ```bash
@@ -48,9 +78,10 @@ $ npm run test:cov
 
 ## Docker build and push image
 
-# 
+```shell
 $ npm run docker:build
-
+$ ./dockerpush.sh koakh-nestjs-graphql-starter 1.0.0
+```
 
 ## Docker commands
 

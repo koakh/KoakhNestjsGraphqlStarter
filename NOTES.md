@@ -103,6 +103,4 @@ $ docker exec -it koakh-nestjs-graphql-starter sh
 $ NODE_DEBUG=myapp node dist/main.js
 ```
 
-changed
-"bcrypt": "^5.0.0",
-"bcrypt": "3.0.3",
+changed `"bcrypt": "^5.0.0"` to `"bcrypt": "3.0.3"`
