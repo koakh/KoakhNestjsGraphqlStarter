@@ -1,4 +1,5 @@
 import AppBar from '@material-ui/core/AppBar';
+import Badge from '@material-ui/core/Badge';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
@@ -7,16 +8,24 @@ import IconButton from '@material-ui/core/IconButton';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
+import MoreIcon from '@material-ui/icons/MoreVert';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, Route, Switch, useLocation } from 'react-router-dom';
 import useDimensions from 'react-use-dimensions';
 import { defaultDrawerListItemIcon, drawerWidth, routes } from '../../../app/config';
 import { ActionType, useStateValue } from '../../../app/state';
 import { DrawerListItem, DrawerSections } from '../../../types';
+import { usePersonLogoutMutation } from '../../../generated/graphql';
+import { setAccessToken } from '../../../app';
 
 interface ResponsiveDrawerProps {
   title: string;
@@ -54,19 +63,46 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       padding: theme.spacing(3),
     },
+    // drawer menus
+    grow: {
+      flexGrow: 1,
+    },
+    sectionDesktop: {
+      display: 'none',
+      [theme.breakpoints.up('md')]: {
+        display: 'flex',
+      },
+    },
+    sectionMobile: {
+      display: 'flex',
+      [theme.breakpoints.up('md')]: {
+        display: 'none',
+      },
+    },
   }),
 );
 
 export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
-  // hooks
+  // hooks: theme and style
   const classes = useStyles();
   const theme = useTheme();
+  // hooks apollo
+  // access apollo client to clear cache store on logout
+  const [logout, { client }] = usePersonLogoutMutation();
+  // hooks: drawer
   const [mobileOpen, setMobileOpen] = useState(false);
+  // menu and mobileMenu
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const isMenuOpen = Boolean(anchorEl);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  // hooks useDimension
   const [appBarRef, { width }] = useDimensions();
   const location = useLocation();
   // context state hook
   // eslint-disable-next-line
   const [state, dispatch] = useStateValue();
+  const [logoutDisabled, setLogoutDisabled] = useState(false);
   // useCallback for optimization, could be omitted if child components don’t rely on shallow comparing.
   const setWidth = useCallback((width) => dispatch({ type: ActionType.SET_SHELL_WIDTH, payload: { width } }), [dispatch]);
   const { title, categories } = props;
@@ -92,6 +128,106 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
       setMobileOpen(false);
     }
   };
+
+  // menu and mobileMenu handlers
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMobileMenuClose = () => {
+    setMobileMoreAnchorEl(null);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    handleMobileMenuClose();
+  };
+  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    setMobileMoreAnchorEl(event.currentTarget);
+  };
+  const handleMenuSignOut = async () => {
+    // disable button
+    setLogoutDisabled(true);
+    // fire logoutMutation
+    await logout();
+    // clear/reset apollo cache store
+    // to prevent problems resetStore, like in the past don't use asyn/await, and use .then
+    // with setAccessToken and dispatch inisde
+    client.resetStore()
+      .then((value) => {
+        // clean inMemory accessToken
+        setAccessToken('');
+        // dispatch logout
+        // dispatch({ type: ActionType.SIGNED_OUT_USER });
+      })
+      .catch(error => {
+        console.error(error);
+      })
+      .finally(() => {
+        // dispatch logout
+        dispatch({ type: ActionType.SIGNED_OUT_USER });
+      });
+  };
+
+  // menu definition
+  const menuId = 'primary-search-account-menu';
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
+      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      {state.user.logged && (<MenuItem onClick={handleMenuSignOut} disabled={logoutDisabled}>Sign out</MenuItem>)}
+      {/* show loading when we logout */}
+      {/* TODO {logoutDisabled && <Loading />} */}
+    </Menu>
+  );
+
+  // mobileMenu definition
+  const mobileMenuId = 'primary-search-account-menu-mobile';
+  const renderMobileMenu = (
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMobileMenuOpen}
+      onClose={handleMobileMenuClose}
+    >
+      <MenuItem>
+        <IconButton aria-label="show 4 new mails" color="inherit">
+          <Badge badgeContent={4} color="secondary">
+            <MailIcon />
+          </Badge>
+        </IconButton>
+        <p>Messages</p>
+      </MenuItem>
+      <MenuItem>
+        <IconButton aria-label="show 11 new notifications" color="inherit">
+          <Badge badgeContent={11} color="secondary">
+            <NotificationsIcon />
+          </Badge>
+        </IconButton>
+        <p>Notifications</p>
+      </MenuItem>
+      <MenuItem onClick={handleProfileMenuOpen}>
+        <IconButton
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="inherit"
+        >
+          <AccountCircle />
+        </IconButton>
+        <p>Profile</p>
+      </MenuItem>
+    </Menu>
+  );
 
   // loop DrawerSections enum, and extract sections from categories
   Object.values(DrawerSections).forEach(e => {
@@ -146,8 +282,44 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
           <Typography variant="h6" noWrap>
             {title}
           </Typography>
+          <div className={classes.grow} />
+          <div className={classes.sectionDesktop}>
+            <IconButton aria-label="show 4 new mails" color="inherit">
+              <Badge badgeContent={4} color="secondary">
+                <MailIcon />
+              </Badge>
+            </IconButton>
+            <IconButton aria-label="show 17 new notifications" color="inherit">
+              <Badge badgeContent={17} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+          </div>
+          <div className={classes.sectionMobile}>
+            <IconButton
+              aria-label="show more"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={handleMobileMenuOpen}
+              color="inherit"
+            >
+              <MoreIcon />
+            </IconButton>
+          </div>
         </Toolbar>
       </AppBar>
+      {renderMobileMenu}
+      {renderMenu}
       <nav className={classes.drawer} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Hidden smUp implementation="css">

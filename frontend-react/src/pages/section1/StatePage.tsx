@@ -18,6 +18,7 @@ export const StatePage: React.FC<Props> = () => {
     dispatch(action);
   }
   const onClickIncrementHandler = (e: InputMouseEvent) => dispatch({ type: ActionType.INCREMENT });
+  const onClickSignOutHandler = (e: InputMouseEvent) => dispatch({ type: ActionType.SIGNED_OUT_USER });
   // generate buttons
   const buttons = Object.keys(Themes).map(e =>
     <button key={e} onClick={onClickChangeThemeHandler({ type: ActionType.CHANGE_THEME, payload: { newTheme: e } })}>{e}</button>
@@ -30,6 +31,7 @@ export const StatePage: React.FC<Props> = () => {
       <h1>State</h1>
       {buttons}
       <button onClick={onClickIncrementHandler}>Increment</button>
+      <button onClick={onClickSignOutHandler}>Sign Out</button>
       <pre>state: {stateOutput}</pre>
     </div>
   )

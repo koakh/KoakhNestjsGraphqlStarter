@@ -22,7 +22,7 @@ export const Routes: React.FC<Props> = ({ logged }: Props) => {
       <Fragment>
         <Redirect to="/" />
         <Route exact path='/' component={SignInPage} />
-        <Route exact path='/register' component={SignUpPage} />
+        <Route exact path='/signup' component={SignUpPage} />
       </Fragment>
     );
   }

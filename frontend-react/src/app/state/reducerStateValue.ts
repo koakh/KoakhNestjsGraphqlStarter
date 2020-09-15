@@ -17,8 +17,8 @@ export enum ActionType {
   CHANGE_THEME = 'CHANGE_THEME',
   INCREMENT = 'INCREMENT',
   CHANGE_SEARCH_USERS_QUERY = 'CHANGE_SEARCH_USERS_QUERY',
-  LOGGED_USER = 'LOGGED_USER',
-  LOGOUT_USER = 'LOGOUT_USER',
+  SIGNED_IN_USER = 'SIGNED_IN_USER',
+  SIGNED_OUT_USER = 'SIGNED_OUT_USER',
   // material
   SET_SHELL_WIDTH = 'SET_SHELL_WIDTH',
 }
@@ -27,8 +27,8 @@ export type Action =
   | { type: ActionType.CHANGE_THEME, payload: { newTheme: string } }
   | { type: ActionType.INCREMENT, payload: any }
   | { type: ActionType.CHANGE_SEARCH_USERS_QUERY, payload: { query: string } }
-  | { type: ActionType.LOGGED_USER, payload: { profile: any } }
-  | { type: ActionType.LOGOUT_USER, payload: any }
+  | { type: ActionType.SIGNED_IN_USER, payload: { profile: any } }
+  | { type: ActionType.SIGNED_OUT_USER }
   | { type: ActionType.SET_SHELL_WIDTH, payload: { width: number } }
   ;
 
@@ -61,7 +61,7 @@ export default (state: State, action: Action) => {
         ...state,
         searchUsersQuery: action.payload.query
       }
-    case ActionType.LOGGED_USER:
+    case ActionType.SIGNED_IN_USER:
       return {
         ...state,
         user: {
@@ -69,7 +69,7 @@ export default (state: State, action: Action) => {
           profile: action.payload.profile
         }
       }
-    case ActionType.LOGOUT_USER:
+    case ActionType.SIGNED_OUT_USER:
       return {
         ...state,
         user: {

@@ -53,8 +53,8 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 	// get hooks
 	const [, dispatch] = useStateValue();
 	// hooks: state
-	const [username, setUsername] = useState('');
-	const [password, setPassword] = useState('');
+	const [username, setUsername] = useState(c.DEFAULT_LOGIN_CREDENTIALS.username);
+	const [password, setPassword] = useState(c.DEFAULT_LOGIN_CREDENTIALS.password);
 	// new hooks from material-ui
 	const [showPassword, setShowPassword] = useState(false);
 	// hooks: apollo
@@ -118,7 +118,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 						roles: user.roles
 					}
 				};
-				dispatch({ type: ActionType.LOGGED_USER, payload });
+				dispatch({ type: ActionType.SIGNED_IN_USER, payload });
 				// use history to send user to homepage, after awaiting for response object, 
 				history.push('/');
 			}

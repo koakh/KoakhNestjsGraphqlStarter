@@ -60,7 +60,7 @@ export const App: React.FC<Props> = () => {
           roles: profileData.personProfile.roles
         }
       };
-      dispatch({ type: ActionType.LOGGED_USER, payload });
+      dispatch({ type: ActionType.SIGNED_IN_USER, payload });
       // set state to profile loaded to prevent loops
       setProfileLoaded(true);
     }
