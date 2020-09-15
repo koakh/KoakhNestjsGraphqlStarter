@@ -10,7 +10,6 @@
 
 ## Installation
 
-
 ```shell
 $ nest new NodeNestSGraphQLStarter
 $ mv node-nest-sgraph-qlstarter NodeNestJsGraphQLStarter

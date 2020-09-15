@@ -38,7 +38,7 @@
 
 ## TLDR
 
-> Notes: use node 12.8.1 or 8.16.0 to
+> Notes: use node 10.20.1 or 8.16.0 to
 
 1. check server `CORS_ORIGIN_REACT_FRONTEND`, if `CORS_ORIGIN_REACT_FRONTEND=https://app.solidarychain.com:3000` use same uri in browser, else we have CORS problems
 2. run frontend with `npm run pkg:react:start`
