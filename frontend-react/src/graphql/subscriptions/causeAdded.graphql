@@ -1,0 +1,18 @@
+subscription causeAdded{
+  causeAdded {
+    id
+    name    
+    ambassadors
+    startDate
+    endDate
+    location
+    tags
+    metaData    
+    input {
+      entity{
+        id
+      }
+    }
+    createdDate
+  }
+}

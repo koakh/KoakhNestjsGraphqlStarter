@@ -1,0 +1,23 @@
+mutation personRegister($newPersonData: NewPersonInput!) {
+  personRegister(newPersonData: $newPersonData) {
+    id
+    firstName
+    lastName
+    username
+    email
+    attributes {
+      id
+      content
+      issuedDate
+      expiresDate
+      expired
+      certifierID
+    }
+    roles
+    participant {
+      id
+      name
+      msp
+    }
+  }
+}

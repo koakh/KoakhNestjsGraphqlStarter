@@ -1,0 +1,56 @@
+query causeById($id: String!) {
+  causeById(id: $id) {
+    id
+    name
+    email
+    ambassadors
+    startDate
+    endDate
+    location
+    tags
+    metaData
+    input {
+      entity {
+        id
+        type
+        createdDate
+      }
+    }
+    participant {
+      id
+      name
+      msp
+    }
+    fundsBalance {
+      debit
+      credit
+      balance
+    }
+    volunteeringHoursBalance {debit
+      debit
+      credit
+      balance
+    }
+    goodsStock {
+      id
+      code
+      barCode
+      name
+      description
+      tags
+      balance {
+        debit
+        credit
+        balance
+      }
+      metaData
+      metaDataInternal
+      createdDate
+      createdByPersonId
+    }
+    createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal
+  }
+}

@@ -1,0 +1,9 @@
+mutation participantUpdate($updateParticipantData: UpdateParticipantInput!) {
+  participantUpdate(updateParticipantData: $updateParticipantData) {
+    id
+    name
+    ambassadors
+    metaData
+    metaDataInternal
+  }
+}

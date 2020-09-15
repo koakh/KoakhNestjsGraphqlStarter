@@ -1,0 +1,15 @@
+subscription assetAdded{
+  causeAdded {
+    id
+    name    
+    location
+    tags
+    metaData    
+    input {
+      entity{
+        id
+      }
+    }
+    createdDate
+  }
+}

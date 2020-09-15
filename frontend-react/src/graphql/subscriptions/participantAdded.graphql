@@ -1,0 +1,7 @@
+subscription participantAdded {
+	participantAdded {
+		id
+		name
+		msp
+	}
+}

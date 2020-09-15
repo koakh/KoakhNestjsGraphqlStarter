@@ -1,0 +1,7 @@
+mutation participantNew($newParticipantData: NewParticipantInput!) {
+	participantNew(newParticipantData: $newParticipantData) {
+		id
+		name
+		msp
+	}
+}

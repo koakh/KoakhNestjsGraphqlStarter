@@ -1,0 +1,22 @@
+query personComplexQuery($getByComplexQueryInput: GetByComplexQueryInput!, $skip: Int, $take: Int) {
+  personComplexQuery(getByComplexQueryInput: $getByComplexQueryInput, skip: $skip, take: $take) {
+    id
+    firstName
+    lastName
+    username
+    fiscalNumber
+    email
+    attributes {
+      id
+      content
+      issuedDate
+      expiresDate
+      expired
+      certifierID
+    }
+    roles
+    createdDate
+    metaData
+    metaDataInternal    
+  }
+}

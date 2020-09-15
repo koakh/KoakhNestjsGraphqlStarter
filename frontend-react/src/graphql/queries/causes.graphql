@@ -1,0 +1,17 @@
+query causes($skip: Int, $take: Int) {
+  causes(skip: $skip, take: $take) {
+    id
+    name    
+    startDate
+    endDate
+    location
+    tags
+    metaData    
+    input {
+      entity{
+        id
+      }
+    }
+    createdDate    
+  }
+}

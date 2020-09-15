@@ -1,0 +1,17 @@
+query participantComplexQuery($getByComplexQueryInput: GetByComplexQueryInput!, $skip: Int, $take: Int) {
+  participantComplexQuery(getByComplexQueryInput: $getByComplexQueryInput, skip: $skip, take: $take) {
+    id
+    name
+    ambassadors
+    msp
+    participant {
+      id
+      name
+      msp
+    }
+    createdDate   
+    createdByPersonId
+    metaData
+    metaDataInternal    
+  }
+}

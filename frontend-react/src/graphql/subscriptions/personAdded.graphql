@@ -1,0 +1,23 @@
+subscription personAdded {
+	personAdded {
+		id
+		firstName
+		lastName
+		username
+		email
+		attributes {
+			id
+			content
+			issuedDate
+			expiresDate
+			expired
+			certifierID
+		}
+		roles
+		participant {
+			id
+			name
+			msp
+		}
+	}
+}

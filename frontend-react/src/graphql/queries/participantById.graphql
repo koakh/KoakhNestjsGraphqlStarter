@@ -1,0 +1,13 @@
+query participantById($id: String!) {
+  participantById(id: $id) {
+    id
+    name
+    msp
+    participant {
+      id
+      name
+      msp
+    }
+    createdDate    
+  }
+}
