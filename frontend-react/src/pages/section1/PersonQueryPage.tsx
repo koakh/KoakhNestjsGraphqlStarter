@@ -1,9 +1,12 @@
-import * as React from 'react';
-import { envVariables as e } from '../../app/config';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
+import React, { Fragment } from 'react';
 import { getAccessToken } from '../../app';
-import { Loading, ShowMessage } from '../../components';
+import { envVariables as e } from '../../app/config';
+import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
+import { LinearIndeterminate } from '../../components/material-ui/feedback';
+import { PageTitle } from '../../components/material-ui/typography';
 import { Person, usePersonsLazyQuery } from '../../generated/graphql';
-import { MessageType } from '../../types';
 
 interface Props { }
 
@@ -24,21 +27,27 @@ export const PersonQueryPage: React.FC<Props> = () => {
 
   // catch error first
   if (error) {
-    return <ShowMessage type={MessageType.ERROR} message={error.message} />;
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
   }
 
+  let pageTitle = <PageTitle>Persons</PageTitle>;
   if (loading || !data) {
-    return <Loading />
+    return (
+      <Fragment>
+        {pageTitle}
+        <LinearIndeterminate />
+      </Fragment>
+    );
   }
 
   return (
-    <div>
-      <h2>Home</h2>
-      <ul>
+    <Fragment>
+      {pageTitle}
+      <Box component='span' m={1}>
         {data.persons.map((e: Person) =>
-          <li key={e.id}>{e.id} : {e.firstName} : {e.lastName} : {e.email} : {e.username}</li>
+          <Typography key={e.id}>{e.id} : {e.firstName} : {e.lastName} : {e.email} : {e.username}</Typography>
         )}
-      </ul>
-    </div>
+      </Box>
+    </Fragment>
   );
 }

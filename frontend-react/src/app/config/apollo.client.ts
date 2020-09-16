@@ -111,6 +111,7 @@ const wsLink = new WebSocketLink({
     connectionParams: () => ({
       authorization: `Bearer ${getAccessToken()}`,
     }),
+    lazy: true,
   },
 });
 

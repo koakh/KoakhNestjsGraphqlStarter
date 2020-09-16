@@ -34,6 +34,7 @@
   - [Error: GraphQL error: [object Object]](#error-graphql-error-object-object)
   - [React router Property 'message' does not exist on type '{}'.  TS2339](#react-router-property-message-does-not-exist-on-type--ts2339)
   - [WebSocketLink authToken Subscriptions](#websocketlink-authtoken-subscriptions)
+  - [WebSocketLink : WebSocket connection to wss graphql failed: WebSocket is closed before the connection is established.react apollo WebSocket connection to 'wss://solidarychain.com/graphql' failed: WebSocket is closed before the connection is established.](#websocketlink--websocket-connection-to-wss-graphql-failed-websocket-is-closed-before-the-connection-is-establishedreact-apollo-websocket-connection-to-wsssolidarychaincomgraphql-failed-websocket-is-closed-before-the-connection-is-established)
   - [Add Material-UI and React Router](#add-material-ui-and-react-router)
 
 ## TLDR
@@ -819,6 +820,19 @@ const wsLink = new WebSocketLink({
     connectionParams: () => ({
       authorization: `Bearer ${getAccessToken()}`,
     }),
+  },
+});
+```
+
+## WebSocketLink : WebSocket connection to wss graphql failed: WebSocket is closed before the connection is established.react apollo WebSocket connection to 'wss://solidarychain.com/graphql' failed: WebSocket is closed before the connection is established.
+
+fixed this by passing `lazy: true` to the constructor of SubscriptionClient
+
+```typescript
+const wsLink = new WebSocketLink({
+  uri: e.graphqlServerWsUri,
+  options: {
+    lazy: true,
   },
 });
 ```

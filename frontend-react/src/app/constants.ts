@@ -1,4 +1,3 @@
-// stub
 const REGISTER_DEFAULT_USER = {
   fiscalNumber: '282692124',
   firstName: 'Mário',
@@ -34,10 +33,13 @@ const COOKIES = {
   jid: 'jid',
 };
 
+const DRAWER_WIDTH: number = 240;
+
 export const appConstants = {
   KEYWORDS,
   MESSAGES,
   REGISTER_DEFAULT_USER,
   DEFAULT_LOGIN_CREDENTIALS,
   COOKIES,
+  DRAWER_WIDTH,
 };

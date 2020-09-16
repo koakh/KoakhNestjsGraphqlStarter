@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { useStateValue, ActionType } from './app/state';
 import { setAccessToken } from './app';
-import { Loading } from './components';
+import './App.css';
 import { envVariables as e } from './app/config/env';
+import { ActionType, useStateValue } from './app/state';
+import { LinearIndeterminate } from './components/material-ui/feedback';
 import { usePersonProfileLazyQuery } from './generated/graphql';
 import { Routes } from './Routes';
-import './App.css';
 
 interface Props { }
 
@@ -68,7 +68,7 @@ export const App: React.FC<Props> = () => {
 
   // require to use both loading states
   if (loading && profileLoading) {
-    return <Loading />
+    return <LinearIndeterminate />
   }
 
   return (<Routes logged={state.user.logged} />);

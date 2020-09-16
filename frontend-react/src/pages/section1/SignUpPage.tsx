@@ -3,9 +3,10 @@ import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import { appConstants as c, headerLinksNavStyle } from '../../app';
-import { Loading, ShowMessage } from '../../components';
+import { RoutePaths } from '../../app/config';
+import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
+import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { MessageType } from '../../types';
 
 // TODO: use reactFormHooks to create signUp
 
@@ -70,7 +71,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	return (
 		<Fragment>
       <div style={headerLinksNavStyle}>
-        <Link to='/'>login</Link>
+        <Link to={RoutePaths.HOME}>login</Link>
       </div>
 			<h2>Register</h2>
 			<form onSubmit={(e) => onSubmitFormHandler(e)}>
@@ -134,8 +135,8 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				{/* submit */}
 				<button type='submit'>register</button>
 			</form>
-			{error && <ShowMessage type={MessageType.ERROR} message={error.message} />}
-			{loading && <Loading />}
+			{error && <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />}
+			{loading && <LinearIndeterminate />}
 		</Fragment>
 	);
 }

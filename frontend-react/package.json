@@ -27,6 +27,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
     "react-use-dimensions": "^1.2.1",
+    "subscriptions-transport-ws": "^0.9.18",
     "uuid": "^8.3.0"
   },
   "devDependencies": {

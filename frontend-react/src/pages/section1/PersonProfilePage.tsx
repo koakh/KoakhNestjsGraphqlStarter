@@ -1,8 +1,10 @@
-import * as React from 'react';
-import { Loading, ShowMessage } from '../../components';
+import Box from '@material-ui/core/Box';
+import React, { Fragment } from 'react';
 import { envVariables as e } from '../../app/config/env';
+import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
+import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { usePersonProfileQuery } from '../../generated/graphql';
-import { MessageType } from '../../types/types';
+import { PageTitle } from '../../components/material-ui/typography';
 
 interface Props { }
 
@@ -12,18 +14,26 @@ export const PersonProfilePage: React.FC<Props> = () => {
   });
 
   if (error) {
-    return <ShowMessage type={MessageType.ERROR} message={error.message} />;
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
   }
 
+  let pageTitle = <PageTitle>Profile</PageTitle>;
   if (loading || !data) {
-    return <Loading />
+    return (
+      <Fragment>
+        {pageTitle}
+        <LinearIndeterminate />
+      </Fragment>
+    );
   }
 
   const { personProfile } = data;
   return (
-    <div>
-      <h1>Profile</h1>
-      <pre>{JSON.stringify(personProfile, undefined, 2)}</pre>
-    </div>
+    <Fragment>
+      {pageTitle}
+      <Box component='span' m={1}>
+        <pre>{JSON.stringify(personProfile, undefined, 2)}</pre>
+      </Box>
+    </Fragment>
   );
 }

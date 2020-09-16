@@ -1,5 +1,4 @@
 import AppBar from '@material-ui/core/AppBar';
-import Badge from '@material-ui/core/Badge';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
@@ -14,18 +13,16 @@ import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/sty
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, Route, Switch, useLocation } from 'react-router-dom';
 import useDimensions from 'react-use-dimensions';
-import { defaultDrawerListItemIcon, drawerWidth, routes } from '../../../app/config';
+import { appConstants as c, setAccessToken } from '../../../app';
+import { defaultDrawerListItemIcon, RoutePaths, routes } from '../../../app/config';
 import { ActionType, useStateValue } from '../../../app/state';
-import { DrawerListItem, DrawerSections } from '../../../types';
 import { usePersonLogoutMutation } from '../../../generated/graphql';
-import { setAccessToken } from '../../../app';
+import { DrawerListItem, DrawerSections } from '../../../types';
 
 interface ResponsiveDrawerProps {
   title: string;
@@ -39,14 +36,14 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     drawer: {
       [theme.breakpoints.up('sm')]: {
-        width: drawerWidth,
+        width: c.DRAWER_WIDTH,
         flexShrink: 0,
       },
     },
     appBar: {
-      marginLeft: drawerWidth,
+      marginLeft: c.DRAWER_WIDTH,
       [theme.breakpoints.up('sm')]: {
-        width: `calc(100% - ${drawerWidth}px)`,
+        width: `calc(100% - ${c.DRAWER_WIDTH}px)`,
       },
     },
     menuButton: {
@@ -57,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
-      width: drawerWidth,
+      width: c.DRAWER_WIDTH,
     },
     content: {
       flexGrow: 1,
@@ -111,7 +108,7 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
   useEffect(() => {
     const margin: number = 48;
     if (!isNaN(width)) {
-      const shellWidth: number = Math.trunc(mobileOpen ? width - drawerWidth - margin : width - margin);
+      const shellWidth: number = Math.trunc(mobileOpen ? width - c.DRAWER_WIDTH - margin : width - margin);
       setWidth(shellWidth);
     }
     // cleanup
@@ -180,7 +177,7 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
       onClose={handleMenuClose}
     >
       {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem component={Link} to={RoutePaths.PROFILE}>Profile</MenuItem>
       {state.user.logged && (<MenuItem onClick={handleMenuSignOut} disabled={logoutDisabled}>Sign out</MenuItem>)}
       {/* show loading when we logout */}
       {/* TODO {logoutDisabled && <Loading />} */}
@@ -199,7 +196,7 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
+      {/* <MenuItem>
         <IconButton aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="secondary">
             <MailIcon />
@@ -214,7 +211,7 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
           </Badge>
         </IconButton>
         <p>Notifications</p>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           aria-label="account of current user"
@@ -224,7 +221,7 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
         >
           <AccountCircle />
         </IconButton>
-        <p>Profile</p>
+        <p>Session</p>
       </MenuItem>
     </Menu>
   );
@@ -249,12 +246,14 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
     // loop section categories
     section.forEach(category => {
       const icon: JSX.Element = (category.icon) ? category.icon : defaultDrawerListItemIcon;
-      listItems.push(
-        <ListItem button key={category.path} component={Link} to={category.path} selected={location.pathname === category.path} onClick={handleClickListItem}>
-          <ListItemIcon>{icon}</ListItemIcon>
-          <ListItemText primary={category.label} />
-        </ListItem>
-      );
+      if (category.visible !== false && !category.visible) {
+        listItems.push(
+          <ListItem button key={category.path} component={Link} to={category.path} selected={location.pathname === category.path} onClick={handleClickListItem}>
+            <ListItemIcon>{icon}</ListItemIcon>
+            <ListItemText primary={category.label} />
+          </ListItem>
+        );
+      }
     });
   });
   // compose final drawer
@@ -284,7 +283,7 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 4 new mails" color="inherit">
+            {/* <IconButton aria-label="show 4 new mails" color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <MailIcon />
               </Badge>
@@ -293,7 +292,7 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
               <Badge badgeContent={17} color="secondary">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
             <IconButton
               edge="end"
               aria-label="account of current user"
