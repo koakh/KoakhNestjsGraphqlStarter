@@ -1,11 +1,9 @@
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import React, { Fragment } from 'react';
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
-import { drawerCategories, RoutePaths } from './app/config';
+import { drawerCategories, envVariables as e, RouteKey, routes } from './app/config';
 import { theme } from './app/theme';
 import { ResponsiveDrawer } from './components/material-ui/navigation';
-import { SignInPage, SignUpPage } from './pages';
-import { envVariables as e } from './app/config';
 
 interface Props {
   logged?: boolean;
@@ -21,9 +19,9 @@ export const Routes: React.FC<Props> = ({ logged }: Props) => {
   else {
     routerChild = (
       <Fragment>
-        <Redirect to={RoutePaths.HOME} />
-        <Route exact path={RoutePaths.HOME} component={SignInPage} />
-        <Route exact path={RoutePaths.SIGNUP} component={SignUpPage} />
+        <Redirect to={routes[RouteKey.HOME].path} />
+        <Route exact path={routes[RouteKey.HOME].path} component={routes[RouteKey.SIGN_IN].component} />
+        <Route exact path={routes[RouteKey.SIGN_UP].path} component={routes[RouteKey.SIGN_UP].component} />
       </Fragment>
     );
   }

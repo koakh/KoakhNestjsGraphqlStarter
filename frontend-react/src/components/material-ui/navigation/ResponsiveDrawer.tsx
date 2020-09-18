@@ -19,10 +19,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, Route, Switch, useLocation } from 'react-router-dom';
 import useDimensions from 'react-use-dimensions';
 import { appConstants as c, setAccessToken } from '../../../app';
-import { defaultDrawerListItemIcon, RoutePaths, routes } from '../../../app/config';
+import { defaultDrawerListItemIcon, routes, RouteKey } from '../../../app/config';
 import { ActionType, useStateValue } from '../../../app/state';
 import { usePersonLogoutMutation } from '../../../generated/graphql';
-import { DrawerListItem, DrawerSections } from '../../../types';
+import { DrawerListItem, DrawerSections, RouteItem } from '../../../types';
+import { recordToArray } from '../../../utils';
 
 interface ResponsiveDrawerProps {
   title: string;
@@ -177,7 +178,7 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
       onClose={handleMenuClose}
     >
       {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-      <MenuItem component={Link} to={RoutePaths.PROFILE}>Profile</MenuItem>
+      <MenuItem component={Link} to={routes[RouteKey.PROFILE].path}>Profile</MenuItem>
       {state.user.logged && (<MenuItem onClick={handleMenuSignOut} disabled={logoutDisabled}>Sign out</MenuItem>)}
       {/* show loading when we logout */}
       {/* TODO {logoutDisabled && <Loading />} */}
@@ -354,7 +355,8 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Switch>
-          {routes.map((route, i) => (
+          {/* convert record to array, and create routes */}
+          {recordToArray<RouteItem>(routes).map((route, i) => (
             <Route key={route.path} exact={route.exact} path={route.path} component={route.component} />
           ))}
         </Switch>

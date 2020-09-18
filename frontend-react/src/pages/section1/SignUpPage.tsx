@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import { appConstants as c, headerLinksNavStyle } from '../../app';
-import { RoutePaths } from '../../app/config';
+import { RouteKey, routes } from '../../app/config';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
@@ -71,7 +71,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	return (
 		<Fragment>
       <div style={headerLinksNavStyle}>
-        <Link to={RoutePaths.HOME}>login</Link>
+        <Link to={routes[RouteKey.HOME].path}>login</Link>
       </div>
 			<h2>Register</h2>
 			<form onSubmit={(e) => onSubmitFormHandler(e)}>
