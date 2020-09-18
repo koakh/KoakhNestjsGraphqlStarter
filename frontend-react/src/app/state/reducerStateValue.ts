@@ -15,6 +15,7 @@ export type State = typeof initialState;
 // reducer actions
 export enum ActionType {
   CHANGE_THEME = 'CHANGE_THEME',
+  DECREMENT = 'DECREMENT',
   INCREMENT = 'INCREMENT',
   CHANGE_SEARCH_USERS_QUERY = 'CHANGE_SEARCH_USERS_QUERY',
   SIGNED_IN_USER = 'SIGNED_IN_USER',
@@ -25,6 +26,7 @@ export enum ActionType {
 
 export type Action =
   | { type: ActionType.CHANGE_THEME, payload: { newTheme: string } }
+  | { type: ActionType.DECREMENT, payload: any }
   | { type: ActionType.INCREMENT, payload: any }
   | { type: ActionType.CHANGE_SEARCH_USERS_QUERY, payload: { query: string } }
   | { type: ActionType.SIGNED_IN_USER, payload: { profile: any } }
@@ -33,7 +35,7 @@ export type Action =
   ;
 
 // reducer types
-export enum Themes {
+export enum ThemeColors {
   GREEN = 'Green',
   BLUE = 'Blue',
   RED = 'Red',
@@ -55,6 +57,11 @@ export default (state: State, action: Action) => {
       return {
         ...state,
         counter: state.counter + 1
+      }
+    case ActionType.DECREMENT:
+      return {
+        ...state,
+        counter: state.counter - 1
       }
     case ActionType.CHANGE_SEARCH_USERS_QUERY:
       return {

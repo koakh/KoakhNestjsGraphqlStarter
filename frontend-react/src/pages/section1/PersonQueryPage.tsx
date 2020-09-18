@@ -30,7 +30,7 @@ export const PersonQueryPage: React.FC<Props> = () => {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
   }
 
-  let pageTitle = <PageTitle>Persons</PageTitle>;
+  const pageTitle = <PageTitle>Persons</PageTitle>;
   if (loading || !data) {
     return (
       <Fragment>

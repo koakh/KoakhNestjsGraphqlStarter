@@ -1,6 +1,5 @@
-import * as React from 'react';
+import React, { Fragment } from 'react';
 import { Typography, Box } from '@material-ui/core';
-import { Fragment } from 'react';
 import { PageTitle } from '../../components/material-ui/typography';
 
 interface Props { }

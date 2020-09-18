@@ -1,14 +1,10 @@
 import { AddBox as AddBoxIcon, Explore as ExploreIcon, Fingerprint as FingerprintIcon, Home as HomeIcon, Loyalty as LoyaltyIcon } from '@material-ui/icons';
 import React from 'react';
-import { CausesPage, CommunityPage, FeedPage, HomePage, PersonQueryPage, StatePage, TransactionAddedPage, PersonProfilePage } from '../../pages';
+import { CausesPage, CommunityPage, FeedPage, HomePage, PersonProfilePage, PersonQueryPage, StatePage, TimelinePage, TransactionAddedPage, SignUpPage } from '../../pages';
 import { DrawerListItem, DrawerSections, RouteItem } from '../../types';
 
 export const defaultDrawerListItemIcon: JSX.Element = <AddBoxIcon />;
 export const subStrCode = (code: string) => code.substr(0, 28);
-
-// TODO: use from env vars
-export const drawerWidth: number = 240;
-export const drawerTitle: string = 'Koakh Material UI Starter';
 
 export enum RoutePaths {
   HOME = '/',
@@ -18,6 +14,7 @@ export enum RoutePaths {
   SIGNUP = '/signup',
   STATE = '/state',
   TRANSACTION = '/transaction',
+  TIMELINE = '/timeline',
   FEED = '/feed',
   CAUSES = '/causes',
   COMMUNITY = '/community'
@@ -36,6 +33,15 @@ export const routes: RouteItem[] = [
   },
   // SECTION1
   {
+    label: 'Profile',
+    path: RoutePaths.PROFILE,
+    component: PersonProfilePage,
+    section: DrawerSections.SECTION1,
+    // drawerIcon: USE DEFAULT HERE,
+    exact: true,
+    // visible: true,
+  },
+  {
     label: 'Persons',
     path: RoutePaths.PERSONQUERY,
     component: PersonQueryPage,
@@ -44,42 +50,31 @@ export const routes: RouteItem[] = [
     exact: true,
   },
   {
-    label: 'Profile',
-    path: RoutePaths.PROFILE,
-    component: PersonProfilePage,
+    label: 'Transaction',
+    path: RoutePaths.TRANSACTION,
+    component: TransactionAddedPage,
     section: DrawerSections.SECTION1,
     // drawerIcon: USE DEFAULT HERE,
     exact: true,
-    visible: false,
   },
-  // {
-  //   label: 'SignIn',
-  //   path: RoutePaths.SIGNIN,
-  //   component: SignInPage,
-  //   section: DrawerSections.SECTION1,
-  //   // drawerIcon: USE DEFAULT HERE,
-  //   exact: true,
-  // },
-  // {
-  //   label: 'SignUp',
-  //   path: RoutePaths.SIGNUP,
-  //   component: SignUpPage,
-  //   section: DrawerSections.SECTION1,
-  //   // drawerIcon: USE DEFAULT HERE,
-  //   exact: true,
-  // },
+  {
+    label: 'TimeLine',
+    path: RoutePaths.TIMELINE,
+    component: TimelinePage,
+    section: DrawerSections.SECTION1,
+  },
+  {
+    label: 'SignUp',
+    path: RoutePaths.SIGNUP,
+    component: SignUpPage,
+    section: DrawerSections.SECTION1,
+    // drawerIcon: USE DEFAULT HERE,
+    exact: true,
+  },
   {
     label: 'State',
     path: RoutePaths.STATE,
     component: StatePage,
-    section: DrawerSections.SECTION1,
-    // drawerIcon: USE DEFAULT HERE,
-    exact: true,
-  },
-  {
-    label: 'Transaction',
-    path: RoutePaths.TRANSACTION,
-    component: TransactionAddedPage,
     section: DrawerSections.SECTION1,
     // drawerIcon: USE DEFAULT HERE,
     exact: true,

@@ -17,7 +17,7 @@ export const PersonProfilePage: React.FC<Props> = () => {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
   }
 
-  let pageTitle = <PageTitle>Profile</PageTitle>;
+  const pageTitle = <PageTitle>Profile</PageTitle>;
   if (loading || !data) {
     return (
       <Fragment>

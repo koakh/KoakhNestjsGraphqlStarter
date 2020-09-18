@@ -5,9 +5,6 @@ import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
@@ -19,6 +16,7 @@ import { RouteComponentProps } from 'react-router';
 import { appConstants as c, setAccessToken } from '../../app';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert/AlertMessage';
+import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright, Props as CopyrightProps } from '../../components/material-ui/other/Copyright';
 import { LoginPersonInput, PersonProfileDocument, usePersonLoginMutation } from '../../generated/graphql';
 
@@ -39,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: theme.spacing(1),
 	},
 	submit: {
-		margin: theme.spacing(3, 0, 2),
+		margin: theme.spacing(2, 0, 1),
 	},
 }));
 
@@ -198,8 +196,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 					>
 						{c.MESSAGES.signIn}
 					</Button>
-					{loading && <LinearProgress />}
-					<Grid container>
+					{/* <Grid container>
 						<Grid item xs>
 							<Link href='#' variant='body2'>
 								Forgot password?
@@ -210,7 +207,8 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 								{c.MESSAGES.nonAccountSignUp}
 							</Link>
 						</Grid>
-					</Grid>
+					</Grid> */}
+					{loading && <LinearIndeterminate />}
 				</form>
 			</div>
 			{error && <AlertMessage severity={AlertSeverityType.ERROR} message={c.MESSAGES.loginFailed} />}

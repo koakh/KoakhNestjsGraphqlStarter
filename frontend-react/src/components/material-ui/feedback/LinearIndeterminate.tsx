@@ -7,8 +7,8 @@ interface Props { color?: 'primary' | 'secondary'; }
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    '& > * + *': {
-      marginTop: theme.spacing(2),
+    '& > *': {
+      margin: theme.spacing(2, 0, 2),
     },
   },
 }));
