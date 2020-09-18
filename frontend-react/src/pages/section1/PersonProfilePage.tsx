@@ -5,6 +5,7 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { usePersonProfileQuery } from '../../generated/graphql';
 import { PageTitle } from '../../components/material-ui/typography';
+import { routes, RouteKey } from '../../app/config';
 
 interface Props { }
 
@@ -17,7 +18,7 @@ export const PersonProfilePage: React.FC<Props> = () => {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
   }
 
-  const pageTitle = <PageTitle>Profile</PageTitle>;
+const pageTitle = <PageTitle>{routes[RouteKey.PROFILE].title}</PageTitle>;
   if (loading || !data) {
     return (
       <Fragment>

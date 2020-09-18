@@ -7,6 +7,7 @@ import { ActionType, ThemeColors } from '../../app/state/reducerStateValue';
 import { useStateValue } from '../../app/state/useStateValue';
 import { PageTitle } from '../../components/material-ui/typography';
 import { InputMouseEvent } from '../../types';
+import { RouteKey, routes } from '../../app/config';
 
 interface Props { }
 
@@ -41,7 +42,7 @@ export const StatePage: React.FC<Props> = () => {
   // styles
   const classes = useStyles();
   const stateOutput = JSON.stringify(state, undefined, 2);
-  const pageTitle = <PageTitle>State</PageTitle>;
+  const pageTitle = <PageTitle>{routes[RouteKey.STATE].title}</PageTitle>;
   const pageContent = (
     <Fragment>
       <div className={classes.root}>

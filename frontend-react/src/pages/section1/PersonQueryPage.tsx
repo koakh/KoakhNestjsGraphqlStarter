@@ -2,7 +2,7 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import React, { Fragment } from 'react';
 import { getAccessToken } from '../../app';
-import { envVariables as e } from '../../app/config';
+import { envVariables as e, routes, RouteKey } from '../../app/config';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
@@ -30,7 +30,7 @@ export const PersonQueryPage: React.FC<Props> = () => {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
   }
 
-  const pageTitle = <PageTitle>Persons</PageTitle>;
+  const pageTitle = <PageTitle>{routes[RouteKey.PERSON_QUERY].title}</PageTitle>;
   if (loading || !data) {
     return (
       <Fragment>

@@ -1,13 +1,14 @@
 import React, { Fragment } from 'react';
 import { Typography, Box } from '@material-ui/core';
 import { PageTitle } from '../../components/material-ui/typography';
+import { routes, RouteKey } from '../../app/config';
 
 interface Props { }
 
 export const FeedPage: React.FC<Props> = () => {
   return (
     <Fragment>
-      <PageTitle>Feed</PageTitle>
+      <PageTitle>{routes[RouteKey.FEED].title}</PageTitle>
       <Box component='span' m={1}>
         <Typography paragraph>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent porttitor nisi nulla, eu ultricies turpis facilisis a.

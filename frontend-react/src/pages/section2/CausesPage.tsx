@@ -1,5 +1,6 @@
+import { Box, Typography } from '@material-ui/core';
 import React, { Fragment } from 'react';
-import { Typography, Box } from '@material-ui/core';
+import { RouteKey, routes } from '../../app/config';
 import { PageTitle } from '../../components/material-ui/typography';
 
 interface Props { }
@@ -7,7 +8,7 @@ interface Props { }
 export const CausesPage: React.FC<Props> = () => {
   return (
     <Fragment>
-      <PageTitle>Causes</PageTitle>
+      <PageTitle>{routes[RouteKey.CAUSES].title}</PageTitle>
       <Box component='span' m={1}>
         <Typography paragraph>
           Nullam facilisis sodales est. Donec augue magna, rhoncus ac velit in, pellentesque mattis velit. Vestibulum dignissim

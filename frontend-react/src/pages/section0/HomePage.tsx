@@ -2,13 +2,14 @@ import { Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import React, { Fragment } from 'react';
 import { PageTitle } from '../../components/material-ui/typography';
+import { RouteKey, routes } from '../../app/config';
 
 interface Props { }
 
 export const HomePage: React.FC<Props> = () => {
   return (
     <Fragment>
-      <PageTitle>Home</PageTitle>
+      <PageTitle>{routes[RouteKey.HOME].title}</PageTitle>
       <Box component='span' m={1}>
         <Typography paragraph>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt

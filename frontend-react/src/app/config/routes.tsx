@@ -14,7 +14,7 @@ export enum RouteKey {
   SIGN_IN = 'SIGN_IN',
   SIGN_UP = 'SIGN_UP',
   STATE = 'STATE',
-  TRANSACTION = 'TRANSACTION',
+  TRANSACTIONS = 'TRANSACTIONS',
   TIMELINE = 'TIMELINE',
   FEED = 'FEED',
   CAUSES = 'CAUSES',
@@ -25,6 +25,7 @@ export enum RouteKey {
 export const routes: Record<RouteKey, RouteItem> = {
   // SECTION0
   [RouteKey.HOME]: {
+    title: 'Home',
     label: 'Home',
     path: '/',
     component: HomePage,
@@ -34,6 +35,7 @@ export const routes: Record<RouteKey, RouteItem> = {
   },
   // SECTION1
   [RouteKey.PROFILE]: {
+    title: 'Profile',
     label: 'Profile',
     path: '/profile',
     component: PersonProfilePage,
@@ -43,6 +45,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     // visible: true,
   },
   [RouteKey.PERSON_QUERY]: {
+    title: 'Persons',
     label: 'Persons',
     path: '/persons',
     component: PersonQueryPage,
@@ -50,21 +53,24 @@ export const routes: Record<RouteKey, RouteItem> = {
     // drawerIcon: USE DEFAULT HERE,
     exact: true,
   },
-  [RouteKey.TRANSACTION]: {
-    label: 'Transaction',
-    path: '/transaction',
+  [RouteKey.TRANSACTIONS]: {
+    title: 'Transactions',
+    label: 'Transactions',
+    path: '/transactions',
     component: TransactionAddedPage,
     section: DrawerSections.SECTION1,
     // drawerIcon: USE DEFAULT HERE,
     exact: true,
   },
   [RouteKey.TIMELINE]: {
+    title: 'TimeLine',
     label: 'TimeLine',
     path: '/timeline',
     component: TimelinePage,
     section: DrawerSections.SECTION1,
   },
   [RouteKey.SIGN_IN]: {
+    title: 'SignIn',
     label: 'SignIn',
     path: '/signin',
     component: SignInPage,
@@ -74,6 +80,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     visible: false,
   },
   [RouteKey.SIGN_UP]: {
+    title: 'SignUp',
     label: 'SignUp',
     path: '/signup',
     component: SignUpPage,
@@ -82,6 +89,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     exact: true,
   },
   [RouteKey.STATE]: {
+    title: 'State',
     label: 'State',
     path: '/state',
     component: StatePage,
@@ -91,6 +99,7 @@ export const routes: Record<RouteKey, RouteItem> = {
   },
   // SECTION2
   [RouteKey.FEED]: {
+    title: 'Feed',
     label: 'Feed',
     path: '/feed',
     component: FeedPage,
@@ -98,6 +107,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     drawerIcon: <FingerprintIcon />,
   },
   [RouteKey.CAUSES]: {
+    title: 'Causes',
     label: 'Causes',
     path: '/causes',
     component: CausesPage,
@@ -105,6 +115,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     drawerIcon: <ExploreIcon />,
   },
   [RouteKey.COMMUNITY]: {
+    title: 'Community',
     label: 'Community',
     path: '/community',
     component: CommunityPage,
