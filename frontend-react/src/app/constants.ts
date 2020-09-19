@@ -1,21 +1,9 @@
-const REGISTER_DEFAULT_USER = {
-  fiscalNumber: '282692124',
-  firstName: 'Mário',
-  lastName: 'Monteiro',
-  email: 'mario@koakh.com',
-  username: 'mario',
-  password: '12345678',
-};
-
 const KEYWORDS = {
-  id: "id",
-  fiscalNumber: "fiscalNumber",
-  firstName: "firstName",
-  lastName: "lastName",
-  email: "email",
-  username: "username",
-  password: "password",
   error: 'Error',
+  register: 'Register',
+  // TODO: remove after clean up from signIn
+  username: 'username',
+  password: 'password',
 };
 
 const MESSAGES = {
@@ -38,7 +26,6 @@ const DRAWER_WIDTH: number = 240;
 export const appConstants = {
   KEYWORDS,
   MESSAGES,
-  REGISTER_DEFAULT_USER,
   DEFAULT_LOGIN_CREDENTIALS,
   COOKIES,
   DRAWER_WIDTH,

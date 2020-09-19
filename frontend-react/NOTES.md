@@ -36,6 +36,7 @@
   - [WebSocketLink authToken Subscriptions](#websocketlink-authtoken-subscriptions)
   - [WebSocketLink : WebSocket connection to wss graphql failed: WebSocket is closed before the connection is established.react apollo WebSocket connection to 'wss://solidarychain.com/graphql' failed: WebSocket is closed before the connection is established.](#websocketlink--websocket-connection-to-wss-graphql-failed-websocket-is-closed-before-the-connection-is-establishedreact-apollo-websocket-connection-to-wsssolidarychaincomgraphql-failed-websocket-is-closed-before-the-connection-is-established)
   - [Add Material-UI and React Router](#add-material-ui-and-react-router)
+  - [React Hook Forms](#react-hook-forms)
 
 ## TLDR
 
@@ -852,3 +853,8 @@ $ ADD_PACKAGE="react-use-dimensions" && npx lerna add ${ADD_PACKAGE} --scope ${T
 # dev
 $ ADD_PACKAGE="@types/react-router-dom" && npx lerna add -D ${ADD_PACKAGE} --scope ${TO_PACKAGE}
 ```
+
+## React Hook Forms
+
+- [react-hook-form](https://react-hook-form.com/get-started)
+

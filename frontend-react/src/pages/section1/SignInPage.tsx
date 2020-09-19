@@ -19,6 +19,7 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright, Props as CopyrightProps } from '../../components/material-ui/other/Copyright';
 import { LoginPersonInput, PersonProfileDocument, usePersonLoginMutation } from '../../generated/graphql';
+import { Grid, Link } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -196,18 +197,18 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 					>
 						{c.MESSAGES.signIn}
 					</Button>
-					{/* <Grid container>
-						<Grid item xs>
+					<Grid container>
+						{/* <Grid item xs>
 							<Link href='#' variant='body2'>
 								Forgot password?
 								</Link>
-						</Grid>
+						</Grid> */}
 						<Grid item>
 							<Link href='#' variant='body2'>
 								{c.MESSAGES.nonAccountSignUp}
 							</Link>
 						</Grid>
-					</Grid> */}
+					</Grid>
 					{loading && <LinearIndeterminate />}
 				</form>
 			</div>
