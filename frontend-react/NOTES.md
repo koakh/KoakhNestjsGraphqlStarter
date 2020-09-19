@@ -857,4 +857,36 @@ $ ADD_PACKAGE="@types/react-router-dom" && npx lerna add -D ${ADD_PACKAGE} --sco
 ## React Hook Forms
 
 - [react-hook-form](https://react-hook-form.com/get-started)
+- [How to use react-hook-form with ant design or material UI](https://stackoverflow.com/questions/58833574/how-to-use-react-hook-form-with-ant-design-or-material-ui)
 
+use `inputRef` and not `ref`, checkout docs
+
+https://codesandbox.io/s/react-hook-form-hookforminput-rzu9s?file=/src/index.js
+
+https://react-hook-form.com/api#Controller
+React Hook Form embraces uncontrolled components and native inputs, however it's hard to avoid working with external controlled component such as React-Select, AntD and Material-UI. This wrapper component will make it easier for you to work with them.
+
+controller validation
+https://codesandbox.io/s/controller-rules-8pd7z?file=/src/App.tsx:883-980
+<Controller
+  name="inputState"
+  control={control}
+  as={<input placeholder="inputState" />}
+  rules={{
+    validate: () => {
+      return getValues("firstName") === "bill";
+    }
+  }}
+  defaultValue=""
+/>
+
+How to Use React-Hook-Form With Material UI
+https://www.youtube.com/watch?v=PquWexbGcVc
+
+
+dont use `error={errors[e.name]}`, here we must return boolean to prevent error
+```
+index.js:1 Warning: Failed prop type: Invalid prop `error` of type `object` supplied to `ForwardRef(TextField)`, expected `boolean`.
+    in ForwardRef(TextField) (created by WithStyles(ForwardRef(TextField)))
+```
+ex `error={(errors[e.name] !== undefined)}`

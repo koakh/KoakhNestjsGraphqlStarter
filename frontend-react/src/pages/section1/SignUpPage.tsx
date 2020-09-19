@@ -4,78 +4,120 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import React, { Fragment, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
-import { v4 as uuid } from 'uuid';
-import { appConstants as c } from '../../app';
+import { appConstants as c, regExp } from '../../app';
 import { RouteKey, routes } from '../../app/config';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
+import { recordToArray } from '../../utils';
+import { useForm, Controller, Validate, ValidationValueMessage, ValidationRule } from 'react-hook-form';
+
+// TODO: check if passwords ae equal
 
 const useStyles = makeStyles((theme) => ({
 	root: {
 		display: 'flex',
 		flexWrap: 'wrap',
+		width: 'fullWidth',
 	},
 	spacer: {
 		marginBottom: theme.spacing(2),
 	},
 }));
 
+type FormInputs = {
+	username: string;
+	password: string;
+	passwordConfirmation: string;
+	fiscalNumber: string;
+	firstName: string;
+	lastName: string;
+	email: string;
+};
+
+const defaultValues = {
+	// username: '',
+	// password: '',
+	// passwordConfirmation: '',
+	// fiscalNumber: '',
+	// firstName: '',
+	// lastName: '',
+	// email: '',
+};
+
+enum FormKeyFields {
+	USERNAME = 'USERNAME',
+	PASSWORD = 'PASSWORD',
+	PASSWORD_CONFIRMATION = 'PASSWORD_CONFIRMATION',
+	FISCAL_NUMBER = 'FISCAL_NUMBER',
+	FIRST_NAME = 'FIRST_NAME',
+	LAST_NAME = 'LAST_NAME',
+	EMAIL = 'EMAIL',
+}
+
+type FormPropFields = {
+	as: JSX.Element,
+	type: 'text' | 'password',
+	name: 'password' | 'username' | 'passwordConfirmation' | 'fiscalNumber' | 'firstName' | 'lastName' | 'email',
+	label: string;
+	defaultValue?: string,
+	placeholder?: string,
+	helperText?: string,
+	fullWidth?: boolean,
+	className?: any,
+	rules?: {
+		required?: string | boolean | ValidationValueMessage<boolean>,
+		min?: ValidationRule<React.ReactText>,
+		max?: ValidationRule<React.ReactText>,
+		maxLength?: ValidationRule<React.ReactText>,
+		minLength?: ValidationRule<React.ReactText>,
+		pattern?: ValidationRule<RegExp>,
+		validate?: Validate | Record<string, Validate>
+	}
+	// 	rules?: Partial<{
+	// 		required: string | boolean | import('./types').ValidationValueMessage<boolean>;
+	// 		min: import('./types').ValidationRule<React.ReactText>;
+	// 		max: import('./types').ValidationRule<React.ReactText>;
+	// 		maxLength: import('./types').ValidationRule<React.ReactText>;
+	// 		minLength: import('./types').ValidationRule<React.ReactText>;
+	// 		pattern: import('./types').ValidationRule<RegExp>;
+	// 		validate: import('./types').Validate | Record<string, import('./types').Validate>;
+	// }> | undefined;	
+}
+
+let renderCount = 0;
+
 // use RouteComponentProps to get history props from Route
 export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
-	// assign from appConstants
-	const defaultUser = c.REGISTER_DEFAULT_USER;
-	// hooks mui
 	// hooks react form
+	const { register, handleSubmit, watch, errors, control, getValues, reset } = useForm<FormInputs>({ defaultValues, mode: 'onBlur' });
+	const [submitting, setSubmitting] = useState(false);
+	renderCount++;
+	// TODO: type data
+	// const onSubmit = (data: any) => console.log(data);
+	// hooks styles
 	const classes = useStyles();
-	// hooks: state
-	const [id, setId] = useState(uuid())
-	const [fiscalNumber, setFiscalNumber] = useState(defaultUser.fiscalNumber)
-	const [firstName, setFirstName] = useState(defaultUser.firstName)
-	const [lastName, setLastName] = useState(defaultUser.lastName)
-	const [email, setEmail] = useState(defaultUser.email);
-	const [username, setUsername] = useState(defaultUser.username)
-	const [password, setPassword] = useState(defaultUser.password);
-	const [passwordConfirmation, setPasswordConfirmation] = useState(defaultUser.password);
-
 	// hooks: apollo
-	const [personNewMutation, { loading, error }] = usePersonRegisterMutation();
-	// handlers
-	const onChangeIdHandler = (e: React.SyntheticEvent) => {
-		setId((e.target as HTMLSelectElement).value)
-	};
-	const onChangeFiscalNumberHandler = (e: React.SyntheticEvent) => {
-		setFiscalNumber((e.target as HTMLSelectElement).value)
-	};
-	const onChangeFirstNameHandler = (e: React.SyntheticEvent) => {
-		setFirstName((e.target as HTMLSelectElement).value)
-	};
-	const onChangeLastNameHandler = (e: React.SyntheticEvent) => {
-		setLastName((e.target as HTMLSelectElement).value)
-	};
-	const onChangeEmailHandler = (e: React.SyntheticEvent) => {
-		setEmail((e.target as HTMLSelectElement).value)
-	};
-	const onChangeUsernameHandler = (e: React.SyntheticEvent) => {
-		setUsername((e.target as HTMLSelectElement).value)
-	};
-	const onChangePasswordHandler = (e: React.SyntheticEvent) => {
-		setPassword((e.target as HTMLSelectElement).value)
-	};
-	const onChangePasswordConfirmationHandler = (e: React.SyntheticEvent) => {
-		setPasswordConfirmation((e.target as HTMLSelectElement).value)
-	};
+	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
 
-	const onSubmitFormHandler = async (e: any) => {
+	// console.log(watch('fiscalNumber'));
+	console.log('errors', JSON.stringify(errors, undefined, 2));
+
+	const onSubmitHandler = async (data: FormInputs) => {
 		try {
-			e.preventDefault();
+			alert(JSON.stringify(data, undefined, 2));
+			setSubmitting(true);
 			const newPersonData: NewPersonInput = {
-				id, fiscalNumber, firstName, lastName, email, username, password
+				username: data.username,
+				password: data.password,
+				fiscalNumber: data.fiscalNumber,
+				email: data.email,				
 			};
-			const response = await personNewMutation({ variables: { newPersonData } }).catch(error => {
-				throw error;
-			})
+			const response = await personNewMutation({ variables: { newPersonData } })
+				.catch(error => {
+					throw error;
+				})
 
 			if (response) {
 				// use history to send user to homepage, after awaiting for response object
@@ -83,100 +125,156 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				history.push({ pathname: '/', state: { message: `user registered successfully! welcome, you can login with ${username}` } });
 			}
 		} catch (error) {
-			console.error(error);
+			console.error(error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message.error, undefined, 2) : error);
+		} finally {
+			setSubmitting(false);
 		}
 	};
 
+	const formDefinition: Record<string, FormPropFields> = {
+		[FormKeyFields.USERNAME]: {
+			as: <TextField />,
+			type: 'text',
+			name: 'username',
+			label: 'Username',
+			defaultValue: 'johndoe',
+			placeholder: 'johndoe',
+			fullWidth: true,
+			className: classes.spacer,
+			rules: {
+				required: true,
+			}
+		},
+		[FormKeyFields.PASSWORD]: {
+			as: <TextField />,
+			type: 'password',
+			name: 'password',
+			label: 'Password',
+			defaultValue: '12345678',
+			placeholder: '12345678',
+			fullWidth: true,
+			className: classes.spacer,
+		},
+		[FormKeyFields.PASSWORD_CONFIRMATION]: {
+			as: <TextField />,
+			type: 'password',
+			name: 'passwordConfirmation',
+			label: 'Password confirmation',
+			defaultValue: '12345678',
+			placeholder: '12345678',
+			fullWidth: true,
+			className: classes.spacer,
+			rules: {
+				required: true,
+				validate: () => {
+					return getValues('password') === getValues('passwordConfirmation');
+				}
+			}
+		},
+		[FormKeyFields.FISCAL_NUMBER]: {
+			as: <TextField />,
+			type: 'text',
+			name: 'fiscalNumber',
+			label: 'Fiscal number',
+			defaultValue: 'PT218269128',
+			placeholder: 'PT218269128',
+			helperText: 'a valid pt fiscal Number',
+			fullWidth: true,
+			className: classes.spacer,
+			rules: {
+				required: true,
+				pattern: regExp.fiscalNumber,
+			}
+		},
+		[FormKeyFields.FIRST_NAME]: {
+			as: <TextField />,
+			type: 'text',
+			name: 'firstName',
+			label: 'First name',
+			defaultValue: 'John',
+			placeholder: 'John',
+			fullWidth: true,
+			className: classes.spacer,
+		},
+		[FormKeyFields.LAST_NAME]: {
+			as: <TextField />,
+			type: 'text',
+			name: 'lastName',
+			label: 'Last name',
+			defaultValue: 'Doe',
+			placeholder: 'Doe',
+			fullWidth: true,
+			className: classes.spacer,
+		},
+		[FormKeyFields.EMAIL]: {
+			as: <TextField />,
+			type: 'text',
+			name: 'email',
+			label: 'Email',
+			defaultValue: 'johndoe@example.com',
+			placeholder: 'johndoe@example.com',
+			fullWidth: true,
+			className: classes.spacer,
+			rules: {
+				required: true,
+				pattern: regExp.email,
+			}
+		},
+	};
+	const username: string = 'username';
 	return (
 		<Fragment>
-			<PageTitle>{routes[RouteKey.SIGN_UP].title}</PageTitle>
+			<PageTitle>{routes[RouteKey.SIGN_UP].title} : {renderCount}</PageTitle>
 			<Box component='span' m={1}>
-				<form className={classes.root} noValidate autoComplete='off' onSubmit={(e) => onSubmitFormHandler(e)}>
-					{/* fiscalNumber */}
-					<TextField
-						id='fiscalNumber'
-						label={c.KEYWORDS.fiscalNumber}
-						defaultValue={fiscalNumber}
-						placeholder='PT18269128'
-						helperText='a valid pt fiscal Number'
-						className={classes.spacer}
-						fullWidth
-						required
-						onChange={(e) => onChangeFiscalNumberHandler(e)} />
-					{/* firstName */}
-					<TextField
-						id='firstName'
-						label={c.KEYWORDS.firstName}
-						defaultValue={firstName}
-						placeholder='John'
-						className={classes.spacer}
-						fullWidth
-						required
-						onChange={(e) => onChangeFirstNameHandler(e)} />
-					{/* lastName */}
-					<TextField
-						id='lastName'
-						label={c.KEYWORDS.lastName}
-						defaultValue={lastName}
-						placeholder='Doe'
-						className={classes.spacer}
-						fullWidth
-						required
-						onChange={(e) => onChangeLastNameHandler(e)} />
-					{/* email */}
-					<TextField
-						id='email'
-						label={c.KEYWORDS.email}
-						defaultValue={email}
-						placeholder='johndoe@example.com'
-						className={classes.spacer}
-						fullWidth
-						required
-						onChange={(e) => onChangeEmailHandler(e)} />
-					{/* username */}
-					<TextField
-						id='username'
-						label={c.KEYWORDS.username}
-						defaultValue={username}
-						placeholder='johndoe'
-						className={classes.spacer}
-						fullWidth
-						required
-						onChange={(e) => onChangeUsernameHandler(e)} />
-					{/* password */}
-					<TextField
-						id='password'
-						label={c.KEYWORDS.password}
-						defaultValue={password}
-						placeholder='your secret password'
-						className={classes.spacer}
-						fullWidth
-						required
-						type='password'
-						onChange={(e) => onChangePasswordHandler(e)} />
-					{/* password */}
-					<TextField
-						id='passwordConfirmation'
-						label={c.KEYWORDS.passwordConfirmation}
-						defaultValue={password}
-						placeholder='your secret password'
-						className={classes.spacer}
-						fullWidth
-						required
-						type='password'
-						onChange={(e) => onChangePasswordConfirmationHandler(e)} />
-					{/* submit */}
+				{/* 'handleSubmit' will validate your inputs before invoking 'onSubmit' */}
+				<form
+					onSubmit={handleSubmit((data) => onSubmitHandler(data))}
+					className={classes.root} noValidate autoComplete='off'>
+					{recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
+						<Fragment key={e.name}>
+							{/* <TextField
+								type={e.type}
+								name={e.name}
+								defaultValue={e.defaultValue}
+								label={e.label}
+								placeholder={e.placeholder}
+								helperText={e.helperText}
+								className={e.className}
+								fullWidth={e.fullWidth}
+								inputRef={register({ required: e.required })}
+							/> */}
+							{/* <section key={e.name}> */}
+							<Controller
+								as={<TextField />}
+								control={control}
+								type={e.type}
+								name={e.name}
+								label={e.label}
+								error={(errors[e.name] !== undefined)}
+								defaultValue={e.defaultValue}
+								placeholder={e.placeholder}
+								helperText={(errors[e.name] !== undefined) ? 'This field is required' : e.helperText}
+								className={e.className}
+								fullWidth={e.fullWidth}
+								rules={e.rules}
+							/>
+							{/* </section> */}
+						</Fragment>
+					))}
 					<Button
 						className={classes.spacer}
 						type='submit'
 						variant='contained'
-						color='primary'>
+						color='primary'
+						disabled={submitting}
+					>
 						{c.KEYWORDS.register}
 					</Button>
 				</form>
-				{error && <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />}
+				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={(apolloError.graphQLErrors[0].message as any).error} />}
+				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 			</Box>
-		</Fragment>
+		</Fragment >
 	);
 }
