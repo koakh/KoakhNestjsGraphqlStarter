@@ -126,6 +126,42 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	};
 
 	const formDefinition: Record<string, FormPropFields> = {
+		[FormFieldNames.FIRST_NAME]: {
+			as: <TextField />,
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.FIRST_NAME,
+			label: 'First name',
+			placeholder: 'John',
+			helperText: 'a valid first Name',
+			fullWidth: true,
+			className: classes.spacer,
+			rules: {
+				required: validationMessage("required", FormFieldNames.FIRST_NAME),
+				pattern: {
+					value: regExp.firstAndLastName,
+					message: validationMessage("invalid", FormFieldNames.FIRST_NAME),
+				},
+			}
+		},
+		[FormFieldNames.LAST_NAME]: {
+			as: <TextField />,
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.LAST_NAME,
+			label: 'Last name',
+			placeholder: 'Doe',
+			helperText: 'a valid last name',
+			fullWidth: true,
+			className: classes.spacer,
+			rules: {
+				required: validationMessage("required", FormFieldNames.LAST_NAME),
+				pattern: {
+					value: regExp.firstAndLastName,
+					message: validationMessage("invalid", FormFieldNames.LAST_NAME),
+				},
+			}
+		},
 		[FormFieldNames.USERNAME]: {
 			as: <TextField />,
 			inputRef: useRef(),
@@ -143,11 +179,11 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				},
 			}
 		},
-		[nameof<FormInputs>('password')]: {
+		[FormFieldNames.PASSWORD]: {
 			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.PASSWORD,
-			name: nameof<FormInputs>('password'),
+			name: FormFieldNames.PASSWORD,
 			label: 'Password',
 			placeholder: '12345678',
 			fullWidth: true,
@@ -160,94 +196,58 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				},
 			}
 		},
-		[nameof<FormInputs>('passwordConfirmation')]: {
+		[FormFieldNames.PASSWORD_CONFIRMATION]: {
 			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.PASSWORD,
-			name: nameof<FormInputs>('passwordConfirmation'),
+			name: FormFieldNames.PASSWORD_CONFIRMATION,
 			label: 'Password confirmation',
 			placeholder: '12345678',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", nameof<FormInputs>('passwordConfirmation')),
+				required: validationMessage("required", FormFieldNames.PASSWORD_CONFIRMATION),
 				pattern: {
 					value: regExp.passwordConfirmation,
-					message: validationMessage("invalid", nameof<FormInputs>('passwordConfirmation')),
+					message: validationMessage("invalid", FormFieldNames.PASSWORD_CONFIRMATION),
 				},
 				validate: () => {
-					return getValues(nameof<FormInputs>('password')) === getValues(nameof<FormInputs>('passwordConfirmation'));
+					return getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION);
 				}
 			}
 		},
-		[nameof<FormInputs>('fiscalNumber')]: {
+		[FormFieldNames.FISCAL_NUMBER]: {
 			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
-			name: nameof<FormInputs>('fiscalNumber'),
+			name: FormFieldNames.FISCAL_NUMBER,
 			label: 'Fiscal number',
 			placeholder: 'PT218269128',
 			helperText: 'a valid pt fiscal Number',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", nameof<FormInputs>('fiscalNumber')),
+				required: validationMessage("required", FormFieldNames.FISCAL_NUMBER),
 				pattern: {
 					value: regExp.fiscalNumber,
-					message: validationMessage("invalid", nameof<FormInputs>('fiscalNumber')),
+					message: validationMessage("invalid", FormFieldNames.FISCAL_NUMBER),
 				},
 			}
 		},
-		[nameof<FormInputs>('email')]: {
+		[FormFieldNames.EMAIL]: {
 			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
-			name: 'email',
+			name: FormFieldNames.EMAIL,
 			label: 'Email',
 			placeholder: 'johndoe@example.com',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", nameof<FormInputs>('email')),
+				required: validationMessage("required", FormFieldNames.EMAIL),
 				pattern: {
 					value: regExp.email,
-					message: validationMessage("invalid", nameof<FormInputs>('email')),
-				},
-			}
-		},
-		[nameof<FormInputs>('firstName')]: {
-			as: <TextField />,
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: nameof<FormInputs>('firstName'),
-			label: 'First name',
-			placeholder: 'John',
-			helperText: 'a valid first Name',
-			fullWidth: true,
-			className: classes.spacer,
-			rules: {
-				required: validationMessage("required", nameof<FormInputs>('firstName')),
-				pattern: {
-					value: regExp.firstAndLastName,
-					message: validationMessage("invalid", nameof<FormInputs>('firstName')),
-				},
-			}
-		},
-		[nameof<FormInputs>('lastName')]: {
-			as: <TextField />,
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: nameof<FormInputs>('lastName'),
-			label: 'Last name',
-			placeholder: 'Doe',
-			helperText: 'a valid last name',
-			fullWidth: true,
-			className: classes.spacer,
-			rules: {
-				required: validationMessage("required", nameof<FormInputs>('lastName')),
-				pattern: {
-					value: regExp.firstAndLastName,
-					message: validationMessage("invalid", nameof<FormInputs>('lastName')),
+					message: validationMessage("invalid", FormFieldNames.EMAIL),
 				},
 			}
 		},

@@ -46,7 +46,7 @@ export const getEnumValueFromEnumKey = (enumType: any, enumKey: string | number)
 };
 
 /**
- * get property name from type
+ * get property name from type, use like this nameof<FormInputs>('firstName'), returns type property
  * @param name property name
  */
 export const nameof = <T>(name: keyof T) => name;
