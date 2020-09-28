@@ -12,8 +12,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormPropFields, validationMessage, FormInputType } from '../../types';
-import { getGraphQLApolloError, nameof, recordToArray } from '../../utils';
+import { FormDefaultValues, FormInputType, FormPropFields, validationMessage } from '../../types';
+import { getGraphQLApolloError, recordToArray } from '../../utils';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -136,6 +136,8 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			helperText: 'a valid first Name',
 			fullWidth: true,
 			className: classes.spacer,
+			variant: "outlined",
+			margin: "normal",
 			rules: {
 				required: validationMessage("required", FormFieldNames.FIRST_NAME),
 				pattern: {
@@ -153,7 +155,9 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'Doe',
 			helperText: 'a valid last name',
 			fullWidth: true,
-			className: classes.spacer,
+			// className: classes.spacer,
+			variant: "outlined",
+			margin: "normal",
 			rules: {
 				required: validationMessage("required", FormFieldNames.LAST_NAME),
 				pattern: {
@@ -170,7 +174,9 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			label: 'Username',
 			placeholder: 'johndoe',
 			fullWidth: true,
-			className: classes.spacer,
+			// className: classes.spacer,
+			variant: "outlined",
+			margin: "normal",
 			rules: {
 				required: validationMessage("required", FormFieldNames.USERNAME),
 				pattern: {
@@ -187,7 +193,9 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			label: 'Password',
 			placeholder: '12345678',
 			fullWidth: true,
-			className: classes.spacer,
+			// className: classes.spacer,
+			variant: "outlined",
+			margin: "normal",
 			rules: {
 				required: validationMessage("required", FormFieldNames.USERNAME),
 				pattern: {
@@ -204,7 +212,9 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			label: 'Password confirmation',
 			placeholder: '12345678',
 			fullWidth: true,
-			className: classes.spacer,
+			// className: classes.spacer,
+			variant: "outlined",
+			margin: "normal",
 			rules: {
 				required: validationMessage("required", FormFieldNames.PASSWORD_CONFIRMATION),
 				pattern: {
@@ -225,7 +235,9 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'PT218269128',
 			helperText: 'a valid pt fiscal Number',
 			fullWidth: true,
-			className: classes.spacer,
+			// className: classes.spacer,
+			variant: "outlined",
+			margin: "normal",
 			rules: {
 				required: validationMessage("required", FormFieldNames.FISCAL_NUMBER),
 				pattern: {
@@ -243,6 +255,8 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'johndoe@example.com',
 			fullWidth: true,
 			className: classes.spacer,
+			variant: "outlined",
+			margin: "normal",
 			rules: {
 				required: validationMessage("required", FormFieldNames.EMAIL),
 				pattern: {
@@ -263,21 +277,25 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					className={classes.root} noValidate autoComplete='off'>
 					{recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
 						<Fragment key={e.name}>
-								<Controller
-									as={<TextField inputRef={e.inputRef} />}
-									onFocus={() => { e.inputRef.current.focus(); }}
-									control={control}
-									type={e.type}
-									name={(e.name as FormInputsString)}
-									error={(errors[(e.name as FormInputsString)] !== undefined)}
-									helperText={(errors[(e.name as FormInputsString)] !== undefined) ? errors[(e.name as FormInputsString)].message : e.helperText}
-									label={e.label}
-									placeholder={e.placeholder}
-									className={e.className}
-									fullWidth={e.fullWidth}
-									rules={e.rules}
-									disabled={submitting}
-								/>
+							<Controller
+								as={<TextField
+									inputRef={e.inputRef}
+									variant={e.variant}
+									margin={e.margin}
+								/>}
+								onFocus={() => { e.inputRef.current.focus(); }}
+								control={control}
+								type={e.type}
+								name={(e.name as FormInputsString)}
+								error={(errors[(e.name as FormInputsString)] !== undefined)}
+								helperText={(errors[(e.name as FormInputsString)] !== undefined) ? errors[(e.name as FormInputsString)].message : e.helperText}
+								label={e.label}
+								placeholder={e.placeholder}
+								className={e.className}
+								fullWidth={e.fullWidth}
+								rules={e.rules}
+								disabled={submitting}
+							/>
 						</Fragment>
 					))}
 					<div className={classes.spacer}>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Validate, ValidationRule, ValidationValueMessage } from 'react-hook-form';
+import { PropTypes } from '@material-ui/core';
 
 export enum FormInputType {
   TEXT = 'text',
@@ -19,6 +20,9 @@ export type FormPropFields = {
   helperText?: string,
   fullWidth?: boolean,
   className?: any,
+// TODO
+variant?:'filled'|'outlined'| 'standard',
+margin?:PropTypes.Margin,
   rules?: {
     required?: string | boolean | ValidationValueMessage<boolean>,
     min?: ValidationRule<React.ReactText>,
