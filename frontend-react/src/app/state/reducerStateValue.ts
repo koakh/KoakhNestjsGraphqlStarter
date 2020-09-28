@@ -6,7 +6,8 @@ export const initialState = {
   user: {
     logged: false,
     profile: {},
-  }
+  },
+  resultMessage: '',
 };
 
 // this infers State type from initialState object???
@@ -20,6 +21,7 @@ export enum ActionType {
   CHANGE_SEARCH_USERS_QUERY = 'CHANGE_SEARCH_USERS_QUERY',
   SIGNED_IN_USER = 'SIGNED_IN_USER',
   SIGNED_OUT_USER = 'SIGNED_OUT_USER',
+  RESULT_MESSAGE = 'RESULT_MESSAGE',
   // material
   SET_SHELL_WIDTH = 'SET_SHELL_WIDTH',
 }
@@ -31,6 +33,7 @@ export type Action =
   | { type: ActionType.CHANGE_SEARCH_USERS_QUERY, payload: { query: string } }
   | { type: ActionType.SIGNED_IN_USER, payload: { profile: any } }
   | { type: ActionType.SIGNED_OUT_USER }
+  | { type: ActionType.RESULT_MESSAGE, payload: { message: string } }
   | { type: ActionType.SET_SHELL_WIDTH, payload: { width: number } }
   ;
 
@@ -84,6 +87,12 @@ export default (state: State, action: Action) => {
           profile: {}
         }
       }
+    case ActionType.RESULT_MESSAGE:
+      debugger;
+      return {
+        ...state,
+        resultMessage: action.payload.message,
+      };
     case ActionType.SET_SHELL_WIDTH:
       return {
         ...state,

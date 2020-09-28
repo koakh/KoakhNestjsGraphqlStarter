@@ -32,7 +32,18 @@ export const appConstants = {
 };
 
 export const regExp: { [key: string]: RegExp; } = {
-  fiscalNumber: /PT[0-9]{9}/,
+  fiscalNumber: /[A-Z]{2}[0-9]{9}/,
+  // Email
   // http://emailregex.com/
+  // eslint-disable-next-line 
   email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  // username 4 to 16 chars
+  username: /^([a-zA-Z]{4,16})$/,
+  // Minimum 8 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character:
+  // https://medium.com/@ikhsanudinhakim/most-used-regex-pattern-for-password-validation-314645912cec
+  password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{6,}$/,
+  // multi lingual, you'd probably be better off validating against characters you don't want to allow
+  firstAndLastName: /^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/,
+  // match names with Capitalization after the first character
+  // firstAndLastName: /^([A-Z][a-zA-Z]*)$/,
 }

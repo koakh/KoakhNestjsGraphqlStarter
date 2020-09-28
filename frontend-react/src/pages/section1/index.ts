@@ -2,6 +2,7 @@ export * from './PersonQueryPage';
 export * from './PersonProfilePage';
 export * from './SignInPage';
 export * from './SignUpPage';
+export * from './SignUpResultPage';
 export * from './StatePage';
 export * from './TimelinePage';
 export * from './TransactionNonCodeGenPage';

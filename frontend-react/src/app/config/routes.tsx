@@ -1,6 +1,6 @@
 import { AddBox as AddBoxIcon, Explore as ExploreIcon, Fingerprint as FingerprintIcon, Home as HomeIcon, Loyalty as LoyaltyIcon } from '@material-ui/icons';
 import React from 'react';
-import { CausesPage, CommunityPage, FeedPage, HomePage, PersonProfilePage, PersonQueryPage, StatePage, TimelinePage, TransactionAddedPage, SignUpPage, SignInPage } from '../../pages';
+import { CausesPage, CommunityPage, FeedPage, HomePage, PersonProfilePage, PersonQueryPage, StatePage, TimelinePage, TransactionAddedPage, SignUpPage, SignInPage, SignUpResultPage } from '../../pages';
 import { DrawerListItem, DrawerSections, RouteItem } from '../../types';
 import { getEnumKeyFromEnumValue } from '../../utils';
 
@@ -13,6 +13,7 @@ export enum RouteKey {
   PROFILE = 'PROFILE',
   SIGN_IN = 'SIGN_IN',
   SIGN_UP = 'SIGN_UP',
+  SIGNUP_RESULT = 'SIGNUP_RESULT',
   STATE = 'STATE',
   TRANSACTIONS = 'TRANSACTIONS',
   TIMELINE = 'TIMELINE',
@@ -85,8 +86,16 @@ export const routes: Record<RouteKey, RouteItem> = {
     path: '/signup',
     component: SignUpPage,
     section: DrawerSections.SECTION1,
-    // drawerIcon: USE DEFAULT HERE,
     exact: true,
+  },
+  [RouteKey.SIGNUP_RESULT]: {
+    title: 'SignUp Result Page',
+    label: 'SignUp Result Page',
+    path: '/signup-result',
+    component: SignUpResultPage,
+    section: DrawerSections.SECTION1,
+    exact: true,
+    visible: false,
   },
   [RouteKey.STATE]: {
     title: 'State',
