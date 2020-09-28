@@ -1,9 +1,9 @@
-const KEYWORDS = {
+const KEYWORDS:{[key: string]:string} = {
   error: 'Error',
   register: 'Register',
-  // TODO: remove after clean up from signIn
-  username: 'username',
-  password: 'password',
+  username: 'Username',
+  password: 'Password',
+  signUpUserRegisteredSuccessfully: 'User registered successfully! You can login with',
 };
 
 const MESSAGES = {
@@ -23,15 +23,7 @@ const COOKIES = {
 
 const DRAWER_WIDTH: number = 240;
 
-export const appConstants = {
-  KEYWORDS,
-  MESSAGES,
-  DEFAULT_LOGIN_CREDENTIALS,
-  COOKIES,
-  DRAWER_WIDTH,
-};
-
-export const regExp: { [key: string]: RegExp; } = {
+const REGEXP: { [key: string]: RegExp; } = {
   fiscalNumber: /[A-Z]{2}[0-9]{9}/,
   // Email
   // http://emailregex.com/
@@ -47,3 +39,12 @@ export const regExp: { [key: string]: RegExp; } = {
   // match names with Capitalization after the first character
   // firstAndLastName: /^([A-Z][a-zA-Z]*)$/,
 }
+
+export const appConstants = {
+  KEYWORDS,
+  MESSAGES,
+  DEFAULT_LOGIN_CREDENTIALS,
+  COOKIES,
+  DRAWER_WIDTH,
+  REGEXP,
+};

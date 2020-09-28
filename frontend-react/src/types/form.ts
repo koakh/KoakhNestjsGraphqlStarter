@@ -23,6 +23,7 @@ export type FormPropFields = {
 // TODO
 variant?:'filled'|'outlined'| 'standard',
 margin?:PropTypes.Margin,
+inputProps?: any;
   rules?: {
     required?: string | boolean | ValidationValueMessage<boolean>,
     min?: ValidationRule<React.ReactText>,

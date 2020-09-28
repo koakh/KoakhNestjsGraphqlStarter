@@ -1,11 +1,11 @@
-import { Box } from '@material-ui/core';
+import { Box, InputAdornment, IconButton } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import React, { Fragment, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
-import { appConstants as c, regExp } from '../../app';
+import { appConstants as c } from '../../app';
 import { RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
@@ -14,6 +14,8 @@ import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields, validationMessage } from '../../types';
 import { getGraphQLApolloError, recordToArray } from '../../utils';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -82,6 +84,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	// hooks react form
 	const { handleSubmit, watch, errors, control, getValues, reset } = useForm<FormInputs>({ defaultValues, mode: 'onBlur' });
 	const [submitting, setSubmitting] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
 	// hooks styles
 	const classes = useStyles();
 	// hooks: apollo
@@ -95,11 +98,13 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	// debug
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
 
-	const onResetHandler = async () => { reset(defaultValues, {}) };
-	const onSubmitHandler = async (data: FormInputs) => {
+	const handlePasswordVisibility = () => setShowPassword(!showPassword);
+	const handleResetHandler = async () => { reset(defaultValues, {}) };
+	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
 			// alert(JSON.stringify(data, undefined, 2));
 			setSubmitting(true);
+			setShowPassword(false);			
 			const newPersonData: NewPersonInput = {
 				username: data.username,
 				password: data.password,
@@ -112,8 +117,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				})
 
 			if (response) {
-				// TODO: put message into i18n
-				const payload = { message: `User registered successfully! You can login with ${username}` };
+				const payload = { message: `${c.KEYWORDS.signUpUserRegisteredSuccessfully} '${username}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				debugger;
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
@@ -122,6 +126,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		} finally {
 			setSubmitting(false);
+			setShowPassword(false);			
 		}
 	};
 
@@ -141,7 +146,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			rules: {
 				required: validationMessage("required", FormFieldNames.FIRST_NAME),
 				pattern: {
-					value: regExp.firstAndLastName,
+					value: c.REGEXP.firstAndLastName,
 					message: validationMessage("invalid", FormFieldNames.FIRST_NAME),
 				},
 			}
@@ -155,13 +160,12 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'Doe',
 			helperText: 'a valid last name',
 			fullWidth: true,
-			// className: classes.spacer,
 			variant: "outlined",
 			margin: "normal",
 			rules: {
 				required: validationMessage("required", FormFieldNames.LAST_NAME),
 				pattern: {
-					value: regExp.firstAndLastName,
+					value: c.REGEXP.firstAndLastName,
 					message: validationMessage("invalid", FormFieldNames.LAST_NAME),
 				},
 			}
@@ -174,13 +178,12 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			label: 'Username',
 			placeholder: 'johndoe',
 			fullWidth: true,
-			// className: classes.spacer,
 			variant: "outlined",
 			margin: "normal",
 			rules: {
 				required: validationMessage("required", FormFieldNames.USERNAME),
 				pattern: {
-					value: regExp.username,
+					value: c.REGEXP.username,
 					message: validationMessage("invalid", FormFieldNames.USERNAME),
 				},
 			}
@@ -188,18 +191,30 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 		[FormFieldNames.PASSWORD]: {
 			as: <TextField />,
 			inputRef: useRef(),
-			type: FormInputType.PASSWORD,
+			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
+			// type: FormInputType.PASSWORD,
 			name: FormFieldNames.PASSWORD,
 			label: 'Password',
 			placeholder: '12345678',
 			fullWidth: true,
-			// className: classes.spacer,
 			variant: "outlined",
 			margin: "normal",
+			inputProps: {
+				endAdornment: (
+					<InputAdornment position="end">
+						<IconButton
+							aria-label="toggle password visibility"
+							onClick={handlePasswordVisibility}
+						>
+							{showPassword ? <VisibilityIcon /> : <VisibilityIconOff />}
+						</IconButton>
+					</InputAdornment>
+				)
+			},
 			rules: {
 				required: validationMessage("required", FormFieldNames.USERNAME),
 				pattern: {
-					value: regExp.password,
+					value: c.REGEXP.password,
 					message: validationMessage("invalid", FormFieldNames.USERNAME),
 				},
 			}
@@ -207,18 +222,17 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 		[FormFieldNames.PASSWORD_CONFIRMATION]: {
 			as: <TextField />,
 			inputRef: useRef(),
-			type: FormInputType.PASSWORD,
+			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
 			name: FormFieldNames.PASSWORD_CONFIRMATION,
 			label: 'Password confirmation',
 			placeholder: '12345678',
 			fullWidth: true,
-			// className: classes.spacer,
 			variant: "outlined",
 			margin: "normal",
 			rules: {
 				required: validationMessage("required", FormFieldNames.PASSWORD_CONFIRMATION),
 				pattern: {
-					value: regExp.passwordConfirmation,
+					value: c.REGEXP.passwordConfirmation,
 					message: validationMessage("invalid", FormFieldNames.PASSWORD_CONFIRMATION),
 				},
 				validate: () => {
@@ -235,13 +249,12 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'PT218269128',
 			helperText: 'a valid pt fiscal Number',
 			fullWidth: true,
-			// className: classes.spacer,
 			variant: "outlined",
 			margin: "normal",
 			rules: {
 				required: validationMessage("required", FormFieldNames.FISCAL_NUMBER),
 				pattern: {
-					value: regExp.fiscalNumber,
+					value: c.REGEXP.fiscalNumber,
 					message: validationMessage("invalid", FormFieldNames.FISCAL_NUMBER),
 				},
 			}
@@ -260,7 +273,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			rules: {
 				required: validationMessage("required", FormFieldNames.EMAIL),
 				pattern: {
-					value: regExp.email,
+					value: c.REGEXP.email,
 					message: validationMessage("invalid", FormFieldNames.EMAIL),
 				},
 			}
@@ -273,7 +286,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			<Box component='span' m={1}>
 				{/* 'handleSubmit' will validate your inputs before invoking 'onSubmit' */}
 				<form
-					onSubmit={handleSubmit((data) => onSubmitHandler(data))}
+					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 					className={classes.root} noValidate autoComplete='off'>
 					{recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
 						<Fragment key={e.name}>
@@ -282,6 +295,8 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 									inputRef={e.inputRef}
 									variant={e.variant}
 									margin={e.margin}
+									// capitalized
+									InputProps={e.inputProps}
 								/>}
 								onFocus={() => { e.inputRef.current.focus(); }}
 								control={control}
@@ -314,7 +329,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 							variant='contained'
 							color='primary'
 							disabled={submitting}
-							onClick={() => onResetHandler()}
+							onClick={() => handleResetHandler()}
 						>
 							Reset
 					</Button>
