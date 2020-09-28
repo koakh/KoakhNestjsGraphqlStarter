@@ -3,18 +3,17 @@ import Button from '@material-ui/core/Button/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import React, { Fragment, useRef, useState } from 'react';
-import { Controller, useForm, Validate, ValidationRule, ValidationValueMessage } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, regExp } from '../../app';
 import { RouteKey, routes } from '../../app/config';
+import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { getGraphQLApolloError, recordToArray } from '../../utils';
-import { useStateValue, ActionType } from '../../app/state';
-
-// TODO: check if passwords ae equal
+import { FormDefaultValues, FormPropFields, validationMessage, FormInputType } from '../../types';
+import { getGraphQLApolloError, nameof, recordToArray } from '../../utils';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -39,92 +38,61 @@ type FormInputs = {
 	lastName: string;
 	email: string;
 };
-
-enum FormKeyFields {
-	USERNAME = 'USERNAME',
-	PASSWORD = 'PASSWORD',
-	PASSWORD_CONFIRMATION = 'PASSWORD_CONFIRMATION',
-	FISCAL_NUMBER = 'FISCAL_NUMBER',
-	FIRST_NAME = 'FIRST_NAME',
-	LAST_NAME = 'LAST_NAME',
-	EMAIL = 'EMAIL',
-}
-
-const inputProps: Record<string, { name: string, label: string, default: string | number | boolean }> = {
-	[FormKeyFields.USERNAME]: { name: 'username', label: 'Username', default: 'jonhdoe' },
-	[FormKeyFields.PASSWORD]: { name: 'password', label: 'Password', default: 'Aa123#12' },
-	[FormKeyFields.PASSWORD_CONFIRMATION]: { name: 'passwordConfirmation', label: 'Password confirmation', default: 'Aa123#12' },
-	[FormKeyFields.FISCAL_NUMBER]: { name: 'fiscalNumber', label: 'Fiscal number', default: 'PT123123123' },
-	[FormKeyFields.FIRST_NAME]: { name: 'firstName', label: 'First name', default: 'John' },
-	[FormKeyFields.LAST_NAME]: { name: 'lastName', label: 'Last name', default: 'Doe' },
-	[FormKeyFields.EMAIL]: { name: 'email', label: 'Email', default: 'johndoe@mail.com' },
-}
-
-const defaultValues: { [key: string]: string | number | boolean } = {
-	username: inputProps[FormKeyFields.USERNAME].default,
-	password: inputProps[FormKeyFields.PASSWORD].default,
-	passwordConfirmation: inputProps[FormKeyFields.PASSWORD_CONFIRMATION].default,
-	fiscalNumber: inputProps[FormKeyFields.FISCAL_NUMBER].default,
-	firstName: inputProps[FormKeyFields.FIRST_NAME].default,
-	lastName: inputProps[FormKeyFields.LAST_NAME].default,
-	email: inputProps[FormKeyFields.EMAIL].default,
+type FormInputsString = 'password' | 'username' | 'passwordConfirmation' | 'fiscalNumber' | 'firstName' | 'lastName' | 'email';
+enum FormFieldNames {
+	USERNAME = 'username',
+	PASSWORD = 'password',
+	PASSWORD_CONFIRMATION = 'passwordConfirmation',
+	FISCAL_NUMBER = 'fiscalNumber',
+	FIRST_NAME = 'firstName',
+	LAST_NAME = 'lastName',
+	EMAIL = 'email',
+};
+// init defaultValues
+const defaultValues: FormDefaultValues = {
+	firstName: 'John',
+	lastName: 'Doe',
+	username: 'jonhdoe',
+	password: 'Aa123#12',
+	passwordConfirmation: 'Aa123#12',
+	fiscalNumber: 'PT123123123',
+	email: 'johndoe@mail.com',
 };
 
-// TODO
-// focus input
+// const inputProps: InputProps = {
+// 	[FormKeyFields.USERNAME]: { name: 'username', label: 'Username', default: 'jonhdoe' },
+// 	[FormKeyFields.PASSWORD]: { name: 'password', label: 'Password', default: 'Aa123#12' },
+// 	[FormKeyFields.PASSWORD_CONFIRMATION]: { name: 'passwordConfirmation', label: 'Password confirmation', default: 'Aa123#12' },
+// 	[FormKeyFields.FISCAL_NUMBER]: { name: 'fiscalNumber', label: 'Fiscal number', default: 'PT123123123' },
+// 	[FormKeyFields.FIRST_NAME]: { name: 'firstName', label: 'First name', default: 'John' },
+// 	[FormKeyFields.LAST_NAME]: { name: 'lastName', label: 'Last name', default: 'Doe' },
+// 	[FormKeyFields.EMAIL]: { name: 'email', label: 'Email', default: 'johndoe@mail.com' },
+// }
 
-// TODO lib
-type FormPropFields = {
-	as: JSX.Element,
-	inputRef: any,
-	// TODO : use this type
-	type: 'text' | 'password',
-	name: 'password' | 'username' | 'passwordConfirmation' | 'fiscalNumber' | 'firstName' | 'lastName' | 'email',
-	label: string;
-	defaultValue?: string,
-	placeholder?: string,
-	helperText?: string,
-	fullWidth?: boolean,
-	className?: any,
-	rules?: {
-		required?: string | boolean | ValidationValueMessage<boolean>,
-		min?: ValidationRule<React.ReactText>,
-		max?: ValidationRule<React.ReactText>,
-		maxLength?: ValidationRule<React.ReactText>,
-		minLength?: ValidationRule<React.ReactText>,
-		pattern?: ValidationRule<RegExp>,
-		validate?: Validate | Record<string, Validate>
-	},
-}
-
-// TODO lib
-const validationMessage = (message: 'required' | 'invalid', field: FormKeyFields) => `${inputProps[field].name} is ${message}`;
+// fill defaultValues
+// Object.keys(inputProps).forEach((e: string) => {
+// 	defaultValues[inputProps[e].name] = inputProps[e].default
+// })
 
 let renderCount = 0;
 
 // use RouteComponentProps to get history props from Route
 export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
+	renderCount++;
 	// hooks react form
-	// eslint-disable-next-line 
-	const { register, handleSubmit, watch, errors, control, getValues, reset } = useForm<FormInputs>({ defaultValues, mode: 'onBlur' });
+	const { handleSubmit, watch, errors, control, getValues, reset } = useForm<FormInputs>({ defaultValues, mode: 'onBlur' });
 	const [submitting, setSubmitting] = useState(false);
 	// hooks styles
 	const classes = useStyles();
 	// hooks: apollo
 	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
 	// hooks state
-	const [,dispatch] = useStateValue();
-	// TODO temp
-	renderCount++;
-
-	// used in message
-	const username = watch('username');
+	const [, dispatch] = useStateValue();
+	// used in rsult state message
+	const username = watch(FormFieldNames.USERNAME);
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
-
 	// debug
-	// console.log('password', watch('password'));
-	// console.log('passwordConfirmation', watch('passwordConfirmation'));
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
 
 	const onResetHandler = async () => { reset(defaultValues, {}) };
@@ -138,7 +106,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				fiscalNumber: data.fiscalNumber,
 				email: data.email,
 			};
-			debugger;
 			const response = await personNewMutation({ variables: { newPersonData } })
 				.catch(error => {
 					throw error;
@@ -149,119 +116,142 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				const payload = { message: `User registered successfully! You can login with ${username}` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				debugger;
-				history.push({ pathname: routes.SIGNUP_RESULT.path});
+				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}
 		} catch (error) {
-			debugger;
-			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message.error, undefined, 2) : error);
+			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		} finally {
 			setSubmitting(false);
 		}
 	};
 
-	// TODO: lib shared type
 	const formDefinition: Record<string, FormPropFields> = {
-		[FormKeyFields.USERNAME]: {
+		[FormFieldNames.USERNAME]: {
 			as: <TextField />,
 			inputRef: useRef(),
-			type: 'text',
-			name: 'username',
+			type: FormInputType.TEXT,
+			name: FormFieldNames.USERNAME,
 			label: 'Username',
-			// defaultValue: 'johndoe',
 			placeholder: 'johndoe',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormKeyFields.USERNAME),
+				required: validationMessage("required", FormFieldNames.USERNAME),
 				pattern: {
 					value: regExp.username,
-					message: validationMessage("invalid", FormKeyFields.USERNAME),
+					message: validationMessage("invalid", FormFieldNames.USERNAME),
 				},
 			}
 		},
-		[FormKeyFields.PASSWORD]: {
+		[nameof<FormInputs>('password')]: {
 			as: <TextField />,
 			inputRef: useRef(),
-			type: 'password',
-			name: 'password',
+			type: FormInputType.PASSWORD,
+			name: nameof<FormInputs>('password'),
 			label: 'Password',
-			// defaultValue: '12345678',
 			placeholder: '12345678',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormKeyFields.PASSWORD),
+				required: validationMessage("required", FormFieldNames.USERNAME),
 				pattern: {
 					value: regExp.password,
-					message: validationMessage("invalid", FormKeyFields.PASSWORD),
+					message: validationMessage("invalid", FormFieldNames.USERNAME),
 				},
 			}
 		},
-		[FormKeyFields.PASSWORD_CONFIRMATION]: {
+		[nameof<FormInputs>('passwordConfirmation')]: {
 			as: <TextField />,
 			inputRef: useRef(),
-			type: 'password',
-			name: 'passwordConfirmation',
+			type: FormInputType.PASSWORD,
+			name: nameof<FormInputs>('passwordConfirmation'),
 			label: 'Password confirmation',
-			// defaultValue: '12345678',
 			placeholder: '12345678',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormKeyFields.PASSWORD_CONFIRMATION),
+				required: validationMessage("required", nameof<FormInputs>('passwordConfirmation')),
 				pattern: {
 					value: regExp.passwordConfirmation,
-					message: validationMessage("invalid", FormKeyFields.PASSWORD_CONFIRMATION),
+					message: validationMessage("invalid", nameof<FormInputs>('passwordConfirmation')),
 				},
 				validate: () => {
-					return getValues(inputProps[FormKeyFields.PASSWORD].name) === getValues(inputProps[FormKeyFields.PASSWORD_CONFIRMATION].name);
+					return getValues(nameof<FormInputs>('password')) === getValues(nameof<FormInputs>('passwordConfirmation'));
 				}
 			}
 		},
-		[FormKeyFields.FISCAL_NUMBER]: {
+		[nameof<FormInputs>('fiscalNumber')]: {
 			as: <TextField />,
 			inputRef: useRef(),
-			type: 'text',
-			name: 'fiscalNumber',
+			type: FormInputType.TEXT,
+			name: nameof<FormInputs>('fiscalNumber'),
 			label: 'Fiscal number',
-			// defaultValue: 'PT218269128',
 			placeholder: 'PT218269128',
 			helperText: 'a valid pt fiscal Number',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormKeyFields.FISCAL_NUMBER),
+				required: validationMessage("required", nameof<FormInputs>('fiscalNumber')),
 				pattern: {
 					value: regExp.fiscalNumber,
-					message: validationMessage("invalid", FormKeyFields.FISCAL_NUMBER),
+					message: validationMessage("invalid", nameof<FormInputs>('fiscalNumber')),
 				},
 			}
 		},
-		[FormKeyFields.EMAIL]: {
+		[nameof<FormInputs>('email')]: {
 			as: <TextField />,
 			inputRef: useRef(),
-			type: 'text',
+			type: FormInputType.TEXT,
 			name: 'email',
 			label: 'Email',
-			// defaultValue: 'johndoe@example.com',
 			placeholder: 'johndoe@example.com',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormKeyFields.EMAIL),
+				required: validationMessage("required", nameof<FormInputs>('email')),
 				pattern: {
 					value: regExp.email,
-					message: validationMessage("invalid", FormKeyFields.EMAIL),
+					message: validationMessage("invalid", nameof<FormInputs>('email')),
+				},
+			}
+		},
+		[nameof<FormInputs>('firstName')]: {
+			as: <TextField />,
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: nameof<FormInputs>('firstName'),
+			label: 'First name',
+			placeholder: 'John',
+			helperText: 'a valid first Name',
+			fullWidth: true,
+			className: classes.spacer,
+			rules: {
+				required: validationMessage("required", nameof<FormInputs>('firstName')),
+				pattern: {
+					value: regExp.firstAndLastName,
+					message: validationMessage("invalid", nameof<FormInputs>('firstName')),
+				},
+			}
+		},
+		[nameof<FormInputs>('lastName')]: {
+			as: <TextField />,
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: nameof<FormInputs>('lastName'),
+			label: 'Last name',
+			placeholder: 'Doe',
+			helperText: 'a valid last name',
+			fullWidth: true,
+			className: classes.spacer,
+			rules: {
+				required: validationMessage("required", nameof<FormInputs>('lastName')),
+				pattern: {
+					value: regExp.firstAndLastName,
+					message: validationMessage("invalid", nameof<FormInputs>('lastName')),
 				},
 			}
 		},
 	};
-
-	// init inputRef's
-	// const inputRef: Record<string, any> = {};
-	// recordToArray<FormPropFields>(formDefinition).forEach((e: FormPropFields) => {
-	// 	inputRef[e.name] == useRef();
-	// })
 
 	return (
 		<Fragment>
@@ -273,34 +263,21 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					className={classes.root} noValidate autoComplete='off'>
 					{recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
 						<Fragment key={e.name}>
-							{/* <TextField
-								type={e.type}
-								name={e.name}
-								defaultValue={e.defaultValue}
-								label={e.label}
-								placeholder={e.placeholder}
-								helperText={e.helperText}
-								className={e.className}
-								fullWidth={e.fullWidth}
-								inputRef={register({ required: e.rules.required })}
-							/> */}
-							{/* <section key={e.name}> */}
-							<Controller
-								as={<TextField inputRef={e.inputRef} />}
-								onFocus={() => { e.inputRef.current.focus(); }}
-								control={control}
-								type={e.type}
-								name={e.name}
-								label={e.label}
-								placeholder={e.placeholder}
-								error={(errors[e.name] !== undefined)}
-								helperText={(errors[e.name] !== undefined) ? errors[e.name].message : e.helperText}
-								className={e.className}
-								fullWidth={e.fullWidth}
-								rules={e.rules}
-								disabled={submitting}
-							/>
-							{/* </section> */}
+								<Controller
+									as={<TextField inputRef={e.inputRef} />}
+									onFocus={() => { e.inputRef.current.focus(); }}
+									control={control}
+									type={e.type}
+									name={(e.name as FormInputsString)}
+									error={(errors[(e.name as FormInputsString)] !== undefined)}
+									helperText={(errors[(e.name as FormInputsString)] !== undefined) ? errors[(e.name as FormInputsString)].message : e.helperText}
+									label={e.label}
+									placeholder={e.placeholder}
+									className={e.className}
+									fullWidth={e.fullWidth}
+									rules={e.rules}
+									disabled={submitting}
+								/>
 						</Fragment>
 					))}
 					<div className={classes.spacer}>
@@ -325,9 +302,8 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					</Button>
 					</div>
 				</form>
-				{/* {apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={(apolloError.graphQLErrors[0].message as any).error} />} */}
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
-				{apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>}
+				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 			</Box>
 		</Fragment >

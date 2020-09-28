@@ -44,3 +44,9 @@ export const getEnumValueFromEnumKey = (enumType: any, enumKey: string | number)
     throw new Error(`Invalid enum key '${enumKey}'! Valid enum key(s() are ${Object.keys(enumType)}`);
   }
 };
+
+/**
+ * get property name from type
+ * @param name property name
+ */
+export const nameof = <T>(name: keyof T) => name;

@@ -15,9 +15,9 @@ export type EnvConfig = {
 
 export const envVariables: EnvConfig = {
   // app
-  appTitle: process.env.REACT_APP_TITLE || 'Koakh GraphQL React Starter',
-  appCopyrightName: process.env.REACT_APP_COPYRIGHT_NAME || 'Koakh',
-  appCopyrightUri: process.env.REACT_APP_COPYRIGHT_URI || 'https://koakh.com',
+  appTitle: process.env.REACT_APP_TITLE || 'SolidaryChain GraphQL React Starter',
+  appCopyrightName: process.env.REACT_APP_COPYRIGHT_NAME || 'SolidaryChain',
+  appCopyrightUri: process.env.REACT_APP_COPYRIGHT_URI || 'https://solidarychain.com',
   // graphql
   graphqlServerHttpProtocol: process.env.REACT_APP_GRAPHQL_SERVER_HTTP_PROTOCOL,
   graphqlServerWsProtocol: process.env.REACT_APP_GRAPHQL_SERVER_WS_PROTOCOL,
