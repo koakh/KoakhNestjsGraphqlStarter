@@ -1,5 +1,4 @@
 import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
@@ -19,7 +18,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, Route, Switch, useLocation } from 'react-router-dom';
 import useDimensions from 'react-use-dimensions';
 import { appConstants as c, setAccessToken } from '../../../app';
-import { defaultDrawerListItemIcon, routes, RouteKey } from '../../../app/config';
+import { defaultDrawerListItemIcon, RouteKey, routes } from '../../../app/config';
 import { ActionType, useStateValue } from '../../../app/state';
 import { usePersonLogoutMutation } from '../../../generated/graphql';
 import { DrawerListItem, DrawerSections, RouteItem } from '../../../types';
@@ -267,7 +266,6 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
 
   return (
     <div className={classes.root}>
-      <CssBaseline />
       <AppBar position="fixed" className={classes.appBar} ref={appBarRef}>
         <Toolbar>
           <IconButton

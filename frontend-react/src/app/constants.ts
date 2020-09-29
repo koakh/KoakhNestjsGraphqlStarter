@@ -1,4 +1,4 @@
-const KEYWORDS:{[key: string]:string} = {
+const KEYWORDS: { [key: string]: string } = {
   error: 'Error',
   register: 'Register',
   username: 'Username',
@@ -14,9 +14,10 @@ const MESSAGES = {
 };
 
 const DEFAULT_LOGIN_CREDENTIALS = {
-  username: 'johndoe',
-  password: '12345678',
+  username: 'admin',    // johndoe
+  password: 'Aa123#12', // 12345678
 };
+
 const COOKIES = {
   jid: 'jid',
 };

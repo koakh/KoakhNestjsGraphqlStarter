@@ -6,7 +6,7 @@ import React, { Fragment, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
-import { RouteKey, routes } from '../../app/config';
+import { RouteKey, routes, formCommonOptions } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
@@ -50,7 +50,6 @@ enum FormFieldNames {
 	LAST_NAME = 'lastName',
 	EMAIL = 'email',
 };
-// init defaultValues
 const defaultValues: FormDefaultValues = {
 	firstName: 'John',
 	lastName: 'Doe',
@@ -60,16 +59,6 @@ const defaultValues: FormDefaultValues = {
 	fiscalNumber: 'PT123123123',
 	email: 'johndoe@mail.com',
 };
-
-// const inputProps: InputProps = {
-// 	[FormKeyFields.USERNAME]: { name: 'username', label: 'Username', default: 'jonhdoe' },
-// 	[FormKeyFields.PASSWORD]: { name: 'password', label: 'Password', default: 'Aa123#12' },
-// 	[FormKeyFields.PASSWORD_CONFIRMATION]: { name: 'passwordConfirmation', label: 'Password confirmation', default: 'Aa123#12' },
-// 	[FormKeyFields.FISCAL_NUMBER]: { name: 'fiscalNumber', label: 'Fiscal number', default: 'PT123123123' },
-// 	[FormKeyFields.FIRST_NAME]: { name: 'firstName', label: 'First name', default: 'John' },
-// 	[FormKeyFields.LAST_NAME]: { name: 'lastName', label: 'Last name', default: 'Doe' },
-// 	[FormKeyFields.EMAIL]: { name: 'email', label: 'Email', default: 'johndoe@mail.com' },
-// }
 
 // fill defaultValues
 // Object.keys(inputProps).forEach((e: string) => {
@@ -81,12 +70,12 @@ let renderCount = 0;
 // use RouteComponentProps to get history props from Route
 export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	renderCount++;
-	// hooks react form
-	const { handleSubmit, watch, errors, control, getValues, reset } = useForm<FormInputs>({ defaultValues, mode: 'onBlur' });
-	const [submitting, setSubmitting] = useState(false);
-	const [showPassword, setShowPassword] = useState(false);
 	// hooks styles
 	const classes = useStyles();
+	// hooks react form
+	const { handleSubmit, watch, errors, control, getValues, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const [submitting, setSubmitting] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
 	// hooks: apollo
 	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
 	// hooks state
@@ -301,8 +290,9 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			<Box component='span' m={1}>
 				{/* 'handleSubmit' will validate your inputs before invoking 'onSubmit' */}
 				<form
+					className={classes.root} noValidate autoComplete='off'
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
-					className={classes.root} noValidate autoComplete='off'>
+				>
 					{recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
 						<Fragment key={e.name}>
 							<Controller
@@ -324,19 +314,17 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					))}
 					<div className={classes.spacer}>
 						<Button
-							className={classes.button}
 							type='submit'
 							variant='contained'
-							// color='primary'
+							className={classes.button}
 							disabled={submitting}
 						>
 							{c.KEYWORDS.register}
 						</Button>
 						<Button
-							className={classes.button}
 							type='reset'
 							variant='contained'
-							// color='primary'
+							className={classes.button}
 							disabled={submitting}
 							onClick={() => handleResetHandler()}
 						>
