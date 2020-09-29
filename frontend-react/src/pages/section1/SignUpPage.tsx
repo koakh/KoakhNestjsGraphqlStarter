@@ -117,7 +117,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				})
 
 			if (response) {
-				const payload = { message: `${c.KEYWORDS.signUpUserRegisteredSuccessfully} '${username}'` };
+				const payload = { message: `${c.MESSAGES.signUpUserRegisteredSuccessfully} '${username}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				debugger;
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
@@ -318,7 +318,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 							className={classes.button}
 							type='submit'
 							variant='contained'
-							color='primary'
+							// color='primary'
 							disabled={submitting}
 						>
 							{c.KEYWORDS.register}
@@ -327,7 +327,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 							className={classes.button}
 							type='reset'
 							variant='contained'
-							color='primary'
+							// color='primary'
 							disabled={submitting}
 							onClick={() => handleResetHandler()}
 						>

@@ -3,7 +3,6 @@ const KEYWORDS:{[key: string]:string} = {
   register: 'Register',
   username: 'Username',
   password: 'Password',
-  signUpUserRegisteredSuccessfully: 'User registered successfully! You can login with',
 };
 
 const MESSAGES = {
@@ -11,6 +10,7 @@ const MESSAGES = {
   signIn: 'Sign In',
   nonAccountSignUp: 'Don\'t have an account? Sign Up',
   rememberMe: 'Remember me',
+  signUpUserRegisteredSuccessfully: 'User registered successfully! You can login with',
 };
 
 const DEFAULT_LOGIN_CREDENTIALS = {
