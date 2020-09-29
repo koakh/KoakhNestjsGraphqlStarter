@@ -20,10 +20,14 @@ export type FormPropFields = {
   helperText?: string,
   fullWidth?: boolean,
   className?: any,
-// TODO
-variant?:'filled'|'outlined'| 'standard',
-margin?:PropTypes.Margin,
-inputProps?: any;
+  // pass arbitrary props
+  controllProps?: {
+    // 'filled' | 'outlined' | 'standard',
+    variant?: any,
+    margin?: PropTypes.Margin,
+    // warn must be capitalized
+    InputProps?: any;
+  };
   rules?: {
     required?: string | boolean | ValidationValueMessage<boolean>,
     min?: ValidationRule<React.ReactText>,

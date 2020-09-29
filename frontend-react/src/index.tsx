@@ -5,11 +5,13 @@ import { App } from './App';
 import client from './app/config/apollo.client';
 import reducer, { initialState } from './app/state/reducerStateValue';
 import { StateProvider } from './app/state/useStateValue';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 ReactDOM.render(
   <ApolloProvider client={client}>
     {/* wrap with state provider */}
     <StateProvider initialState={initialState} reducer={reducer}>
+      <CssBaseline />
       <div className="App">
         <App />
       </div>
