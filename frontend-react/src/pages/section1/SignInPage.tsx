@@ -1,8 +1,11 @@
+import { Grid, Link } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { makeStyles } from '@material-ui/core/styles';
@@ -19,7 +22,6 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright, Props as CopyrightProps } from '../../components/material-ui/other/Copyright';
 import { LoginPersonInput, PersonProfileDocument, usePersonLoginMutation } from '../../generated/graphql';
-import { Grid, Link } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -184,10 +186,6 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 							)
 						}}
 					/>
-					{/* <FormControlLabel
-						control={<Checkbox value='remember' color='primary' />}
-						label={c.MESSAGES.rememberMe}
-					/> */}
 					<Button
 						type='submit'
 						variant='contained'
@@ -197,12 +195,16 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 					>
 						{c.MESSAGES.signIn}
 					</Button>
+					<FormControlLabel
+						control={<Checkbox value='remember' color='primary' />}
+						label={c.MESSAGES.rememberMe}
+					/>
 					<Grid container>
-						{/* <Grid item xs>
+						<Grid item xs>
 							<Link href='#' variant='body2'>
 								Forgot password?
 								</Link>
-						</Grid> */}
+						</Grid>
 						<Grid item>
 							<Link href='#' variant='body2'>
 								{c.MESSAGES.nonAccountSignUp}
