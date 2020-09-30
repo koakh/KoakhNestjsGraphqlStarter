@@ -1,6 +1,6 @@
 import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { envVariables as e } from '../env';
+import { getEnvVariables as e }  from '../common/env';
 import { UsersModule } from '../user/user.module';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
@@ -18,8 +18,8 @@ import { AuthController } from './auth.controller';
     //   defaultStrategy: 'jwt',
     // }),
     JwtModule.register({
-      secret: e.accessTokenJwtSecret,
-      signOptions: { expiresIn: e.accessTokenExpiresIn },
+      secret: e().accessTokenJwtSecret,
+      signOptions: { expiresIn: e().accessTokenExpiresIn },
     }),
   ],
   controllers: [AuthController],

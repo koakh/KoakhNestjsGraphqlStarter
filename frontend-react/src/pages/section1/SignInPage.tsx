@@ -247,7 +247,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 						{c.MESSAGES.signIn}
 					</Button>
 					<FormControlLabel
-						control={<Checkbox value='remember' color='primary' />}
+						control={<Checkbox value='remember' color='primary' disabled={loading} />}
 						label={c.MESSAGES.rememberMe}
 					/>
 					<Grid container className={classes.spacer}>

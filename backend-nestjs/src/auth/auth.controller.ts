@@ -1,7 +1,7 @@
 import { Controller, HttpStatus, Post, Request, Response } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { GqlContextPayload } from '../types';
-import { envVariables as e } from '../env';
+import { getEnvVariables as e } from '../common/env';
 import { UsersService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { AccessToken } from './models';
@@ -35,7 +35,7 @@ export class AuthController {
 
     let payload: GqlContextPayload;
     try {
-      payload = this.jwtService.verify(token, e.refreshTokenJwtSecret);
+      payload = this.jwtService.verify(token, { secret: e().refreshTokenJwtSecret });
     } catch (error) {
       // Logger.log(error);
       return invalidPayload();

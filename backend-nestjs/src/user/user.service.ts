@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { UserStore } from './user.store';
-import { appConstants as c } from '../constants';
+import { appConstants as c } from '../common/constants';
 import { User } from './models';
 import { UserData, UserRoles } from './types';
 import { userData } from './user.data';

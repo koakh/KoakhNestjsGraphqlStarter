@@ -11,8 +11,8 @@
 ## Installation
 
 ```shell
-$ nest new NodeNestSGraphQLStarter
-$ mv node-nest-sgraph-qlstarter NodeNestJsGraphQLStarter
+$ nest new node-nest-graph-qlstarter
+$ mv node-nest-graph-qlstarter NodeNestJsGraphQLStarter
 $ cd NodeNestJsGraphQLStarter
 # start by installing the required packages:
 $ npm i \

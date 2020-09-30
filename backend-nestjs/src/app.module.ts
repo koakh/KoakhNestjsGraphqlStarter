@@ -4,15 +4,18 @@ import { AuthenticationError } from 'apollo-server-core';
 import { ConnectionParams } from 'subscriptions-transport-ws';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
-import { envVariables as e } from './env';
+import { getEnvVariables as e } from './common/env';
 import { GqlContext, GqlContextPayload } from './types';
 import { UsersModule } from './user/user.module';
-import { mapKeysToLowerCase } from './utils';
+import { mapKeysToLowerCase } from './common/utils';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     AuthModule,
     UsersModule,
+    // configService
+    ConfigModule.forRoot(),
     // apolloServer config: use forRootAsync to import AuthModule and inject AuthService
     GraphQLModule.forRootAsync({
       // import AuthModule
@@ -29,7 +32,7 @@ import { mapKeysToLowerCase } from './utils';
         context: ({ req, res, payload, connection }: GqlContext) => ({ req, res, payload, connection }),
         // configure graphql cors here
         cors: {
-          origin: e.corsOriginReactFrontend,
+          origin: e().corsOriginReactFrontend,
           credentials: true,
         },
         // subscriptions/webSockets authentication

@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { SignOptions } from 'jsonwebtoken';
-import { envVariables as e } from '../env';
+import { getEnvVariables as e } from '../common/env';
 import { GqlContextPayload } from '../types';
 import { UsersService } from '../user/user.service';
 import AccessToken from './types/access-token';
@@ -43,7 +43,7 @@ export class AuthService {
     const payload = { username: user.username, sub: user.userId, roles: user.roles, tokenVersion };
     return {
       // generate JWT from a subset of the user object properties
-      accessToken: this.jwtService.sign(payload, { ...options, expiresIn: e.refreshTokenExpiresIn }),
+      accessToken: this.jwtService.sign(payload, { ...options, expiresIn: e().refreshTokenExpiresIn }),
     };
   }
 

@@ -1,10 +1,10 @@
 // node module
 import * as fs from 'fs';
-import { envVariables as e } from '../env';
+import { getEnvVariables as e } from '../common/env';
 
 export const httpsOptions = {
   // private-key.pem
-  key: fs.readFileSync(`./${e.httpsKeyFile}`),
+  key: fs.readFileSync(`./${e().httpsKeyFile}`),
   // public-certificate.pem
-  cert: fs.readFileSync(`./${e.httpsCertFile}`),
+  cert: fs.readFileSync(`./${e().httpsCertFile}`),
 };

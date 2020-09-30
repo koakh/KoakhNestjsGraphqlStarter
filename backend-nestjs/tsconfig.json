@@ -10,7 +10,7 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
   // prevent error `error TS5055: Cannot write file '...' because it would overwrite input file.` use include 'src', this way we prevent include dist folder
   "exclude": [

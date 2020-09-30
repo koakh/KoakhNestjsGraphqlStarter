@@ -1,5 +1,5 @@
 import { httpsOptions } from './config/express.config';
-import { envVariables as e } from './env';
+import { getEnvVariables as e } from './common/env';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ApplicationModule } from './app.module';
@@ -13,14 +13,14 @@ async function bootstrap() {
   // rest server cors, before any middleware,
   // warn cors for graphql is configured in ApplicationModule
   app.enableCors({
-    origin: e.corsOriginReactFrontend,
+    origin: e().corsOriginReactFrontend,
     credentials: true,
   });
   // middleware
   app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(e.httpsPort)
-    .then(() => Logger.log(`graphql server started, endpoint exposed at https://localhost:${e.httpsPort}/graphql`));
+  await app.listen(e().httpsPort)
+    .then(() => Logger.log(`graphql server started, endpoint exposed at https://localhost:${e().httpsPort}/graphql`));
 }
 
 bootstrap();
