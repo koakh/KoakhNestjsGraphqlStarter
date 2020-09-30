@@ -1,0 +1,22 @@
+[
+	{
+		"path": "$ROOTPATH$/src/pages/section1/SignInPage.tsx",
+		"bookmarks": [
+			{
+				"line": 255,
+				"column": 24,
+				"label": ""
+			}
+		]
+	},
+	{
+		"path": "$ROOTPATH$/src/Routes.tsx",
+		"bookmarks": [
+			{
+				"line": 23,
+				"column": 7,
+				"label": ""
+			}
+		]
+	}
+]

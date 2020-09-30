@@ -75,7 +75,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     label: 'SignIn',
     path: '/signin',
     component: SignInPage,
-    section: DrawerSections.SECTION1,
+    // section: DrawerSections.SECTION1,
     // drawerIcon: USE DEFAULT HERE,
     exact: true,
     visible: false,
@@ -85,7 +85,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     label: 'SignUp',
     path: '/signup',
     component: SignUpPage,
-    section: DrawerSections.SECTION1,
+    // section: DrawerSections.SECTION1,
     exact: true,
   },
   [RouteKey.SIGNUP_RESULT]: {

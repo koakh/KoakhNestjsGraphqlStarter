@@ -17,7 +17,7 @@ import React, { Fragment, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, setAccessToken } from '../../app';
-import { envVariables as e, formCommonOptions } from '../../app/config';
+import { envVariables as e, formCommonOptions, routes, RouteKey } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert/AlertMessage';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
@@ -97,7 +97,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 					if (!data) {
 						return null
 					}
-					// TODO: used cache her
+					// TODO: used cache here
 					// this will update message `You are logged in as: ${username}` that is using apollo cache
 					// update apollo cache with new data, this will update usePersonProfileQuery cache
 					// warning: for this to work data return fields from personLoginMutation must match usePersonProfileQuery
@@ -257,7 +257,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 								</Link>
 						</Grid>
 						<Grid item>
-							<Link href='#' variant='body2'>
+							<Link href={routes[RouteKey.SIGN_UP].path} variant='body2'>
 								{c.MESSAGES.nonAccountSignUp}
 							</Link>
 						</Grid>
