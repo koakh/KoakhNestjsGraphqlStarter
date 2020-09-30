@@ -88,7 +88,6 @@ export default (state: State, action: Action) => {
         }
       }
     case ActionType.RESULT_MESSAGE:
-      debugger;
       return {
         ...state,
         resultMessage: action.payload.message,

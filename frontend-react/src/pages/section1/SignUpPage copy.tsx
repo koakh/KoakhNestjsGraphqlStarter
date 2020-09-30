@@ -1,25 +1,35 @@
-import { Box, Grid, IconButton, InputAdornment, Link } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
+import { Box, InputAdornment, IconButton } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
-import Container from '@material-ui/core/Container';
+import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
-import React, { useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { Fragment, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
-import { formCommonOptions, RouteKey, routes } from '../../app/config';
+import { RouteKey, routes, formCommonOptions } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
-import { Copyright } from '../../components/material-ui/other/Copyright';
+import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields, validationMessage } from '../../types';
-import { generateFormDefinition, getGraphQLApolloError } from '../../utils';
-import { copyrightProps, useStyles } from './SignInPage';
+import { getGraphQLApolloError, recordToArray } from '../../utils';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		display: 'flex',
+		flexWrap: 'wrap',
+		width: 'fullWidth',
+	},
+	spacer: {
+		marginBottom: theme.spacing(2),
+	},
+	button: {
+		marginRight: theme.spacing(2),
+	},
+}));
 
 type FormInputs = {
 	username: string;
@@ -50,13 +60,21 @@ const defaultValues: FormDefaultValues = {
 	email: 'johndoe@mail.com',
 };
 
+// fill defaultValues
+// Object.keys(inputProps).forEach((e: string) => {
+// 	defaultValues[inputProps[e].name] = inputProps[e].default
+// })
+
+let renderCount = 0;
+
 // use RouteComponentProps to get history props from Route
 export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
-	// hooks styles: from signInPage
+	renderCount++;
+	// hooks styles
 	const classes = useStyles();
 	// hooks react form
 	const { handleSubmit, watch, errors, control, getValues, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
-	// const [submitting, setSubmitting] = useState(false);
+	const [submitting, setSubmitting] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	// hooks: apollo
 	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
@@ -74,7 +92,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
 			// alert(JSON.stringify(data, undefined, 2));
-			// setSubmitting(true);
+			setSubmitting(true);
 			setShowPassword(false);
 			const newPersonData: NewPersonInput = {
 				username: data.username,
@@ -94,9 +112,9 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}
 		} catch (error) {
-			// console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
+			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		} finally {
-			// setSubmitting(false);
+			setSubmitting(false);
 			setShowPassword(false);
 		}
 	};
@@ -111,7 +129,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'John',
 			helperText: 'a valid first Name',
 			fullWidth: true,
-			// className: classes.spacer,
+			className: classes.spacer,
 			rules: {
 				required: validationMessage("required", FormFieldNames.FIRST_NAME),
 				pattern: {
@@ -251,7 +269,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			label: 'Email',
 			placeholder: 'johndoe@example.com',
 			fullWidth: true,
-			// className: classes.spacer,
+			className: classes.spacer,
 			rules: {
 				required: validationMessage("required", FormFieldNames.EMAIL),
 				pattern: {
@@ -267,22 +285,15 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	};
 
 	return (
-		<Container component='main' maxWidth='xs'>
-			<div className={classes.paper}>
-				<Avatar className={classes.avatar}>
-					<LockOutlinedIcon />
-				</Avatar>
-				<Typography component='h1' variant='h5'>
-					{c.MESSAGES.signUp}
-				</Typography>
+		<Fragment>
+			<PageTitle>{routes[RouteKey.SIGN_UP].title} : {renderCount}</PageTitle>
+			<Box component='span' m={1}>
 				{/* 'handleSubmit' will validate your inputs before invoking 'onSubmit' */}
 				<form
-					className={classes.form} noValidate autoComplete='off'
+					className={classes.root} noValidate autoComplete='off'
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
-					{generateFormDefinition(formDefinition, control, errors, loading)}
-					{/* TODO: cleanup */}
-					{/* {recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
+					{recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
 						<Fragment key={e.name}>
 							<Controller
 								type={e.type}
@@ -296,47 +307,35 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 								className={e.className}
 								fullWidth={e.fullWidth}
 								rules={e.rules}
-								disabled={loading}
+								disabled={submitting}
 								onFocus={() => { e.inputRef.current.focus(); }}
 							/>
 						</Fragment>
-					))} */}
-					<Grid container spacing={1}>
-						<Grid item xs={6}>
-							<Button
-								type='submit'
-								variant='contained'
-								// className={classes.submit}
-								disabled={loading}
-								fullWidth
-							>{c.MESSAGES.signUp}</Button>
-						</Grid>
-						<Grid item xs={6}>
-							<Button
-								type='reset'
-								variant='contained'
-								// className={classes.submit}
-								disabled={loading}
-								fullWidth
-								onClick={() => handleResetHandler()}
-							>Reset</Button>
-						</Grid>
-					</Grid>
-					<Grid container spacing={1}>
-						<Grid item xs={12}>
-							<Link href={routes[RouteKey.SIGN_IN].path} variant='body2'>
-								<Typography align='center' variant='subtitle2'>{c.MESSAGES.signIn}</Typography>
-							</Link>
-						</Grid>
-					</Grid>
-					{loading && <LinearIndeterminate />}
+					))}
+					<div className={classes.spacer}>
+						<Button
+							type='submit'
+							variant='contained'
+							className={classes.button}
+							disabled={submitting}
+						>
+							{c.KEYWORDS.register}
+						</Button>
+						<Button
+							type='reset'
+							variant='contained'
+							className={classes.button}
+							disabled={submitting}
+							onClick={() => handleResetHandler()}
+						>
+							Reset
+					</Button>
+					</div>
 				</form>
-			</div>
-			{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
-			{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
-			<Box mt={8}>
-				<Copyright {...copyrightProps} />
+				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
+				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
+				{loading && <LinearIndeterminate />}
 			</Box>
-		</Container>
+		</Fragment >
 	);
 }

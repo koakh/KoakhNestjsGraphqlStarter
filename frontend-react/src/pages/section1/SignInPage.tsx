@@ -13,20 +13,20 @@ import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
-import React, { Fragment, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, setAccessToken } from '../../app';
-import { envVariables as e, formCommonOptions, routes, RouteKey } from '../../app/config';
+import { envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert/AlertMessage';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright, Props as CopyrightProps } from '../../components/material-ui/other/Copyright';
 import { LoginPersonInput, PersonProfileDocument, usePersonLoginMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields, validationMessage } from '../../types';
-import { recordToArray } from '../../utils';
+import { generateFormDefinition } from '../../utils';
 
-const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles((theme) => ({
 	paper: {
 		marginTop: theme.spacing(8),
 		display: 'flex',
@@ -42,12 +42,12 @@ const useStyles = makeStyles((theme) => ({
 		width: '100%',
 		marginTop: theme.spacing(1),
 	},
-	submit: {
-		margin: theme.spacing(2, 0, 1),
-	},
-	spacer: {
-		marginBottom: theme.spacing(2),
-	},
+	// submit: {
+	// 	margin: theme.spacing(2, 0, 1),
+	// },
+	// spacer: {
+	// 	marginBottom: theme.spacing(2),
+	// },
 }));
 
 type FormInputs = {
@@ -64,7 +64,7 @@ const defaultValues: FormDefaultValues = {
 	password: c.DEFAULT_LOGIN_CREDENTIALS.password,
 };
 
-const copyrightProps: CopyrightProps = {
+export const copyrightProps: CopyrightProps = {
 	copyrightName: e.appCopyrightName,
 	copyrightUri: e.appCopyrightUri,
 }
@@ -79,7 +79,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 	const { handleSubmit, errors, control } = useForm<FormInputs>({ defaultValues, ...formCommonOptions });
 	const [showPassword, setShowPassword] = useState(false);
 	// hooks: apollo
-	const [personLoginMutation, { loading, error }] = usePersonLoginMutation();
+	const [personLoginMutation, { loading, error: apolloError }] = usePersonLoginMutation();
 
 	const handlePasswordVisibility = () => setShowPassword(!showPassword);
 	const handleSubmitHandler = async (data: FormInputs) => {
@@ -211,14 +211,16 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 					<LockOutlinedIcon />
 				</Avatar>
 				<Typography component='h1' variant='h5'>
-					Sign in
+					{c.MESSAGES.signIn}
 				</Typography>
 				{/* 'handleSubmit' will validate your inputs before invoking 'onSubmit' */}
 				<form
 					className={classes.form} noValidate autoComplete='off'
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
-					{recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
+					{generateFormDefinition(formDefinition, control, errors, loading)}
+					{/* TODO: cleanup */}
+					{/* {recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
 						<Fragment key={e.name}>
 							<Controller
 								type={e.type}
@@ -236,11 +238,11 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 								onFocus={() => { e.inputRef.current.focus(); }}
 							/>
 						</Fragment>
-					))}
+					))} */}
 					<Button
 						type='submit'
 						variant='contained'
-						className={classes.submit}
+						// className={classes.submit}
 						disabled={loading}
 						fullWidth
 					>
@@ -250,22 +252,22 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 						control={<Checkbox value='remember' color='primary' disabled={loading} />}
 						label={c.MESSAGES.rememberMe}
 					/>
-					<Grid container className={classes.spacer}>
-						<Grid item xs>
+					<Grid container spacing={1}>
+						<Grid item xs={4}>
 							<Link href='#' variant='body2'>
-								Forgot password?
-								</Link>
+								<Typography align='left' variant='subtitle2'>{c.MESSAGES.forgotPassword}</Typography>
+							</Link>
 						</Grid>
-						<Grid item>
+						<Grid item xs={8}>
 							<Link href={routes[RouteKey.SIGN_UP].path} variant='body2'>
-								{c.MESSAGES.nonAccountSignUp}
+								<Typography align='right' variant='subtitle2'>{c.MESSAGES.nonAccountSignUp}</Typography>
 							</Link>
 						</Grid>
 					</Grid>
 					{loading && <LinearIndeterminate />}
 				</form>
 			</div>
-			{error && <AlertMessage severity={AlertSeverityType.ERROR} message={c.MESSAGES.loginFailed} />}
+			{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={c.MESSAGES.loginFailed} />}
 			<Box mt={8}>
 				<Copyright {...copyrightProps} />
 			</Box>

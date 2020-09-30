@@ -8,8 +8,10 @@ const KEYWORDS: { [key: string]: string } = {
 const MESSAGES = {
   loginFailed: 'login failed please try again...',
   signIn: 'Sign In',
+  signUp: 'Sign Up',
   nonAccountSignUp: 'Don\'t have an account? Sign Up',
   rememberMe: 'Remember me',
+  forgotPassword: 'Forgot password?',
   signUpUserRegisteredSuccessfully: 'User registered successfully! You can login with',
 };
 
