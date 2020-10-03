@@ -1,9 +1,28 @@
+/**
+ * helper file with common functionl stuff for dynamic forms
+ */
+
 import { ApolloError } from '@apollo/client';
 import TextField from '@material-ui/core/TextField';
 import React, { Fragment } from 'react';
 import { Controller, Control, DeepMap, FieldError } from 'react-hook-form';
 import { FormPropFields } from '../types';
 import { recordToArray } from './main-util';
+import { makeStyles } from '@material-ui/core/styles';
+
+export const useStyles = makeStyles((theme) => ({
+	root: {
+		display: 'flex',
+		flexWrap: 'wrap',
+		width: 'fullWidth',
+	},
+	spacer: {
+		marginBottom: theme.spacing(2),
+	},
+	button: {
+		marginRight: theme.spacing(2),
+	},
+}));
 
 /**
  * helper to extract string error message from ApolloError

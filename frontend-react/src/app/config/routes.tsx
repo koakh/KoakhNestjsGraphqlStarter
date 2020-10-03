@@ -1,6 +1,6 @@
-import { AddBox as AddBoxIcon, Explore as ExploreIcon, Fingerprint as FingerprintIcon, Home as HomeIcon, Loyalty as LoyaltyIcon } from '@material-ui/icons';
+import { AddBox as AddBoxIcon, Explore as ExploreIcon, Fingerprint as FingerprintIcon, Home as HomeIcon, Loyalty as LoyaltyIcon, DynamicFeed as DynamicFeedIcon, People as PeopleIcon, AccountTree as AccountTreeIcon, Apartment as ApartmentIcon, Assessment as AssessmentIcon, LocalPlay as LocalPlayIcon } from '@material-ui/icons';
 import React from 'react';
-import { CausesPage, CommunityPage, FeedPage, HomePage, PersonProfilePage, PersonQueryPage, StatePage, TimelinePage, TransactionAddedPage, SignUpPage, SignInPage, SignUpResultPage } from '../../pages';
+import { CausesPage, CommunityPage, FeedPage, HomePage, PersonProfilePage, PersonQueryPage, StatePage, TimelinePage, TransactionAddedPage, SignUpPage, SignInPage, SignUpResultPage, AssetUpsertForm, CauseUpsertForm, ParticipantUpsertForm, PersonUpsertForm, TransactionUpsertForm } from '../../pages';
 import { DrawerListItem, DrawerSections, RouteItem } from '../../types';
 import { getEnumKeyFromEnumValue } from '../../utils';
 
@@ -20,6 +20,11 @@ export enum RouteKey {
   FEED = 'FEED',
   CAUSES = 'CAUSES',
   COMMUNITY = 'COMMUNITY',
+  ASSET_UPSERT_FORM = 'ASSET_UPSERT_FORM',
+  CAUSE_UPSERT_FORM = 'CAUSE_UPSERT_FORM',
+  PARTICIPANT_UPSERT_FORM = 'PARTICIPANT_UPSERT_FORM',
+  PERSON_UPSERT_FORM = 'PERSON_UPSERT_FORM',
+  TRANSACTION_UPSERT_FORM = 'TRANSACTION_UPSERT_FORM',
 }
 
 // route
@@ -41,7 +46,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     path: '/profile',
     component: PersonProfilePage,
     section: DrawerSections.SECTION1,
-    // drawerIcon: USE DEFAULT HERE,
+    drawerIcon: <FingerprintIcon />,
     exact: true,
     // visible: true,
   },
@@ -113,7 +118,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     path: '/feed',
     component: FeedPage,
     section: DrawerSections.SECTION2,
-    drawerIcon: <FingerprintIcon />,
+    drawerIcon: <DynamicFeedIcon />,
   },
   [RouteKey.CAUSES]: {
     title: 'Causes',
@@ -130,7 +135,48 @@ export const routes: Record<RouteKey, RouteItem> = {
     component: CommunityPage,
     section: DrawerSections.SECTION2,
     drawerIcon: <LoyaltyIcon />,
-  }
+  },
+  // SECTION3
+  [RouteKey.ASSET_UPSERT_FORM]: {
+    title: 'Upsert Asset',
+    label: 'Upsert Asset',
+    path: '/upsert-asset',
+    component: AssetUpsertForm,
+    section: DrawerSections.SECTION3,
+    drawerIcon: <LocalPlayIcon />,
+  },
+  [RouteKey.CAUSE_UPSERT_FORM]: {
+    title: 'Upsert Cause',
+    label: 'Upsert Cause',
+    path: '/upsert-cause',
+    component: CauseUpsertForm,
+    section: DrawerSections.SECTION3,
+    drawerIcon: <AssessmentIcon />,
+  },
+  [RouteKey.PARTICIPANT_UPSERT_FORM]: {
+    title: 'Upsert Participant',
+    label: 'Upsert Participant',
+    path: '/upsert-participant',
+    component: ParticipantUpsertForm,
+    section: DrawerSections.SECTION3,
+    drawerIcon: <ApartmentIcon />,
+  },
+  [RouteKey.PERSON_UPSERT_FORM]: {
+    title: 'Upsert Person',
+    label: 'Upsert Person',
+    path: '/upsert-person',
+    component: PersonUpsertForm,
+    section: DrawerSections.SECTION3,
+    drawerIcon: <PeopleIcon />,
+  },
+  [RouteKey.TRANSACTION_UPSERT_FORM]: {
+    title: 'Upsert Transaction',
+    label: 'Upsert Transaction',
+    path: '/upsert-transaction',
+    component: TransactionUpsertForm,
+    section: DrawerSections.SECTION3,
+    drawerIcon: <AccountTreeIcon />,
+  },
 };
 
 // drawer appShell: convert record to DrawerListItem[]
