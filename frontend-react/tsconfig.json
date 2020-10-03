@@ -19,7 +19,10 @@
     "noEmit": true,
     "jsx": "react",
     // changed to override problem in "value={useReducer(reducer, initialState)"
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    // reflect-metadata
+    // "experimentalDecorators": true,
+    // "emitDecoratorMetadata": true
   },
   "include": [
     "src"

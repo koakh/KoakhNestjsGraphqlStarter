@@ -28,6 +28,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
     "react-use-dimensions": "^1.2.1",
+    "reflect-metadata": "^0.1.13",
     "subscriptions-transport-ws": "^0.9.18",
     "uuid": "^8.3.0"
   },
@@ -40,6 +41,7 @@
     "@types/graphql": "^14.5.0",
     "@types/jwt-decode": "^2.2.1",
     "@types/react-router-dom": "^5.1.5",
+    "@types/reflect-metadata": "^0.1.0",
     "@types/uuid": "^8.3.0",
     "typescript": "^4.0.2"
   },

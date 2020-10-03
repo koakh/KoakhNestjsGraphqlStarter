@@ -1,5 +1,5 @@
-query personByFiscalnumber($fiscalNumber: String!){
-  personByFiscalnumber(fiscalNumber: $fiscalNumber) {
+query personByFiscalNumber($fiscalNumber: String!){
+  personByFiscalNumber(fiscalNumber: $fiscalNumber) {
     id
     firstName
     lastName

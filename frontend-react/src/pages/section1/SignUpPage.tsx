@@ -30,6 +30,7 @@ type FormInputs = {
 	lastName: string;
 	email: string;
 };
+// TODO: cleanup
 type FormInputsString = 'password' | 'username' | 'passwordConfirmation' | 'fiscalNumber' | 'firstName' | 'lastName' | 'email';
 enum FormFieldNames {
 	USERNAME = 'username',

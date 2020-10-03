@@ -30,7 +30,7 @@ export type Query = {
   personComplexQuery: Array<Person>;
   personById: Person;
   personByUsername: Person;
-  personByFiscalnumber: Person;
+  personByFiscalNumber: Person;
   personProfile: Person;
   transactions: Array<Transaction>;
   transactionComplexQuery: Array<Transaction>;
@@ -119,7 +119,7 @@ export type QueryPersonByUsernameArgs = {
 };
 
 
-export type QueryPersonByFiscalnumberArgs = {
+export type QueryPersonByFiscalNumberArgs = {
   fiscalNumber: Scalars['String'];
 };
 
@@ -769,19 +769,6 @@ export type CauseUpdateMutation = (
   ) }
 );
 
-export type NewParticipantDataMutationVariables = Exact<{
-  newParticipantData: NewParticipantInput;
-}>;
-
-
-export type NewParticipantDataMutation = (
-  { __typename?: 'Mutation' }
-  & { participantNew: (
-    { __typename?: 'Participant' }
-    & Pick<Participant, 'id' | 'name' | 'msp'>
-  ) }
-);
-
 export type ParticipantNewMutationVariables = Exact<{
   newParticipantData: NewParticipantInput;
 }>;
@@ -1245,14 +1232,14 @@ export type PersonByAttributeQuery = (
   )> }
 );
 
-export type PersonByFiscalnumberQueryVariables = Exact<{
+export type PersonByFiscalNumberQueryVariables = Exact<{
   fiscalNumber: Scalars['String'];
 }>;
 
 
-export type PersonByFiscalnumberQuery = (
+export type PersonByFiscalNumberQuery = (
   { __typename?: 'Query' }
-  & { personByFiscalnumber: (
+  & { personByFiscalNumber: (
     { __typename?: 'Person' }
     & Pick<Person, 'id' | 'firstName' | 'lastName' | 'username' | 'fiscalNumber' | 'email' | 'documentNumber' | 'roles'>
     & { attributes?: Maybe<Array<(
@@ -1760,40 +1747,6 @@ export function useCauseUpdateMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CauseUpdateMutationHookResult = ReturnType<typeof useCauseUpdateMutation>;
 export type CauseUpdateMutationResult = Apollo.MutationResult<CauseUpdateMutation>;
 export type CauseUpdateMutationOptions = Apollo.BaseMutationOptions<CauseUpdateMutation, CauseUpdateMutationVariables>;
-export const NewParticipantDataDocument = gql`
-    mutation newParticipantData($newParticipantData: NewParticipantInput!) {
-  participantNew(newParticipantData: $newParticipantData) {
-    id
-    name
-    msp
-  }
-}
-    `;
-export type NewParticipantDataMutationFn = Apollo.MutationFunction<NewParticipantDataMutation, NewParticipantDataMutationVariables>;
-
-/**
- * __useNewParticipantDataMutation__
- *
- * To run a mutation, you first call `useNewParticipantDataMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useNewParticipantDataMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [newParticipantDataMutation, { data, loading, error }] = useNewParticipantDataMutation({
- *   variables: {
- *      newParticipantData: // value for 'newParticipantData'
- *   },
- * });
- */
-export function useNewParticipantDataMutation(baseOptions?: Apollo.MutationHookOptions<NewParticipantDataMutation, NewParticipantDataMutationVariables>) {
-        return Apollo.useMutation<NewParticipantDataMutation, NewParticipantDataMutationVariables>(NewParticipantDataDocument, baseOptions);
-      }
-export type NewParticipantDataMutationHookResult = ReturnType<typeof useNewParticipantDataMutation>;
-export type NewParticipantDataMutationResult = Apollo.MutationResult<NewParticipantDataMutation>;
-export type NewParticipantDataMutationOptions = Apollo.BaseMutationOptions<NewParticipantDataMutation, NewParticipantDataMutationVariables>;
 export const ParticipantNewDocument = gql`
     mutation participantNew($newParticipantData: NewParticipantInput!) {
   participantNew(newParticipantData: $newParticipantData) {
@@ -3054,9 +3007,9 @@ export function usePersonByAttributeLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type PersonByAttributeQueryHookResult = ReturnType<typeof usePersonByAttributeQuery>;
 export type PersonByAttributeLazyQueryHookResult = ReturnType<typeof usePersonByAttributeLazyQuery>;
 export type PersonByAttributeQueryResult = Apollo.QueryResult<PersonByAttributeQuery, PersonByAttributeQueryVariables>;
-export const PersonByFiscalnumberDocument = gql`
-    query personByFiscalnumber($fiscalNumber: String!) {
-  personByFiscalnumber(fiscalNumber: $fiscalNumber) {
+export const PersonByFiscalNumberDocument = gql`
+    query personByFiscalNumber($fiscalNumber: String!) {
+  personByFiscalNumber(fiscalNumber: $fiscalNumber) {
     id
     firstName
     lastName
@@ -3078,30 +3031,30 @@ export const PersonByFiscalnumberDocument = gql`
     `;
 
 /**
- * __usePersonByFiscalnumberQuery__
+ * __usePersonByFiscalNumberQuery__
  *
- * To run a query within a React component, call `usePersonByFiscalnumberQuery` and pass it any options that fit your needs.
- * When your component renders, `usePersonByFiscalnumberQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `usePersonByFiscalNumberQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePersonByFiscalNumberQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = usePersonByFiscalnumberQuery({
+ * const { data, loading, error } = usePersonByFiscalNumberQuery({
  *   variables: {
  *      fiscalNumber: // value for 'fiscalNumber'
  *   },
  * });
  */
-export function usePersonByFiscalnumberQuery(baseOptions?: Apollo.QueryHookOptions<PersonByFiscalnumberQuery, PersonByFiscalnumberQueryVariables>) {
-        return Apollo.useQuery<PersonByFiscalnumberQuery, PersonByFiscalnumberQueryVariables>(PersonByFiscalnumberDocument, baseOptions);
+export function usePersonByFiscalNumberQuery(baseOptions?: Apollo.QueryHookOptions<PersonByFiscalNumberQuery, PersonByFiscalNumberQueryVariables>) {
+        return Apollo.useQuery<PersonByFiscalNumberQuery, PersonByFiscalNumberQueryVariables>(PersonByFiscalNumberDocument, baseOptions);
       }
-export function usePersonByFiscalnumberLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PersonByFiscalnumberQuery, PersonByFiscalnumberQueryVariables>) {
-          return Apollo.useLazyQuery<PersonByFiscalnumberQuery, PersonByFiscalnumberQueryVariables>(PersonByFiscalnumberDocument, baseOptions);
+export function usePersonByFiscalNumberLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PersonByFiscalNumberQuery, PersonByFiscalNumberQueryVariables>) {
+          return Apollo.useLazyQuery<PersonByFiscalNumberQuery, PersonByFiscalNumberQueryVariables>(PersonByFiscalNumberDocument, baseOptions);
         }
-export type PersonByFiscalnumberQueryHookResult = ReturnType<typeof usePersonByFiscalnumberQuery>;
-export type PersonByFiscalnumberLazyQueryHookResult = ReturnType<typeof usePersonByFiscalnumberLazyQuery>;
-export type PersonByFiscalnumberQueryResult = Apollo.QueryResult<PersonByFiscalnumberQuery, PersonByFiscalnumberQueryVariables>;
+export type PersonByFiscalNumberQueryHookResult = ReturnType<typeof usePersonByFiscalNumberQuery>;
+export type PersonByFiscalNumberLazyQueryHookResult = ReturnType<typeof usePersonByFiscalNumberLazyQuery>;
+export type PersonByFiscalNumberQueryResult = Apollo.QueryResult<PersonByFiscalNumberQuery, PersonByFiscalNumberQueryVariables>;
 export const PersonByIdDocument = gql`
     query personById($id: String!) {
   personById(id: $id) {

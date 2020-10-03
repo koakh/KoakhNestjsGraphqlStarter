@@ -127,7 +127,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			name: FormFieldNames.FIRST_NAME,
 			label: 'First name',
 			placeholder: 'John',
-			helperText: 'a valid first Name',
+			// helperText: 'a valid first Name',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
@@ -149,7 +149,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			name: FormFieldNames.LAST_NAME,
 			label: 'Last name',
 			placeholder: 'Doe',
-			helperText: 'a valid last name',
+			// helperText: 'a valid last name',
 			fullWidth: true,
 			rules: {
 				required: validationMessage("required", FormFieldNames.LAST_NAME),
@@ -247,7 +247,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			name: FormFieldNames.FISCAL_NUMBER,
 			label: 'Fiscal number',
 			placeholder: 'PT218269128',
-			helperText: 'a valid pt fiscal Number',
+			// helperText: 'a valid pt fiscal Number',
 			fullWidth: true,
 			rules: {
 				required: validationMessage("required", FormFieldNames.FISCAL_NUMBER),

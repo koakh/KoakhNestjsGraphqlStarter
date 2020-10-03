@@ -6,6 +6,7 @@ import client from './app/config/apollo.client';
 import reducer, { initialState } from './app/state/reducerStateValue';
 import { StateProvider } from './app/state/useStateValue';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import 'reflect-metadata';
 
 ReactDOM.render(
   <ApolloProvider client={client}>

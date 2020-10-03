@@ -42,12 +42,6 @@ export const useStyles = makeStyles((theme) => ({
 		width: '100%',
 		marginTop: theme.spacing(1),
 	},
-	// submit: {
-	// 	margin: theme.spacing(2, 0, 1),
-	// },
-	// spacer: {
-	// 	marginBottom: theme.spacing(2),
-	// },
 }));
 
 type FormInputs = {
@@ -135,11 +129,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 				history.push('/');
 			}
 		} catch (error) {
-			// TODO
-			// setUsername('');
-			// setPassword('');
 			setShowPassword(false);
-			// debug
 			// if (error.graphQLErrors[0]) {
 			// 	const {status, error: errorMessage, message} = error.graphQLErrors[0].message;
 			// 	console.log(`status: ${status}, message: ${message}`);
@@ -219,26 +209,6 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
 					{generateFormDefinition(formDefinition, control, errors, loading)}
-					{/* TODO: cleanup */}
-					{/* {recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
-						<Fragment key={e.name}>
-							<Controller
-								type={e.type}
-								control={control}
-								as={<TextField inputRef={e.inputRef} {...e.controllProps} />}
-								name={(e.name as FormInputsString)}
-								error={(errors[(e.name as FormInputsString)] !== undefined)}
-								helperText={(errors[(e.name as FormInputsString)] !== undefined) ? errors[(e.name as FormInputsString)].message : e.helperText}
-								label={e.label}
-								placeholder={e.placeholder}
-								className={e.className}
-								fullWidth={e.fullWidth}
-								rules={e.rules}
-								disabled={loading}
-								onFocus={() => { e.inputRef.current.focus(); }}
-							/>
-						</Fragment>
-					))} */}
 					<Button
 						type='submit'
 						variant='contained'
@@ -253,14 +223,14 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 						label={c.MESSAGES.rememberMe}
 					/>
 					<Grid container spacing={1}>
-						<Grid item xs={4}>
+						{/* <Grid item xs={4}>
 							<Link href='#' variant='body2'>
 								<Typography align='left' variant='subtitle2'>{c.MESSAGES.forgotPassword}</Typography>
 							</Link>
-						</Grid>
-						<Grid item xs={8}>
+						</Grid> */}
+						<Grid item xs={12}>
 							<Link href={routes[RouteKey.SIGN_UP].path} variant='body2'>
-								<Typography align='right' variant='subtitle2'>{c.MESSAGES.nonAccountSignUp}</Typography>
+								<Typography align='center' variant='subtitle2'>{c.MESSAGES.nonAccountSignUp}</Typography>
 							</Link>
 						</Grid>
 					</Grid>

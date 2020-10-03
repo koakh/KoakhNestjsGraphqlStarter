@@ -602,7 +602,7 @@
             "deprecationReason": null
           },
           {
-            "name": "personByFiscalnumber",
+            "name": "personByFiscalNumber",
             "description": null,
             "args": [
               {

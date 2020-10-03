@@ -1,11 +1,12 @@
 @host = 192.168.1.31
-@port = 4443
+@port = 7443
 @uri = https://{{host}}:{{port}}/graphql
 @contentType = application/json
 @requestType = GraphQL
 
 @userLoginUsername = admin
 @userLoginPassword = 12345678
+@userResgisterPassword = Aa123#12
 @userIdAdmin = efeed3eb-c0a2-4b3e-816f-2a42ca8451b3
 
 ### mutation: userLogin
@@ -57,7 +58,7 @@ mutation userRegister($newUserData: NewUserInput!){
 {
   "newUserData": {
     "username": "petedoe",
-    "password": "12345678",
+    "password": "{{userResgisterPassword}}",
     "firstName": "Jake",
     "lastName": "Doe",
     "email": "petedoe@example.com",
