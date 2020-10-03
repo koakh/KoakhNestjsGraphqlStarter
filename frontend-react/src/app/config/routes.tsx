@@ -1,6 +1,6 @@
-import { AddBox as AddBoxIcon, Explore as ExploreIcon, Fingerprint as FingerprintIcon, Home as HomeIcon, Loyalty as LoyaltyIcon, DynamicFeed as DynamicFeedIcon, People as PeopleIcon, AccountTree as AccountTreeIcon, Apartment as ApartmentIcon, Assessment as AssessmentIcon, LocalPlay as LocalPlayIcon } from '@material-ui/icons';
+import { AccountTree as AccountTreeIcon, AddBox as AddBoxIcon, Apartment as ApartmentIcon, Assessment as AssessmentIcon, DynamicFeed as DynamicFeedIcon, Explore as ExploreIcon, Fingerprint as FingerprintIcon, Home as HomeIcon, Loyalty as LoyaltyIcon, People as PeopleIcon, LocalPlay as LocalPlayIcon } from '@material-ui/icons';
 import React from 'react';
-import { CausesPage, CommunityPage, FeedPage, HomePage, PersonProfilePage, PersonQueryPage, StatePage, TimelinePage, TransactionAddedPage, SignUpPage, SignInPage, SignUpResultPage, AssetUpsertForm, CauseUpsertForm, ParticipantUpsertForm, PersonUpsertForm, TransactionUpsertForm } from '../../pages';
+import { CausesPage, CauseUpsertForm, CommunityPage, FeedPage, HomePage, ParticipantUpsertForm, PersonProfilePage, PersonQueryPage, PersonUpsertForm, SignInPage, SignUpPage, SignUpResultPage, StatePage, TimelinePage, TransactionAddedPage, TransactionUpsertForm, AssetUpsertForm } from '../../pages';
 import { DrawerListItem, DrawerSections, RouteItem } from '../../types';
 import { getEnumKeyFromEnumValue } from '../../utils';
 
@@ -138,41 +138,41 @@ export const routes: Record<RouteKey, RouteItem> = {
   },
   // SECTION3
   [RouteKey.ASSET_UPSERT_FORM]: {
-    title: 'Upsert Asset',
-    label: 'Upsert Asset',
-    path: '/upsert-asset',
+    title: 'New Asset',
+    label: 'New Asset',
+    path: '/new-asset',
     component: AssetUpsertForm,
     section: DrawerSections.SECTION3,
     drawerIcon: <LocalPlayIcon />,
   },
   [RouteKey.CAUSE_UPSERT_FORM]: {
-    title: 'Upsert Cause',
-    label: 'Upsert Cause',
-    path: '/upsert-cause',
+    title: 'New Cause',
+    label: 'New Cause',
+    path: '/new-cause',
     component: CauseUpsertForm,
     section: DrawerSections.SECTION3,
     drawerIcon: <AssessmentIcon />,
   },
   [RouteKey.PARTICIPANT_UPSERT_FORM]: {
-    title: 'Upsert Participant',
-    label: 'Upsert Participant',
-    path: '/upsert-participant',
+    title: 'New Participant',
+    label: 'New Participant',
+    path: '/new-participant',
     component: ParticipantUpsertForm,
     section: DrawerSections.SECTION3,
     drawerIcon: <ApartmentIcon />,
   },
   [RouteKey.PERSON_UPSERT_FORM]: {
-    title: 'Upsert Person',
-    label: 'Upsert Person',
-    path: '/upsert-person',
+    title: 'New Person',
+    label: 'New Person',
+    path: '/new-person',
     component: PersonUpsertForm,
     section: DrawerSections.SECTION3,
     drawerIcon: <PeopleIcon />,
   },
   [RouteKey.TRANSACTION_UPSERT_FORM]: {
-    title: 'Upsert Transaction',
-    label: 'Upsert Transaction',
-    path: '/upsert-transaction',
+    title: 'New Transaction',
+    label: 'New Transaction',
+    path: '/new-transaction',
     component: TransactionUpsertForm,
     section: DrawerSections.SECTION3,
     drawerIcon: <AccountTreeIcon />,

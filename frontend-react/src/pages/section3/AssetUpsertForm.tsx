@@ -1,48 +1,48 @@
-import { Box, InputAdornment, IconButton } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
 import TextField from '@material-ui/core/TextField';
 import React, { Fragment, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
-import { RouteKey, routes, formCommonOptions } from '../../app/config';
+import { formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
-import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, validationMessage } from '../../types';
-import { getGraphQLApolloError, recordToArray, useStyles } from '../../utils';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
+import { NewAssetInput, useAssetNewMutation } from '../../generated/graphql';
+import { FormDefaultValues, FormInputType, FormPropFields, validationMessage, commonControllProps } from '../../types';
+import { generateFormDefinition, getGraphQLApolloError, useStyles } from '../../utils';
 
 type FormInputs = {
-	username: string;
-	password: string;
-	passwordConfirmation: string;
-	fiscalNumber: string;
-	firstName: string;
-	lastName: string;
-	email: string;
+	name: string,
+	assetType: string,
+	ambassadors?: string[],
+	owner: string,
+	location: string
+	tags: string[],
+	metaData: any,
+	metaDataInternal: any,
 };
-type FormInputsString = 'password' | 'username' | 'passwordConfirmation' | 'fiscalNumber' | 'firstName' | 'lastName' | 'email';
 enum FormFieldNames {
-	USERNAME = 'username',
-	PASSWORD = 'password',
-	PASSWORD_CONFIRMATION = 'passwordConfirmation',
-	FISCAL_NUMBER = 'fiscalNumber',
-	FIRST_NAME = 'firstName',
-	LAST_NAME = 'lastName',
-	EMAIL = 'email',
+	NAME = 'name',
+	ASSET_TYPE = 'assetType',
+	AMBASSADORS = 'ambassadors',
+	OWNER = 'owner',
+	LOCATION = 'location',
+	TAGS = 'tags',
+	META_DATA = 'metaData',
+	META_DATA_INTERNAL = 'metaDataInternal',
 };
 const defaultValues: FormDefaultValues = {
-	firstName: 'John',
-	lastName: 'Doe',
-	username: 'jonhdoe',
-	password: 'Aa123#12',
-	passwordConfirmation: 'Aa123#12',
-	fiscalNumber: 'PT123123123',
-	email: 'johndoe@mail.com',
+	name: '',
+	ambassadors: [],
+	startDate: Date.now(),
+	endDate: '',
+	location: '',
+	tags: [],
+	metaData: {},
+	metaDataInternal: {},
 };
 
 // use RouteComponentProps to get history props from Route
@@ -50,40 +50,41 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// hooks styles
 	const classes = useStyles();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, getValues, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, watch, errors, control, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	const [submitting, setSubmitting] = useState(false);
-	const [showPassword, setShowPassword] = useState(false);
 	// hooks: apollo
-	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
+	const [assetNewMutation, { loading, error: apolloError }] = useAssetNewMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
-	// used in rsult state message
-	const username = watch(FormFieldNames.USERNAME);
+	// used in result state message
+	const name = watch(FormFieldNames.NAME);
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
 
-	const handlePasswordVisibility = () => setShowPassword(!showPassword);
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
 			// alert(JSON.stringify(data, undefined, 2));
 			setSubmitting(true);
-			setShowPassword(false);
-			const newPersonData: NewPersonInput = {
-				username: data.username,
-				password: data.password,
-				fiscalNumber: data.fiscalNumber,
-				email: data.email,
+			const newAssetData: NewAssetInput = {
+				name: data.name,
+				assetType: data.assetType,
+				ambassadors: data.ambassadors,
+				owner: data.owner,
+				location: data.location,
+				tags: data.tags,
+				metaData: data.metaData,
+				metaDataInternal: data.metaDataInternal,
 			};
-			const response = await personNewMutation({ variables: { newPersonData } })
+			const response = await assetNewMutation({ variables: { newAssetData: newAssetData } })
 				.catch(error => {
 					throw error;
 				})
 
 			if (response) {
-				const payload = { message: `${c.MESSAGES.signUpUserRegisteredSuccessfully} '${username}'` };
+				const payload = { message: `${c.MESSAGES.signUpUserRegisteredSuccessfully} '${name}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				debugger;
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
@@ -92,172 +93,153 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		} finally {
 			setSubmitting(false);
-			setShowPassword(false);
 		}
 	};
 
 	const formDefinition: Record<string, FormPropFields> = {
-		[FormFieldNames.FIRST_NAME]: {
+		[FormFieldNames.NAME]: {
 			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
-			name: FormFieldNames.FIRST_NAME,
-			label: 'First name',
-			placeholder: 'John',
-			// helperText: 'a valid first Name',
+			name: FormFieldNames.NAME,
+			label: 'Cause name',
+			placeholder: 'Save the world today',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormFieldNames.FIRST_NAME),
+				required: validationMessage('required', FormFieldNames.NAME),
 				pattern: {
-					value: c.REGEXP.firstAndLastName,
-					message: validationMessage("invalid", FormFieldNames.FIRST_NAME),
+					value: c.REGEXP.name,
+					message: validationMessage('invalid', FormFieldNames.NAME),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
-		[FormFieldNames.LAST_NAME]: {
+		[FormFieldNames.ASSET_TYPE]: {
 			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
-			name: FormFieldNames.LAST_NAME,
-			label: 'Last name',
-			placeholder: 'Doe',
-			// helperText: 'a valid last name',
+			name: FormFieldNames.ASSET_TYPE,
+			label: 'Asset type',
+			placeholder: 'PHYSICAL_ASSET',
 			fullWidth: true,
+			// TODO: AssetType enum PHYSICAL_ASSET | DIGITAL_ASSET
 			rules: {
-				required: validationMessage("required", FormFieldNames.LAST_NAME),
+				required: validationMessage('required', FormFieldNames.ASSET_TYPE),
 				pattern: {
-					value: c.REGEXP.firstAndLastName,
-					message: validationMessage("invalid", FormFieldNames.LAST_NAME),
+					value: c.REGEXP.name,
+					message: validationMessage('invalid', FormFieldNames.ASSET_TYPE),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
-		[FormFieldNames.USERNAME]: {
+		[FormFieldNames.AMBASSADORS]: {
 			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
-			name: FormFieldNames.USERNAME,
-			label: 'Username',
-			placeholder: 'johndoe',
+			name: FormFieldNames.AMBASSADORS,
+			label: 'Ambassadors',
+			placeholder: 'add ambassadors',
 			fullWidth: true,
+			// TODO: valid ambassador fiscalNumber array
 			rules: {
-				required: validationMessage("required", FormFieldNames.USERNAME),
+				required: validationMessage('required', FormFieldNames.AMBASSADORS),
 				pattern: {
 					value: c.REGEXP.username,
-					message: validationMessage("invalid", FormFieldNames.USERNAME),
+					message: validationMessage('invalid', FormFieldNames.AMBASSADORS),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
-		[FormFieldNames.PASSWORD]: {
-			as: <TextField />,
-			inputRef: useRef(),
-			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
-			// type: FormInputType.PASSWORD,
-			name: FormFieldNames.PASSWORD,
-			label: 'Password',
-			placeholder: '12345678',
-			fullWidth: true,
-			rules: {
-				required: validationMessage("required", FormFieldNames.USERNAME),
-				pattern: {
-					value: c.REGEXP.password,
-					message: validationMessage("invalid", FormFieldNames.USERNAME),
-				},
-			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-				// must be capitalized
-				InputProps: {
-					endAdornment: (
-						<InputAdornment position="end">
-							<IconButton
-								aria-label="toggle password visibility"
-								onClick={handlePasswordVisibility}
-							>
-								{showPassword ? <VisibilityIcon /> : <VisibilityIconOff />}
-							</IconButton>
-						</InputAdornment>
-					)
-				},
-			},
-		},
-		[FormFieldNames.PASSWORD_CONFIRMATION]: {
-			as: <TextField />,
-			inputRef: useRef(),
-			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
-			name: FormFieldNames.PASSWORD_CONFIRMATION,
-			label: 'Password confirmation',
-			placeholder: '12345678',
-			fullWidth: true,
-			rules: {
-				required: validationMessage("required", FormFieldNames.PASSWORD_CONFIRMATION),
-				pattern: {
-					value: c.REGEXP.passwordConfirmation,
-					message: validationMessage("invalid", FormFieldNames.PASSWORD_CONFIRMATION),
-				},
-				validate: () => {
-					return getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION);
-				}
-			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
-		},
-		[FormFieldNames.FISCAL_NUMBER]: {
+		[FormFieldNames.OWNER]: {
 			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
-			name: FormFieldNames.FISCAL_NUMBER,
-			label: 'Fiscal number',
-			placeholder: 'PT218269128',
-			// helperText: 'a valid pt fiscal Number',
-			fullWidth: true,
-			rules: {
-				required: validationMessage("required", FormFieldNames.FISCAL_NUMBER),
-				pattern: {
-					value: c.REGEXP.fiscalNumber,
-					message: validationMessage("invalid", FormFieldNames.FISCAL_NUMBER),
-				},
-			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
-		},
-		[FormFieldNames.EMAIL]: {
-			as: <TextField />,
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.EMAIL,
-			label: 'Email',
-			placeholder: 'johndoe@example.com',
+			name: FormFieldNames.OWNER,
+			label: 'Location',
+			placeholder: 'Lisbon',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormFieldNames.EMAIL),
+				required: validationMessage('required', FormFieldNames.OWNER),
 				pattern: {
 					value: c.REGEXP.email,
-					message: validationMessage("invalid", FormFieldNames.EMAIL),
+					message: validationMessage('invalid', FormFieldNames.OWNER),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
+			controllProps: commonControllProps,
+		},
+		[FormFieldNames.LOCATION]: {
+			as: <TextField />,
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.LOCATION,
+			label: 'Location',
+			placeholder: 'Lisbon',
+			fullWidth: true,
+			className: classes.spacer,
+			rules: {
+				required: validationMessage('required', FormFieldNames.LOCATION),
+				pattern: {
+					value: c.REGEXP.email,
+					message: validationMessage('invalid', FormFieldNames.LOCATION),
+				},
 			},
+			controllProps: commonControllProps,
+		},
+		[FormFieldNames.TAGS]: {
+			as: <TextField />,
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.TAGS,
+			label: 'Tags',
+			placeholder: 'nature, plaent',
+			fullWidth: true,
+			className: classes.spacer,
+			rules: {
+				required: validationMessage('required', FormFieldNames.TAGS),
+				pattern: {
+					value: c.REGEXP.email,
+					message: validationMessage('invalid', FormFieldNames.TAGS),
+				},
+			},
+			controllProps: commonControllProps,
+		},
+		[FormFieldNames.META_DATA]: {
+			as: <TextField />,
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.META_DATA,
+			label: 'Metada',
+			placeholder: 'arbitrary object',
+			fullWidth: true,
+			className: classes.spacer,
+			rules: {
+				required: validationMessage('required', FormFieldNames.META_DATA),
+				pattern: {
+					value: c.REGEXP.email,
+					message: validationMessage('invalid', FormFieldNames.META_DATA),
+				},
+			},
+			controllProps: commonControllProps,
+		},
+		[FormFieldNames.META_DATA_INTERNAL]: {
+			as: <TextField />,
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.META_DATA_INTERNAL,
+			label: 'Metada internal',
+			placeholder: 'arbitrary object',
+			fullWidth: true,
+			className: classes.spacer,
+			rules: {
+				required: validationMessage('required', FormFieldNames.META_DATA_INTERNAL),
+				pattern: {
+					value: c.REGEXP.email,
+					message: validationMessage('invalid', FormFieldNames.META_DATA_INTERNAL),
+				},
+			},
+			controllProps: commonControllProps,
 		},
 	};
 
@@ -270,25 +252,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 					className={classes.root} noValidate autoComplete='off'
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
-					{recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
-						<Fragment key={e.name}>
-							<Controller
-								type={e.type}
-								control={control}
-								as={<TextField inputRef={e.inputRef} {...e.controllProps} />}
-								name={(e.name as FormInputsString)}
-								error={(errors[(e.name as FormInputsString)] !== undefined)}
-								helperText={(errors[(e.name as FormInputsString)] !== undefined) ? errors[(e.name as FormInputsString)].message : e.helperText}
-								label={e.label}
-								placeholder={e.placeholder}
-								className={e.className}
-								fullWidth={e.fullWidth}
-								rules={e.rules}
-								disabled={submitting}
-								onFocus={() => { e.inputRef.current.focus(); }}
-							/>
-						</Fragment>
-					))}
+					{generateFormDefinition(formDefinition, control, errors, loading)}
 					<div className={classes.spacer}>
 						<Button
 							type='submit'

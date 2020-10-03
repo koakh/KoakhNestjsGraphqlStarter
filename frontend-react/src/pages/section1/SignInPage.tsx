@@ -23,7 +23,7 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright, Props as CopyrightProps } from '../../components/material-ui/other/Copyright';
 import { LoginPersonInput, PersonProfileDocument, usePersonLoginMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, validationMessage } from '../../types';
+import { FormDefaultValues, FormInputType, FormPropFields, validationMessage, commonControllProps } from '../../types';
 import { generateFormDefinition } from '../../utils';
 
 export const useStyles = makeStyles((theme) => ({
@@ -147,16 +147,13 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 			placeholder: 'johndoe',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.USERNAME),
+				required: validationMessage('required', FormFieldNames.USERNAME),
 				pattern: {
 					value: c.REGEXP.username,
-					message: validationMessage("invalid", FormFieldNames.USERNAME),
+					message: validationMessage('invalid', FormFieldNames.USERNAME),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.PASSWORD]: {
 			as: <TextField />,
@@ -168,21 +165,20 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 			placeholder: '12345678',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.USERNAME),
+				required: validationMessage('required', FormFieldNames.USERNAME),
 				pattern: {
 					value: c.REGEXP.password,
-					message: validationMessage("invalid", FormFieldNames.USERNAME),
+					message: validationMessage('invalid', FormFieldNames.USERNAME),
 				},
 			},
 			controllProps: {
-				variant: "outlined",
-				margin: "normal",
+				...commonControllProps,
 				// must be capitalized
 				InputProps: {
 					endAdornment: (
-						<InputAdornment position="end">
+						<InputAdornment position='end'>
 							<IconButton
-								aria-label="toggle password visibility"
+								aria-label='toggle password visibility'
 								onClick={handlePasswordVisibility}
 							>
 								{showPassword ? <VisibilityIcon /> : <VisibilityIconOff />}

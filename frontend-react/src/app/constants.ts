@@ -40,7 +40,7 @@ const REGEXP: { [key: string]: RegExp; } = {
   // https://medium.com/@ikhsanudinhakim/most-used-regex-pattern-for-password-validation-314645912cec
   password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{6,}$/,
   // multi lingual, you'd probably be better off validating against characters you don't want to allow
-  firstAndLastName: /^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/,
+  name: /^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/,
   // match names with Capitalization after the first character
   // firstAndLastName: /^([A-Z][a-zA-Z]*)$/,
 }

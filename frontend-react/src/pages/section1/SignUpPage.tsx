@@ -17,7 +17,7 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright } from '../../components/material-ui/other/Copyright';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, validationMessage } from '../../types';
+import { FormDefaultValues, FormInputType, FormPropFields, validationMessage, commonControllProps } from '../../types';
 import { generateFormDefinition, getGraphQLApolloError } from '../../utils';
 import { copyrightProps, useStyles } from './SignInPage';
 
@@ -114,16 +114,13 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			fullWidth: true,
 			// className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormFieldNames.FIRST_NAME),
+				required: validationMessage('required', FormFieldNames.FIRST_NAME),
 				pattern: {
 					value: c.REGEXP.firstAndLastName,
-					message: validationMessage("invalid", FormFieldNames.FIRST_NAME),
+					message: validationMessage('invalid', FormFieldNames.FIRST_NAME),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
 			as: <TextField />,
@@ -135,16 +132,13 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			helperText: 'a valid last name',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.LAST_NAME),
+				required: validationMessage('required', FormFieldNames.LAST_NAME),
 				pattern: {
 					value: c.REGEXP.firstAndLastName,
-					message: validationMessage("invalid", FormFieldNames.LAST_NAME),
+					message: validationMessage('invalid', FormFieldNames.LAST_NAME),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.USERNAME]: {
 			as: <TextField />,
@@ -155,16 +149,13 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'johndoe',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.USERNAME),
+				required: validationMessage('required', FormFieldNames.USERNAME),
 				pattern: {
 					value: c.REGEXP.username,
-					message: validationMessage("invalid", FormFieldNames.USERNAME),
+					message: validationMessage('invalid', FormFieldNames.USERNAME),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.PASSWORD]: {
 			as: <TextField />,
@@ -176,21 +167,20 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: '12345678',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.USERNAME),
+				required: validationMessage('required', FormFieldNames.PASSWORD),
 				pattern: {
 					value: c.REGEXP.password,
-					message: validationMessage("invalid", FormFieldNames.USERNAME),
+					message: validationMessage('invalid', FormFieldNames.PASSWORD),
 				},
 			},
 			controllProps: {
-				variant: "outlined",
-				margin: "normal",
+				...commonControllProps,
 				// must be capitalized
 				InputProps: {
 					endAdornment: (
-						<InputAdornment position="end">
+						<InputAdornment position='end'>
 							<IconButton
-								aria-label="toggle password visibility"
+								aria-label='toggle password visibility'
 								onClick={handlePasswordVisibility}
 							>
 								{showPassword ? <VisibilityIcon /> : <VisibilityIconOff />}
@@ -209,19 +199,16 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: '12345678',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.PASSWORD_CONFIRMATION),
+				required: validationMessage('required', FormFieldNames.PASSWORD_CONFIRMATION),
 				pattern: {
 					value: c.REGEXP.passwordConfirmation,
-					message: validationMessage("invalid", FormFieldNames.PASSWORD_CONFIRMATION),
+					message: validationMessage('invalid', FormFieldNames.PASSWORD_CONFIRMATION),
 				},
 				validate: () => {
 					return getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION);
 				}
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
 			as: <TextField />,
@@ -233,16 +220,13 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			helperText: 'a valid pt fiscal Number',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.FISCAL_NUMBER),
+				required: validationMessage('required', FormFieldNames.FISCAL_NUMBER),
 				pattern: {
 					value: c.REGEXP.fiscalNumber,
-					message: validationMessage("invalid", FormFieldNames.FISCAL_NUMBER),
+					message: validationMessage('invalid', FormFieldNames.FISCAL_NUMBER),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.EMAIL]: {
 			as: <TextField />,
@@ -254,16 +238,13 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			fullWidth: true,
 			// className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormFieldNames.EMAIL),
+				required: validationMessage('required', FormFieldNames.EMAIL),
 				pattern: {
 					value: c.REGEXP.email,
-					message: validationMessage("invalid", FormFieldNames.EMAIL),
+					message: validationMessage('invalid', FormFieldNames.EMAIL),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 	};
 
@@ -282,26 +263,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
 					{generateFormDefinition(formDefinition, control, errors, loading)}
-					{/* TODO: cleanup */}
-					{/* {recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
-						<Fragment key={e.name}>
-							<Controller
-								type={e.type}
-								control={control}
-								as={<TextField inputRef={e.inputRef} {...e.controllProps} />}
-								name={(e.name as FormInputsString)}
-								error={(errors[(e.name as FormInputsString)] !== undefined)}
-								helperText={(errors[(e.name as FormInputsString)] !== undefined) ? errors[(e.name as FormInputsString)].message : e.helperText}
-								label={e.label}
-								placeholder={e.placeholder}
-								className={e.className}
-								fullWidth={e.fullWidth}
-								rules={e.rules}
-								disabled={loading}
-								onFocus={() => { e.inputRef.current.focus(); }}
-							/>
-						</Fragment>
-					))} */}
 					<Grid container spacing={1}>
 						<Grid item xs={6}>
 							<Button

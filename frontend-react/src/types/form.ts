@@ -8,7 +8,7 @@ export enum FormInputType {
 };
 export type FormInputPropsValue = { name: string, label: string, default: string | number | boolean }
 export type FormInputProps = Record<string, FormInputPropsValue>;
-export type FormDefaultValues = { [key: string]: string | number | boolean };
+export type FormDefaultValues = { [key: string]: string | number | boolean | string[] | any };
 export type FormPropFields = {
   as: JSX.Element,
   inputRef: any,
@@ -49,3 +49,8 @@ export type FormPropFields = {
 // export type Props = ExtraProps & RouteComponentProps;
 
 export const validationMessage = (message: 'required' | 'invalid', fieldName: string, ) => `${fieldName} is ${message}`;
+
+export const commonControllProps: {[key:string]:string} = {
+  variant: 'outlined',
+  margin: 'normal',
+};

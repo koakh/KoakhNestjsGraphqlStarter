@@ -1,20 +1,18 @@
-import { Box, InputAdornment, IconButton } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
 import TextField from '@material-ui/core/TextField';
 import React, { Fragment, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
-import { RouteKey, routes, formCommonOptions } from '../../app/config';
+import { formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, validationMessage } from '../../types';
-import { getGraphQLApolloError, recordToArray, useStyles } from '../../utils';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
+import { FormDefaultValues, FormInputType, FormPropFields, validationMessage, commonControllProps } from '../../types';
+import { generateFormDefinition, getGraphQLApolloError, useStyles } from '../../utils';
 
 type FormInputs = {
 	username: string;
@@ -25,7 +23,6 @@ type FormInputs = {
 	lastName: string;
 	email: string;
 };
-type FormInputsString = 'password' | 'username' | 'passwordConfirmation' | 'fiscalNumber' | 'firstName' | 'lastName' | 'email';
 enum FormFieldNames {
 	USERNAME = 'username',
 	PASSWORD = 'password',
@@ -50,27 +47,24 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// hooks styles
 	const classes = useStyles();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, getValues, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, watch, errors, control, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	const [submitting, setSubmitting] = useState(false);
-	const [showPassword, setShowPassword] = useState(false);
 	// hooks: apollo
 	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
-	// used in rsult state message
+	// used in result state message
 	const username = watch(FormFieldNames.USERNAME);
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
 
-	const handlePasswordVisibility = () => setShowPassword(!showPassword);
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
 			// alert(JSON.stringify(data, undefined, 2));
 			setSubmitting(true);
-			setShowPassword(false);
 			const newPersonData: NewPersonInput = {
 				username: data.username,
 				password: data.password,
@@ -92,7 +86,6 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		} finally {
 			setSubmitting(false);
-			setShowPassword(false);
 		}
 	};
 
@@ -108,16 +101,13 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormFieldNames.FIRST_NAME),
+				required: validationMessage('required', FormFieldNames.FIRST_NAME),
 				pattern: {
-					value: c.REGEXP.firstAndLastName,
-					message: validationMessage("invalid", FormFieldNames.FIRST_NAME),
+					value: c.REGEXP.name,
+					message: validationMessage('invalid', FormFieldNames.FIRST_NAME),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
 			as: <TextField />,
@@ -129,16 +119,13 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			// helperText: 'a valid last name',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.LAST_NAME),
+				required: validationMessage('required', FormFieldNames.LAST_NAME),
 				pattern: {
-					value: c.REGEXP.firstAndLastName,
-					message: validationMessage("invalid", FormFieldNames.LAST_NAME),
+					value: c.REGEXP.name,
+					message: validationMessage('invalid', FormFieldNames.LAST_NAME),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.USERNAME]: {
 			as: <TextField />,
@@ -149,73 +136,13 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			placeholder: 'johndoe',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.USERNAME),
+				required: validationMessage('required', FormFieldNames.USERNAME),
 				pattern: {
 					value: c.REGEXP.username,
-					message: validationMessage("invalid", FormFieldNames.USERNAME),
+					message: validationMessage('invalid', FormFieldNames.USERNAME),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
-		},
-		[FormFieldNames.PASSWORD]: {
-			as: <TextField />,
-			inputRef: useRef(),
-			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
-			// type: FormInputType.PASSWORD,
-			name: FormFieldNames.PASSWORD,
-			label: 'Password',
-			placeholder: '12345678',
-			fullWidth: true,
-			rules: {
-				required: validationMessage("required", FormFieldNames.USERNAME),
-				pattern: {
-					value: c.REGEXP.password,
-					message: validationMessage("invalid", FormFieldNames.USERNAME),
-				},
-			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-				// must be capitalized
-				InputProps: {
-					endAdornment: (
-						<InputAdornment position="end">
-							<IconButton
-								aria-label="toggle password visibility"
-								onClick={handlePasswordVisibility}
-							>
-								{showPassword ? <VisibilityIcon /> : <VisibilityIconOff />}
-							</IconButton>
-						</InputAdornment>
-					)
-				},
-			},
-		},
-		[FormFieldNames.PASSWORD_CONFIRMATION]: {
-			as: <TextField />,
-			inputRef: useRef(),
-			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
-			name: FormFieldNames.PASSWORD_CONFIRMATION,
-			label: 'Password confirmation',
-			placeholder: '12345678',
-			fullWidth: true,
-			rules: {
-				required: validationMessage("required", FormFieldNames.PASSWORD_CONFIRMATION),
-				pattern: {
-					value: c.REGEXP.passwordConfirmation,
-					message: validationMessage("invalid", FormFieldNames.PASSWORD_CONFIRMATION),
-				},
-				validate: () => {
-					return getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION);
-				}
-			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
 			as: <TextField />,
@@ -227,16 +154,13 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			// helperText: 'a valid pt fiscal Number',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.FISCAL_NUMBER),
+				required: validationMessage('required', FormFieldNames.FISCAL_NUMBER),
 				pattern: {
 					value: c.REGEXP.fiscalNumber,
-					message: validationMessage("invalid", FormFieldNames.FISCAL_NUMBER),
+					message: validationMessage('invalid', FormFieldNames.FISCAL_NUMBER),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.EMAIL]: {
 			as: <TextField />,
@@ -248,16 +172,13 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormFieldNames.EMAIL),
+				required: validationMessage('required', FormFieldNames.EMAIL),
 				pattern: {
 					value: c.REGEXP.email,
-					message: validationMessage("invalid", FormFieldNames.EMAIL),
+					message: validationMessage('invalid', FormFieldNames.EMAIL),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 	};
 
@@ -270,25 +191,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					className={classes.root} noValidate autoComplete='off'
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
-					{recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => (
-						<Fragment key={e.name}>
-							<Controller
-								type={e.type}
-								control={control}
-								as={<TextField inputRef={e.inputRef} {...e.controllProps} />}
-								name={(e.name as FormInputsString)}
-								error={(errors[(e.name as FormInputsString)] !== undefined)}
-								helperText={(errors[(e.name as FormInputsString)] !== undefined) ? errors[(e.name as FormInputsString)].message : e.helperText}
-								label={e.label}
-								placeholder={e.placeholder}
-								className={e.className}
-								fullWidth={e.fullWidth}
-								rules={e.rules}
-								disabled={submitting}
-								onFocus={() => { e.inputRef.current.focus(); }}
-							/>
-						</Fragment>
-					))}
+					{generateFormDefinition(formDefinition, control, errors, loading)}
 					<div className={classes.spacer}>
 						<Button
 							type='submit'

@@ -12,7 +12,7 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, validationMessage } from '../../types';
+import { FormDefaultValues, FormInputType, FormPropFields, validationMessage, commonControllProps } from '../../types';
 import { getGraphQLApolloError, recordToArray } from '../../utils';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
@@ -80,7 +80,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
-	// used in rsult state message
+	// used in result state message
 	const username = watch(FormFieldNames.USERNAME);
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
@@ -131,16 +131,13 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormFieldNames.FIRST_NAME),
+				required: validationMessage('required', FormFieldNames.FIRST_NAME),
 				pattern: {
-					value: c.REGEXP.firstAndLastName,
-					message: validationMessage("invalid", FormFieldNames.FIRST_NAME),
+					value: c.REGEXP.name,
+					message: validationMessage('invalid', FormFieldNames.FIRST_NAME),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
 			as: <TextField />,
@@ -152,16 +149,13 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			// helperText: 'a valid last name',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.LAST_NAME),
+				required: validationMessage('required', FormFieldNames.LAST_NAME),
 				pattern: {
-					value: c.REGEXP.firstAndLastName,
-					message: validationMessage("invalid", FormFieldNames.LAST_NAME),
+					value: c.REGEXP.name,
+					message: validationMessage('invalid', FormFieldNames.LAST_NAME),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.USERNAME]: {
 			as: <TextField />,
@@ -172,16 +166,13 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'johndoe',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.USERNAME),
+				required: validationMessage('required', FormFieldNames.USERNAME),
 				pattern: {
 					value: c.REGEXP.username,
-					message: validationMessage("invalid", FormFieldNames.USERNAME),
+					message: validationMessage('invalid', FormFieldNames.USERNAME),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.PASSWORD]: {
 			as: <TextField />,
@@ -193,21 +184,20 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: '12345678',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.USERNAME),
+				required: validationMessage('required', FormFieldNames.USERNAME),
 				pattern: {
 					value: c.REGEXP.password,
-					message: validationMessage("invalid", FormFieldNames.USERNAME),
+					message: validationMessage('invalid', FormFieldNames.USERNAME),
 				},
 			},
 			controllProps: {
-				variant: "outlined",
-				margin: "normal",
+				...commonControllProps,
 				// must be capitalized
 				InputProps: {
 					endAdornment: (
-						<InputAdornment position="end">
+						<InputAdornment position='end'>
 							<IconButton
-								aria-label="toggle password visibility"
+								aria-label='toggle password visibility'
 								onClick={handlePasswordVisibility}
 							>
 								{showPassword ? <VisibilityIcon /> : <VisibilityIconOff />}
@@ -226,19 +216,16 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: '12345678',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.PASSWORD_CONFIRMATION),
+				required: validationMessage('required', FormFieldNames.PASSWORD_CONFIRMATION),
 				pattern: {
 					value: c.REGEXP.passwordConfirmation,
-					message: validationMessage("invalid", FormFieldNames.PASSWORD_CONFIRMATION),
+					message: validationMessage('invalid', FormFieldNames.PASSWORD_CONFIRMATION),
 				},
 				validate: () => {
 					return getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION);
 				}
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
 			as: <TextField />,
@@ -250,16 +237,13 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			// helperText: 'a valid pt fiscal Number',
 			fullWidth: true,
 			rules: {
-				required: validationMessage("required", FormFieldNames.FISCAL_NUMBER),
+				required: validationMessage('required', FormFieldNames.FISCAL_NUMBER),
 				pattern: {
 					value: c.REGEXP.fiscalNumber,
-					message: validationMessage("invalid", FormFieldNames.FISCAL_NUMBER),
+					message: validationMessage('invalid', FormFieldNames.FISCAL_NUMBER),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 		[FormFieldNames.EMAIL]: {
 			as: <TextField />,
@@ -271,16 +255,13 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage("required", FormFieldNames.EMAIL),
+				required: validationMessage('required', FormFieldNames.EMAIL),
 				pattern: {
 					value: c.REGEXP.email,
-					message: validationMessage("invalid", FormFieldNames.EMAIL),
+					message: validationMessage('invalid', FormFieldNames.EMAIL),
 				},
 			},
-			controllProps: {
-				variant: "outlined",
-				margin: "normal",
-			},
+			controllProps: commonControllProps,
 		},
 	};
 
