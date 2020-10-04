@@ -139,34 +139,75 @@ const generateAutocomplete = (
 ) => {
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
+  // working but has no value
+  // return (
+  //   <Fragment key={e.name}>
+  //     <Autocomplete
+  //       id={e.name}
+  //       options={options}
+  //       multiple
+  //       disableCloseOnSelect
+  //       defaultValue={[options[1]]}
+  //       getOptionLabel={(option) => option.title}
+  //       getOptionSelected={(option, value) => option.value === value.value}
+  //       renderOption={(option, { selected }) => (
+  //         <Fragment>
+  //           <Checkbox
+  //             icon={icon}
+  //             checkedIcon={checkedIcon}
+  //             style={{ marginRight: 8 }}
+  //             checked={selected}
+  //           />
+  //           {option.title}
+  //         </Fragment>
+  //       )}
+  //       renderInput={(params) => (
+  //         <TextField name={e.name} inputRef={e.inputRef} {...params} variant="outlined" label={e.label} placeholder={e.placeholder} />
+  //       )}
+  //       fullWidth={e.fullWidth}
+  //       disabled={loading}
+  //       onFocus={() => { e.inputRef.current.focus(); }}
+  //       {...e.controllProps}
+  //     />
+  //   </Fragment>
+  // );
+
   return (
     <Fragment key={e.name}>
-      <Autocomplete
-        id={e.name}
-        options={options}
-        multiple
-        disableCloseOnSelect
-        defaultValue={[options[1]]}
-        getOptionLabel={(option) => option.title}
-        getOptionSelected={(option, value) => option.value === value.value}
-        renderOption={(option, { selected }) => (
-          <Fragment>
-            <Checkbox
-              icon={icon}
-              checkedIcon={checkedIcon}
-              style={{ marginRight: 8 }}
-              checked={selected}
-            />
-            {option.title}
-          </Fragment>
+      <Controller
+        name={e.name}
+        control={control}
+        render={({ onChange, ...props }) => (
+          <Autocomplete
+            id={e.name}
+            options={options}
+            multiple
+            disableCloseOnSelect
+            onChange={(e, data) => onChange(data)}
+            {...props}
+            defaultValue={[options[1]]}
+            getOptionLabel={(option) => option.title}
+            getOptionSelected={(option, value) => option.value === value.value}
+            renderOption={(option, { selected }) => (
+              <Fragment>
+                <Checkbox
+                  icon={icon}
+                  checkedIcon={checkedIcon}
+                  style={{ marginRight: 8 }}
+                  checked={selected}
+                />
+                {option.title}
+              </Fragment>
+            )}
+            renderInput={(params) => (
+              <TextField name={e.name} inputRef={e.inputRef} {...params} variant="outlined" label={e.label} placeholder={e.placeholder} />
+            )}
+            fullWidth={e.fullWidth}
+            disabled={loading}
+            onFocus={() => { e.inputRef.current.focus(); }}
+            {...e.controllProps}
+          />
         )}
-        renderInput={(params) => (
-          <TextField name={e.name} inputRef={e.inputRef} {...params} variant="outlined" label={e.label} placeholder={e.placeholder} />
-        )}
-        fullWidth={e.fullWidth}
-        disabled={loading}
-        onFocus={() => { e.inputRef.current.focus(); }}
-        {...e.controllProps}
       />
     </Fragment>
   );
