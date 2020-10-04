@@ -1,7 +1,7 @@
 import { Box } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
 import TextField from '@material-ui/core/TextField';
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
@@ -11,8 +11,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, validationMessage, commonControllProps } from '../../types';
-import { generateFormDefinition, getGraphQLApolloError, useStyles } from '../../utils';
+import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
+import { generateFormDefinition, getGraphQLApolloError, useStyles, validationMessage, commonControllProps } from '../../utils';
 
 type FormInputs = {
 	username: string;
@@ -48,7 +48,6 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	const classes = useStyles();
 	// hooks react form
 	const { handleSubmit, watch, errors, control, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
-	const [submitting, setSubmitting] = useState(false);
 	// hooks: apollo
 	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
 	// hooks state
@@ -64,7 +63,6 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
 			// alert(JSON.stringify(data, undefined, 2));
-			setSubmitting(true);
 			const newPersonData: NewPersonInput = {
 				username: data.username,
 				password: data.password,
@@ -84,8 +82,6 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			}
 		} catch (error) {
 			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
-		} finally {
-			setSubmitting(false);
 		}
 	};
 
@@ -179,7 +175,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 							type='submit'
 							variant='contained'
 							className={classes.button}
-							disabled={submitting}
+							disabled={loading}
 						>
 							{c.KEYWORDS.create}
 						</Button>
@@ -187,7 +183,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 							type='reset'
 							variant='contained'
 							className={classes.button}
-							disabled={submitting}
+							disabled={loading}
 							onClick={() => handleResetHandler()}
 						>
 							Reset

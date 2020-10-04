@@ -23,8 +23,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright, Props as CopyrightProps } from '../../components/material-ui/other/Copyright';
 import { LoginPersonInput, PersonProfileDocument, usePersonLoginMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, validationMessage, commonControllProps } from '../../types';
-import { generateFormDefinition } from '../../utils';
+import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
+import { generateFormDefinition, validationMessage, commonControllProps } from '../../utils';
 
 export const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -208,7 +208,6 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 					<Button
 						type='submit'
 						variant='contained'
-						// className={classes.submit}
 						disabled={loading}
 						fullWidth
 					>

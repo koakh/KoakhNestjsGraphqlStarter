@@ -1,7 +1,7 @@
 import { Box } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
 import TextField from '@material-ui/core/TextField';
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
@@ -11,8 +11,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewAssetInput, useAssetNewMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, validationMessage, commonControllProps } from '../../types';
-import { generateFormDefinition, getGraphQLApolloError, useStyles } from '../../utils';
+import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
+import { generateFormDefinition, getGraphQLApolloError, useStyles, validationRuleRegExHelper, commonControllProps } from '../../utils';
 
 type FormInputs = {
 	name: string,
@@ -36,7 +36,9 @@ enum FormFieldNames {
 };
 const defaultValues: FormDefaultValues = {
 	name: '',
+	assetType: '',
 	ambassadors: [],
+	owner: '',
 	startDate: Date.now(),
 	endDate: '',
 	location: '',
@@ -50,8 +52,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// hooks styles
 	const classes = useStyles();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
-	const [submitting, setSubmitting] = useState(false);
+	const { handleSubmit, watch, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	// hooks: apollo
 	const [assetNewMutation, { loading, error: apolloError }] = useAssetNewMutation();
 	// hooks state
@@ -62,12 +63,13 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
+	console.log(`name:${getValues(FormFieldNames.NAME)}`);
+	console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
 
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
 			// alert(JSON.stringify(data, undefined, 2));
-			setSubmitting(true);
 			const newAssetData: NewAssetInput = {
 				name: data.name,
 				assetType: data.assetType,
@@ -91,8 +93,6 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			}
 		} catch (error) {
 			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
-		} finally {
-			setSubmitting(false);
 		}
 	};
 
@@ -106,13 +106,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'Save the world today',
 			fullWidth: true,
 			className: classes.spacer,
-			rules: {
-				required: validationMessage('required', FormFieldNames.NAME),
-				pattern: {
-					value: c.REGEXP.name,
-					message: validationMessage('invalid', FormFieldNames.NAME),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.NAME, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.ASSET_TYPE]: {
@@ -123,14 +117,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			label: 'Asset type',
 			placeholder: 'PHYSICAL_ASSET',
 			fullWidth: true,
-			// TODO: AssetType enum PHYSICAL_ASSET | DIGITAL_ASSET
-			rules: {
-				required: validationMessage('required', FormFieldNames.ASSET_TYPE),
-				pattern: {
-					value: c.REGEXP.name,
-					message: validationMessage('invalid', FormFieldNames.ASSET_TYPE),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.ASSET_TYPE, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.AMBASSADORS]: {
@@ -141,14 +128,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			label: 'Ambassadors',
 			placeholder: 'add ambassadors',
 			fullWidth: true,
-			// TODO: valid ambassador fiscalNumber array
-			rules: {
-				required: validationMessage('required', FormFieldNames.AMBASSADORS),
-				pattern: {
-					value: c.REGEXP.username,
-					message: validationMessage('invalid', FormFieldNames.AMBASSADORS),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.OWNER]: {
@@ -160,13 +140,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'Lisbon',
 			fullWidth: true,
 			className: classes.spacer,
-			rules: {
-				required: validationMessage('required', FormFieldNames.OWNER),
-				pattern: {
-					value: c.REGEXP.email,
-					message: validationMessage('invalid', FormFieldNames.OWNER),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.OWNER, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.LOCATION]: {
@@ -178,31 +152,19 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'Lisbon',
 			fullWidth: true,
 			className: classes.spacer,
-			rules: {
-				required: validationMessage('required', FormFieldNames.LOCATION),
-				pattern: {
-					value: c.REGEXP.email,
-					message: validationMessage('invalid', FormFieldNames.LOCATION),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.TAGS]: {
 			as: <TextField />,
 			inputRef: useRef(),
-			type: FormInputType.TEXT,
+			type: FormInputType.AUTOCOMPLETE,
 			name: FormFieldNames.TAGS,
 			label: 'Tags',
-			placeholder: 'nature, plaent',
+			placeholder: 'nature, planet',
 			fullWidth: true,
 			className: classes.spacer,
-			rules: {
-				required: validationMessage('required', FormFieldNames.TAGS),
-				pattern: {
-					value: c.REGEXP.email,
-					message: validationMessage('invalid', FormFieldNames.TAGS),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.TAGS, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.META_DATA]: {
@@ -214,13 +176,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'arbitrary object',
 			fullWidth: true,
 			className: classes.spacer,
-			rules: {
-				required: validationMessage('required', FormFieldNames.META_DATA),
-				pattern: {
-					value: c.REGEXP.email,
-					message: validationMessage('invalid', FormFieldNames.META_DATA),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.META_DATA, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.META_DATA_INTERNAL]: {
@@ -232,13 +188,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'arbitrary object',
 			fullWidth: true,
 			className: classes.spacer,
-			rules: {
-				required: validationMessage('required', FormFieldNames.META_DATA_INTERNAL),
-				pattern: {
-					value: c.REGEXP.email,
-					message: validationMessage('invalid', FormFieldNames.META_DATA_INTERNAL),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.META_DATA_INTERNAL, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 	};
@@ -258,7 +208,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 							type='submit'
 							variant='contained'
 							className={classes.button}
-							disabled={submitting}
+							disabled={loading}
 						>
 							{c.KEYWORDS.create}
 						</Button>
@@ -266,10 +216,10 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 							type='reset'
 							variant='contained'
 							className={classes.button}
-							disabled={submitting}
+							disabled={loading}
 							onClick={() => handleResetHandler()}
 						>
-							Reset
+							{c.KEYWORDS.reset}
 					</Button>
 					</div>
 				</form>

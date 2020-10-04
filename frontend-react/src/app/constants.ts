@@ -3,8 +3,11 @@ const KEYWORDS: { [key: string]: string } = {
   register: 'Register',
   username: 'Username',
   password: 'Password',
+  reset: 'Reset',
   create: 'Create',
   update: 'Update',
+  required: 'Required',
+  invalid: 'Invalid',
 };
 
 const MESSAGES = {

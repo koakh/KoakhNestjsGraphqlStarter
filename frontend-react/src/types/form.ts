@@ -5,6 +5,7 @@ import { PropTypes } from '@material-ui/core';
 export enum FormInputType {
   TEXT = 'text',
   PASSWORD = 'password',
+  AUTOCOMPLETE = 'autocomplete',
 };
 export type FormInputPropsValue = { name: string, label: string, default: string | number | boolean }
 export type FormInputProps = Record<string, FormInputPropsValue>;
@@ -39,6 +40,9 @@ export type FormPropFields = {
   },
 }
 
+// components
+export type AutocompleteOption = { title: string, value: string | number | boolean };
+
 // export type ExtraProps<ClassKey extends string = string> = {
 //   formDefinition: Record<string, FormPropFields>;
 //   inputProps: InputProps;
@@ -47,10 +51,3 @@ export type FormPropFields = {
 // }
 
 // export type Props = ExtraProps & RouteComponentProps;
-
-export const validationMessage = (message: 'required' | 'invalid', fieldName: string, ) => `${fieldName} is ${message}`;
-
-export const commonControllProps: {[key:string]:string} = {
-  variant: 'outlined',
-  margin: 'normal',
-};

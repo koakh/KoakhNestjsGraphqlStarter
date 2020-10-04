@@ -137,21 +137,13 @@ export const routes: Record<RouteKey, RouteItem> = {
     drawerIcon: <LoyaltyIcon />,
   },
   // SECTION3
-  [RouteKey.ASSET_UPSERT_FORM]: {
-    title: 'New Asset',
-    label: 'New Asset',
-    path: '/new-asset',
-    component: AssetUpsertForm,
+  [RouteKey.PERSON_UPSERT_FORM]: {
+    title: 'New Person',
+    label: 'New Person',
+    path: '/new-person',
+    component: PersonUpsertForm,
     section: DrawerSections.SECTION3,
-    drawerIcon: <LocalPlayIcon />,
-  },
-  [RouteKey.CAUSE_UPSERT_FORM]: {
-    title: 'New Cause',
-    label: 'New Cause',
-    path: '/new-cause',
-    component: CauseUpsertForm,
-    section: DrawerSections.SECTION3,
-    drawerIcon: <AssessmentIcon />,
+    drawerIcon: <PeopleIcon />,
   },
   [RouteKey.PARTICIPANT_UPSERT_FORM]: {
     title: 'New Participant',
@@ -161,13 +153,21 @@ export const routes: Record<RouteKey, RouteItem> = {
     section: DrawerSections.SECTION3,
     drawerIcon: <ApartmentIcon />,
   },
-  [RouteKey.PERSON_UPSERT_FORM]: {
-    title: 'New Person',
-    label: 'New Person',
-    path: '/new-person',
-    component: PersonUpsertForm,
+  [RouteKey.CAUSE_UPSERT_FORM]: {
+    title: 'New Cause',
+    label: 'New Cause',
+    path: '/new-cause',
+    component: CauseUpsertForm,
     section: DrawerSections.SECTION3,
-    drawerIcon: <PeopleIcon />,
+    drawerIcon: <AssessmentIcon />,
+  },
+  [RouteKey.ASSET_UPSERT_FORM]: {
+    title: 'New Asset',
+    label: 'New Asset',
+    path: '/new-asset',
+    component: AssetUpsertForm,
+    section: DrawerSections.SECTION3,
+    drawerIcon: <LocalPlayIcon />,
   },
   [RouteKey.TRANSACTION_UPSERT_FORM]: {
     title: 'New Transaction',

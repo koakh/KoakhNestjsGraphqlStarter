@@ -37,6 +37,8 @@
   - [WebSocketLink : WebSocket connection to wss graphql failed: WebSocket is closed before the connection is established.react apollo WebSocket connection to 'wss://solidarychain.com/graphql' failed: WebSocket is closed before the connection is established.](#websocketlink--websocket-connection-to-wss-graphql-failed-websocket-is-closed-before-the-connection-is-establishedreact-apollo-websocket-connection-to-wsssolidarychaincomgraphql-failed-websocket-is-closed-before-the-connection-is-established)
   - [Add Material-UI and React Router](#add-material-ui-and-react-router)
   - [React Hook Forms](#react-hook-forms)
+  - [Material-UI: The value provided to Autocomplete is invalid.](#material-ui-the-value-provided-to-autocomplete-is-invalid)
+  - [Material-UI: How to use AutoComplete](#material-ui-how-to-use-autocomplete)
 
 ## TLDR
 
@@ -861,9 +863,10 @@ $ ADD_PACKAGE="@types/react-router-dom" && npx lerna add -D ${ADD_PACKAGE} --sco
 
 use `inputRef` and not `ref`, checkout docs
 
-https://codesandbox.io/s/react-hook-form-hookforminput-rzu9s?file=/src/index.js
+- [React Hook Form Input CondSandBox](https://codesandbox.io/s/react-hook-form-hookforminput-rzu9s?file=/src/index.js)
 
 https://react-hook-form.com/api#Controller
+
 React Hook Form embraces uncontrolled components and native inputs, however it's hard to avoid working with external controlled component such as React-Select, AntD and Material-UI. This wrapper component will make it easier for you to work with them.
 
 controller validation
@@ -890,3 +893,14 @@ index.js:1 Warning: Failed prop type: Invalid prop `error` of type `object` supp
     in ForwardRef(TextField) (created by WithStyles(ForwardRef(TextField)))
 ```
 ex `error={(errors[e.name] !== undefined)}`
+
+## Material-UI: The value provided to Autocomplete is invalid.
+
+- [Typescript Equality issue on Material UI Autocomplete](https://stackoverflow.com/questions/61504777/typescript-equality-issue-on-material-ui-autocomplete)
+
+None of the options match with `{"title":"Schindler's List","year":1993}`.
+You can use the `getOptionSelected` prop to customize the equality test. at Autocomplete
+
+## Material-UI: How to use AutoComplete
+
+- [Proper way to use react-hook-form Controller with Material-UI Autocomplete](https://stackoverflow.com/questions/61655199/proper-way-to-use-react-hook-form-controller-with-material-ui-autocomplete)

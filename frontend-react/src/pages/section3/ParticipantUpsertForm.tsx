@@ -1,7 +1,7 @@
 import { Box } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
 import TextField from '@material-ui/core/TextField';
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
@@ -11,8 +11,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, validationMessage, commonControllProps } from '../../types';
-import { generateFormDefinition, getGraphQLApolloError, useStyles } from '../../utils';
+import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
+import { commonControllProps, generateFormDefinition, getGraphQLApolloError, useStyles, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	username: string;
@@ -48,7 +48,6 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	const classes = useStyles();
 	// hooks react form
 	const { handleSubmit, watch, errors, control, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
-	const [submitting, setSubmitting] = useState(false);
 	// hooks: apollo
 	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
 	// hooks state
@@ -64,7 +63,6 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
 			// alert(JSON.stringify(data, undefined, 2));
-			setSubmitting(true);
 			const newPersonData: NewPersonInput = {
 				username: data.username,
 				password: data.password,
@@ -84,8 +82,6 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			}
 		} catch (error) {
 			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
-		} finally {
-			setSubmitting(false);
 		}
 	};
 
@@ -97,16 +93,9 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			name: FormFieldNames.FIRST_NAME,
 			label: 'First name',
 			placeholder: 'John',
-			// helperText: 'a valid first Name',
 			fullWidth: true,
 			className: classes.spacer,
-			rules: {
-				required: validationMessage('required', FormFieldNames.FIRST_NAME),
-				pattern: {
-					value: c.REGEXP.name,
-					message: validationMessage('invalid', FormFieldNames.FIRST_NAME),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.FIRST_NAME, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
@@ -116,15 +105,8 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			name: FormFieldNames.LAST_NAME,
 			label: 'Last name',
 			placeholder: 'Doe',
-			// helperText: 'a valid last name',
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.LAST_NAME),
-				pattern: {
-					value: c.REGEXP.name,
-					message: validationMessage('invalid', FormFieldNames.LAST_NAME),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.LAST_NAME, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.USERNAME]: {
@@ -135,13 +117,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			label: 'Username',
 			placeholder: 'johndoe',
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.USERNAME),
-				pattern: {
-					value: c.REGEXP.username,
-					message: validationMessage('invalid', FormFieldNames.USERNAME),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.USERNAME, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
@@ -151,15 +127,8 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			name: FormFieldNames.FISCAL_NUMBER,
 			label: 'Fiscal number',
 			placeholder: 'PT218269128',
-			// helperText: 'a valid pt fiscal Number',
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.FISCAL_NUMBER),
-				pattern: {
-					value: c.REGEXP.fiscalNumber,
-					message: validationMessage('invalid', FormFieldNames.FISCAL_NUMBER),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.FISCAL_NUMBER, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.EMAIL]: {
@@ -171,13 +140,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			placeholder: 'johndoe@example.com',
 			fullWidth: true,
 			className: classes.spacer,
-			rules: {
-				required: validationMessage('required', FormFieldNames.EMAIL),
-				pattern: {
-					value: c.REGEXP.email,
-					message: validationMessage('invalid', FormFieldNames.EMAIL),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 	};
@@ -197,7 +160,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 							type='submit'
 							variant='contained'
 							className={classes.button}
-							disabled={submitting}
+							disabled={loading}
 						>
 							{c.KEYWORDS.create}
 						</Button>
@@ -205,7 +168,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 							type='reset'
 							variant='contained'
 							className={classes.button}
-							disabled={submitting}
+							disabled={loading}
 							onClick={() => handleResetHandler()}
 						>
 							Reset

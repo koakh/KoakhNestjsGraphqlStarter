@@ -17,8 +17,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright } from '../../components/material-ui/other/Copyright';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, validationMessage, commonControllProps } from '../../types';
-import { generateFormDefinition, getGraphQLApolloError } from '../../utils';
+import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
+import { commonControllProps, generateFormDefinition, getGraphQLApolloError, validationRuleRegExHelper } from '../../utils';
 import { copyrightProps, useStyles } from './SignInPage';
 
 type FormInputs = {
@@ -57,7 +57,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	const classes = useStyles();
 	// hooks react form
 	const { handleSubmit, watch, errors, control, getValues, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
-	// const [submitting, setSubmitting] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	// hooks: apollo
 	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
@@ -75,7 +74,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
 			// alert(JSON.stringify(data, undefined, 2));
-			// setSubmitting(true);
 			setShowPassword(false);
 			const newPersonData: NewPersonInput = {
 				username: data.username,
@@ -97,7 +95,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 		} catch (error) {
 			// console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		} finally {
-			// setSubmitting(false);
 			setShowPassword(false);
 		}
 	};
@@ -112,14 +109,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'John',
 			helperText: 'a valid first Name',
 			fullWidth: true,
-			// className: classes.spacer,
-			rules: {
-				required: validationMessage('required', FormFieldNames.FIRST_NAME),
-				pattern: {
-					value: c.REGEXP.firstAndLastName,
-					message: validationMessage('invalid', FormFieldNames.FIRST_NAME),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.FIRST_NAME, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
@@ -131,13 +121,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'Doe',
 			helperText: 'a valid last name',
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.LAST_NAME),
-				pattern: {
-					value: c.REGEXP.firstAndLastName,
-					message: validationMessage('invalid', FormFieldNames.LAST_NAME),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.LAST_NAME, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.USERNAME]: {
@@ -148,13 +132,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			label: 'Username',
 			placeholder: 'johndoe',
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.USERNAME),
-				pattern: {
-					value: c.REGEXP.username,
-					message: validationMessage('invalid', FormFieldNames.USERNAME),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.USERNAME, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.PASSWORD]: {
@@ -166,13 +144,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			label: 'Password',
 			placeholder: '12345678',
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.PASSWORD),
-				pattern: {
-					value: c.REGEXP.password,
-					message: validationMessage('invalid', FormFieldNames.PASSWORD),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.PASSWORD, c.REGEXP.name),
 			controllProps: {
 				...commonControllProps,
 				// must be capitalized
@@ -199,11 +171,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: '12345678',
 			fullWidth: true,
 			rules: {
-				required: validationMessage('required', FormFieldNames.PASSWORD_CONFIRMATION),
-				pattern: {
-					value: c.REGEXP.passwordConfirmation,
-					message: validationMessage('invalid', FormFieldNames.PASSWORD_CONFIRMATION),
-				},
+				...validationRuleRegExHelper(FormFieldNames.PASSWORD_CONFIRMATION, c.REGEXP.name),
 				validate: () => {
 					return getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION);
 				}
@@ -219,13 +187,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'PT218269128',
 			helperText: 'a valid pt fiscal Number',
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.FISCAL_NUMBER),
-				pattern: {
-					value: c.REGEXP.fiscalNumber,
-					message: validationMessage('invalid', FormFieldNames.FISCAL_NUMBER),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.FISCAL_NUMBER, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.EMAIL]: {
@@ -236,14 +198,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			label: 'Email',
 			placeholder: 'johndoe@example.com',
 			fullWidth: true,
-			// className: classes.spacer,
-			rules: {
-				required: validationMessage('required', FormFieldNames.EMAIL),
-				pattern: {
-					value: c.REGEXP.email,
-					message: validationMessage('invalid', FormFieldNames.EMAIL),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.name),
 			controllProps: commonControllProps,
 		},
 	};
@@ -268,7 +223,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 							<Button
 								type='submit'
 								variant='contained'
-								// className={classes.submit}
 								disabled={loading}
 								fullWidth
 							>{c.MESSAGES.signUp}</Button>
@@ -277,11 +231,10 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 							<Button
 								type='reset'
 								variant='contained'
-								// className={classes.submit}
 								disabled={loading}
 								fullWidth
 								onClick={() => handleResetHandler()}
-							>Reset</Button>
+							>{c.KEYWORDS.reset}</Button>
 						</Grid>
 					</Grid>
 					<Grid container spacing={1}>

@@ -1,21 +1,21 @@
-import { Box, InputAdornment, IconButton } from '@material-ui/core';
+import { Box, IconButton, InputAdornment } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
 import React, { Fragment, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
-import { RouteKey, routes, formCommonOptions } from '../../app/config';
+import { formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, validationMessage, commonControllProps } from '../../types';
-import { getGraphQLApolloError, recordToArray } from '../../utils';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
+import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
+import { commonControllProps, getGraphQLApolloError, recordToArray, validationMessage } from '../../utils';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -92,7 +92,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
 			// alert(JSON.stringify(data, undefined, 2));
-			setSubmitting(true);
 			setShowPassword(false);
 			const newPersonData: NewPersonInput = {
 				username: data.username,

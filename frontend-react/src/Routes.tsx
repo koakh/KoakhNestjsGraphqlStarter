@@ -14,7 +14,7 @@ interface Props {
 export const Routes: React.FC<Props> = ({ logged }: Props) => {
   let routerChild;
   // drawerApp
-  if (logged) {
+  if (logged || true) {
     routerChild = <ResponsiveDrawer title={e.appTitle} categories={drawerCategories} />;
   }
   // signIn and signUp routes
