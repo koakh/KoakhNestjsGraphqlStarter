@@ -42,7 +42,10 @@ const defaultValues: FormDefaultValues = {
 	startDate: Date.now(),
 	endDate: '',
 	location: '',
-	tags: [],
+	tags: [
+		{ title: 'Nature', value: 'NATURE' },
+		{ title: 'Economy', value: 'ECONOMY' },
+	],
 	metaData: {},
 	metaDataInternal: {},
 };
@@ -166,6 +169,12 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			className: classes.spacer,
 			rules: validationRuleRegExHelper(FormFieldNames.TAGS, c.REGEXP.name),
 			controllProps: commonControllProps,
+			options: [
+				{ title: 'Nature', value: 'NATURE' },
+				{ title: 'Planet', value: 'PLANET' },
+				{ title: 'Economy', value: 'ECONOMY' },
+			],
+			multipleOptions: true,
 		},
 		[FormFieldNames.META_DATA]: {
 			as: <TextField />,
@@ -220,7 +229,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 							onClick={() => handleResetHandler()}
 						>
 							{c.KEYWORDS.reset}
-					</Button>
+						</Button>
 					</div>
 				</form>
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}

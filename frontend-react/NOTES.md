@@ -904,3 +904,11 @@ You can use the `getOptionSelected` prop to customize the equality test. at Auto
 ## Material-UI: How to use AutoComplete
 
 - [Proper way to use react-hook-form Controller with Material-UI Autocomplete](https://stackoverflow.com/questions/61655199/proper-way-to-use-react-hook-form-controller-with-material-ui-autocomplete)
+
+working version with default values
+https://github.com/react-hook-form/react-hook-form/issues/1457
+https://codesandbox.io/s/material-demo-fcijs?file=/demo.js
+
+with rules and all the missing props
+
+

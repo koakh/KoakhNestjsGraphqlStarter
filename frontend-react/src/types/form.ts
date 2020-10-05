@@ -38,6 +38,9 @@ export type FormPropFields = {
     pattern?: ValidationRule<RegExp>,
     validate?: Validate | Record<string, Validate>
   },
+  // autocomplete
+  options?: AutocompleteOption[],
+  multipleOptions?: boolean,
 }
 
 // components

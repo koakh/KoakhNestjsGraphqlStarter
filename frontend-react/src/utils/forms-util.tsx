@@ -82,7 +82,7 @@ export const generateFormDefinition = (formDefinition: any, control: Control<Rec
       case FormInputType.PASSWORD:
         return generateTextField(e, control, errors, loading);
       case FormInputType.AUTOCOMPLETE:
-        return generateAutocomplete(e, control, errors, loading,
+        return generateAutocomplete(e, control, loading,
           [
             { title: 'The Shawshank Redemption', value: 1994 },
             { title: 'The Godfather', value: 1972 }
@@ -95,7 +95,7 @@ export const generateFormDefinition = (formDefinition: any, control: Control<Rec
       //     { title: 'The Shawshank Redemption', value: 1994 },
       //     { title: 'The Godfather', value: 1972 }
       //   ]}
-      //   renderInput={(params: any) => <TextField {...params} label="My label" margin="normal" />}
+      //   renderInput={(params: any) => <TextField {...params} label='My label' margin='normal' />}
       //   defaultValue={null}
       //   multiple
       //   disableCloseOnSelect
@@ -133,12 +133,11 @@ const generateTextField = (e: FormPropFields, control: Control<Record<string, an
  * @param options [{ title: 'The Shawshank Redemption', year: 1994 }...]
  */
 const generateAutocomplete = (
-  e: FormPropFields, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean,
-  // id: string, label: string, placeholder: string, 
+  e: FormPropFields, control: Control<Record<string, any>>, loading: boolean,
   options: AutocompleteOption[]
 ) => {
-  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-  const checkedIcon = <CheckBoxIcon fontSize="small" />;
+  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
+  const checkedIcon = <CheckBoxIcon fontSize='small' />;
   // working but has no value
   // return (
   //   <Fragment key={e.name}>
@@ -162,7 +161,7 @@ const generateAutocomplete = (
   //         </Fragment>
   //       )}
   //       renderInput={(params) => (
-  //         <TextField name={e.name} inputRef={e.inputRef} {...params} variant="outlined" label={e.label} placeholder={e.placeholder} />
+  //         <TextField name={e.name} inputRef={e.inputRef} {...params} variant='outlined' label={e.label} placeholder={e.placeholder} />
   //       )}
   //       fullWidth={e.fullWidth}
   //       disabled={loading}
@@ -180,12 +179,10 @@ const generateAutocomplete = (
         render={({ onChange, ...props }) => (
           <Autocomplete
             id={e.name}
-            options={options}
-            multiple
+            options={e.options}
+            multiple={e.multipleOptions}
             disableCloseOnSelect
-            onChange={(e, data) => onChange(data)}
-            {...props}
-            defaultValue={[options[1]]}
+            filterSelectedOptions
             getOptionLabel={(option) => option.title}
             getOptionSelected={(option, value) => option.value === value.value}
             renderOption={(option, { selected }) => (
@@ -200,11 +197,15 @@ const generateAutocomplete = (
               </Fragment>
             )}
             renderInput={(params) => (
-              <TextField name={e.name} inputRef={e.inputRef} {...params} variant="outlined" label={e.label} placeholder={e.placeholder} />
+              <TextField name={e.name} inputRef={e.inputRef} {...params} variant='outlined' label={e.label} placeholder={e.placeholder} />
             )}
+            onChange={(e, data) => onChange(data)}
             fullWidth={e.fullWidth}
             disabled={loading}
             onFocus={() => { e.inputRef.current.focus(); }}
+            // TODO: THIS MUST HAVE DEFAULT VALUES
+            // {...props}
+            defaultValue={[e.options[0], e.options[2]]}
             {...e.controllProps}
           />
         )}
@@ -236,7 +237,7 @@ const generateAutocomplete = (
   //           </Fragment>
   //         )}
   //         renderInput={(params) => (
-  //           <TextField {...params} variant="outlined" label={e.label} placeholder={e.placeholder} />
+  //           <TextField {...params} variant='outlined' label={e.label} placeholder={e.placeholder} />
   //         )}
   //         // {...e.controllProps}
   //       />}
@@ -265,7 +266,7 @@ const generateAutocomplete = (
   //         getOptionLabel={(option) => option.title}
   //         getOptionSelected={(option, value) => option.value === value.value}
   //         renderInput={(params) => (
-  //           <TextField {...params} variant="outlined" label={e.label} placeholder={e.placeholder} />
+  //           <TextField {...params} variant='outlined' label={e.label} placeholder={e.placeholder} />
   //         )}
   //         renderOption={(option, { selected }) => (
   //           <Fragment>
