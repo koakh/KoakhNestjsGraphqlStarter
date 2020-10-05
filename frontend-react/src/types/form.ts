@@ -5,6 +5,7 @@ import { PropTypes } from '@material-ui/core';
 export enum FormInputType {
   TEXT = 'text',
   PASSWORD = 'password',
+  SELECT = 'select',
   AUTOCOMPLETE = 'autocomplete',
 };
 export type FormInputPropsValue = { name: string, label: string, default: string | number | boolean }

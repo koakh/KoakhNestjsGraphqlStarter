@@ -7,6 +7,10 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { Fragment } from 'react';
@@ -81,6 +85,8 @@ export const generateFormDefinition = (formDefinition: any, control: Control<Rec
       case FormInputType.TEXT:
       case FormInputType.PASSWORD:
         return generateTextField(e, control, errors, loading);
+      case FormInputType.SELECT:
+        return generateSelection(e, control, errors, loading);
       case FormInputType.AUTOCOMPLETE:
         return generateAutocomplete(e, control, errors, loading);
       // return <ControlledAutocomplete
@@ -106,20 +112,59 @@ const generateTextField = (e: FormPropFields, control: Control<Record<string, an
   return (
     <Fragment key={e.name}>
       <Controller
-        type={e.type}
-        control={control}
+        // TOOD cleanup
+        // type={e.type}
+        // className={e.className}
         as={<TextField inputRef={e.inputRef} {...e.controllProps} />}
+        control={control}
         name={(e.name as string)}
         error={(errors[(e.name)] !== undefined)}
         helperText={(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}
         label={e.label}
         placeholder={e.placeholder}
-        className={e.className}
         fullWidth={e.fullWidth}
         rules={e.rules}
         disabled={loading}
         onFocus={() => { e.inputRef.current.focus(); }}
       />
+    </Fragment>
+  )
+}
+
+const generateSelection = (e: FormPropFields, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean): JSX.Element => {
+  return (
+    <Fragment key={e.name}>
+      <FormControl variant='outlined' margin='normal' fullWidth={e.fullWidth}>
+        <InputLabel id='demo-simple-select-outlined-label'>Age</InputLabel>
+        <Controller
+          as={
+            <Select
+              id='demo-simple-select-filled'
+              labelId='demo-simple-select-filled-label'
+              label={e.label}
+              inputRef={e.inputRef}
+            >
+              <MenuItem value={''}>None</MenuItem>
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+            </Select>
+          }
+          control={control}
+          name={e.name}
+          error={(errors[(e.name)] !== undefined)}
+          // TODO: wip
+          helperText={(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}
+          // TODO: wip
+          placeholder={e.placeholder}
+          // TODO: wip
+          rules={e.rules}
+          disabled={loading}
+          onFocus={() => { e.inputRef.current.focus(); }}
+          defaultValue={''}
+          // this gives the margin problem
+          // {...e.controllProps}
+        />
+      </FormControl>
     </Fragment>
   )
 }
@@ -166,6 +211,7 @@ const generateAutocomplete = (
   //   </Fragment>
   // );
 
+  // working but before use cleaner version from codesandbox
   return (
     <Fragment key={e.name}>
       <Controller
@@ -196,7 +242,7 @@ const generateAutocomplete = (
               <TextField
                 name={e.name}
                 inputRef={e.inputRef}
-                variant='outlined'
+                // variant='outlined'
                 label={e.label}
                 placeholder={e.placeholder}
                 error={(errors[(e.name)] !== undefined)}

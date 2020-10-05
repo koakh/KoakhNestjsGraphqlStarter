@@ -19,10 +19,10 @@ type FormInputs = {
 	assetType: string,
 	ambassadors?: string[],
 	owner: string,
-	location: string
+	location?: string
 	tags: string[],
-	metaData: any,
-	metaDataInternal: any,
+	metaData?: any,
+	metaDataInternal?: any,
 };
 enum FormFieldNames {
 	NAME = 'name',
@@ -46,8 +46,8 @@ const defaultValues: FormDefaultValues = {
 		{ title: 'Nature', value: 'NATURE' },
 		{ title: 'Economy', value: 'ECONOMY' },
 	],
-	metaData: {},
-	metaDataInternal: {},
+	metaData: '{}',
+	metaDataInternal: '{}',
 };
 
 // use RouteComponentProps to get history props from Route
@@ -66,8 +66,9 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
-	console.log(`name:${getValues(FormFieldNames.NAME)}`);
-	console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
+	// console.log(`name:${getValues(FormFieldNames.NAME)}`);
+	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
+	console.log(`assetType:${getValues(FormFieldNames.ASSET_TYPE)}`);
 
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
@@ -101,6 +102,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.NAME]: {
+			// TODO: remove all as from all froms
 			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
@@ -115,7 +117,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 		[FormFieldNames.ASSET_TYPE]: {
 			as: <TextField />,
 			inputRef: useRef(),
-			type: FormInputType.TEXT,
+			type: FormInputType.SELECT,
 			name: FormFieldNames.ASSET_TYPE,
 			label: 'Asset type',
 			placeholder: 'PHYSICAL_ASSET',
@@ -165,13 +167,13 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			name: FormFieldNames.TAGS,
 			label: 'Tags',
 			placeholder: 'nature, planet',
+			helperText: 'helper text here',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: {
-				required: validationMessage('required', FormFieldNames.TAGS),
-				validate: () => {
-					return (getValues(FormFieldNames.TAGS) as string[]).length > 0;
-				}
+				validate: () => (getValues(FormFieldNames.TAGS) as string[]).length > 0
+					? true
+					: validationMessage('required', FormFieldNames.TAGS)
 			},
 			controllProps: commonControllProps,
 			options: [
