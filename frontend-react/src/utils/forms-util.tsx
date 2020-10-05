@@ -12,7 +12,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { Fragment } from 'react';
 import { Control, Controller, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '../app/constants';
-import { FormPropFields, FormInputType, AutocompleteOption } from '../types';
+import { FormInputType, FormPropFields } from '../types';
 import { recordToArray } from './main-util';
 
 export const useStyles = makeStyles((theme) => ({
@@ -82,11 +82,7 @@ export const generateFormDefinition = (formDefinition: any, control: Control<Rec
       case FormInputType.PASSWORD:
         return generateTextField(e, control, errors, loading);
       case FormInputType.AUTOCOMPLETE:
-        return generateAutocomplete(e, control, loading,
-          [
-            { title: 'The Shawshank Redemption', value: 1994 },
-            { title: 'The Godfather', value: 1972 }
-          ]);
+        return generateAutocomplete(e, control, errors, loading);
       // return <ControlledAutocomplete
       //   key={e.name}
       //   control={control}
@@ -133,8 +129,7 @@ const generateTextField = (e: FormPropFields, control: Control<Record<string, an
  * @param options [{ title: 'The Shawshank Redemption', year: 1994 }...]
  */
 const generateAutocomplete = (
-  e: FormPropFields, control: Control<Record<string, any>>, loading: boolean,
-  options: AutocompleteOption[]
+  e: FormPropFields, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean
 ) => {
   const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
   const checkedIcon = <CheckBoxIcon fontSize='small' />;
@@ -176,6 +171,7 @@ const generateAutocomplete = (
       <Controller
         name={e.name}
         control={control}
+        rules={e.rules}
         render={({ onChange, ...props }) => (
           <Autocomplete
             id={e.name}
@@ -197,16 +193,23 @@ const generateAutocomplete = (
               </Fragment>
             )}
             renderInput={(params) => (
-              <TextField name={e.name} inputRef={e.inputRef} {...params} variant='outlined' label={e.label} placeholder={e.placeholder} />
+              <TextField
+                name={e.name}
+                inputRef={e.inputRef}
+                variant='outlined'
+                label={e.label}
+                placeholder={e.placeholder}
+                error={(errors[(e.name)] !== undefined)}
+                helperText={(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}
+                {...params}
+                {...e.controllProps}
+              />
             )}
             onChange={(e, data) => onChange(data)}
             fullWidth={e.fullWidth}
             disabled={loading}
             onFocus={() => { e.inputRef.current.focus(); }}
-            // TODO: THIS MUST HAVE DEFAULT VALUES
-            // {...props}
             defaultValue={[e.options[0], e.options[2]]}
-            {...e.controllProps}
           />
         )}
       />

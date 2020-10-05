@@ -12,7 +12,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewAssetInput, useAssetNewMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
-import { generateFormDefinition, getGraphQLApolloError, useStyles, validationRuleRegExHelper, commonControllProps } from '../../utils';
+import { generateFormDefinition, getGraphQLApolloError, useStyles, validationRuleRegExHelper, commonControllProps, validationMessage } from '../../utils';
 
 type FormInputs = {
 	name: string,
@@ -167,7 +167,12 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'nature, planet',
 			fullWidth: true,
 			className: classes.spacer,
-			rules: validationRuleRegExHelper(FormFieldNames.TAGS, c.REGEXP.name),
+			rules: {
+				required: validationMessage('required', FormFieldNames.TAGS),
+				validate: () => {
+					return (getValues(FormFieldNames.TAGS) as string[]).length > 0;
+				}
+			},
 			controllProps: commonControllProps,
 			options: [
 				{ title: 'Nature', value: 'NATURE' },
