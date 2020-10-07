@@ -18,6 +18,7 @@ import { Control, Controller, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '../app/constants';
 import { FormInputType, FormPropFields } from '../types';
 import { recordToArray } from './main-util';
+import { FormHelperText } from '@material-ui/core';
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -135,7 +136,7 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
   return (
     <Fragment key={e.name}>
       <FormControl variant='outlined' margin='normal' fullWidth={e.fullWidth}>
-        <InputLabel id='demo-simple-select-outlined-label'>Age</InputLabel>
+        <InputLabel id='demo-simple-select-outlined-label'>{e.label}</InputLabel>
         <Controller
           as={
             <Select
@@ -143,17 +144,14 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
               labelId='demo-simple-select-filled-label'
               label={e.label}
               inputRef={e.inputRef}
-            >
-              <MenuItem value={''}>None</MenuItem>
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
+            >              
+              <MenuItem value={''}>{c.KEYWORDS.none}</MenuItem>
+              {e.options.map(e => <MenuItem key={e.value} value={e.value}>{e.title}</MenuItem>)}
             </Select>
           }
           control={control}
           name={e.name}
           error={(errors[(e.name)] !== undefined)}
-          // TODO: wip
-          helperText={(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}
           // TODO: wip
           placeholder={e.placeholder}
           // TODO: wip
@@ -161,9 +159,10 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
           disabled={loading}
           onFocus={() => { e.inputRef.current.focus(); }}
           defaultValue={''}
-          // this gives the margin problem
+          // TODO: this gives the margin problem
           // {...e.controllProps}
         />
+        <FormHelperText error={(errors[(e.name as any)] !== undefined)}>{(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}</FormHelperText>
       </FormControl>
     </Fragment>
   )
@@ -217,14 +216,17 @@ const generateAutocomplete = (
       <Controller
         name={e.name}
         control={control}
-        rules={e.rules}
-        render={({ onChange, ...props }) => (
+        rules={e.rules}        
+ render={({ onChange, ...props }) => (
+// TOOD: use as crash when we clear tags   
+//  as={
           <Autocomplete
             id={e.name}
             options={e.options}
             multiple={e.multipleOptions}
             disableCloseOnSelect
             filterSelectedOptions
+            autoComplete
             getOptionLabel={(option) => option.title}
             getOptionSelected={(option, value) => option.value === value.value}
             renderOption={(option, { selected }) => (
@@ -251,13 +253,14 @@ const generateAutocomplete = (
                 {...e.controllProps}
               />
             )}
-            onChange={(e, data) => onChange(data)}
+ onChange={(e, data) => onChange(data)}
             fullWidth={e.fullWidth}
             disabled={loading}
             onFocus={() => { e.inputRef.current.focus(); }}
             defaultValue={[e.options[0], e.options[2]]}
           />
-        )}
+ )}
+// } // as
       />
     </Fragment>
   );

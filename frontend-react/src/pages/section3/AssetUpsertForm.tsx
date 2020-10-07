@@ -11,8 +11,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewAssetInput, useAssetNewMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
-import { generateFormDefinition, getGraphQLApolloError, useStyles, validationRuleRegExHelper, commonControllProps, validationMessage } from '../../utils';
+import { FormDefaultValues, FormInputType, FormPropFields, AssetType } from '../../types';
+import { generateFormDefinition, getGraphQLApolloError, useStyles, validationRuleRegExHelper, commonControllProps, validationMessage, getEnumKeyFromEnumValue, isValidEnum } from '../../utils';
 
 type FormInputs = {
 	name: string,
@@ -65,7 +65,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
-	// console.log('errors', JSON.stringify(errors, undefined, 2));
+	console.log('errors', JSON.stringify(errors, undefined, 2));
 	// console.log(`name:${getValues(FormFieldNames.NAME)}`);
 	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
 	console.log(`assetType:${getValues(FormFieldNames.ASSET_TYPE)}`);
@@ -121,9 +121,21 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			name: FormFieldNames.ASSET_TYPE,
 			label: 'Asset type',
 			placeholder: 'PHYSICAL_ASSET',
+			helperText: 'helper text here',
 			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.ASSET_TYPE, c.REGEXP.name),
+			// TODO change to a custom validation that have enum values
+			// rules: validationRuleRegExHelper(FormFieldNames.ASSET_TYPE, c.REGEXP.name),
+			rules: {
+				validate: () => isValidEnum(AssetType, getValues(FormFieldNames.ASSET_TYPE))
+					? true
+					: validationMessage('required', FormFieldNames.ASSET_TYPE)
+			},
 			controllProps: commonControllProps,
+			options: [
+				// TODO: i18n
+				{ title: 'Physical Asset', value: 'PHYSICAL_ASSET' },
+				{ title: 'Digital Asset', value: 'DIGITAL_ASSET' },
+			],
 		},
 		[FormFieldNames.AMBASSADORS]: {
 			as: <TextField />,
@@ -141,8 +153,8 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.OWNER,
-			label: 'Location',
-			placeholder: 'Lisbon',
+			label: 'Owner',
+			placeholder: 'valid fiscal number',
 			fullWidth: true,
 			className: classes.spacer,
 			rules: validationRuleRegExHelper(FormFieldNames.OWNER, c.REGEXP.name),

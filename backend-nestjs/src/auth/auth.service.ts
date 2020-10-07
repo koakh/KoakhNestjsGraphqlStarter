@@ -5,13 +5,13 @@ import { Response } from 'express';
 import { SignOptions } from 'jsonwebtoken';
 import { getEnvVariables as e } from '../common/env';
 import { GqlContextPayload } from '../types';
-import { UsersService } from '../user/user.service';
+import { UserService } from '../user/user.service';
 import AccessToken from './types/access-token';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersService: UserService,
     private readonly jwtService: JwtService,
   ) { }
   // called by GqlLocalAuthGuard

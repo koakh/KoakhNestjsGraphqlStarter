@@ -46,6 +46,15 @@ export const getEnumValueFromEnumKey = (enumType: any, enumKey: string | number)
 };
 
 /**
+ * check if is a valid enum
+ * @param enumType 
+ * @param enumKey 
+ */
+export const isValidEnum = (enumType: any, enumKey: string): boolean => {
+  return Object.values(enumType).includes(enumKey);
+}
+
+/**
  * get property name from type, use like this nameof<FormInputs>('firstName'), returns type property
  * @param name property name
  */

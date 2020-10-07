@@ -45,7 +45,7 @@ export type FormPropFields = {
 }
 
 // components
-export type AutocompleteOption = { title: string, value: string | number | boolean };
+export type AutocompleteOption = { title: string, value: string | number };
 
 // export type ExtraProps<ClassKey extends string = string> = {
 //   formDefinition: Record<string, FormPropFields>;

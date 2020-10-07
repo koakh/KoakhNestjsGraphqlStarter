@@ -10,11 +10,9 @@ import { hashPassword } from '../auth/utils';
 import { newUuid } from '../common/utils';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   // init usersStore
   usersStore: UserStore = new UserStore();
-
-  constructor() { }
 
   async findAll(paginationArgs: PaginationArgs): Promise<User[]> {
     // clone array before slice it

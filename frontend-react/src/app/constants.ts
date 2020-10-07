@@ -8,6 +8,7 @@ const KEYWORDS: { [key: string]: string } = {
   update: 'Update',
   required: 'Required',
   invalid: 'Invalid',
+  none: 'none',
 };
 
 const MESSAGES = {

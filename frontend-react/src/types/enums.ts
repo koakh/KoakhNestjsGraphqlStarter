@@ -1,0 +1,4 @@
+export enum AssetType {
+  PHYSICAL_ASSET = 'PHYSICAL_ASSET',
+  DIGITAL_ASSET = 'DIGITAL_ASSET',
+}
