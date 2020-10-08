@@ -13,6 +13,15 @@ export const recordToArray = <T>(record: Record<string, T>) => {
 }
 
 /**
+ * check if is a valid enum
+ * @param enumType 
+ * @param enumKey 
+ */
+export const isValidEnum = (enumType: any, enumKey: string): boolean => {
+  return Object.values(enumType).includes(enumKey);
+}
+
+/**
  * generic function to get Enum key from a Enum value
  * @param enumType a typescript Type
  * @param enumValue string value
@@ -44,15 +53,6 @@ export const getEnumValueFromEnumKey = (enumType: any, enumKey: string | number)
     throw new Error(`Invalid enum key '${enumKey}'! Valid enum key(s() are ${Object.keys(enumType)}`);
   }
 };
-
-/**
- * check if is a valid enum
- * @param enumType 
- * @param enumKey 
- */
-export const isValidEnum = (enumType: any, enumKey: string): boolean => {
-  return Object.values(enumType).includes(enumKey);
-}
 
 /**
  * get property name from type, use like this nameof<FormInputs>('firstName'), returns type property
