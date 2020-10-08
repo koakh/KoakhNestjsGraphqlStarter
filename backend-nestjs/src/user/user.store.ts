@@ -35,7 +35,7 @@ export class UserStore {
 
   incrementTokenVersion(username: string): number {
     const user: User = this.getUser(username);
-    if (Boolean(e().refreshTokenSkipIncrementVersion)) {
+    if (Boolean(e().refreshTokenSkipIncrementVersion === 'true' ? true : false)) {
       // devMode: don't increment tokenVersion
       return user.tokenVersion;
     } else {
