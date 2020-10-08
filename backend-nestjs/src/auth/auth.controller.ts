@@ -1,8 +1,8 @@
-import { Controller, HttpStatus, Post, Request, Response } from '@nestjs/common';
+import { Controller, HttpStatus, Logger, Post, Request, Response } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { GqlContextPayload } from '../types';
 import { getEnvVariables as e } from '../common/env';
-import { UsersService } from '../user/user.service';
+import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { AccessToken } from './models';
 import { LoginUserInput } from '../user/dto';
@@ -13,7 +13,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
-    private readonly usersService: UsersService,
+    private readonly userService: UserService,
   ) { }
   // for security purposes, refreshToken cookie only works in this specific route,
   // to request a new accessToken, this prevent /graphql to works with cookie
@@ -27,7 +27,7 @@ export class AuthController {
     // Logger.log('cookies', JSON.stringify(req.cookies, undefined, 2));
     const invalidPayload = () => res.status(HttpStatus.UNAUTHORIZED).send({ valid: false, accessToken: '' });
     // get jid token from cookies
-    const token: string = req.cookies.jid;
+    const token: string = (req.cookies && req.cookies.jid) ? req.cookies.jid : null;
     // check if jid token is present
     if (!token) {
       return invalidPayload();
@@ -42,14 +42,14 @@ export class AuthController {
     }
 
     // token is valid, send back accessToken
-    const user: User = await this.usersService.findOneByUsername(payload.username);
+    const user: User = await this.userService.findOneByUsername(payload.username);
     // check jid token
     if (!user) {
       return invalidPayload();
     }
 
     // check inMemory tokenVersion
-    const tokenVersion: number = this.usersService.usersStore.getTokenVersion(user.username);
+    const tokenVersion: number = this.userService.usersStore.getTokenVersion(user.username);
     if (tokenVersion !== payload.tokenVersion) {
       return invalidPayload();
     }

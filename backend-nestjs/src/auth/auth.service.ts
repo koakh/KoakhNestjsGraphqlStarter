@@ -11,12 +11,12 @@ import AccessToken from './types/access-token';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UserService,
+    private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) { }
   // called by GqlLocalAuthGuard
   async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOneByUsername(username);
+    const user = await this.userService.findOneByUsername(username);
     if (user) {
       const authorized = this.bcryptValidate(pass, user.password);
       if (authorized) {
@@ -43,7 +43,12 @@ export class AuthService {
     const payload = { username: user.username, sub: user.userId, roles: user.roles, tokenVersion };
     return {
       // generate JWT from a subset of the user object properties
-      accessToken: this.jwtService.sign(payload, { ...options, expiresIn: e().refreshTokenExpiresIn }),
+      accessToken: this.jwtService.sign(payload, {
+        ...options,
+        // require to use refreshTokenJwtSecret
+        secret: e().refreshTokenJwtSecret,
+        expiresIn: e().refreshTokenExpiresIn,
+      }),
     };
   }
 

@@ -1,6 +1,8 @@
 @host = 192.168.1.31
 @port = 7443
-@uri = https://{{host}}:{{port}}/graphql
+@uriBase = https://{{host}}:{{port}}
+@uri = {{uriBase}}/graphql
+
 @contentType = application/json
 @requestType = GraphQL
 
@@ -34,6 +36,16 @@ mutation userLogin($loginUserData: LoginUserInput!) {
 		"password": "{{userLoginPassword}}"
 	}
 }
+
+### authRefreshToken
+// @name authRefreshToken
+
+POST {{uriBase}}/refresh-token HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+}
+
 
 ### mutation: userRegister
 

@@ -1,6 +1,6 @@
 import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver,  } from '@nestjs/graphql';
-import { UsersService } from './user.service';
+import { UserService } from './user.service';
 import { User } from './models';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { PaginationArgs } from '../common/dto';
@@ -9,13 +9,13 @@ import { PaginationArgs } from '../common/dto';
 @UseGuards(GqlAuthGuard)
 export class UsersResolver {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly userService: UserService,
   ) { }
   @Query(returns => [User])
   async users(
     @Args() paginationArgs: PaginationArgs,
   ): Promise<User[]> {
-    return await this.usersService.findAll(paginationArgs);
+    return await this.userService.findAll(paginationArgs);
   }
 
   @UseGuards(GqlAuthGuard)
@@ -23,7 +23,7 @@ export class UsersResolver {
   async userById(
     @Args('id') id: string,
   ): Promise<User> {
-    const user = await this.usersService.findOneByField('id', id);
+    const user = await this.userService.findOneByField('id', id);
     if (!user) {
       throw new NotFoundException(id);
     }
