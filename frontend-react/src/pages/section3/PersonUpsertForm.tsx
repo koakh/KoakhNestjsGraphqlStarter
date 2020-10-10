@@ -76,7 +76,6 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 			if (response) {
 				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${username}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
-				debugger;
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}
 		} catch (error) {

@@ -42,7 +42,7 @@ export const commonControllProps: { [key: string]: string } = {
   margin: 'normal',
 };
 
-export const validationMessage = (messageType: 'required' | 'invalid', fieldName: string, ) => `${fieldName} is ${c.I18N[messageType]}`;
+export const validationMessage = (messageType: 'required' | 'invalid', fieldName: string,) => `${fieldName} is ${c.I18N[messageType]}`;
 
 /**
  * a simple helper to generate regExpt rules
@@ -65,12 +65,14 @@ export const validationRuleRegExHelper = (fieldName: string, regExp: RegExp) => 
 export const getGraphQLApolloError = (apolloError: ApolloError): string => {
   let errorMessage = '';
   if (apolloError) {
-    if (typeof (apolloError.message === 'string')) {
-      errorMessage = apolloError.message;
+    if (typeof (apolloError.graphQLErrors[0]!!.extensions!!.exception!!.responses[0]!!.error!!.message) === 'string') {
+      errorMessage = apolloError.graphQLErrors[0].extensions.exception.responses[0].error.message;
+    } else if (typeof (apolloError.graphQLErrors[0]!!.message as any).error!!.message === 'string') {
+      errorMessage = (apolloError.graphQLErrors[0]!!.message as any).error!!.message;
     } else if (typeof (apolloError.graphQLErrors[0].message as any).error === 'string') {
       errorMessage = (apolloError.graphQLErrors[0].message as any).error;
-    } else if (typeof (apolloError.graphQLErrors[0].message as any).error.message === 'string') {
-      errorMessage = (apolloError.graphQLErrors[0].message as any).error.message;
+    } else if (typeof (apolloError.message === 'string')) {
+      errorMessage = apolloError.message;
     }
   }
   return errorMessage;
@@ -158,7 +160,8 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
           disabled={loading}
           onFocus={() => { e.inputRef.current.focus(); }}
           defaultValue={''}
-        // TODO: this gives the margin problem
+        // TODO: this gives the margin problem in console
+        // Failed prop type: Invalid prop `margin` of value `normal` supplied to 
         // {...e.controllProps}
         />
         <FormHelperText error={(errors[(e.name as any)] !== undefined)}>{(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}</FormHelperText>

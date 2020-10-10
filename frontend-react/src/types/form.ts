@@ -14,6 +14,7 @@ export type FormDefaultValues = { [key: string]: string | number | boolean | str
 export type FormPropFields = {
   // as: JSX.Element,
   inputRef: any,
+  // used only in textField inputs, other inputs don't use it like autocomplete and selection etc
   type: FormInputType,
   name: string,
   label: string;

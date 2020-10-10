@@ -64,8 +64,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// debug
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
 	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
-	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
-	console.log(`assetType:${getValues(FormFieldNames.ASSET_TYPE)}`);
+	// console.log(`assetType:${getValues(FormFieldNames.ASSET_TYPE)}`);
 
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
@@ -81,11 +80,11 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 				},
 				location: data.location,
 				tags: data.tags.map((e: Tag) => e.value),
-				// metaData: JSON.parse(data.metaData),
+				metaData: JSON.parse(data.metaData),
 				metaDataInternal: JSON.parse(data.metaDataInternal),
 			};
-			console.log(JSON.stringify(data, undefined, 2));
-			console.log(JSON.stringify(newAssetData, undefined, 2));
+			// console.log(JSON.stringify(data, undefined, 2));
+			// console.log(JSON.stringify(newAssetData, undefined, 2));
 			const response = await assetNewMutation({ variables: { newAssetData: newAssetData } });
 				// .catch(error => {
 				// 	const errorMessage = getGraphQLApolloError(error);
@@ -95,13 +94,11 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			if (response) {
 				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${name}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
-				debugger;
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}
 		} catch (error) {
+			// don't throw here else we ctach react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
 			// console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
-			const errorMessage = getGraphQLApolloError(error);
-			throw new Error(errorMessage);
 		}
 	};
 
@@ -123,7 +120,8 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			controllProps: commonControllProps,
 			fullWidth: true,
 			label: c.I18N.assetType,
-			placeholder: c.VALUES.PHYSICAL_ASSET,
+			// selection don't use placeHolder
+			// placeholder: c.VALUES.PHYSICAL_ASSET,
 			rules: {
 				validate: () => isValidEnum(AssetType, getValues(FormFieldNames.ASSET_TYPE))
 					? true
