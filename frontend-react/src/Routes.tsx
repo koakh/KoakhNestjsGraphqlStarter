@@ -2,7 +2,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import React, { Fragment } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { drawerCategories, envVariables as e, RouteKey, routes } from './app/config';
-import { theme } from './app/theme';
+import { theme } from './app';
 import { ResponsiveDrawer } from './components/material-ui/navigation';
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 export const Routes: React.FC<Props> = ({ logged }: Props) => {
   let routerChild;
   // drawerApp
-  if (logged || true) {
+  if (logged) {
     routerChild = <ResponsiveDrawer title={e.appTitle} categories={drawerCategories} />;
   }
   // signIn and signUp routes

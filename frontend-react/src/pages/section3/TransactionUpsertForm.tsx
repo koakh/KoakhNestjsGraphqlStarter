@@ -1,6 +1,5 @@
 import { Box } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
-import TextField from '@material-ui/core/TextField';
 import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
@@ -75,7 +74,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				})
 
 			if (response) {
-				const payload = { message: `${c.MESSAGES.signUpUserRegisteredSuccessfully} '${username}'` };
+				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${username}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				debugger;
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
@@ -87,7 +86,6 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.FIRST_NAME]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.FIRST_NAME,
@@ -109,7 +107,6 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			},
 		},
 		[FormFieldNames.LAST_NAME]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.LAST_NAME,
@@ -130,7 +127,6 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			},
 		},
 		[FormFieldNames.USERNAME]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.USERNAME,
@@ -150,7 +146,6 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			},
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.FISCAL_NUMBER,
@@ -168,7 +163,6 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.EMAIL]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.EMAIL,
@@ -204,7 +198,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 							className={classes.button}
 							disabled={loading}
 						>
-							{c.KEYWORDS.create}
+							{c.I18N.create}
 						</Button>
 						<Button
 							type='reset'

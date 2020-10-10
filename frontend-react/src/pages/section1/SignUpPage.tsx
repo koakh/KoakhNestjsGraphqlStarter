@@ -2,7 +2,6 @@ import { Box, Grid, IconButton, InputAdornment, Link } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button/Button';
 import Container from '@material-ui/core/Container';
-import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import VisibilityIcon from '@material-ui/icons/Visibility';
@@ -87,7 +86,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				})
 
 			if (response) {
-				const payload = { message: `${c.MESSAGES.signUpUserRegisteredSuccessfully} '${username}'` };
+				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${username}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				debugger;
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
@@ -101,7 +100,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.FIRST_NAME]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.FIRST_NAME,
@@ -113,7 +111,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.LAST_NAME,
@@ -125,7 +122,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.USERNAME]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.USERNAME,
@@ -136,7 +132,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.PASSWORD]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
 			// type: FormInputType.PASSWORD,
@@ -163,7 +158,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			},
 		},
 		[FormFieldNames.PASSWORD_CONFIRMATION]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
 			name: FormFieldNames.PASSWORD_CONFIRMATION,
@@ -179,7 +173,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.FISCAL_NUMBER,
@@ -191,7 +184,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.EMAIL]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.EMAIL,
@@ -210,7 +202,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					<LockOutlinedIcon />
 				</Avatar>
 				<Typography component='h1' variant='h5'>
-					{c.MESSAGES.signUp}
+					{c.I18N.signUp}
 				</Typography>
 				{/* 'handleSubmit' will validate your inputs before invoking 'onSubmit' */}
 				<form
@@ -225,7 +217,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 								variant='contained'
 								disabled={loading}
 								fullWidth
-							>{c.MESSAGES.signUp}</Button>
+							>{c.I18N.signUp}</Button>
 						</Grid>
 						<Grid item xs={6}>
 							<Button
@@ -234,13 +226,13 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 								disabled={loading}
 								fullWidth
 								onClick={() => handleResetHandler()}
-							>{c.KEYWORDS.reset}</Button>
+							>{c.I18N.reset}</Button>
 						</Grid>
 					</Grid>
 					<Grid container spacing={1}>
 						<Grid item xs={12}>
 							<Link href={routes[RouteKey.SIGN_IN].path} variant='body2'>
-								<Typography align='center' variant='subtitle2'>{c.MESSAGES.signIn}</Typography>
+								<Typography align='center' variant='subtitle2'>{c.I18N.signIn}</Typography>
 							</Link>
 						</Grid>
 					</Grid>

@@ -1,6 +1,5 @@
 import { Box } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
-import TextField from '@material-ui/core/TextField';
 import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
@@ -11,8 +10,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewAssetInput, useAssetNewMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, AssetType } from '../../types';
-import { generateFormDefinition, getGraphQLApolloError, useStyles, validationRuleRegExHelper, commonControllProps, validationMessage, getEnumKeyFromEnumValue, isValidEnum } from '../../utils';
+import { AssetType, FormDefaultValues, FormInputType, FormPropFields, Tag } from '../../types';
+import { commonControllProps, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	name: string,
@@ -20,7 +19,7 @@ type FormInputs = {
 	ambassadors?: string[],
 	owner: string,
 	location?: string
-	tags: string[],
+	tags: Tag[],
 	metaData?: any,
 	metaDataInternal?: any,
 };
@@ -35,13 +34,11 @@ enum FormFieldNames {
 	META_DATA_INTERNAL = 'metaDataInternal',
 };
 const defaultValues: FormDefaultValues = {
-	name: '',
-	assetType: '',
-	ambassadors: [],
-	owner: '',
-	startDate: Date.now(),
-	endDate: '',
-	location: '',
+	name: 'Wheel chair',
+	assetType: 'PHYSICAL_ASSET',
+	ambassadors: ['0466c748-05fd-4d46-b381-4f1bb39458c7', '108f4bb0-2918-4340-a0c8-8b5fb5af249c'],
+	owner: '4ea88521-031b-4279-9165-9c10e1839001',
+	location: '12.1890144,-28.5171909',
 	tags: [
 		{ title: 'Nature', value: 'NATURE' },
 		{ title: 'Economy', value: 'ECONOMY' },
@@ -65,159 +62,154 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
-	console.log('errors', JSON.stringify(errors, undefined, 2));
-	// console.log(`name:${getValues(FormFieldNames.NAME)}`);
+	// console.log('errors', JSON.stringify(errors, undefined, 2));
+	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
 	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
 	console.log(`assetType:${getValues(FormFieldNames.ASSET_TYPE)}`);
 
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
-			// alert(JSON.stringify(data, undefined, 2));
 			const newAssetData: NewAssetInput = {
 				name: data.name,
 				assetType: data.assetType,
 				ambassadors: data.ambassadors,
-				owner: data.owner,
+				// TODO
+				owner: {
+					type: 'com.chain.solidary.model.person',
+					id: data.owner,
+				},
 				location: data.location,
-				tags: data.tags,
-				metaData: data.metaData,
-				metaDataInternal: data.metaDataInternal,
+				tags: data.tags.map((e: Tag) => e.value),
+				// metaData: JSON.parse(data.metaData),
+				metaDataInternal: JSON.parse(data.metaDataInternal),
 			};
-			const response = await assetNewMutation({ variables: { newAssetData: newAssetData } })
-				.catch(error => {
-					throw error;
-				})
+			console.log(JSON.stringify(data, undefined, 2));
+			console.log(JSON.stringify(newAssetData, undefined, 2));
+			const response = await assetNewMutation({ variables: { newAssetData: newAssetData } });
+				// .catch(error => {
+				// 	const errorMessage = getGraphQLApolloError(error);
+				// 	throw new Error(errorMessage);
+				// })
 
 			if (response) {
-				const payload = { message: `${c.MESSAGES.signUpUserRegisteredSuccessfully} '${name}'` };
+				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${name}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				debugger;
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}
 		} catch (error) {
-			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
+			// console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
+			const errorMessage = getGraphQLApolloError(error);
+			throw new Error(errorMessage);
 		}
 	};
 
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.NAME]: {
-			// TODO: remove all as from all froms
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.NAME,
-			label: 'Cause name',
-			placeholder: 'Save the world today',
-			fullWidth: true,
-			className: classes.spacer,
-			rules: validationRuleRegExHelper(FormFieldNames.NAME, c.REGEXP.name),
 			controllProps: commonControllProps,
+			fullWidth: true,
+			label: c.I18N.assetLabel,
+			placeholder: c.I18N.assetPlaceHolder,
+			rules: validationRuleRegExHelper(FormFieldNames.NAME, c.REGEXP.name),
 		},
 		[FormFieldNames.ASSET_TYPE]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.SELECT,
 			name: FormFieldNames.ASSET_TYPE,
-			label: 'Asset type',
-			placeholder: 'PHYSICAL_ASSET',
-			helperText: 'helper text here',
+			controllProps: commonControllProps,
 			fullWidth: true,
-			// TODO change to a custom validation that have enum values
-			// rules: validationRuleRegExHelper(FormFieldNames.ASSET_TYPE, c.REGEXP.name),
+			label: c.I18N.assetType,
+			placeholder: c.VALUES.PHYSICAL_ASSET,
 			rules: {
 				validate: () => isValidEnum(AssetType, getValues(FormFieldNames.ASSET_TYPE))
 					? true
 					: validationMessage('required', FormFieldNames.ASSET_TYPE)
 			},
-			controllProps: commonControllProps,
 			options: [
-				// TODO: i18n
-				{ title: 'Physical Asset', value: 'PHYSICAL_ASSET' },
-				{ title: 'Digital Asset', value: 'DIGITAL_ASSET' },
+				{ title: c.I18N.physicalAsset, value: c.VALUES.PHYSICAL_ASSET },
+				{ title: c.I18N.digitalAsset, value: c.VALUES.DIGITAL_ASSET },
 			],
 		},
 		[FormFieldNames.AMBASSADORS]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.AMBASSADORS,
-			label: 'Ambassadors',
-			placeholder: 'add ambassadors',
-			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.name),
 			controllProps: commonControllProps,
+			fullWidth: true,
+			label: c.I18N.ambassadorsLabel,
+			placeholder: c.I18N.ambassadorsPlaceHolder,
+			helperText: c.I18N.ambassadorsHelperText,
+			rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.uuidArray),
 		},
 		[FormFieldNames.OWNER]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.OWNER,
-			label: 'Owner',
-			placeholder: 'valid fiscal number',
-			fullWidth: true,
-			className: classes.spacer,
-			rules: validationRuleRegExHelper(FormFieldNames.OWNER, c.REGEXP.name),
 			controllProps: commonControllProps,
+			fullWidth: true,
+			label: c.I18N.ownerLabel,
+			placeholder: c.I18N.ownerPlaceholder,
+			helperText: c.I18N.ownerHelperText,
+			rules: validationRuleRegExHelper(FormFieldNames.OWNER, c.REGEXP.uuid),
 		},
 		[FormFieldNames.LOCATION]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.LOCATION,
-			label: 'Location',
-			placeholder: 'Lisbon',
-			fullWidth: true,
-			className: classes.spacer,
-			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.name),
 			controllProps: commonControllProps,
+			fullWidth: true,
+			label: c.I18N.locationLabel,
+			placeholder: c.I18N.locationPlaceHolder,
+			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location),
 		},
 		[FormFieldNames.TAGS]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.AUTOCOMPLETE,
 			name: FormFieldNames.TAGS,
-			label: 'Tags',
-			placeholder: 'nature, planet',
-			helperText: 'helper text here',
+			controllProps: commonControllProps,
 			fullWidth: true,
-			className: classes.spacer,
+			label: c.I18N.tagsLabel,
+			placeholder: c.I18N.tagsLabel,
+			helperText: c.I18N.tagsPlaceHolder,
 			rules: {
 				validate: () => (getValues(FormFieldNames.TAGS) as string[]).length > 0
 					? true
-					: validationMessage('required', FormFieldNames.TAGS)
+					: validationMessage('invalid', FormFieldNames.TAGS)
 			},
-			controllProps: commonControllProps,
-			options: [
-				{ title: 'Nature', value: 'NATURE' },
-				{ title: 'Planet', value: 'PLANET' },
-				{ title: 'Economy', value: 'ECONOMY' },
-			],
+			options: c.TAGS_OPTIONS,
 			multipleOptions: true,
 		},
 		[FormFieldNames.META_DATA]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA,
-			label: 'Metada',
-			placeholder: 'arbitrary object',
-			fullWidth: true,
-			className: classes.spacer,
-			rules: validationRuleRegExHelper(FormFieldNames.META_DATA, c.REGEXP.name),
 			controllProps: commonControllProps,
+			fullWidth: true,
+			label: c.I18N.metaDataLabel,
+			placeholder: c.I18N.metaDataPlaceHolder,
+			rules: {
+				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA))
+					? true
+					: validationMessage('invalid', FormFieldNames.META_DATA)
+			},
 		},
 		[FormFieldNames.META_DATA_INTERNAL]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA_INTERNAL,
-			label: 'Metada internal',
-			placeholder: 'arbitrary object',
-			fullWidth: true,
-			className: classes.spacer,
-			rules: validationRuleRegExHelper(FormFieldNames.META_DATA_INTERNAL, c.REGEXP.name),
 			controllProps: commonControllProps,
+			fullWidth: true,
+			label: c.I18N.metaDataInternalLabel,
+			placeholder: c.I18N.metaDataPlaceHolder,
+			rules: {
+				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL))
+					? true
+					: validationMessage('invalid', FormFieldNames.META_DATA_INTERNAL)
+			},
 		},
 	};
 
@@ -238,7 +230,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 							className={classes.button}
 							disabled={loading}
 						>
-							{c.KEYWORDS.create}
+							{c.I18N.create}
 						</Button>
 						<Button
 							type='reset'
@@ -247,7 +239,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 							disabled={loading}
 							onClick={() => handleResetHandler()}
 						>
-							{c.KEYWORDS.reset}
+							{c.I18N.reset}
 						</Button>
 					</div>
 				</form>

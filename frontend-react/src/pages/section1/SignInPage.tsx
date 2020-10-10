@@ -8,7 +8,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import VisibilityIcon from '@material-ui/icons/Visibility';
@@ -139,7 +138,6 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.USERNAME]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.USERNAME,
@@ -156,10 +154,8 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.PASSWORD]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
-			// type: FormInputType.PASSWORD,
 			name: FormFieldNames.PASSWORD,
 			label: 'Password',
 			placeholder: '12345678',
@@ -197,7 +193,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 					<LockOutlinedIcon />
 				</Avatar>
 				<Typography component='h1' variant='h5'>
-					{c.MESSAGES.signIn}
+					{c.I18N.signIn}
 				</Typography>
 				{/* 'handleSubmit' will validate your inputs before invoking 'onSubmit' */}
 				<form
@@ -211,28 +207,28 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 						disabled={loading}
 						fullWidth
 					>
-						{c.MESSAGES.signIn}
+						{c.I18N.signIn}
 					</Button>
 					<FormControlLabel
 						control={<Checkbox value='remember' color='primary' disabled={loading} />}
-						label={c.MESSAGES.rememberMe}
+						label={c.I18N.rememberMe}
 					/>
 					<Grid container spacing={1}>
 						{/* <Grid item xs={4}>
 							<Link href='#' variant='body2'>
-								<Typography align='left' variant='subtitle2'>{c.MESSAGES.forgotPassword}</Typography>
+								<Typography align='left' variant='subtitle2'>{c.I18N.forgotPassword}</Typography>
 							</Link>
 						</Grid> */}
 						<Grid item xs={12}>
 							<Link href={routes[RouteKey.SIGN_UP].path} variant='body2'>
-								<Typography align='center' variant='subtitle2'>{c.MESSAGES.nonAccountSignUp}</Typography>
+								<Typography align='center' variant='subtitle2'>{c.I18N.nonAccountSignUp}</Typography>
 							</Link>
 						</Grid>
 					</Grid>
 					{loading && <LinearIndeterminate />}
 				</form>
 			</div>
-			{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={c.MESSAGES.loginFailed} />}
+			{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={c.I18N.loginFailed} />}
 			<Box mt={8}>
 				<Copyright {...copyrightProps} />
 			</Box>

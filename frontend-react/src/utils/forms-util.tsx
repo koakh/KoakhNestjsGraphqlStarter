@@ -42,7 +42,7 @@ export const commonControllProps: { [key: string]: string } = {
   margin: 'normal',
 };
 
-export const validationMessage = (messageType: 'required' | 'invalid', fieldName: string, ) => `${fieldName} is ${c.KEYWORDS[messageType]}`;
+export const validationMessage = (messageType: 'required' | 'invalid', fieldName: string, ) => `${fieldName} is ${c.I18N[messageType]}`;
 
 /**
  * a simple helper to generate regExpt rules
@@ -144,8 +144,8 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
               labelId='demo-simple-select-filled-label'
               label={e.label}
               inputRef={e.inputRef}
-            >              
-              <MenuItem value={''}>{c.KEYWORDS.none}</MenuItem>
+            >
+              <MenuItem value={''}>{c.I18N.none}</MenuItem>
               {e.options.map(e => <MenuItem key={e.value} value={e.value}>{e.title}</MenuItem>)}
             </Select>
           }
@@ -159,8 +159,8 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
           disabled={loading}
           onFocus={() => { e.inputRef.current.focus(); }}
           defaultValue={''}
-          // TODO: this gives the margin problem
-          // {...e.controllProps}
+        // TODO: this gives the margin problem
+        // {...e.controllProps}
         />
         <FormHelperText error={(errors[(e.name as any)] !== undefined)}>{(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}</FormHelperText>
       </FormControl>
@@ -216,10 +216,10 @@ const generateAutocomplete = (
       <Controller
         name={e.name}
         control={control}
-        rules={e.rules}        
- render={({ onChange, ...props }) => (
-// TOOD: use as crash when we clear tags   
-//  as={
+        rules={e.rules}
+        render={({ onChange, ...props }) => (
+          // TOOD: use `as` crash when we clear tags
+          //  as={
           <Autocomplete
             id={e.name}
             options={e.options}
@@ -253,14 +253,14 @@ const generateAutocomplete = (
                 {...e.controllProps}
               />
             )}
- onChange={(e, data) => onChange(data)}
+            onChange={(e, data) => onChange(data)}
             fullWidth={e.fullWidth}
             disabled={loading}
             onFocus={() => { e.inputRef.current.focus(); }}
             defaultValue={[e.options[0], e.options[2]]}
           />
- )}
-// } // as
+        )}
+      // } // as
       />
     </Fragment>
   );

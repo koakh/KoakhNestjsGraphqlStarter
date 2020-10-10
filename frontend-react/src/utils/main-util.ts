@@ -13,9 +13,20 @@ export const recordToArray = <T>(record: Record<string, T>) => {
 }
 
 /**
+ * check if is a valid json object
+ */
+export const isValidJsonObject = (json: string): boolean => {
+  try {
+    JSON.parse(json);
+    // console.log(JSON.stringify(parsed));
+  } catch (error) {
+    return false;
+  }
+  return true;
+}
+
+/**
  * check if is a valid enum
- * @param enumType 
- * @param enumKey 
  */
 export const isValidEnum = (enumType: any, enumKey: string): boolean => {
   return Object.values(enumType).includes(enumKey);

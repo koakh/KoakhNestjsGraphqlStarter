@@ -12,7 +12,7 @@ export type FormInputPropsValue = { name: string, label: string, default: string
 export type FormInputProps = Record<string, FormInputPropsValue>;
 export type FormDefaultValues = { [key: string]: string | number | boolean | string[] | any };
 export type FormPropFields = {
-  as: JSX.Element,
+  // as: JSX.Element,
   inputRef: any,
   type: FormInputType,
   name: string,

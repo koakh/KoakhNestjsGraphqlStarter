@@ -105,7 +105,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				})
 
 			if (response) {
-				const payload = { message: `${c.MESSAGES.signUpUserRegisteredSuccessfully} '${username}'` };
+				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${username}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				debugger;
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
@@ -120,7 +120,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.FIRST_NAME]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.FIRST_NAME,
@@ -139,7 +138,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
-			as: <TextField />,
+
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.LAST_NAME,
@@ -157,7 +156,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.USERNAME]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.USERNAME,
@@ -174,7 +172,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.PASSWORD]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
 			// type: FormInputType.PASSWORD,
@@ -207,7 +204,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			},
 		},
 		[FormFieldNames.PASSWORD_CONFIRMATION]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
 			name: FormFieldNames.PASSWORD_CONFIRMATION,
@@ -227,7 +223,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.FISCAL_NUMBER,
@@ -245,7 +240,6 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			controllProps: commonControllProps,
 		},
 		[FormFieldNames.EMAIL]: {
-			as: <TextField />,
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.EMAIL,
@@ -299,7 +293,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 							className={classes.button}
 							disabled={submitting}
 						>
-							{c.KEYWORDS.register}
+							{c.I18N.register}
 						</Button>
 						<Button
 							type='reset'
