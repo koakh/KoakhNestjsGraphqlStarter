@@ -155,7 +155,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 		},
 		[FormFieldNames.PASSWORD]: {
 			inputRef: useRef(),
-			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
+			type: showPassword ? FormInputType.TEXT : FormInputType.PASSWORD,
 			name: FormFieldNames.PASSWORD,
 			label: 'Password',
 			placeholder: '12345678',

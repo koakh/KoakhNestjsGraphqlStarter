@@ -153,7 +153,7 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
         // clean inMemory accessToken
         setAccessToken('');
         // dispatch logout
-        // dispatch({ type: ActionType.SIGNED_OUT_USER });
+        dispatch({ type: ActionType.SIGNED_OUT_USER });
       })
       .catch(error => {
         console.error(error);

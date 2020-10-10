@@ -113,10 +113,9 @@ const generateTextField = (e: FormPropFields, control: Control<Record<string, an
   return (
     <Fragment key={e.name}>
       <Controller
-        // TOOD cleanup
-        // type={e.type}
-        // className={e.className}
         as={<TextField inputRef={e.inputRef} {...e.controllProps} />}
+        // text | password
+        type={e.type}
         control={control}
         name={(e.name as string)}
         error={(errors[(e.name)] !== undefined)}
