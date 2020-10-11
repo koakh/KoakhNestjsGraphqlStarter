@@ -1,3 +1,5 @@
+import { ElapsedTime } from "../types";
+
 /**
  * convert a generic record type to array
  * @param record a generic record
@@ -63,6 +65,33 @@ export const getEnumValueFromEnumKey = (enumType: any, enumKey: string | number)
     // throw error to caller function
     throw new Error(`Invalid enum key '${enumKey}'! Valid enum key(s() are ${Object.keys(enumType)}`);
   }
+};
+
+export const calcElapsedTime = (start: Date, end: Date): ElapsedTime => {
+  const elapsedMs: number = (end.getTime() - start.getTime());
+  const elapsed = new Date(elapsedMs);
+  // subtract the timezone offset, else we have 1h and not 0h
+  elapsed.setTime(elapsed.getTime() + elapsed.getTimezoneOffset() * 60 * 1000);
+  const elapsedHours = elapsed.getHours();
+  const elapsedMinutes = elapsed.getMinutes();
+  const elapsedSeconds = elapsed.getSeconds();
+
+  return { hours: elapsedHours, minutes: elapsedMinutes, seconds: elapsedSeconds, ms: elapsedMs };
+};
+
+/**
+ * Simple func to format Date
+ */
+export const currentFormatedDate = (date: Date, withTime: boolean = true): string => {
+  const yy: string = date.getUTCFullYear().toString();
+  const mo: string = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+  const dd: string = date.getUTCDate().toString().padStart(2, '0');
+  const hh: string = date.getUTCHours().toString().padStart(2, '0');
+  const mm: string = date.getUTCMinutes().toString().padStart(2, '0');
+  const ss: string = date.getUTCSeconds().toString().padStart(2, '0');
+  return (withTime)
+    ? `${yy}-${mo}-${dd} ${hh}:${mm}:${ss}`
+    : `${yy}-${mo}-${dd}`;
 };
 
 /**

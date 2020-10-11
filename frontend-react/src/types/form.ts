@@ -2,9 +2,29 @@ import React from 'react';
 import { Validate, ValidationRule, ValidationValueMessage } from 'react-hook-form';
 import { PropTypes } from '@material-ui/core';
 
+// TODO refactor to FormTextFieldType
+// https://www.w3schools.com/html/html_form_input_types.asp
+// min max etc
 export enum FormInputType {
+  // used
   TEXT = 'text',
   PASSWORD = 'password',
+  DATE = 'date',
+  EMAIL = 'email',
+  // not used yet
+  COLOR = 'color',
+  DATETIME = 'datetime',
+  FILE = 'file',
+  HIDDEN = 'hidden',
+  IMAGE = 'image',
+  MONTH = 'month',
+  NUMBER = 'number',
+  RANGE = 'range',
+  TEL = 'tel',
+  TIME = 'time',
+  URL = 'url',
+  WEEK = 'week',
+  // TODO remove
   SELECT = 'select',
   AUTOCOMPLETE = 'autocomplete',
 };

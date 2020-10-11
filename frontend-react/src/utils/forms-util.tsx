@@ -87,26 +87,25 @@ export const generateFormDefinition = (formDefinition: any, control: Control<Rec
     switch (e.type) {
       case FormInputType.TEXT:
       case FormInputType.PASSWORD:
+      case FormInputType.DATE:
+      case FormInputType.EMAIL:
+      case FormInputType.COLOR:
+      case FormInputType.DATETIME:
+      case FormInputType.FILE:
+      case FormInputType.HIDDEN:
+      case FormInputType.IMAGE:
+      case FormInputType.MONTH:
+      case FormInputType.NUMBER:
+      case FormInputType.RANGE:
+      case FormInputType.TEL:
+      case FormInputType.TIME:
+      case FormInputType.URL:
+      case FormInputType.WEEK:
         return generateTextField(e, control, errors, loading);
       case FormInputType.SELECT:
         return generateSelection(e, control, errors, loading);
       case FormInputType.AUTOCOMPLETE:
         return generateAutocomplete(e, control, errors, loading);
-      // return <ControlledAutocomplete
-      //   key={e.name}
-      //   control={control}
-      //   name={e.name}
-      //   options={[
-      //     { title: 'The Shawshank Redemption', value: 1994 },
-      //     { title: 'The Godfather', value: 1972 }
-      //   ]}
-      //   renderInput={(params: any) => <TextField {...params} label='My label' margin='normal' />}
-      //   defaultValue={null}
-      //   multiple
-      //   disableCloseOnSelect
-      //   getOptionLabel={(option: any) => option.title}
-      //   getOptionSelected={(option: any, value: any) => option.value === value.value}
-      // />
     }
   })
 }
@@ -229,6 +228,7 @@ const generateAutocomplete = (
             disableCloseOnSelect
             filterSelectedOptions
             autoComplete
+            autoHighlight
             getOptionLabel={(option) => option.title}
             getOptionSelected={(option, value) => option.value === value.value}
             renderOption={(option, { selected }) => (

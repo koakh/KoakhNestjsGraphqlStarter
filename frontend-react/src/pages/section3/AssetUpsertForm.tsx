@@ -17,6 +17,7 @@ type FormInputs = {
 	name: string,
 	assetType: string,
 	ambassadors?: string[],
+	// input/output entity object
 	owner: string,
 	location?: string
 	tags: Tag[],
@@ -73,7 +74,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 				name: data.name,
 				assetType: data.assetType,
 				ambassadors: data.ambassadors,
-				// TODO
+				// TODO: must get owner type on chaincode side, from uuid
 				owner: {
 					type: 'com.chain.solidary.model.person',
 					id: data.owner,
@@ -86,12 +87,9 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			// console.log(JSON.stringify(data, undefined, 2));
 			// console.log(JSON.stringify(newAssetData, undefined, 2));
 			const response = await assetNewMutation({ variables: { newAssetData: newAssetData } });
-				// .catch(error => {
-				// 	const errorMessage = getGraphQLApolloError(error);
-				// 	throw new Error(errorMessage);
-				// })
 
 			if (response) {
+				// TODO: finishe result message
 				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${name}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.SIGNUP_RESULT.path });

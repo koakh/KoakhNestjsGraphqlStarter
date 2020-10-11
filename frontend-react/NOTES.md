@@ -39,6 +39,8 @@
   - [React Hook Forms](#react-hook-forms)
   - [Material-UI: The value provided to Autocomplete is invalid.](#material-ui-the-value-provided-to-autocomplete-is-invalid)
   - [Material-UI: How to use AutoComplete](#material-ui-how-to-use-autocomplete)
+  - [Material-UI: How to use select](#material-ui-how-to-use-select)
+  - [Material-UI: How to use AutoComplete to add values](#material-ui-how-to-use-autocomplete-to-add-values)
 
 ## TLDR
 
@@ -915,6 +917,10 @@ with rules and all the missing props
 
 https://stackoverflow.com/questions/63236951/how-to-use-material-ui-select-with-react-hook-form
 
+## Material-UI: How to use AutoComplete to add values
 
+- [Material ui Autocomplete: can tags be created on events aside from 'Enter' events?](https://stackoverflow.com/questions/59035788/material-ui-autocomplete-can-tags-be-created-on-events-aside-from-enter-event)
 
+- [Typescript Working Version](https://codesandbox.io/s/typescript-autocomplete-override-keydown-twgs8?fontsize=14&hidenavigation=1&theme=dark)
 
+type tag and press enter key

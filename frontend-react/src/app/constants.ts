@@ -27,18 +27,29 @@ const I18N: { [key: string]: string } = {
   assetLabel: 'Asset description',
   assetPlaceHolder: 'Wheelchair cum bed (Motorized)',
   ambassadorsLabel: 'Ambassadors',
+  // TODO: uuid
   ambassadorsPlaceHolder: 'PT182692128',
-  ambassadorsHelperText: 'required a valid ambassador fiscalNumber',
+  ambassadorsHelperText: 'valid ambassador fiscalNumber',
   ownerLabel: 'Owner',
+  // TODO: uuid
   ownerPlaceHolder: 'PT182692128',
-  ownerHelperText: 'required a valid owner fiscalNumber',
+  ownerHelperText: 'valid owner fiscalNumber',
   locationLabel: 'Location',
   locationPlaceHolder: '12.1890144,-28.5171909',
   tagsLabel: 'Tags',
-  tagsPlaceHolder: 'required one or more tags',
+  tagsPlaceHolder: 'one or more tags',
   metaDataLabel: 'Metadata',
   metaDataInternalLabel: 'Metadata',
   metaDataPlaceHolder: 'arbitrary json object',
+  emailLabel: 'Email',
+  emailPlaceHolder: 'valid email',
+  startDateLabel: 'Start date',
+  endDateLabel: 'End date',
+  datePlaceHolder: 'valid date format YYYY/MM/DD ',
+  inputLabel: 'Input',
+  // TODO: uuid
+  inputPlaceHolder: 'PT182692128',
+  inputHelperText: 'valid input fiscalNumber',
 };
 
 const VALUES = {
@@ -77,10 +88,11 @@ const REGEXP: { [key: string]: RegExp; } = {
   // https://medium.com/@ikhsanudinhakim/most-used-regex-pattern-for-password-validation-314645912cec
   password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{6,}$/i,
   // multi lingual, you'd probably be better off validating against characters you don't want to allow
-  name: /^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/i,
   // match names with Capitalization after the first character
   // firstAndLastName: /^([A-Z][a-zA-Z]*)$/,
-  date: /^((?:19|20)\\d\\d)-(0?[1-9]|1[012])-([12][0-9]|3[01]|0?[1-9])$/i,
+  name: /^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/i,
+  alphaNumeric: /^[ A-Za-z0-9_@./#&+-:]*$/i,
+  date: /^((?:19|20)\d\d)-(0?[1-9]|1[012])-([12][0-9]|3[01]|0?[1-9])$/i,
   // latitude/longitude coordinates
   location: /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/i,
   uuid: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
