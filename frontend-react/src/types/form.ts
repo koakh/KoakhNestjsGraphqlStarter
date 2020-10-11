@@ -64,7 +64,6 @@ export type FormPropFields = {
   options?: AutocompleteOption[],
   multipleOptions?: boolean,
 }
-
 // components
 export type AutocompleteOption = { title: string, value: string | number };
 

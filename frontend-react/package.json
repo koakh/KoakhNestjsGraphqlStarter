@@ -20,6 +20,7 @@
     "@types/react": "^16.9.5",
     "@types/react-dom": "^16.9.1",
     "apollo-link-token-refresh": "^0.3.2",
+    "change-case": "^4.1.1",
     "graphql": "^15.3.0",
     "jwt-decode": "^2.2.0",
     "react": "^16.13.1",

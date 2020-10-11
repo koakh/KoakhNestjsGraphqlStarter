@@ -12,13 +12,14 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete, { AutocompleteRenderInputParams } from "@material-ui/lab/Autocomplete";
 import React, { Fragment } from 'react';
 import { Control, Controller, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '../app/constants';
-import { FormInputType, FormPropFields } from '../types';
+import { AutocompleteOption, FormInputType, FormPropFields } from '../types';
 import { recordToArray } from './main-util';
 import { FormHelperText } from '@material-ui/core';
+import { capitalCase, constantCase } from "change-case";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,11 +79,31 @@ export const getGraphQLApolloError = (apolloError: ApolloError): string => {
   return errorMessage;
 }
 
+/**
+ * add if not exists, and convert title and value to
+ * Capital Case and CONSTANT
+ */
+export const addToAutocomplete = (name: string, control: Control<Record<string, any>>, value: string): void => {
+  // clone
+  const result: Array<AutocompleteOption> = [ ...control.getValues(name) ];
+  const newTitle = capitalCase(value);
+  const newValue = constantCase(value);
+  if (result.length > 0) {
+    const exists = result.find((e) => e.value === newValue);
+    if (!exists) {
+      // add to options
+      control.setValue(name, [...control.getValues(name),
+      { title: newTitle, value: newValue }
+      ], { shouldValidate: true });
+    }
+  }
+}
+
 // trick to use generics with jsx, we can use <T> it will be interpreted as jsx
 // https://stackoverflow.com/questions/41112313/how-to-use-generics-with-arrow-functions-in-typescript-jsx-with-react?rq=1
 // use '<T extends {}>'
 // T is FormInputs
-export const generateFormDefinition = (formDefinition: any, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean): JSX.Element[] => {
+export const generateFormDefinition = (formDefinition: any, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean, setValue?: any): JSX.Element[] => {
   return recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => {
     switch (e.type) {
       case FormInputType.TEXT:
@@ -178,6 +199,34 @@ const generateAutocomplete = (
 ) => {
   const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
   const checkedIcon = <CheckBoxIcon fontSize='small' />;
+  interface InputProps {
+    onKeyDown: (event: object) => void;
+  }
+  // interface InputParams extends AutocompleteRenderInputParams {
+  //   inputProps: InputProps;
+  // }
+
+  const handleKeyDown = (event: any) => {
+    switch (event.key) {
+      case 'Enter':
+      case ' ':
+      case ',': {
+        event.preventDefault();
+        event.stopPropagation();
+        // 3 chars minimum
+        if (event.target.value.length >= 3) {
+          // get current control values
+          // working version without function helper
+          // const newValue = { title: event.target.value, value: (event.target.value as string).toUpperCase() };
+          // control.setValue(e.name, [...control.getValues(e.name), newValue], { shouldValidate: true });
+          addToAutocomplete(e.name, control, event.target.value);
+        }
+        break;
+      }
+      default:
+    }
+  };
+
   // working but has no value
   // return (
   //   <Fragment key={e.name}>
@@ -229,6 +278,7 @@ const generateAutocomplete = (
             filterSelectedOptions
             autoComplete
             autoHighlight
+            freeSolo
             getOptionLabel={(option) => option.title}
             getOptionSelected={(option, value) => option.value === value.value}
             renderOption={(option, { selected }) => (
@@ -242,24 +292,30 @@ const generateAutocomplete = (
                 {option.title}
               </Fragment>
             )}
-            renderInput={(params) => (
-              <TextField
-                name={e.name}
-                inputRef={e.inputRef}
-                // variant='outlined'
-                label={e.label}
-                placeholder={e.placeholder}
-                error={(errors[(e.name)] !== undefined)}
-                helperText={(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}
-                {...params}
-                {...e.controllProps}
-              />
-            )}
+            renderInput={(params: AutocompleteRenderInputParams) => {
+              (params.inputProps as any).onKeyDown = handleKeyDown;
+              return (
+                <TextField
+                  name={e.name}
+                  inputRef={e.inputRef}
+                  // variant='outlined'
+                  label={e.label}
+                  placeholder={e.placeholder}
+                  error={(errors[(e.name)] !== undefined)}
+                  helperText={(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}
+                  {...params}
+                  {...e.controllProps}
+                />
+              )
+            }}
             onChange={(e, data) => onChange(data)}
             fullWidth={e.fullWidth}
             disabled={loading}
             onFocus={() => { e.inputRef.current.focus(); }}
-            defaultValue={[e.options[0], e.options[2]]}
+            // defaultValue={[e.options[0], e.options[2]]}
+            // props is the way to inject default values
+            // and Add tags Too, fuck 2 hours to discover it, how to create tags
+            {...props}
           />
         )}
       // } // as
