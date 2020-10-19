@@ -23,7 +23,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright, Props as CopyrightProps } from '../../components/material-ui/other/Copyright';
 import { LoginPersonInput, PersonProfileDocument, usePersonLoginMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
-import { generateFormDefinition, validationMessage, commonControllProps } from '../../utils';
+import { generateFormDefinition, validationMessage, commonControlProps } from '../../utils';
 
 export const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -151,7 +151,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 					message: validationMessage('invalid', FormFieldNames.USERNAME),
 				},
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.PASSWORD]: {
 			inputRef: useRef(),
@@ -168,7 +168,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 				},
 			},
 			controllProps: {
-				...commonControllProps,
+				...commonControlProps,
 				// must be capitalized
 				InputProps: {
 					endAdornment: (

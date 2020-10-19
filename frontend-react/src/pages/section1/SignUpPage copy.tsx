@@ -15,7 +15,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
-import { commonControllProps, getGraphQLApolloError, recordToArray, validationMessage } from '../../utils';
+import { commonControlProps, getGraphQLApolloError, recordToArray, validationMessage } from '../../utils';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -135,7 +135,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					message: validationMessage('invalid', FormFieldNames.FIRST_NAME),
 				},
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
 
@@ -153,7 +153,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					message: validationMessage('invalid', FormFieldNames.LAST_NAME),
 				},
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.USERNAME]: {
 			inputRef: useRef(),
@@ -169,7 +169,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					message: validationMessage('invalid', FormFieldNames.USERNAME),
 				},
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.PASSWORD]: {
 			inputRef: useRef(),
@@ -187,7 +187,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				},
 			},
 			controllProps: {
-				...commonControllProps,
+				...commonControlProps,
 				// must be capitalized
 				InputProps: {
 					endAdornment: (
@@ -220,7 +220,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					return getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION);
 				}
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
 			inputRef: useRef(),
@@ -237,7 +237,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					message: validationMessage('invalid', FormFieldNames.FISCAL_NUMBER),
 				},
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.EMAIL]: {
 			inputRef: useRef(),
@@ -254,7 +254,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					message: validationMessage('invalid', FormFieldNames.EMAIL),
 				},
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 	};
 

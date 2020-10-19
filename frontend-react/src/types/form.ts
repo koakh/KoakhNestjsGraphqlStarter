@@ -1,5 +1,5 @@
 import React from 'react';
-import { Validate, ValidationRule, ValidationValueMessage } from 'react-hook-form';
+import { Control, Validate, ValidationRule, ValidationValueMessage } from 'react-hook-form';
 import { PropTypes } from '@material-ui/core';
 
 // TODO refactor to FormTextFieldType
@@ -63,6 +63,7 @@ export type FormPropFields = {
   // autocomplete
   options?: AutocompleteOption[],
   multipleOptions?: boolean,
+  visible?: boolean | ((control: Control<Record<string, any>>) => boolean),  
 }
 // components
 export type AutocompleteOption = { title: string, value: string | number };

@@ -18,7 +18,7 @@ import { Control, Controller, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '../app/constants';
 import { AutocompleteOption, FormInputType, FormPropFields } from '../types';
 import { recordToArray } from './main-util';
-import { FormHelperText } from '@material-ui/core';
+import { Button, FormHelperText } from '@material-ui/core';
 import { capitalCase, constantCase } from "change-case";
 
 export const useStyles = makeStyles((theme) => ({
@@ -38,7 +38,7 @@ export const useStyles = makeStyles((theme) => ({
 /**
  * common control properties
  */
-export const commonControllProps: { [key: string]: string } = {
+export const commonControlProps: { [key: string]: string } = {
   variant: 'outlined',
   margin: 'normal',
 };
@@ -85,10 +85,11 @@ export const getGraphQLApolloError = (apolloError: ApolloError): string => {
  */
 export const addToAutocomplete = (name: string, control: Control<Record<string, any>>, value: string): void => {
   // clone
-  const result: Array<AutocompleteOption> = [ ...control.getValues(name) ];
+  debugger;
+  const result: Array<AutocompleteOption> = [...control.getValues(name)];
   const newTitle = capitalCase(value);
   const newValue = constantCase(value);
-  if (result.length > 0) {
+  if (result.length >= 0) {
     const exists = result.find((e) => e.value === newValue);
     if (!exists) {
       // add to options
@@ -99,12 +100,40 @@ export const addToAutocomplete = (name: string, control: Control<Record<string, 
   }
 }
 
+/**
+ * helper to get common form buttons
+ */
+export const generateFormButtonsDiv = (classes: Record<"root" | "button" | "spacer", string>, loading: boolean, handleResetHandler: () => void ) => {
+  return (
+    <div className={classes.spacer}>
+      <Button
+        type='submit'
+        variant='contained'
+        className={classes.button}
+        disabled={loading}
+      >
+        {c.I18N.create}
+      </Button>
+      <Button
+        type='reset'
+        variant='contained'
+        className={classes.button}
+        disabled={loading}
+        onClick={() => handleResetHandler()}
+      >
+        {c.I18N.reset}
+      </Button>
+    </div>
+  );
+}
+
 // trick to use generics with jsx, we can use <T> it will be interpreted as jsx
 // https://stackoverflow.com/questions/41112313/how-to-use-generics-with-arrow-functions-in-typescript-jsx-with-react?rq=1
 // use '<T extends {}>'
 // T is FormInputs
 export const generateFormDefinition = (formDefinition: any, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean, setValue?: any): JSX.Element[] => {
   return recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => {
+    if (e.visible && (typeof e.visible === 'function' && !e.visible(control))) return;
     switch (e.type) {
       case FormInputType.TEXT:
       case FormInputType.PASSWORD:

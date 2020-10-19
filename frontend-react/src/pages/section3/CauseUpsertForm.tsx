@@ -1,5 +1,4 @@
 import { Box } from '@material-ui/core';
-import Button from '@material-ui/core/Button/Button';
 import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
@@ -11,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewCauseInput, useCauseNewMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields, Tag } from '../../types';
-import { commonControllProps, currentFormatedDate, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, currentFormatedDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	name: string,
@@ -40,7 +39,7 @@ enum FormFieldNames {
 };
 const defaultValues: FormDefaultValues = {
 	name: 'Save the world now 2020',
-	email: 'save-the-world-now@kw.com',
+	email: 'mail@swn.com',
 	ambassadors: ['0466c748-05fd-4d46-b381-4f1bb39458c7', '108f4bb0-2918-4340-a0c8-8b5fb5af249c'],
 	// current plus one day/24h
 	startDate: currentFormatedDate(new Date(Date.now() + (( 3600 * 1000 * 24) * 0)), false),
@@ -116,7 +115,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.NAME,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.causeLabel,
 			placeholder: c.I18N.causePlaceHolder,
@@ -126,7 +125,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.EMAIL,
 			name: FormFieldNames.EMAIL,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.emailLabel,
 			placeholder: c.I18N.emailPlaceHolder,
@@ -136,7 +135,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.DATE,
 			name: FormFieldNames.START_DATE,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.startDateLabel,
 			placeholder: c.I18N.datePlaceHolder,
@@ -146,7 +145,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.DATE,
 			name: FormFieldNames.END_DATE,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.endDateLabel,
 			placeholder: c.I18N.datePlaceHolder,
@@ -156,7 +155,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.LOCATION,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.locationLabel,
 			placeholder: c.I18N.locationPlaceHolder,
@@ -166,7 +165,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.INPUT,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.inputLabel,
 			placeholder: c.I18N.inputPlaceholder,
@@ -177,7 +176,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.AMBASSADORS,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.ambassadorsLabel,
 			placeholder: c.I18N.ambassadorsPlaceHolder,
@@ -188,7 +187,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.AUTOCOMPLETE,
 			name: FormFieldNames.TAGS,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.tagsLabel,
 			placeholder: c.I18N.tagsLabel,
@@ -205,7 +204,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.metaDataLabel,
 			placeholder: c.I18N.metaDataPlaceHolder,
@@ -219,7 +218,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA_INTERNAL,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.metaDataInternalLabel,
 			placeholder: c.I18N.metaDataPlaceHolder,
@@ -241,25 +240,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
 					{generateFormDefinition(formDefinition, control, errors, loading)}
-					<div className={classes.spacer}>
-						<Button
-							type='submit'
-							variant='contained'
-							className={classes.button}
-							disabled={loading}
-						>
-							{c.I18N.create}
-						</Button>
-						<Button
-							type='reset'
-							variant='contained'
-							className={classes.button}
-							disabled={loading}
-							onClick={() => handleResetHandler()}
-						>
-							{c.I18N.reset}
-						</Button>
-					</div>
+					{generateFormButtonsDiv(classes, loading, handleResetHandler)}
 				</form>
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}

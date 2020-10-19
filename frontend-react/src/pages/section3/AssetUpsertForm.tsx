@@ -1,5 +1,4 @@
 import { Box } from '@material-ui/core';
-import Button from '@material-ui/core/Button/Button';
 import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
@@ -11,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewAssetInput, useAssetNewMutation } from '../../generated/graphql';
 import { AssetType, FormDefaultValues, FormInputType, FormPropFields, Tag } from '../../types';
-import { commonControllProps, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	name: string,
@@ -64,7 +63,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
-	console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
+	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
 	// console.log(`assetType:${getValues(FormFieldNames.ASSET_TYPE)}`);
 
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
@@ -105,7 +104,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.NAME,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.assetLabel,
 			placeholder: c.I18N.assetPlaceHolder,
@@ -115,7 +114,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.SELECT,
 			name: FormFieldNames.ASSET_TYPE,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.assetType,
 			// selection don't use placeHolder
@@ -126,15 +125,15 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 					: validationMessage('required', FormFieldNames.ASSET_TYPE)
 			},
 			options: [
-				{ title: c.I18N.physicalAsset, value: c.VALUES.PHYSICAL_ASSET },
-				{ title: c.I18N.digitalAsset, value: c.VALUES.DIGITAL_ASSET },
+				{ title: c.I18N.assetTypeOptionPhysicalAsset, value: AssetType.physicalAsset },
+				{ title: c.I18N.assetTypeOptionDigitalAsset, value: AssetType.digitalAsset },
 			],
 		},
 		[FormFieldNames.AMBASSADORS]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.AMBASSADORS,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.ambassadorsLabel,
 			placeholder: c.I18N.ambassadorsPlaceHolder,
@@ -145,7 +144,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.OWNER,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.ownerLabel,
 			placeholder: c.I18N.ownerPlaceholder,
@@ -156,7 +155,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.LOCATION,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.locationLabel,
 			placeholder: c.I18N.locationPlaceHolder,
@@ -166,7 +165,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.AUTOCOMPLETE,
 			name: FormFieldNames.TAGS,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.tagsLabel,
 			placeholder: c.I18N.tagsLabel,
@@ -183,7 +182,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.metaDataLabel,
 			placeholder: c.I18N.metaDataPlaceHolder,
@@ -197,7 +196,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA_INTERNAL,
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.metaDataInternalLabel,
 			placeholder: c.I18N.metaDataPlaceHolder,
@@ -219,25 +218,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
 					{generateFormDefinition(formDefinition, control, errors, loading)}
-					<div className={classes.spacer}>
-						<Button
-							type='submit'
-							variant='contained'
-							className={classes.button}
-							disabled={loading}
-						>
-							{c.I18N.create}
-						</Button>
-						<Button
-							type='reset'
-							variant='contained'
-							className={classes.button}
-							disabled={loading}
-							onClick={() => handleResetHandler()}
-						>
-							{c.I18N.reset}
-						</Button>
-					</div>
+					{generateFormButtonsDiv(classes, loading, handleResetHandler)}
 				</form>
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}

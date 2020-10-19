@@ -2,6 +2,7 @@
 
 - [NOTES : Warning : Internal notes, subject to errors and typos](#notes--warning--internal-notes-subject-to-errors-and-typos)
   - [TLDR](#tldr)
+  - [Hosts](#hosts)
   - [Commit Ids](#commit-ids)
     - [4c427d4: Last commit before Chakra UI layer on React Frontend](#4c427d4-last-commit-before-chakra-ui-layer-on-react-frontend)
   - [Links](#links)
@@ -41,6 +42,7 @@
   - [Material-UI: How to use AutoComplete](#material-ui-how-to-use-autocomplete)
   - [Material-UI: How to use select](#material-ui-how-to-use-select)
   - [Material-UI: How to use AutoComplete to add values](#material-ui-how-to-use-autocomplete-to-add-values)
+  - [Material-UI : Select with Hook Forms](#material-ui--select-with-hook-forms)
 
 ## TLDR
 
@@ -51,6 +53,18 @@
 3. launch debug with F5 (https://app.solidarychain.com:3000)
 4. test login/logout and refresh-token
 5. test subscriptions
+
+## Hosts
+
+require in hosts
+
+```shell
+# graphql server
+192.168.1.61    solidarychain.com
+# dev machine
+127.0.0.1       app.solidarychain.com
+# 192.168.31    app.solidarychain.com
+```
 
 ## Commit Ids
 
@@ -924,3 +938,7 @@ https://stackoverflow.com/questions/63236951/how-to-use-material-ui-select-with-
 - [Typescript Working Version](https://codesandbox.io/s/typescript-autocomplete-override-keydown-twgs8?fontsize=14&hidenavigation=1&theme=dark)
 
 type tag and press enter key
+
+## Material-UI : Select with Hook Forms
+
+https://stackoverflow.com/questions/63236951/how-to-use-material-ui-select-with-react-hook-form

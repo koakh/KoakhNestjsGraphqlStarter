@@ -1,5 +1,4 @@
 import { Box } from '@material-ui/core';
-import Button from '@material-ui/core/Button/Button';
 import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
@@ -9,36 +8,33 @@ import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
-import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
+import { NewParticipantInput, useParticipantNewMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
-import { commonControllProps, generateFormDefinition, getGraphQLApolloError, useStyles, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormDefinition, generateFormButtonsDiv, getGraphQLApolloError, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
-	username: string;
-	password: string;
-	passwordConfirmation: string;
-	fiscalNumber: string;
-	firstName: string;
-	lastName: string;
-	email: string;
+	code: string,
+	name: string,
+	email: string,
+	ambassadors?: string[],
+	metaData?: any,
+	metaDataInternal?: any,
 };
 enum FormFieldNames {
-	USERNAME = 'username',
-	PASSWORD = 'password',
-	PASSWORD_CONFIRMATION = 'passwordConfirmation',
-	FISCAL_NUMBER = 'fiscalNumber',
-	FIRST_NAME = 'firstName',
-	LAST_NAME = 'lastName',
+	CODE = 'code',
+	NAME = 'name',
 	EMAIL = 'email',
+	AMBASSADORS = 'ambassadors',
+	META_DATA = 'metaData',
+	META_DATA_INTERNAL = 'metaDataInternal',
 };
 const defaultValues: FormDefaultValues = {
-	firstName: 'John',
-	lastName: 'Doe',
-	username: 'jonhdoe',
-	password: 'Aa123#12',
-	passwordConfirmation: 'Aa123#12',
-	fiscalNumber: 'PT123123123',
-	email: 'johndoe@mail.com',
+	code: 'wfp',
+	name: 'World Food Program',
+	email: 'mail@efp.com',
+	ambassadors: ['0466c748-05fd-4d46-b381-4f1bb39458c7', '108f4bb0-2918-4340-a0c8-8b5fb5af249c'],
+	metaData: '{}',
+	metaDataInternal: '{}',
 };
 
 // use RouteComponentProps to get history props from Route
@@ -46,95 +42,113 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// hooks styles
 	const classes = useStyles();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, watch, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	// hooks: apollo
-	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
+	const [assetNewMutation, { loading, error: apolloError }] = useParticipantNewMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
 	// used in result state message
-	const username = watch(FormFieldNames.USERNAME);
+	const name = watch(FormFieldNames.NAME);
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
+	// console.log(`assetType:${getValues(FormFieldNames.ASSET_TYPE)}`);
 
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
-			// alert(JSON.stringify(data, undefined, 2));
-			const newPersonData: NewPersonInput = {
-				username: data.username,
-				password: data.password,
-				fiscalNumber: data.fiscalNumber,
+			const newParticipantData: NewParticipantInput = {
+				code: data.code,
+				name: data.name,
 				email: data.email,
+				ambassadors: data.ambassadors,
+				metaData: JSON.parse(data.metaData),
+				metaDataInternal: JSON.parse(data.metaDataInternal),
 			};
-			const response = await personNewMutation({ variables: { newPersonData } })
-				.catch(error => {
-					throw error;
-				})
+			const response = await assetNewMutation({ variables: { newParticipantData: newParticipantData } });
 
 			if (response) {
-				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${username}'` };
+				// TODO: finishe result message
+				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${name}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}
 		} catch (error) {
-			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
+			// don't throw here else we ctach react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
+			// console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		}
 	};
 
 	const formDefinition: Record<string, FormPropFields> = {
-		[FormFieldNames.FIRST_NAME]: {
+		[FormFieldNames.CODE]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
-			name: FormFieldNames.FIRST_NAME,
-			label: 'First name',
-			placeholder: 'John',
+			name: FormFieldNames.CODE,
+			controllProps: commonControlProps,
 			fullWidth: true,
-			className: classes.spacer,
-			rules: validationRuleRegExHelper(FormFieldNames.FIRST_NAME, c.REGEXP.name),
-			controllProps: commonControllProps,
+			label: c.I18N.codeLabel,
+			placeholder: c.I18N.codePlaceHolder,
+			rules: validationRuleRegExHelper(FormFieldNames.CODE, c.REGEXP.alphaNumeric),
 		},
-		[FormFieldNames.LAST_NAME]: {
+		[FormFieldNames.NAME]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
-			name: FormFieldNames.LAST_NAME,
-			label: 'Last name',
-			placeholder: 'Doe',
+			name: FormFieldNames.NAME,
+			controllProps: commonControlProps,
 			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.LAST_NAME, c.REGEXP.name),
-			controllProps: commonControllProps,
-		},
-		[FormFieldNames.USERNAME]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.USERNAME,
-			label: 'Username',
-			placeholder: 'johndoe',
-			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.USERNAME, c.REGEXP.name),
-			controllProps: commonControllProps,
-		},
-		[FormFieldNames.FISCAL_NUMBER]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.FISCAL_NUMBER,
-			label: 'Fiscal number',
-			placeholder: 'PT218269128',
-			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.FISCAL_NUMBER, c.REGEXP.name),
-			controllProps: commonControllProps,
+			label: c.I18N.assetLabel,
+			placeholder: c.I18N.assetPlaceHolder,
+			rules: validationRuleRegExHelper(FormFieldNames.NAME, c.REGEXP.name),
 		},
 		[FormFieldNames.EMAIL]: {
 			inputRef: useRef(),
-			type: FormInputType.TEXT,
+			type: FormInputType.EMAIL,
 			name: FormFieldNames.EMAIL,
-			label: 'Email',
-			placeholder: 'johndoe@example.com',
+			controllProps: commonControlProps,
 			fullWidth: true,
-			className: classes.spacer,
-			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.name),
-			controllProps: commonControllProps,
+			label: c.I18N.emailLabel,
+			placeholder: c.I18N.emailPlaceHolder,
+			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.email),
+		},
+		[FormFieldNames.AMBASSADORS]: {
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.AMBASSADORS,
+			controllProps: commonControlProps,
+			fullWidth: true,
+			label: c.I18N.ambassadorsLabel,
+			placeholder: c.I18N.ambassadorsPlaceHolder,
+			helperText: c.I18N.ambassadorsHelperText,
+			rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.uuidArray),
+		},
+		[FormFieldNames.META_DATA]: {
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.META_DATA,
+			controllProps: commonControlProps,
+			fullWidth: true,
+			label: c.I18N.metaDataLabel,
+			placeholder: c.I18N.metaDataPlaceHolder,
+			rules: {
+				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA))
+					? true
+					: validationMessage('invalid', FormFieldNames.META_DATA)
+			},
+		},
+		[FormFieldNames.META_DATA_INTERNAL]: {
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.META_DATA_INTERNAL,
+			controllProps: commonControlProps,
+			fullWidth: true,
+			label: c.I18N.metaDataInternalLabel,
+			placeholder: c.I18N.metaDataPlaceHolder,
+			rules: {
+				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL))
+					? true
+					: validationMessage('invalid', FormFieldNames.META_DATA_INTERNAL)
+			},
 		},
 	};
 
@@ -148,25 +162,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
 					{generateFormDefinition(formDefinition, control, errors, loading)}
-					<div className={classes.spacer}>
-						<Button
-							type='submit'
-							variant='contained'
-							className={classes.button}
-							disabled={loading}
-						>
-							{c.I18N.create}
-						</Button>
-						<Button
-							type='reset'
-							variant='contained'
-							className={classes.button}
-							disabled={loading}
-							onClick={() => handleResetHandler()}
-						>
-							Reset
-					</Button>
-					</div>
+					{generateFormButtonsDiv(classes, loading, handleResetHandler)}
 				</form>
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}

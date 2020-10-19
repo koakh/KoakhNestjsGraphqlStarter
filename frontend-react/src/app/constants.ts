@@ -18,12 +18,25 @@ const I18N: { [key: string]: string } = {
   rememberMe: 'Remember me',
   forgotPassword: 'Forgot password?',
   signUpUserRegisteredSuccessfully: 'User registered successfully! You can login with',
-  assetType: 'Asset type',
-  physicalAsset: 'Physical Asset',
-  digitalAsset: 'Digital Asset',
+  // input options
+  assetTypeOptionPhysicalAsset: 'Physical asset',
+  assetTypeOptionDigitalAsset: 'Digital asset',
+  transactionTypeTransferFunds: 'Transfer funds',
+  transactionTypeTransferVolunteeringHours: 'Transfer volunteering hours',
+  transactionTypeTransferGoods: 'Transfer goods',
+  transactionTypeTransferAsset: 'Transfer asset',
+  resourceTypeFunds: 'Funds',
+  resourceTypeVolunteeringHours: 'Volunteering hours',
+  resourceTypeGenericGoods: 'Generic goods',
+  resourceTypePhysicalAsset: 'Physical asset',
+  resourceTypeDigitalAsset: 'Digital asset',
   // inputs
+  assetTypeLabel: 'Asset type',
   causeLabel: 'Cause name',
   causePlaceHolder: 'Save the world today',
+  assetIdLabel: 'Asset Id',
+  assetIdPlaceholder: '16834df0-766d-4cc8-8baa-b0c37338ca34',
+  assetIdHelperText: 'valid asset id',
   assetLabel: 'Asset description',
   assetPlaceHolder: 'Wheelchair cum bed (Motorized)',
   ambassadorsLabel: 'Ambassadors',
@@ -50,12 +63,22 @@ const I18N: { [key: string]: string } = {
   // TODO: uuid
   inputPlaceHolder: 'PT182692128',
   inputHelperText: 'valid input fiscalNumber',
+  outputLabel: 'Output',
+  // TODO: uuid
+  outputPlaceHolder: 'PT182692128',
+  outputHelperText: 'valid output fiscalNumber',
+  codeLabel: 'code',
+  codePlaceHolder: 'valid alfanumeric code format',
+  transferTypeLabel: 'Transfer type',
+  resourceTypeLabel: 'Resource type',
+  quantityLabel: 'Quantity',
+  quantityPlaceHolder: '28.82',
+  currencyLabel: 'Currency',
+  goodsLabel: 'Goods',
+  goodsPlaceHolder: 'valid goods array',
+  currencyCodeEur: 'EUR',
+  currencyCodeUsd: 'USD',
 };
-
-const VALUES = {
-  PHYSICAL_ASSET: 'PHYSICAL_ASSET',
-  DIGITAL_ASSET: 'DIGITAL_ASSET',
-}
 
 const TAGS_OPTIONS = [
   { title: 'Nature', value: 'NATURE' },
@@ -97,11 +120,15 @@ const REGEXP: { [key: string]: RegExp; } = {
   location: /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/i,
   uuid: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
   uuidArray: /^([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})(,[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})*$/i,
+  // positive and negative
+  float: /^[+-]?((\d+(\.\d*)?)|(\.\d+))$/,
+  floatPositive: /^((\d+(\.\d*)?)|(\.\d+))$/i,
+  // currency code
+  // currencyCode: /^(?:[A-Z]{3} [0-9]+(?:\.[0-9]+)?)|(?:[0-9]+(?:\.[0-9]+)? [A-Z]{3})$/i,
 }
 
 export const appConstants = {
   I18N,
-  VALUES,
   TAGS_OPTIONS,
   DEFAULT_LOGIN_CREDENTIALS,
   COOKIES,

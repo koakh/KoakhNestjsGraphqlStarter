@@ -17,7 +17,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright } from '../../components/material-ui/other/Copyright';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
-import { commonControllProps, generateFormDefinition, getGraphQLApolloError, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormDefinition, getGraphQLApolloError, validationRuleRegExHelper } from '../../utils';
 import { copyrightProps, useStyles } from './SignInPage';
 
 type FormInputs = {
@@ -107,7 +107,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			helperText: 'a valid first Name',
 			fullWidth: true,
 			rules: validationRuleRegExHelper(FormFieldNames.FIRST_NAME, c.REGEXP.name),
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
 			inputRef: useRef(),
@@ -118,7 +118,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			helperText: 'a valid last name',
 			fullWidth: true,
 			rules: validationRuleRegExHelper(FormFieldNames.LAST_NAME, c.REGEXP.name),
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.USERNAME]: {
 			inputRef: useRef(),
@@ -128,7 +128,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'johndoe',
 			fullWidth: true,
 			rules: validationRuleRegExHelper(FormFieldNames.USERNAME, c.REGEXP.name),
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.PASSWORD]: {
 			inputRef: useRef(),
@@ -140,7 +140,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			fullWidth: true,
 			rules: validationRuleRegExHelper(FormFieldNames.PASSWORD, c.REGEXP.name),
 			controllProps: {
-				...commonControllProps,
+				...commonControlProps,
 				// must be capitalized
 				InputProps: {
 					endAdornment: (
@@ -169,7 +169,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					return getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION);
 				}
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
 			inputRef: useRef(),
@@ -180,7 +180,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			helperText: 'a valid pt fiscal Number',
 			fullWidth: true,
 			rules: validationRuleRegExHelper(FormFieldNames.FISCAL_NUMBER, c.REGEXP.name),
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.EMAIL]: {
 			inputRef: useRef(),
@@ -190,7 +190,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			placeholder: 'johndoe@example.com',
 			fullWidth: true,
 			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.name),
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 	};
 

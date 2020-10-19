@@ -11,7 +11,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields} from '../../types';
-import { generateFormDefinition, getGraphQLApolloError, useStyles, validationMessage, commonControllProps } from '../../utils';
+import { generateFormDefinition, getGraphQLApolloError, useStyles, validationMessage, commonControlProps } from '../../utils';
 
 type FormInputs = {
 	username: string;
@@ -100,7 +100,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 					message: validationMessage('invalid', FormFieldNames.FIRST_NAME),
 				},
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
 			inputRef: useRef(),
@@ -117,7 +117,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 					message: validationMessage('invalid', FormFieldNames.LAST_NAME),
 				},
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.USERNAME]: {
 			inputRef: useRef(),
@@ -133,7 +133,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 					message: validationMessage('invalid', FormFieldNames.USERNAME),
 				},
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
 			inputRef: useRef(),
@@ -150,7 +150,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 					message: validationMessage('invalid', FormFieldNames.FISCAL_NUMBER),
 				},
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 		[FormFieldNames.EMAIL]: {
 			inputRef: useRef(),
@@ -167,7 +167,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 					message: validationMessage('invalid', FormFieldNames.EMAIL),
 				},
 			},
-			controllProps: commonControllProps,
+			controllProps: commonControlProps,
 		},
 	};
 
