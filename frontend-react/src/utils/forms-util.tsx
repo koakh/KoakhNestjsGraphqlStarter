@@ -103,7 +103,7 @@ export const addToAutocomplete = (name: string, control: Control<Record<string, 
 /**
  * helper to get common form buttons
  */
-export const generateFormButtonsDiv = (classes: Record<"root" | "button" | "spacer", string>, loading: boolean, handleResetHandler: () => void ) => {
+export const generateFormButtonsDiv = (classes: Record<"root" | "button" | "spacer", string>, loading: boolean, handleResetHandler: () => void) => {
   return (
     <div className={classes.spacer}>
       <Button
@@ -186,12 +186,12 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
   return (
     <Fragment key={e.name}>
       <FormControl variant='outlined' margin='normal' fullWidth={e.fullWidth}>
-        <InputLabel id='demo-simple-select-outlined-label'>{e.label}</InputLabel>
+        <InputLabel id={`${e.name}-select-label`}>{e.label}</InputLabel>
         <Controller
           as={
             <Select
-              id='demo-simple-select-filled'
-              labelId='demo-simple-select-filled-label'
+              id={e.name}
+              labelId={`${e.name}-select-label`}
               label={e.label}
               inputRef={e.inputRef}
             >
@@ -199,6 +199,18 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
               {e.options.map(e => <MenuItem key={e.value} value={e.value}>{e.title}</MenuItem>)}
             </Select>
           }
+          // render={({ onChange, onBlur, value, name, ...props }) => (
+          //   <Select
+          //     id={e.name}
+          //     labelId={`${e.name}-select-label`}
+          //     label={e.label}
+          //     inputRef={e.inputRef}
+          //     onChange={(event) => console.log(event.target.value)}
+          //   >
+          //     <MenuItem value={''}>{c.I18N.none}</MenuItem>
+          //     {e.options.map(e => <MenuItem key={e.value} value={e.value}>{e.title}</MenuItem>)}
+          //   </Select>
+          // )}
           control={control}
           name={e.name}
           error={(errors[(e.name)] !== undefined)}
@@ -207,8 +219,8 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
           // TODO: wip
           rules={e.rules}
           disabled={loading}
-          onFocus={() => { e.inputRef.current.focus(); }}
           defaultValue={''}
+          onFocus={() => { e.inputRef.current.focus(); }}
         // TODO: this gives the margin problem in console
         // Failed prop type: Invalid prop `margin` of value `normal` supplied to 
         // {...e.controllProps}

@@ -61,19 +61,43 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// hooks styles
 	const classes = useStyles();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, watch, errors, control, reset, getValues, setValue } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	// hooks: apollo
 	const [causeNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
 	// used in result state message
-	const name = watch(FormFieldNames.TRANSACTION_TYPE);
+	const transactionType = watch(FormFieldNames.TRANSACTION_TYPE);
+	const resourceType = watch(FormFieldNames.RESOURCE_TYPE);
+	// TODO remove after fix forword message
+	const name = transactionType;
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
 	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
 	// console.log(`transactionType:${getValues(FormFieldNames.TRANSACTION_TYPE)}`);
+	// console.log('TRANSACTION_TYPE', name);
+	if (transactionType === TransactionType.TransferFunds && resourceType !== ResourceType.Funds) {
+		setTimeout(() => {
+			setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.Funds);
+		}, 100);
+	}
+	if (transactionType === TransactionType.TransferVolunteeringHours && resourceType !== ResourceType.VolunteeringHours) {
+		setTimeout(() => {
+			setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.VolunteeringHours);
+		}, 100);
+	}
+	if (transactionType === TransactionType.TransferGoods && resourceType !== ResourceType.GenericGoods) {
+		setTimeout(() => {
+			setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.GenericGoods);
+		}, 100);
+	}
+	if (transactionType === TransactionType.TransferAsset && resourceType !== ResourceType.PhysicalAsset) {
+		setTimeout(() => {
+			setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.PhysicalAsset);
+		}, 100);
+	}
 
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
@@ -133,12 +157,14 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('required', FormFieldNames.TRANSACTION_TYPE)
 			},
+			// TODO can be object or function
 			options: [
 				{ title: c.I18N.transactionTypeTransferFunds, value: TransactionType.TransferFunds },
 				{ title: c.I18N.transactionTypeTransferVolunteeringHours, value: TransactionType.TransferVolunteeringHours },
 				{ title: c.I18N.transactionTypeTransferGoods, value: TransactionType.TransferGoods },
 				{ title: c.I18N.transactionTypeTransferAsset, value: TransactionType.TransferAsset },
 			],
+			// onChange: () => console.log('here'),
 		},
 		[FormFieldNames.RESOURCE_TYPE]: {
 			inputRef: useRef(),
@@ -152,6 +178,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('required', FormFieldNames.RESOURCE_TYPE)
 			},
+			// TODO array or function, to use dynamic options
 			options: [
 				{ title: c.I18N.resourceTypeFunds, value: ResourceType.Funds },
 				{ title: c.I18N.resourceTypeVolunteeringHours, value: ResourceType.VolunteeringHours },
@@ -159,6 +186,9 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				{ title: c.I18N.resourceTypePhysicalAsset, value: ResourceType.PhysicalAsset },
 				{ title: c.I18N.resourceTypeDigitalAsset, value: ResourceType.DigitalAsset },
 			],
+			visible: (control) => {
+				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.TransferAsset);
+			}
 		},
 		[FormFieldNames.INPUT]: {
 			inputRef: useRef(),
@@ -191,6 +221,9 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			label: c.I18N.quantityLabel,
 			placeholder: c.I18N.quantityPlaceHolder,
 			rules: validationRuleRegExHelper(FormFieldNames.QUANTITY, c.REGEXP.floatPositive),
+			visible: (control) => {
+				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) !== TransactionType.TransferGoods);
+			}
 		},
 		[FormFieldNames.CURRENCY]: {
 			inputRef: useRef(),

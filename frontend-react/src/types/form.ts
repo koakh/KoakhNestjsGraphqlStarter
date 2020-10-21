@@ -38,7 +38,8 @@ export type FormPropFields = {
   type: FormInputType,
   name: string,
   label: string;
-  defaultValue?: string,
+  // TODO: not used, we use forme defaultValues
+  // defaultValue?: string,
   placeholder?: string,
   helperText?: string,
   fullWidth?: boolean,
@@ -61,9 +62,12 @@ export type FormPropFields = {
     validate?: Validate | Record<string, Validate>
   },
   // autocomplete
-  options?: AutocompleteOption[],
   multipleOptions?: boolean,
-  visible?: boolean | ((control: Control<Record<string, any>>) => boolean),  
+  // functions
+  options?: AutocompleteOption[], // | ((control: Control<Record<string, any>>) => AutocompleteOption[]),
+  visible?: boolean | ((control: Control<Record<string, any>>) => boolean),
+  // events
+  // onChange?: () => void,
 }
 // components
 export type AutocompleteOption = { title: string, value: string | number };
