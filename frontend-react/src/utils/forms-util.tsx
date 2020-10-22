@@ -3,23 +3,23 @@
  */
 
 import { ApolloError } from '@apollo/client';
+import { Button, FormHelperText } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
-import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import Autocomplete, { AutocompleteRenderInputParams } from "@material-ui/lab/Autocomplete";
+import { capitalCase, constantCase } from "change-case";
 import React, { Fragment } from 'react';
 import { Control, Controller, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '../app/constants';
 import { AutocompleteOption, FormInputType, FormPropFields } from '../types';
 import { recordToArray } from './main-util';
-import { Button, FormHelperText } from '@material-ui/core';
-import { capitalCase, constantCase } from "change-case";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -85,7 +85,6 @@ export const getGraphQLApolloError = (apolloError: ApolloError): string => {
  */
 export const addToAutocomplete = (name: string, control: Control<Record<string, any>>, value: string): void => {
   // clone
-  debugger;
   const result: Array<AutocompleteOption> = [...control.getValues(name)];
   const newTitle = capitalCase(value);
   const newValue = constantCase(value);
@@ -196,7 +195,8 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
               inputRef={e.inputRef}
             >
               <MenuItem value={''}>{c.I18N.none}</MenuItem>
-              {e.options.map(e => <MenuItem key={e.value} value={e.value}>{e.title}</MenuItem>)}
+              {/* use key or value */}
+              {e.options && e.options.map((e: AutocompleteOption) => <MenuItem key={e.key ? e.key : e.value} value={e.value}>{e.title}</MenuItem>)}
             </Select>
           }
           // render={({ onChange, onBlur, value, name, ...props }) => (
@@ -243,9 +243,6 @@ const generateAutocomplete = (
   interface InputProps {
     onKeyDown: (event: object) => void;
   }
-  // interface InputParams extends AutocompleteRenderInputParams {
-  //   inputProps: InputProps;
-  // }
 
   const handleKeyDown = (event: any) => {
     switch (event.key) {
@@ -315,26 +312,31 @@ const generateAutocomplete = (
             id={e.name}
             options={e.options}
             multiple={e.multipleOptions}
-            disableCloseOnSelect
+            disableCloseOnSelect={e.disableCloseOnSelect}
             filterSelectedOptions
             autoComplete
             autoHighlight
             freeSolo
-            getOptionLabel={(option) => option.title}
+            getOptionLabel={(option) => (option.title) ? option.title : ''}
             getOptionSelected={(option, value) => option.value === value.value}
             renderOption={(option, { selected }) => (
               <Fragment>
-                <Checkbox
-                  icon={icon}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  checked={selected}
-                />
+                {e.multipleOptions &&
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                }
                 {option.title}
               </Fragment>
             )}
             renderInput={(params: AutocompleteRenderInputParams) => {
-              (params.inputProps as any).onKeyDown = handleKeyDown;
+              // add listener if addToAutocomplete is enabled
+              if (e.addToAutocomplete) {
+                (params.inputProps as any).onKeyDown = handleKeyDown;
+              }
               return (
                 <TextField
                   name={e.name}
@@ -351,7 +353,7 @@ const generateAutocomplete = (
             }}
             onChange={(e, data) => onChange(data)}
             fullWidth={e.fullWidth}
-            disabled={loading}
+            disabled={loading || e.disabled}
             onFocus={() => { e.inputRef.current.focus(); }}
             // defaultValue={[e.options[0], e.options[2]]}
             // props is the way to inject default values

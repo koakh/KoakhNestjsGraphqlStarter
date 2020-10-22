@@ -177,6 +177,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			},
 			options: c.TAGS_OPTIONS,
 			multipleOptions: true,
+			addToAutocomplete: true,
 		},
 		[FormFieldNames.META_DATA]: {
 			inputRef: useRef(),

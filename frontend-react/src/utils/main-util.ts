@@ -15,11 +15,20 @@ export const recordToArray = <T>(record: Record<string, T>) => {
 }
 
 /**
- * check if is a valid json object
+ * check if is a valid json object, or array of valid objects
  */
 export const isValidJsonObject = (json: string): boolean => {
   try {
-    JSON.parse(json);
+    // validate all elements of array
+    if (Array.isArray(json)){
+      Array.from(json).forEach(e => {
+        // don't reparse already object, use JSON.stringify to check if is valid
+        JSON.stringify(e);
+      });
+    } else {
+      // parse string
+      JSON.parse(json);
+    }
     // console.log(JSON.stringify(parsed));
   } catch (error) {
     return false;
@@ -32,6 +41,20 @@ export const isValidJsonObject = (json: string): boolean => {
  */
 export const isValidEnum = (enumType: any, enumKey: string): boolean => {
   return Object.values(enumType).includes(enumKey);
+}
+
+/**
+ * validate regEx
+ */
+export const validateRegExp = (value: string, regExp: RegExp): boolean => {
+  return regExp.test(value);
+}
+
+/**
+ * validate regEx
+ */
+export const validateRegExpObjectProperty = (obj: any, prop: string, regExp: RegExp): boolean => {
+  return (obj && obj[prop] && regExp.test(obj[prop]));
 }
 
 /**

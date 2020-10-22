@@ -1,3 +1,5 @@
+import { GoodsOptions } from "../types";
+
 const I18N: { [key: string]: string } = {
   // keywords
   error: 'Error',
@@ -86,6 +88,51 @@ const TAGS_OPTIONS = [
   { title: 'Economy', value: 'ECONOMY' },
 ]
 
+const GOODS_OPTIONS: GoodsOptions[] = [
+  {
+    // require to pass key
+    key: 1,
+    title: 'option1: 10x001 + 20x002',
+    value: [
+      {
+        code: '001',
+        barCode: 'ean001',
+        name: 'name001',
+        description: 'description001',
+        quantity: 10
+      },
+      {
+        code: '002',
+        barCode: 'ean002',
+        name: 'name002',
+        description: 'description002',
+        quantity: 20
+      }
+    ]
+  },
+  {
+    // require to pass key
+    key: 2,
+    title: 'option2: 30x003 + 40x004',
+    value: [
+      {
+        code: '005',
+        barCode: 'ean005',
+        name: 'name005',
+        description: 'description005',
+        quantity: 50
+      },
+      {
+        code: '004',
+        barCode: 'ean004',
+        name: 'name004',
+        description: 'description004',
+        quantity: 40
+      }
+    ]
+  }
+];
+
 const DEFAULT_LOGIN_CREDENTIALS = {
   username: 'admin',    // johndoe
   password: 'Aa123#12', // 12345678
@@ -130,6 +177,7 @@ const REGEXP: { [key: string]: RegExp; } = {
 export const appConstants = {
   I18N,
   TAGS_OPTIONS,
+  GOODS_OPTIONS,
   DEFAULT_LOGIN_CREDENTIALS,
   COOKIES,
   DRAWER_WIDTH,

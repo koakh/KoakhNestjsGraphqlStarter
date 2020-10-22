@@ -1,16 +1,18 @@
 import { Box } from '@material-ui/core';
-import React, { Fragment, useRef } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
-import { formCommonOptions, RouteKey, routes } from '../../app/config';
+import { envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
-import { NewTransactionInput, useTransactionNewMutation } from '../../generated/graphql';
-import { CurrencyCode, FormDefaultValues, FormInputType, FormPropFields, ResourceType, Tag, TransactionType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { NewTransactionInput, useCausesLazyQuery, usePersonsLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
+import { AutocompleteOption, CurrencyCode, FormDefaultValues, FormInputType, FormPropFields, ResourceType, Tag, TransactionType } from '../../types';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validateRegExpObjectProperty, validationMessage, validationRuleRegExHelper } from '../../utils';
+
+let renderCount = 0;
 
 type FormInputs = {
 	transactionType: string;
@@ -44,7 +46,8 @@ enum FormFieldNames {
 const defaultValues: FormDefaultValues = {
 	transactionType: TransactionType.TransferFunds,
 	resourceType: ResourceType.Funds,
-	input: '4ea88521-031b-4279-9165-9c10e1839001',
+	// '4ea88521-031b-4279-9165-9c10e1839001',
+	input: '',
 	output: '4ea88521-031b-4279-9165-9c10e1838010',
 	quantity: 10,
 	currency: 'EUR',
@@ -66,6 +69,34 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	const [causeNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
+	// input personOptions: require [] array to be a reference, not a primitive
+	const [personOptions, setPersonOptions] = useState<AutocompleteOption[]>([]);
+	const [personOptionsLoaded, setPersonOptionsLoaded] = useState<boolean>(false);
+	const [personQuery, { data: personQueryData, loading: personQueryLoading, error: personQueryError }] = usePersonsLazyQuery({
+		fetchPolicy: e.apolloFetchPolicy,
+		variables: { skip: 0, take: 50 }
+	});
+	if (!personQueryData && !personQueryLoading) { personQuery(); };
+	if (!personOptionsLoaded && personQueryData && !personQueryLoading && !personQueryError) {
+		setPersonOptions(personQueryData.persons.map((e) => {
+			return { title: `${e.fiscalNumber}: ${e.username}`, value: e.id }
+		}));
+		setPersonOptionsLoaded(true);
+	}
+	// output personOptions: require [] array to be a reference, not a primitive
+	const [causeOptions, setCauseOptions] = useState<AutocompleteOption[]>([]);
+	const [causeOptionsLoaded, setCauseOptionsLoaded] = useState<boolean>(false);
+	const [causeQuery, { data: causeQueryData, loading: causeQueryLoading, error: causeQueryError }] = useCausesLazyQuery({
+		fetchPolicy: e.apolloFetchPolicy,
+		variables: { skip: 0, take: 50 }
+	});
+	if (!causeQueryData && !causeQueryLoading) { causeQuery(); };
+	if (!causeOptionsLoaded && causeQueryData && !causeQueryLoading && !causeQueryError) {
+		setCauseOptions(causeQueryData.causes.map((e) => {
+			return { title: `${e.name}`, value: e.id }
+		}));
+		setCauseOptionsLoaded(true);
+	}
 	// used in result state message
 	const transactionType = watch(FormFieldNames.TRANSACTION_TYPE);
 	const resourceType = watch(FormFieldNames.RESOURCE_TYPE);
@@ -74,28 +105,35 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
+	renderCount++;
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
 	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
+	// console.log(`goods:${JSON.stringify(getValues(FormFieldNames.GOODS), undefined, 2)}`);
+	// console.log(`input:${JSON.stringify(getValues(FormFieldNames.INPUT), undefined, 2)}`);
 	// console.log(`transactionType:${getValues(FormFieldNames.TRANSACTION_TYPE)}`);
 	// console.log('TRANSACTION_TYPE', name);
 	if (transactionType === TransactionType.TransferFunds && resourceType !== ResourceType.Funds) {
 		setTimeout(() => {
-			setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.Funds);
+			// TODO
+			// setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.Funds);
 		}, 100);
 	}
 	if (transactionType === TransactionType.TransferVolunteeringHours && resourceType !== ResourceType.VolunteeringHours) {
 		setTimeout(() => {
-			setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.VolunteeringHours);
+			// TODO
+			// setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.VolunteeringHours);
 		}, 100);
 	}
 	if (transactionType === TransactionType.TransferGoods && resourceType !== ResourceType.GenericGoods) {
 		setTimeout(() => {
-			setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.GenericGoods);
+			// TODO
+			// setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.GenericGoods);
 		}, 100);
 	}
 	if (transactionType === TransactionType.TransferAsset && resourceType !== ResourceType.PhysicalAsset) {
 		setTimeout(() => {
-			setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.PhysicalAsset);
+			// TODO
+			// setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.PhysicalAsset);
 		}, 100);
 	}
 
@@ -128,12 +166,13 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				metaData: JSON.parse(data.metaData),
 				metaDataInternal: JSON.parse(data.metaDataInternal),
 			};
+			debugger;
 			// console.log(JSON.stringify(data, undefined, 2));
 			// console.log(JSON.stringify(newTransactionData, undefined, 2));
 			const response = await causeNewMutation({ variables: { newTransactionData: newTransactionData } });
 
 			if (response) {
-				// TODO: finishe result message
+				// TODO: finish result message
 				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${name}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
@@ -157,7 +196,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('required', FormFieldNames.TRANSACTION_TYPE)
 			},
-			// TODO can be object or function
+			// TODO can be object or function, better to always be a function
 			options: [
 				{ title: c.I18N.transactionTypeTransferFunds, value: TransactionType.TransferFunds },
 				{ title: c.I18N.transactionTypeTransferVolunteeringHours, value: TransactionType.TransferVolunteeringHours },
@@ -192,25 +231,39 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		},
 		[FormFieldNames.INPUT]: {
 			inputRef: useRef(),
-			type: FormInputType.TEXT,
+			type: FormInputType.AUTOCOMPLETE,
 			name: FormFieldNames.INPUT,
 			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.inputLabel,
 			placeholder: c.I18N.inputPlaceholder,
 			helperText: c.I18N.inputHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.INPUT, c.REGEXP.uuid),
+			rules: {
+				validate: () => validateRegExpObjectProperty(getValues(FormFieldNames.INPUT), 'value', c.REGEXP.uuid)
+					? true
+					: validationMessage('required', FormFieldNames.INPUT)
+			},
+			disabled: !causeOptionsLoaded,
+			options: causeOptions,
+			disableCloseOnSelect: false,
 		},
 		[FormFieldNames.OUTPUT]: {
 			inputRef: useRef(),
-			type: FormInputType.TEXT,
+			type: FormInputType.AUTOCOMPLETE,
 			name: FormFieldNames.OUTPUT,
 			controllProps: commonControlProps,
 			fullWidth: true,
-			label: c.I18N.outputLabel,
-			placeholder: c.I18N.outputPlaceholder,
-			helperText: c.I18N.outputHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.OUTPUT, c.REGEXP.uuid),
+			label: c.I18N.inputLabel,
+			placeholder: c.I18N.inputPlaceholder,
+			helperText: c.I18N.inputHelperText,
+			rules: {
+				validate: () => validateRegExpObjectProperty(getValues(FormFieldNames.OUTPUT), 'value', c.REGEXP.uuid)
+					? true
+					: validationMessage('required', FormFieldNames.OUTPUT)
+			},
+			disabled: !personOptionsLoaded,
+			options: personOptions,
+			disableCloseOnSelect: false,
 		},
 		[FormFieldNames.QUANTITY]: {
 			inputRef: useRef(),
@@ -264,13 +317,18 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		// add goods here
 		[FormFieldNames.GOODS]: {
 			inputRef: useRef(),
-			type: FormInputType.TEXT,
+			type: FormInputType.SELECT,
 			name: FormFieldNames.GOODS,
 			controllProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.goodsLabel,
 			placeholder: c.I18N.goodsPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.GOODS, c.REGEXP.alphaNumeric),
+			rules: {
+				validate: () => isValidJsonObject(getValues(FormFieldNames.GOODS))
+					? true
+					: validationMessage('invalid', FormFieldNames.GOODS)
+			},
+			options: c.GOODS_OPTIONS,
 			visible: (control) => {
 				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.TransferGoods);
 			}
@@ -284,23 +342,6 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			label: c.I18N.locationLabel,
 			placeholder: c.I18N.locationPlaceHolder,
 			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location),
-		},
-		[FormFieldNames.TAGS]: {
-			inputRef: useRef(),
-			type: FormInputType.AUTOCOMPLETE,
-			name: FormFieldNames.TAGS,
-			controllProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.tagsLabel,
-			placeholder: c.I18N.tagsLabel,
-			helperText: c.I18N.tagsPlaceHolder,
-			rules: {
-				validate: () => (getValues(FormFieldNames.TAGS) as string[]).length > 0
-					? true
-					: validationMessage('invalid', FormFieldNames.TAGS)
-			},
-			options: c.TAGS_OPTIONS,
-			multipleOptions: true,
 		},
 		[FormFieldNames.META_DATA]: {
 			inputRef: useRef(),
@@ -334,7 +375,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 
 	return (
 		<Fragment>
-			<PageTitle>{routes[RouteKey.TRANSACTION_UPSERT_FORM].title}</PageTitle>
+			<PageTitle>{routes[RouteKey.TRANSACTION_UPSERT_FORM].title} [{renderCount}]</PageTitle>
 			<Box component='span' m={1}>
 				{/* 'handleSubmit' will validate your inputs before invoking 'onSubmit' */}
 				<form
