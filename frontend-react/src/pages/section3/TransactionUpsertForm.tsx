@@ -111,6 +111,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// console.log(`goods:${JSON.stringify(getValues(FormFieldNames.GOODS), undefined, 2)}`);
 	// console.log(`input:${JSON.stringify(getValues(FormFieldNames.INPUT), undefined, 2)}`);
 	// console.log(`transactionType:${getValues(FormFieldNames.TRANSACTION_TYPE)}`);
+	// console.log(`resourceType:${getValues(FormFieldNames.RESOURCE_TYPE)}`);
 	// console.log('TRANSACTION_TYPE', name);
 	if (transactionType === TransactionType.TransferFunds && resourceType !== ResourceType.Funds) {
 		setTimeout(() => {
@@ -140,36 +141,36 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
-			// TODO: wip 
-			const keys = Object.values(data);
-			const newTransactionDataTest: any = keys.map((e) => { return { [e]: (data as any)[e] } });
-			debugger;
+			// TODO: wip create a map function
+			// const keys = Object.values(data);
+			// const newTransactionDataTest: any = keys.map((e) => { return { [e]: (data as any)[e] } });
+			// debugger;
+			// TODO only send data from current transactionType
 			const newTransactionData: NewTransactionInput = {
 				transactionType: data.transactionType,
 				resourceType: data.resourceType,
 				// TODO: must get owner type on chaincode side, from uuid
 				input: {
 					type: 'com.chain.solidary.model.person',
-					id: data.input,
+					id: (data.input as any).value,
 				},
 				// TODO: must get owner type on chaincode side, from uuid
 				output: {
-					type: 'com.chain.solidary.model.person',
-					id: data.output,
+					type: 'com.chain.solidary.model.cause',
+					id: (data.output as any).value,
 				},
 				quantity: data.quantity,
 				currency: data.currency,
 				assetId: data.assetId,
 				goods: data.goods,
 				location: data.location,
-				tags: data.tags.map((e: Tag) => e.value),
 				metaData: JSON.parse(data.metaData),
 				metaDataInternal: JSON.parse(data.metaDataInternal),
 			};
-			debugger;
 			// console.log(JSON.stringify(data, undefined, 2));
-			// console.log(JSON.stringify(newTransactionData, undefined, 2));
+			console.log(JSON.stringify(newTransactionData, undefined, 2));
 			const response = await causeNewMutation({ variables: { newTransactionData: newTransactionData } });
+			debugger;
 
 			if (response) {
 				// TODO: finish result message
@@ -178,8 +179,8 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}
 		} catch (error) {
-			// don't throw here else we ctach react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
-			// console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
+			// don't throw here else we catch react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
+			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		}
 	};
 
@@ -225,9 +226,9 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				{ title: c.I18N.resourceTypePhysicalAsset, value: ResourceType.PhysicalAsset },
 				{ title: c.I18N.resourceTypeDigitalAsset, value: ResourceType.DigitalAsset },
 			],
-			visible: (control) => {
-				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.TransferAsset);
-			}
+			// visible: (control) => {
+			// 	return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.TransferAsset);
+			// }
 		},
 		[FormFieldNames.INPUT]: {
 			inputRef: useRef(),
@@ -243,8 +244,8 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('required', FormFieldNames.INPUT)
 			},
-			disabled: !causeOptionsLoaded,
-			options: causeOptions,
+			disabled: !personOptionsLoaded,
+			options: personOptions,
 			disableCloseOnSelect: false,
 		},
 		[FormFieldNames.OUTPUT]: {
@@ -253,16 +254,16 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			name: FormFieldNames.OUTPUT,
 			controllProps: commonControlProps,
 			fullWidth: true,
-			label: c.I18N.inputLabel,
-			placeholder: c.I18N.inputPlaceholder,
-			helperText: c.I18N.inputHelperText,
+			label: c.I18N.outputLabel,
+			placeholder: c.I18N.outputPlaceholder,
+			helperText: c.I18N.outputHelperText,
 			rules: {
 				validate: () => validateRegExpObjectProperty(getValues(FormFieldNames.OUTPUT), 'value', c.REGEXP.uuid)
 					? true
 					: validationMessage('required', FormFieldNames.OUTPUT)
 			},
-			disabled: !personOptionsLoaded,
-			options: personOptions,
+			disabled: !causeOptionsLoaded,
+			options: causeOptions,
 			disableCloseOnSelect: false,
 		},
 		[FormFieldNames.QUANTITY]: {

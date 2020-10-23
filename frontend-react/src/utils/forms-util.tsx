@@ -65,16 +65,18 @@ export const validationRuleRegExHelper = (fieldName: string, regExp: RegExp) => 
  */
 export const getGraphQLApolloError = (apolloError: ApolloError): string => {
   let errorMessage = '';
+  // TODO remove !!
   if (apolloError) {
-    if (typeof (apolloError.graphQLErrors[0]!!.extensions!!.exception!!.responses[0]!!.error!!.message) === 'string') {
-      errorMessage = apolloError.graphQLErrors[0].extensions.exception.responses[0].error.message;
-    } else if (typeof (apolloError.graphQLErrors[0]!!.message as any).error!!.message === 'string') {
-      errorMessage = (apolloError.graphQLErrors[0]!!.message as any).error!!.message;
-    } else if (typeof (apolloError.graphQLErrors[0].message as any).error === 'string') {
-      errorMessage = (apolloError.graphQLErrors[0].message as any).error;
-    } else if (typeof (apolloError.message === 'string')) {
-      errorMessage = apolloError.message;
-    }
+    // if (typeof (apolloError.graphQLErrors[0]!!.extensions!!.exception!!.responses[0]!!.error!!.message) === 'string') {
+    //   errorMessage = apolloError.graphQLErrors[0].extensions.exception.responses[0].error.message;
+    // } else if (typeof (apolloError.graphQLErrors[0]!!.message as any).error!!.message === 'string') {
+    //   errorMessage = (apolloError.graphQLErrors[0]!!.message as any).error!!.message;
+    // } else if (typeof (apolloError.graphQLErrors[0].message as any).error === 'string') {
+    //   errorMessage = (apolloError.graphQLErrors[0].message as any).error;
+    // } else if (typeof (apolloError.message === 'string')) {
+    //   errorMessage = apolloError.message;
+    // }
+    errorMessage = apolloError.message
   }
   return errorMessage;
 }

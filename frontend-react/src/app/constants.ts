@@ -64,11 +64,11 @@ const I18N: { [key: string]: string } = {
   inputLabel: 'Input',
   // TODO: uuid
   inputPlaceHolder: 'PT182692128',
-  inputHelperText: 'valid input fiscalNumber',
+  inputHelperText: 'valid input entity',
   outputLabel: 'Output',
   // TODO: uuid
   outputPlaceHolder: 'PT182692128',
-  outputHelperText: 'valid output fiscalNumber',
+  outputHelperText: 'valid output entity',
   codeLabel: 'code',
   codePlaceHolder: 'valid alfanumeric code format',
   transferTypeLabel: 'Transfer type',

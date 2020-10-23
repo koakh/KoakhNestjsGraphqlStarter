@@ -94,7 +94,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}
 		} catch (error) {
-			// don't throw here else we ctach react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
+			// don't throw here else we catch react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
 			// console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		}
 	};
