@@ -9,8 +9,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewCauseInput, useCauseNewMutation } from '../../generated/graphql';
-import { EntityType, FormDefaultValues, FormInputType, FormPropFields, Tag } from '../../types';
-import { commonControlProps, currentFormatDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, Tag } from '../../types';
+import { commonControlProps, currentFormatDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	name: string,
@@ -42,9 +42,9 @@ const defaultValues: FormDefaultValues = {
 	email: 'mail@swn.com',
 	ambassadors: 'PT182692125 PT582692178',
 	// current plus one day/24h
-	startDate: currentFormatDate(new Date(Date.now() + (( 3600 * 1000 * 24) * 0)), false),
+	startDate: currentFormatDate(new Date(Date.now() + ((3600 * 1000 * 24) * 0)), false),
 	// current plus one day/24h*7
-	endDate: currentFormatDate(new Date(Date.now() + (( 3600 * 1000 * 24) * 7)), false),
+	endDate: currentFormatDate(new Date(Date.now() + ((3600 * 1000 * 24) * 7)), false),
 	location: '12.1890144,-28.5171909',
 	input: '4ea88521-031b-4279-9165-9c10e1839001',
 	tags: [
@@ -86,7 +86,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 				endDate: data.endDate,
 				location: data.location,
 				input: {
-					type: EntityType.Person,
+					type: EntityType.person,
 					id: data.input,
 				},
 				tags: data.tags.map((e: Tag) => e.value),
@@ -98,8 +98,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			const response = await causeNewMutation({ variables: { newCauseData: newCauseData } });
 
 			if (response) {
-				// TODO: finishe result message
-				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${name}'` };
+				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.cause, id: response.data.causeNew.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}

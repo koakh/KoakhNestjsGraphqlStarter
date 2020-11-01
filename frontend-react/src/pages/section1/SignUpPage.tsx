@@ -17,7 +17,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright } from '../../components/material-ui/other/Copyright';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
-import { commonControlProps, generateFormDefinition, getGraphQLApolloError, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormDefinition, getGraphQLApolloError, getInjected, validationRuleRegExHelper } from '../../utils';
 import { copyrightProps, useStyles } from './SignInPage';
 
 type FormInputs = {
@@ -88,7 +88,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				})
 
 			if (response) {
-				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${username}'` };
+				const payload = { message: getInjected(c.I18N.signUpUserRegisteredSuccessfully, { username }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}

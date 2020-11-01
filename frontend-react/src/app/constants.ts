@@ -24,7 +24,9 @@ const I18N: { [key: string]: string } = {
   nonAccountSignUp: 'Don\'t have an account? Sign Up',
   rememberMe: 'Remember me',
   forgotPassword: 'Forgot password?',
-  signUpUserRegisteredSuccessfully: 'User registered successfully! You can login with',
+  // template
+  signUpUserRegisteredSuccessfully: 'User registered successfully! You can login with \'${username}\'',
+  newModelCreatedSuccessfully: 'New ${model} id: \'${id}\' created successfully!',
   // select options
   assetTypeOptionPhysicalAsset: 'Physical asset',
   assetTypeOptionDigitalAsset: 'Digital asset',
@@ -97,9 +99,9 @@ const I18N: { [key: string]: string } = {
 };
 
 const ENTITY_TYPE_OPTIONS = [
-  { title: I18N.entityTypeOptionPerson, value: EntityType.Person },
-  { title: I18N.entityTypeOptionParticipant, value: EntityType.Participant },
-  { title: I18N.entityTypeOptionCause, value: EntityType.Cause },
+  { title: I18N.entityTypeOptionPerson, value: EntityType.person },
+  { title: I18N.entityTypeOptionParticipant, value: EntityType.participant },
+  { title: I18N.entityTypeOptionCause, value: EntityType.cause },
 ];
 
 const TAGS_OPTIONS = [
@@ -175,7 +177,7 @@ const REGEXP: { [key: string]: RegExp; } = {
   // comma separated array of emails: https://www.thetopsites.net/article/52527605.shtml
   emailArray: /^([\w+-.%]+@[\w.-]+\.[A-Za-z]{2,4})(,[\w+-.%]+@[\w.-]+\.[A-Za-z]{2,4})*$/i,
   // username 4 to 16 chars
-  username: /^([a-zA-Z]{4,16})$/i,
+  username: /^([a-zA-Z0-9-_]{4,16})$/i,
   // Minimum 8 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character:
   // https://medium.com/@ikhsanudinhakim/most-used-regex-pattern-for-password-validation-314645912cec
   password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{6,}$/i,

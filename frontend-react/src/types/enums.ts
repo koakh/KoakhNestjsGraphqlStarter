@@ -1,7 +1,15 @@
+export enum ModelType {
+  asset = 'Asset',
+  cause = 'Cause',
+  person = 'Person',
+  participant = 'Participant',
+  transaction = 'Transaction',
+}
+
 export enum EntityType {
-  Participant = 'com.chain.solidary.model.participant',
-  Person = 'com.chain.solidary.model.person',
-  Cause = 'com.chain.solidary.model.cause'
+  participant = 'com.chain.solidary.model.participant',
+  person = 'com.chain.solidary.model.person',
+  cause = 'com.chain.solidary.model.cause'
 }
 
 export enum AssetType {
@@ -10,18 +18,18 @@ export enum AssetType {
 }
 
 export enum TransactionType {
-  TransferFunds = 'TRANSFER_FUNDS',
-  TransferVolunteeringHours = 'TRANSFER_VOLUNTEERING_HOURS',
-  TransferGoods = 'TRANSFER_GOODS',
-  TransferAsset = 'TRANSFER_ASSET',
+  transferFunds = 'TRANSFER_FUNDS',
+  transferVolunteeringHours = 'TRANSFER_VOLUNTEERING_HOURS',
+  transferGoods = 'TRANSFER_GOODS',
+  transferAsset = 'TRANSFER_ASSET',
 }
 
 export enum ResourceType {
-  Funds = 'FUNDS',
-  VolunteeringHours = 'VOLUNTEERING_HOURS',
-  GenericGoods = 'GENERIC_GOODS',
-  PhysicalAsset = 'PHYSICAL_ASSET',
-  DigitalAsset = 'DIGITAL_ASSET',
+  funds = 'FUNDS',
+  volunteeringHours = 'VOLUNTEERING_HOURS',
+  genericGoods = 'GENERIC_GOODS',
+  physicalAsset = 'PHYSICAL_ASSET',
+  digitalAsset = 'DIGITAL_ASSET',
 }
 
 export enum CurrencyCode {

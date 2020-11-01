@@ -1,5 +1,6 @@
-import { Box } from '@material-ui/core';
+import { Box, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
+import { Person } from '@material-ui/icons';
 import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
@@ -10,8 +11,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields} from '../../types';
-import { generateFormDefinition, getGraphQLApolloError, useStyles, validationMessage, commonControlProps, validationRuleRegExHelper } from '../../utils';
+import { FormDefaultValues, FormInputType, FormPropFields, ModelType } from '../../types';
+import { generateFormDefinition, getGraphQLApolloError, useStyles, validationMessage, commonControlProps, validationRuleRegExHelper, getInjected } from '../../utils';
 
 type FormInputs = {
 	firstName: string;
@@ -75,10 +76,10 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 			const response = await personNewMutation({ variables: { newPersonData } })
 				.catch(error => {
 					throw error;
-				})
+				});
 
 			if (response) {
-				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${username}'` };
+				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.person, id: response.data.personRegister.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}

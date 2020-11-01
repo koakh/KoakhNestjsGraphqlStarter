@@ -116,3 +116,11 @@ export const currentFormatDate = (date: Date, withTime: boolean = true): string 
     ? `${yy}-${mo}-${dd} ${hh}:${mm}:${ss}`
     : `${yy}-${mo}-${dd}`;
 };
+
+
+/**
+ * simple string template engine
+ * @param stringTemplate 
+ * @param obj 
+ */
+export const getInjected = (stringTemplate: string, obj: any) => stringTemplate.replace(/\${(.*?)}/g, (x, g) => obj[g]);

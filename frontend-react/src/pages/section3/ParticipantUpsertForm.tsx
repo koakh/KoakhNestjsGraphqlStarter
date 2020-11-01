@@ -9,8 +9,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewParticipantInput, useParticipantNewMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
-import { commonControlProps, generateFormDefinition, generateFormButtonsDiv, getGraphQLApolloError, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { FormDefaultValues, FormInputType, FormPropFields, ModelType } from '../../types';
+import { commonControlProps, generateFormDefinition, generateFormButtonsDiv, getGraphQLApolloError, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper, getInjected } from '../../utils';
 
 type FormInputs = {
 	code: string,
@@ -73,8 +73,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			const response = await assetNewMutation({ variables: { newParticipantData: newParticipantData } });
 
 			if (response) {
-				// TODO: finish result message in every forms
-				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${name}'` };
+				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.participant, id: response.data.participantNew.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}

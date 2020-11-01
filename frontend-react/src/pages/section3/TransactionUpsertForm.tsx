@@ -9,8 +9,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewTransactionInput, useCausesLazyQuery, usePersonsLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
-import { AutocompleteOption, CurrencyCode, FormDefaultValues, FormInputType, FormPropFields, ResourceType, Tag, TransactionType, EntityType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validateRegExpObjectProperty, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { AutocompleteOption, CurrencyCode, FormDefaultValues, FormInputType, FormPropFields, ResourceType, Tag, TransactionType, EntityType, ModelType } from '../../types';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validateRegExpObjectProperty, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 let renderCount = 0;
 
@@ -50,9 +50,9 @@ enum FormFieldNames {
 const defaultValues: FormDefaultValues = {
 	transactionType: c.VALUES.undefined,
 	resourceType: c.VALUES.undefined,
-	inputType: EntityType.Person,
+	inputType: EntityType.person,
 	input: '',
-	outputType: EntityType.Cause,
+	outputType: EntityType.cause,
 	output: c.VALUES.undefined,
 	quantity: 1,
 	currency: 'EUR',
@@ -121,25 +121,25 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// console.log(`input:${getValues(FormFieldNames.INPUT)}`);
 	// console.log(`resourceType:${getValues(FormFieldNames.RESOURCE_TYPE)}`);
 	// console.log('TRANSACTION_TYPE', name);
-	if (transactionType === TransactionType.TransferFunds && resourceType !== ResourceType.Funds) {
+	if (transactionType === TransactionType.transferFunds && resourceType !== ResourceType.funds) {
 		setTimeout(() => {
 			// TODO
 			// setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.Funds);
 		}, 100);
 	}
-	if (transactionType === TransactionType.TransferVolunteeringHours && resourceType !== ResourceType.VolunteeringHours) {
+	if (transactionType === TransactionType.transferVolunteeringHours && resourceType !== ResourceType.volunteeringHours) {
 		setTimeout(() => {
 			// TODO
 			// setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.VolunteeringHours);
 		}, 100);
 	}
-	if (transactionType === TransactionType.TransferGoods && resourceType !== ResourceType.GenericGoods) {
+	if (transactionType === TransactionType.transferGoods && resourceType !== ResourceType.genericGoods) {
 		setTimeout(() => {
 			// TODO
 			// setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.GenericGoods);
 		}, 100);
 	}
-	if (transactionType === TransactionType.TransferAsset && resourceType !== ResourceType.PhysicalAsset) {
+	if (transactionType === TransactionType.transferAsset && resourceType !== ResourceType.physicalAsset) {
 		setTimeout(() => {
 			// TODO
 			// setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.PhysicalAsset);
@@ -180,8 +180,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			const response = await transactionNewMutation({ variables: { newTransactionData: newTransactionData } });
 
 			if (response) {
-				// TODO: finish result message
-				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${name}'` };
+				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.transaction, id: response.data.transactionNew.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
 			}
@@ -207,10 +206,10 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			},
 			// TODO can be object or function, better to always be a function
 			options: [
-				{ title: c.I18N.transactionTypeOptionTransferFunds, value: TransactionType.TransferFunds },
-				{ title: c.I18N.transactionTypeOptionTransferVolunteeringHours, value: TransactionType.TransferVolunteeringHours },
-				{ title: c.I18N.transactionTypeOptionTransferGoods, value: TransactionType.TransferGoods },
-				{ title: c.I18N.transactionTypeOptionTransferAsset, value: TransactionType.TransferAsset },
+				{ title: c.I18N.transactionTypeOptionTransferFunds, value: TransactionType.transferFunds },
+				{ title: c.I18N.transactionTypeOptionTransferVolunteeringHours, value: TransactionType.transferVolunteeringHours },
+				{ title: c.I18N.transactionTypeOptionTransferGoods, value: TransactionType.transferGoods },
+				{ title: c.I18N.transactionTypeOptionTransferAsset, value: TransactionType.transferAsset },
 			],
 			// onChange: () => console.log('here'),
 		},
@@ -228,11 +227,11 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			},
 			// TODO array or function, to use dynamic options
 			options: [
-				{ title: c.I18N.resourceTypeOptionFunds, value: ResourceType.Funds },
-				{ title: c.I18N.resourceTypeOptionVolunteeringHours, value: ResourceType.VolunteeringHours },
-				{ title: c.I18N.resourceTypeOptionGenericGoods, value: ResourceType.GenericGoods },
-				{ title: c.I18N.resourceTypeOptionPhysicalAsset, value: ResourceType.PhysicalAsset },
-				{ title: c.I18N.resourceTypeOptionDigitalAsset, value: ResourceType.DigitalAsset },
+				{ title: c.I18N.resourceTypeOptionFunds, value: ResourceType.funds },
+				{ title: c.I18N.resourceTypeOptionVolunteeringHours, value: ResourceType.volunteeringHours },
+				{ title: c.I18N.resourceTypeOptionGenericGoods, value: ResourceType.genericGoods },
+				{ title: c.I18N.resourceTypeOptionPhysicalAsset, value: ResourceType.physicalAsset },
+				{ title: c.I18N.resourceTypeOptionDigitalAsset, value: ResourceType.digitalAsset },
 			],
 			// visible: (control) => {
 			// 	return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.TransferAsset);
@@ -286,9 +285,9 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			},
 			disabled: true,
 			options: [
-				{ title: c.I18N.entityTypeOptionPerson, value: EntityType.Person },
-				{ title: c.I18N.entityTypeOptionParticipant, value: EntityType.Participant },
-				{ title: c.I18N.entityTypeOptionCause, value: EntityType.Cause },
+				{ title: c.I18N.entityTypeOptionPerson, value: EntityType.person },
+				{ title: c.I18N.entityTypeOptionParticipant, value: EntityType.participant },
+				{ title: c.I18N.entityTypeOptionCause, value: EntityType.cause },
 			],
 		},
 		[FormFieldNames.OUTPUT]: {
@@ -321,7 +320,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			placeholder: c.I18N.quantityPlaceHolder,
 			rules: validationRuleRegExHelper(FormFieldNames.QUANTITY, c.REGEXP.floatPositive),
 			visible: (control) => {
-				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) !== TransactionType.TransferGoods);
+				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) !== TransactionType.transferGoods);
 			}
 		},
 		[FormFieldNames.CURRENCY]: {
@@ -342,7 +341,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			],
 			visible: (control) => {
 				// required to check if is undefined and assume true as a default
-				return (!control.getValues(FormFieldNames.TRANSACTION_TYPE) || control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.TransferFunds);
+				return (!control.getValues(FormFieldNames.TRANSACTION_TYPE) || control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferFunds);
 			}
 		},
 		[FormFieldNames.ASSET_ID]: {
@@ -356,7 +355,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			helperText: c.I18N.assetIdHelperText,
 			rules: validationRuleRegExHelper(FormFieldNames.ASSET_ID, c.REGEXP.uuid),
 			visible: (control) => {
-				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.TransferAsset);
+				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferAsset);
 			}
 		},
 		// TODO | WIP
@@ -376,7 +375,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			},
 			options: c.GOODS_OPTIONS,
 			visible: (control) => {
-				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.TransferGoods);
+				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferGoods);
 			}
 		},
 		[FormFieldNames.LOCATION]: {
