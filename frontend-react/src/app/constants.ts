@@ -104,6 +104,11 @@ const ENTITY_TYPE_OPTIONS = [
   { title: I18N.entityTypeOptionCause, value: EntityType.cause },
 ];
 
+const PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS = [
+  { title: I18N.entityTypeOptionPerson, value: EntityType.person },
+  { title: I18N.entityTypeOptionParticipant, value: EntityType.participant },
+];
+
 const TAGS_OPTIONS = [
   { title: 'Nature', value: 'NATURE' },
   { title: 'Planet', value: 'PLANET' },
@@ -205,6 +210,7 @@ export const appConstants = {
   VALUES,
   I18N,
   ENTITY_TYPE_OPTIONS,
+  PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
   TAGS_OPTIONS,
   GOODS_OPTIONS,
   DEFAULT_LOGIN_CREDENTIALS,

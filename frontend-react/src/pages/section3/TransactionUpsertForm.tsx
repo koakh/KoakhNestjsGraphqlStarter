@@ -75,20 +75,21 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	const [transactionNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
-	// input personOptions: require [] array to be a reference, not a primitive
-	const [personOptions, setPersonOptions] = useState<AutocompleteOption[]>([]);
-	const [personOptionsLoaded, setPersonOptionsLoaded] = useState<boolean>(false);
-	const [personQuery, { data: personQueryData, loading: personQueryLoading, error: personQueryError }] = usePersonsLazyQuery({
-		fetchPolicy: e.apolloFetchPolicy,
-		variables: { skip: 0, take: 50 }
-	});
-	if (!personQueryData && !personQueryLoading) { personQuery(); };
-	if (!personOptionsLoaded && personQueryData && !personQueryLoading && !personQueryError) {
-		setPersonOptions(personQueryData.persons.map((e) => {
-			return { title: `${e.fiscalNumber}: ${e.username}`, value: e.id }
-		}));
-		setPersonOptionsLoaded(true);
-	}
+	// not used anymore
+	// // input personOptions: require [] array to be a reference, not a primitive
+	// const [personOptions, setPersonOptions] = useState<AutocompleteOption[]>([]);
+	// const [personOptionsLoaded, setPersonOptionsLoaded] = useState<boolean>(false);
+	// const [personQuery, { data: personQueryData, loading: personQueryLoading, error: personQueryError }] = usePersonsLazyQuery({
+	// 	fetchPolicy: e.apolloFetchPolicy,
+	// 	variables: { skip: 0, take: 50 }
+	// });
+	// if (!personQueryData && !personQueryLoading) { personQuery(); };
+	// if (!personOptionsLoaded && personQueryData && !personQueryLoading && !personQueryError) {
+	// 	setPersonOptions(personQueryData.persons.map((e) => {
+	// 		return { title: `${e.fiscalNumber}: ${e.username}`, value: e.id }
+	// 	}));
+	// 	setPersonOptionsLoaded(true);
+	// }
 	// output personOptions: require [] array to be a reference, not a primitive
 	const [causeOptions, setCauseOptions] = useState<AutocompleteOption[]>([]);
 	const [causeOptionsLoaded, setCauseOptionsLoaded] = useState<boolean>(false);
@@ -211,6 +212,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				{ title: c.I18N.transactionTypeOptionTransferGoods, value: TransactionType.transferGoods },
 				{ title: c.I18N.transactionTypeOptionTransferAsset, value: TransactionType.transferAsset },
 			],
+			disabled: !causeOptionsLoaded,
 			// onChange: () => console.log('here'),
 		},
 		[FormFieldNames.RESOURCE_TYPE]: {
@@ -233,6 +235,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				{ title: c.I18N.resourceTypeOptionPhysicalAsset, value: ResourceType.physicalAsset },
 				{ title: c.I18N.resourceTypeOptionDigitalAsset, value: ResourceType.digitalAsset },
 			],
+			disabled: !causeOptionsLoaded,
 			// visible: (control) => {
 			// 	return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.TransferAsset);
 			// }
@@ -251,8 +254,8 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('required', FormFieldNames.INPUT_TYPE)
 			},
-			disabled: true,
-			options: c.ENTITY_TYPE_OPTIONS,
+			options: c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
+			disabled: !causeOptionsLoaded,
 		},
 		[FormFieldNames.INPUT]: {
 			inputRef: useRef(),
@@ -264,7 +267,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			placeholder: c.I18N.inputPlaceholder,
 			helperText: c.I18N.inputHelperText,
 			rules: validationRuleRegExHelper(FormFieldNames.INPUT, c.REGEXP.fiscalNumber),
-			disabled: false,
+			disabled: !causeOptionsLoaded,
 			// AUTOCOMPLETE
 			// options: personOptions,
 			// disableCloseOnSelect: false,
@@ -283,12 +286,12 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('required', FormFieldNames.OUTPUT_TYPE)
 			},
-			disabled: true,
 			options: [
 				{ title: c.I18N.entityTypeOptionPerson, value: EntityType.person },
 				{ title: c.I18N.entityTypeOptionParticipant, value: EntityType.participant },
 				{ title: c.I18N.entityTypeOptionCause, value: EntityType.cause },
 			],
+			disabled: true,
 		},
 		[FormFieldNames.OUTPUT]: {
 			inputRef: useRef(),
@@ -306,8 +309,8 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			// 		: validationMessage('required', FormFieldNames.OUTPUT)
 			// },
 			rules: validationRuleRegExHelper(FormFieldNames.OUTPUT, c.REGEXP.uuid),
-			disabled: !causeOptionsLoaded,
 			options: causeOptions,
+			disabled: !causeOptionsLoaded,
 			// disableCloseOnSelect: false,
 		},
 		[FormFieldNames.QUANTITY]: {
@@ -319,9 +322,10 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			label: c.I18N.quantityLabel,
 			placeholder: c.I18N.quantityPlaceHolder,
 			rules: validationRuleRegExHelper(FormFieldNames.QUANTITY, c.REGEXP.floatPositive),
+			disabled: !causeOptionsLoaded,
 			visible: (control) => {
 				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) !== TransactionType.transferGoods);
-			}
+			},
 		},
 		[FormFieldNames.CURRENCY]: {
 			inputRef: useRef(),
@@ -339,6 +343,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				{ title: c.I18N.currencyCodeEur, value: CurrencyCode.eur },
 				{ title: c.I18N.currencyCodeUsd, value: CurrencyCode.usd },
 			],
+			disabled: !causeOptionsLoaded,			
 			visible: (control) => {
 				// required to check if is undefined and assume true as a default
 				return (!control.getValues(FormFieldNames.TRANSACTION_TYPE) || control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferFunds);
@@ -354,6 +359,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			placeholder: c.I18N.assetIdPlaceholder,
 			helperText: c.I18N.assetIdHelperText,
 			rules: validationRuleRegExHelper(FormFieldNames.ASSET_ID, c.REGEXP.uuid),
+			disabled: !causeOptionsLoaded,			
 			visible: (control) => {
 				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferAsset);
 			}
@@ -374,6 +380,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					: validationMessage('invalid', FormFieldNames.GOODS)
 			},
 			options: c.GOODS_OPTIONS,
+			disabled: !causeOptionsLoaded,			
 			visible: (control) => {
 				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferGoods);
 			}
@@ -385,8 +392,9 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.locationLabel,
-			placeholder: c.I18N.locationPlaceHolder,			
+			placeholder: c.I18N.locationPlaceHolder,
 			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location, false),
+			disabled: !causeOptionsLoaded,			
 		},
 		[FormFieldNames.META_DATA]: {
 			inputRef: useRef(),
@@ -401,6 +409,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('invalid', FormFieldNames.META_DATA)
 			},
+			disabled: !causeOptionsLoaded,			
 		},
 		[FormFieldNames.META_DATA_INTERNAL]: {
 			inputRef: useRef(),
@@ -415,6 +424,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('invalid', FormFieldNames.META_DATA_INTERNAL)
 			},
+			disabled: !causeOptionsLoaded,			
 		},
 	};
 

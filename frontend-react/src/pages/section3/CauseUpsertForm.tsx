@@ -10,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewCauseInput, useCauseNewMutation } from '../../generated/graphql';
 import { EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, Tag } from '../../types';
-import { commonControlProps, currentFormatDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, currentFormatDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	name: string,
@@ -19,6 +19,7 @@ type FormInputs = {
 	endDate: string;
 	location?: string
 	// input/output entity object
+	inputType: EntityType;
 	input: string;
 	ambassadors?: string,
 	tags: Tag[],
@@ -31,6 +32,7 @@ enum FormFieldNames {
 	START_DATE = 'startDate',
 	END_DATE = 'endDate',
 	LOCATION = 'location',
+	INPUT_TYPE = 'inputType',
 	INPUT = 'input',
 	AMBASSADORS = 'ambassadors',
 	TAGS = 'tags',
@@ -46,7 +48,8 @@ const defaultValues: FormDefaultValues = {
 	// current plus one day/24h*7
 	endDate: currentFormatDate(new Date(Date.now() + ((3600 * 1000 * 24) * 7)), false),
 	location: '12.1890144,-28.5171909',
-	input: '4ea88521-031b-4279-9165-9c10e1839001',
+	inputType: c.VALUES.undefined,
+	input: '',
 	tags: [
 		{ title: 'Nature', value: 'NATURE' },
 		{ title: 'Economy', value: 'ECONOMY' },
@@ -86,7 +89,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 				endDate: data.endDate,
 				location: data.location,
 				input: {
-					type: EntityType.person,
+					type: data.inputType,
 					id: data.input,
 				},
 				tags: data.tags.map((e: Tag) => e.value),
@@ -160,6 +163,34 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location, false),
 		},
 		// TODO why causes have input? it is related with BELONGS TO Person, Participant etc
+		// [FormFieldNames.INPUT]: {
+		// 	inputRef: useRef(),
+		// 	type: FormInputType.TEXT,
+		// 	name: FormFieldNames.INPUT,
+		// 	controlProps: commonControlProps,
+		// 	fullWidth: true,
+		// 	label: c.I18N.inputLabel,
+		// 	placeholder: c.I18N.inputPlaceholder,
+		// 	helperText: c.I18N.inputHelperText,
+		// 	rules: validationRuleRegExHelper(FormFieldNames.INPUT, c.REGEXP.uuid),
+		// },
+		[FormFieldNames.INPUT_TYPE]: {
+			inputRef: useRef(),
+			type: FormInputType.SELECT,
+			name: FormFieldNames.INPUT_TYPE,
+			controlProps: commonControlProps,
+			fullWidth: true,
+			label: c.I18N.inputTypeLabel,
+			// selection don't use placeHolder
+			// placeholder: c.VALUES.PHYSICAL_ASSET,
+			rules: {
+				validate: () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))
+					? true
+					: validationMessage('required', FormFieldNames.INPUT_TYPE)
+			},
+			disabled: false,
+			options: c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
+		},
 		[FormFieldNames.INPUT]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
@@ -169,7 +200,11 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			label: c.I18N.inputLabel,
 			placeholder: c.I18N.inputPlaceholder,
 			helperText: c.I18N.inputHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.INPUT, c.REGEXP.uuid),
+			rules: validationRuleRegExHelper(FormFieldNames.INPUT, c.REGEXP.fiscalNumber),
+			disabled: false,
+			// AUTOCOMPLETE
+			// options: personOptions,
+			// disableCloseOnSelect: false,
 		},
 		[FormFieldNames.AMBASSADORS]: {
 			inputRef: useRef(),
