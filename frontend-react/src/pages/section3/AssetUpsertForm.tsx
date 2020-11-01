@@ -9,13 +9,13 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewAssetInput, useAssetNewMutation } from '../../generated/graphql';
-import { AssetType, FormDefaultValues, FormInputType, FormPropFields, Tag } from '../../types';
+import { AssetType, EntityType, FormDefaultValues, FormInputType, FormPropFields, Tag } from '../../types';
 import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
+	assetType: AssetType,
 	name: string,
-	assetType: string,
-	ambassadors?: string[],
+	ambassadors?: string,
 	// input/output entity object
 	owner: string,
 	location?: string
@@ -24,8 +24,8 @@ type FormInputs = {
 	metaDataInternal?: any,
 };
 enum FormFieldNames {
-	NAME = 'name',
 	ASSET_TYPE = 'assetType',
+	NAME = 'name',
 	AMBASSADORS = 'ambassadors',
 	OWNER = 'owner',
 	LOCATION = 'location',
@@ -34,10 +34,10 @@ enum FormFieldNames {
 	META_DATA_INTERNAL = 'metaDataInternal',
 };
 const defaultValues: FormDefaultValues = {
+	assetType: c.VALUES.undefined,
 	name: 'Wheel chair',
-	assetType: 'PHYSICAL_ASSET',
-	ambassadors: ['0466c748-05fd-4d46-b381-4f1bb39458c7', '108f4bb0-2918-4340-a0c8-8b5fb5af249c'],
-	owner: '4ea88521-031b-4279-9165-9c10e1839001',
+	ambassadors: 'PT182692125 PT582692178',
+	owner: 'PT182692125',
 	location: '12.1890144,-28.5171909',
 	tags: [
 		{ title: 'Nature', value: 'NATURE' },
@@ -72,10 +72,9 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			const newAssetData: NewAssetInput = {
 				name: data.name,
 				assetType: data.assetType,
-				ambassadors: data.ambassadors,
-				// TODO: must get owner type on chaincode side, from uuid
+				ambassadors: data.ambassadors.split(' '),
 				owner: {
-					type: 'com.chain.solidary.model.person',
+					type: EntityType.Person,
 					id: data.owner,
 				},
 				location: data.location,
@@ -100,21 +99,11 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	};
 
 	const formDefinition: Record<string, FormPropFields> = {
-		[FormFieldNames.NAME]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.NAME,
-			controllProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.assetLabel,
-			placeholder: c.I18N.assetPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.NAME, c.REGEXP.name),
-		},
 		[FormFieldNames.ASSET_TYPE]: {
 			inputRef: useRef(),
 			type: FormInputType.SELECT,
 			name: FormFieldNames.ASSET_TYPE,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.assetType,
 			// selection don't use placeHolder
@@ -129,43 +118,53 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 				{ title: c.I18N.assetTypeOptionDigitalAsset, value: AssetType.digitalAsset },
 			],
 		},
+		[FormFieldNames.NAME]: {
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.NAME,
+			controlProps: commonControlProps,
+			fullWidth: true,
+			label: c.I18N.assetLabel,
+			placeholder: c.I18N.assetPlaceHolder,
+			rules: validationRuleRegExHelper(FormFieldNames.NAME, c.REGEXP.name),
+		},
 		[FormFieldNames.AMBASSADORS]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.AMBASSADORS,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.ambassadorsLabel,
 			placeholder: c.I18N.ambassadorsPlaceHolder,
 			helperText: c.I18N.ambassadorsHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.uuidArray),
+			rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.fiscalNumberArray),
 		},
 		[FormFieldNames.OWNER]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.OWNER,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.ownerLabel,
 			placeholder: c.I18N.ownerPlaceholder,
 			helperText: c.I18N.ownerHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.OWNER, c.REGEXP.uuid),
+			rules: validationRuleRegExHelper(FormFieldNames.OWNER, c.REGEXP.fiscalNumber),
 		},
 		[FormFieldNames.LOCATION]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.LOCATION,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.locationLabel,
 			placeholder: c.I18N.locationPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location),
+			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location, false),
 		},
 		[FormFieldNames.TAGS]: {
 			inputRef: useRef(),
 			type: FormInputType.AUTOCOMPLETE,
 			name: FormFieldNames.TAGS,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.tagsLabel,
 			placeholder: c.I18N.tagsLabel,
@@ -183,7 +182,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.metaDataLabel,
 			placeholder: c.I18N.metaDataPlaceHolder,
@@ -197,7 +196,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA_INTERNAL,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.metaDataInternalLabel,
 			placeholder: c.I18N.metaDataPlaceHolder,

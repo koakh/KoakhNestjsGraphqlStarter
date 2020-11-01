@@ -199,6 +199,7 @@ export type Participant = {
   code: Scalars['String'];
   name: Scalars['String'];
   email?: Maybe<Scalars['String']>;
+  fiscalNumber: Scalars['String'];
   ambassadors?: Maybe<Array<Scalars['String']>>;
   msp: Scalars['String'];
   participant?: Maybe<Participant>;
@@ -249,7 +250,7 @@ export type Person = {
   participant: Participant;
   createdDate: Scalars['Float'];
   registrationDate: Scalars['Date'];
-  mobilePhone?: Maybe<Scalars['String']>;
+  mobilePhone: Scalars['String'];
   postal?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
   region?: Maybe<Scalars['String']>;
@@ -488,7 +489,8 @@ export type NewParticipantInput = {
   id?: Maybe<Scalars['String']>;
   code: Scalars['String'];
   name: Scalars['String'];
-  email?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
+  fiscalNumber: Scalars['String'];
   ambassadors?: Maybe<Array<Scalars['String']>>;
   metaData?: Maybe<Scalars['JSONObject']>;
   metaDataInternal?: Maybe<Scalars['JSONObject']>;
@@ -513,7 +515,7 @@ export type NewPersonInput = {
   username?: Maybe<Scalars['String']>;
   password?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
-  mobilePhone?: Maybe<Scalars['String']>;
+  mobilePhone: Scalars['String'];
   postal?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
   region?: Maybe<Scalars['String']>;
@@ -572,7 +574,7 @@ export type UpdatePersonPasswordInput = {
 export type UpdatePersonProfileInput = {
   id: Scalars['String'];
   email?: Maybe<Scalars['String']>;
-  mobilePhone?: Maybe<Scalars['String']>;
+  mobilePhone: Scalars['String'];
   postal?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
   region?: Maybe<Scalars['String']>;
@@ -778,7 +780,7 @@ export type ParticipantNewMutation = (
   { __typename?: 'Mutation' }
   & { participantNew: (
     { __typename?: 'Participant' }
-    & Pick<Participant, 'id' | 'name' | 'msp'>
+    & Pick<Participant, 'id' | 'code' | 'name' | 'email' | 'fiscalNumber' | 'msp'>
   ) }
 );
 
@@ -1183,7 +1185,7 @@ export type ParticipantsQuery = (
   { __typename?: 'Query' }
   & { participants: Array<(
     { __typename?: 'Participant' }
-    & Pick<Participant, 'id' | 'name' | 'msp' | 'createdDate'>
+    & Pick<Participant, 'id' | 'name' | 'email' | 'fiscalNumber' | 'ambassadors' | 'msp' | 'createdDate'>
     & { participant?: Maybe<(
       { __typename?: 'Participant' }
       & Pick<Participant, 'id' | 'name' | 'msp'>
@@ -1342,7 +1344,7 @@ export type PersonsQuery = (
       & Pick<Attribute, 'id' | 'content' | 'issuedDate' | 'expiresDate' | 'expired' | 'certifierID'>
     )>>, participant: (
       { __typename?: 'Participant' }
-      & Pick<Participant, 'id' | 'code' | 'email' | 'name' | 'msp' | 'createdDate'>
+      & Pick<Participant, 'id' | 'code' | 'name' | 'email' | 'fiscalNumber' | 'ambassadors' | 'msp' | 'createdDate'>
       & { fundsBalance: (
         { __typename?: 'GenericBalance' }
         & Pick<GenericBalance, 'debit' | 'credit' | 'balance'>
@@ -1751,7 +1753,10 @@ export const ParticipantNewDocument = gql`
     mutation participantNew($newParticipantData: NewParticipantInput!) {
   participantNew(newParticipantData: $newParticipantData) {
     id
+    code
     name
+    email
+    fiscalNumber
     msp
   }
 }
@@ -2838,6 +2843,9 @@ export const ParticipantsDocument = gql`
   participants(skip: $skip, take: $take) {
     id
     name
+    email
+    fiscalNumber
+    ambassadors
     msp
     participant {
       id
@@ -3342,7 +3350,10 @@ export const PersonsDocument = gql`
     participant {
       id
       code
+      name
       email
+      fiscalNumber
+      ambassadors
       fundsBalance {
         debit
         credit

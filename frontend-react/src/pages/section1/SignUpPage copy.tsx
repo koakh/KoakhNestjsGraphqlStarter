@@ -15,7 +15,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
-import { commonControlProps, getGraphQLApolloError, recordToArray, validationMessage } from '../../utils';
+import { commonControlProps, getGraphQLApolloError, recordToArray, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -32,22 +32,24 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type FormInputs = {
+	firstName: string;
+	lastName: string;
 	username: string;
 	password: string;
 	passwordConfirmation: string;
 	fiscalNumber: string;
-	firstName: string;
-	lastName: string;
+	mobilePhone: string;
 	email: string;
 };
-type FormInputsString = 'password' | 'username' | 'passwordConfirmation' | 'fiscalNumber' | 'firstName' | 'lastName' | 'email';
+type FormInputsString = 'firstName' | 'lastName' | 'username' | 'password' | 'passwordConfirmation' | 'fiscalNumber' | 'mobilePhone' | 'email';
 enum FormFieldNames {
+	FIRST_NAME = 'firstName',
+	LAST_NAME = 'lastName',
 	USERNAME = 'username',
 	PASSWORD = 'password',
 	PASSWORD_CONFIRMATION = 'passwordConfirmation',
 	FISCAL_NUMBER = 'fiscalNumber',
-	FIRST_NAME = 'firstName',
-	LAST_NAME = 'lastName',
+	MOBILE_PHONE = 'mobilePhone',
 	EMAIL = 'email',
 };
 const defaultValues: FormDefaultValues = {
@@ -57,6 +59,7 @@ const defaultValues: FormDefaultValues = {
 	password: 'Aa123#12',
 	passwordConfirmation: 'Aa123#12',
 	fiscalNumber: 'PT123123123',
+	mobilePhone: '+351936101188',
 	email: 'johndoe@mail.com',
 };
 
@@ -97,6 +100,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				username: data.username,
 				password: data.password,
 				fiscalNumber: data.fiscalNumber,
+				mobilePhone: data.mobilePhone,
 				email: data.email,
 			};
 			const response = await personNewMutation({ variables: { newPersonData } })
@@ -135,7 +139,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					message: validationMessage('invalid', FormFieldNames.FIRST_NAME),
 				},
 			},
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
 
@@ -153,7 +157,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					message: validationMessage('invalid', FormFieldNames.LAST_NAME),
 				},
 			},
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.USERNAME]: {
 			inputRef: useRef(),
@@ -169,7 +173,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					message: validationMessage('invalid', FormFieldNames.USERNAME),
 				},
 			},
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.PASSWORD]: {
 			inputRef: useRef(),
@@ -186,7 +190,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					message: validationMessage('invalid', FormFieldNames.USERNAME),
 				},
 			},
-			controllProps: {
+			controlProps: {
 				...commonControlProps,
 				// must be capitalized
 				InputProps: {
@@ -220,15 +224,14 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					return getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION);
 				}
 			},
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.FISCAL_NUMBER,
-			label: 'Fiscal number',
-			placeholder: 'PT218269128',
-			// helperText: 'a valid pt fiscal Number',
+			label: c.I18N.fiscalNumberLabel,
+			placeholder: c.I18N.fiscalNumberPlaceHolder,
 			fullWidth: true,
 			rules: {
 				required: validationMessage('required', FormFieldNames.FISCAL_NUMBER),
@@ -237,7 +240,17 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					message: validationMessage('invalid', FormFieldNames.FISCAL_NUMBER),
 				},
 			},
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
+		},
+		[FormFieldNames.MOBILE_PHONE]: {
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.MOBILE_PHONE,
+			label: c.I18N.mobilePhoneLabel,
+			placeholder: c.I18N.mobilePhonePlaceHolder,
+			fullWidth: true,
+			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.mobilePhone),
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.EMAIL]: {
 			inputRef: useRef(),
@@ -254,7 +267,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					message: validationMessage('invalid', FormFieldNames.EMAIL),
 				},
 			},
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 		},
 	};
 
@@ -272,7 +285,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 							<Controller
 								type={e.type}
 								control={control}
-								as={<TextField inputRef={e.inputRef} {...e.controllProps} />}
+								as={<TextField inputRef={e.inputRef} {...e.controlProps} />}
 								name={(e.name as FormInputsString)}
 								error={(errors[(e.name as FormInputsString)] !== undefined)}
 								helperText={(errors[(e.name as FormInputsString)] !== undefined) ? errors[(e.name as FormInputsString)].message : e.helperText}

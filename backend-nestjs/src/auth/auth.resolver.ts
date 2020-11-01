@@ -1,7 +1,8 @@
-import { ConflictException, Logger, UseGuards } from '@nestjs/common';
+import { ConflictException, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'apollo-server-express';
 import { SubscriptionEvent } from '../common/types';
+import SignJwtTokenPayload from '../common/types/sign-jwt-token-payload';
 import { GqlContext } from '../types';
 import { LoginUserInput, NewUserInput } from '../user/dto';
 import { User } from '../user/models';
@@ -47,7 +48,7 @@ export class AuthResolver {
     // get user
     const user: User = await this.userService.findOneByUsername(loginUserData.username);
     // accessToken: add some user data to it, like id and roles
-    const signJwtTokenDto = { ...loginUserData, userId: user.id, roles: user.roles };
+    const signJwtTokenDto: SignJwtTokenPayload = { ...loginUserData, userId: user.id, roles: user.roles };
     const { accessToken } = await this.authService.signJwtToken(signJwtTokenDto);
     // assign jwt Payload to context
     payload = this.authService.getJwtPayLoad(accessToken);

@@ -9,7 +9,7 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewTransactionInput, useCausesLazyQuery, usePersonsLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
-import { AutocompleteOption, CurrencyCode, FormDefaultValues, FormInputType, FormPropFields, ResourceType, Tag, TransactionType } from '../../types';
+import { AutocompleteOption, CurrencyCode, FormDefaultValues, FormInputType, FormPropFields, ResourceType, Tag, TransactionType, EntityType } from '../../types';
 import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validateRegExpObjectProperty, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 let renderCount = 0;
@@ -18,7 +18,9 @@ type FormInputs = {
 	transactionType: string;
 	resourceType: string,
 	// input/output entity object
+	inputType: EntityType;
 	input: string;
+	outputType: EntityType;
 	output: string;
 	quantity: number;
 	currency: string;
@@ -32,7 +34,9 @@ type FormInputs = {
 enum FormFieldNames {
 	TRANSACTION_TYPE = 'transactionType',
 	RESOURCE_TYPE = 'resourceType',
+	INPUT_TYPE = 'inputType',
 	INPUT = 'input',
+	OUTPUT_TYPE = 'outputType',
 	OUTPUT = 'output',
 	QUANTITY = 'quantity',
 	CURRENCY = 'currency',
@@ -44,13 +48,15 @@ enum FormFieldNames {
 	META_DATA_INTERNAL = 'metaDataInternal',
 };
 const defaultValues: FormDefaultValues = {
-	transactionType: TransactionType.TransferFunds,
-	resourceType: ResourceType.Funds,
-	// '4ea88521-031b-4279-9165-9c10e1839001',
+	transactionType: c.VALUES.undefined,
+	resourceType: c.VALUES.undefined,
+	inputType: EntityType.Person,
 	input: '',
-	output: '4ea88521-031b-4279-9165-9c10e1838010',
-	quantity: 10,
+	outputType: EntityType.Cause,
+	output: c.VALUES.undefined,
+	quantity: 1,
 	currency: 'EUR',
+	// TODO
 	assetId: '16834df0-766d-4cc8-8baa-b0c37338ca34',
 	goods: [],
 	location: '12.1890144,-28.5171909',
@@ -66,7 +72,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// hooks react form
 	const { handleSubmit, watch, errors, control, reset, getValues, setValue } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	// hooks: apollo
-	const [causeNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
+	const [transactionNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
 	// input personOptions: require [] array to be a reference, not a primitive
@@ -110,7 +116,9 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
 	// console.log(`goods:${JSON.stringify(getValues(FormFieldNames.GOODS), undefined, 2)}`);
 	// console.log(`input:${JSON.stringify(getValues(FormFieldNames.INPUT), undefined, 2)}`);
+	// console.log(`output:${JSON.stringify(getValues(FormFieldNames.OUTPUT), undefined, 2)}`);
 	// console.log(`transactionType:${getValues(FormFieldNames.TRANSACTION_TYPE)}`);
+	// console.log(`input:${getValues(FormFieldNames.INPUT)}`);
 	// console.log(`resourceType:${getValues(FormFieldNames.RESOURCE_TYPE)}`);
 	// console.log('TRANSACTION_TYPE', name);
 	if (transactionType === TransactionType.TransferFunds && resourceType !== ResourceType.Funds) {
@@ -149,17 +157,16 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			const newTransactionData: NewTransactionInput = {
 				transactionType: data.transactionType,
 				resourceType: data.resourceType,
-				// TODO: must get owner type on chaincode side, from uuid
 				input: {
-					type: 'com.chain.solidary.model.person',
-					id: (data.input as any).value,
+					type: data.inputType,
+					id: data.input,
 				},
-				// TODO: must get owner type on chaincode side, from uuid
 				output: {
-					type: 'com.chain.solidary.model.cause',
-					id: (data.output as any).value,
+					type: data.outputType,
+					id: data.output,
 				},
-				quantity: data.quantity,
+				// require to cast to number else fails on server validations
+				quantity: Number(data.quantity),
 				currency: data.currency,
 				assetId: data.assetId,
 				goods: data.goods,
@@ -169,8 +176,8 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			};
 			// console.log(JSON.stringify(data, undefined, 2));
 			console.log(JSON.stringify(newTransactionData, undefined, 2));
-			const response = await causeNewMutation({ variables: { newTransactionData: newTransactionData } });
 			debugger;
+			const response = await transactionNewMutation({ variables: { newTransactionData: newTransactionData } });
 
 			if (response) {
 				// TODO: finish result message
@@ -189,20 +196,21 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			inputRef: useRef(),
 			type: FormInputType.SELECT,
 			name: FormFieldNames.TRANSACTION_TYPE,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.transferTypeLabel,
 			rules: {
+				// TODO create helper to validate enums
 				validate: () => isValidEnum(TransactionType, getValues(FormFieldNames.TRANSACTION_TYPE))
 					? true
 					: validationMessage('required', FormFieldNames.TRANSACTION_TYPE)
 			},
 			// TODO can be object or function, better to always be a function
 			options: [
-				{ title: c.I18N.transactionTypeTransferFunds, value: TransactionType.TransferFunds },
-				{ title: c.I18N.transactionTypeTransferVolunteeringHours, value: TransactionType.TransferVolunteeringHours },
-				{ title: c.I18N.transactionTypeTransferGoods, value: TransactionType.TransferGoods },
-				{ title: c.I18N.transactionTypeTransferAsset, value: TransactionType.TransferAsset },
+				{ title: c.I18N.transactionTypeOptionTransferFunds, value: TransactionType.TransferFunds },
+				{ title: c.I18N.transactionTypeOptionTransferVolunteeringHours, value: TransactionType.TransferVolunteeringHours },
+				{ title: c.I18N.transactionTypeOptionTransferGoods, value: TransactionType.TransferGoods },
+				{ title: c.I18N.transactionTypeOptionTransferAsset, value: TransactionType.TransferAsset },
 			],
 			// onChange: () => console.log('here'),
 		},
@@ -210,7 +218,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			inputRef: useRef(),
 			type: FormInputType.SELECT,
 			name: FormFieldNames.RESOURCE_TYPE,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.resourceTypeLabel,
 			rules: {
@@ -220,57 +228,94 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			},
 			// TODO array or function, to use dynamic options
 			options: [
-				{ title: c.I18N.resourceTypeFunds, value: ResourceType.Funds },
-				{ title: c.I18N.resourceTypeVolunteeringHours, value: ResourceType.VolunteeringHours },
-				{ title: c.I18N.resourceTypeGenericGoods, value: ResourceType.GenericGoods },
-				{ title: c.I18N.resourceTypePhysicalAsset, value: ResourceType.PhysicalAsset },
-				{ title: c.I18N.resourceTypeDigitalAsset, value: ResourceType.DigitalAsset },
+				{ title: c.I18N.resourceTypeOptionFunds, value: ResourceType.Funds },
+				{ title: c.I18N.resourceTypeOptionVolunteeringHours, value: ResourceType.VolunteeringHours },
+				{ title: c.I18N.resourceTypeOptionGenericGoods, value: ResourceType.GenericGoods },
+				{ title: c.I18N.resourceTypeOptionPhysicalAsset, value: ResourceType.PhysicalAsset },
+				{ title: c.I18N.resourceTypeOptionDigitalAsset, value: ResourceType.DigitalAsset },
 			],
 			// visible: (control) => {
 			// 	return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.TransferAsset);
 			// }
 		},
+		[FormFieldNames.INPUT_TYPE]: {
+			inputRef: useRef(),
+			type: FormInputType.SELECT,
+			name: FormFieldNames.INPUT_TYPE,
+			controlProps: commonControlProps,
+			fullWidth: true,
+			label: c.I18N.inputTypeLabel,
+			// selection don't use placeHolder
+			// placeholder: c.VALUES.PHYSICAL_ASSET,
+			rules: {
+				validate: () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))
+					? true
+					: validationMessage('required', FormFieldNames.INPUT_TYPE)
+			},
+			disabled: true,
+			options: c.ENTITY_TYPE_OPTIONS,
+		},
 		[FormFieldNames.INPUT]: {
 			inputRef: useRef(),
-			type: FormInputType.AUTOCOMPLETE,
+			type: FormInputType.TEXT,
 			name: FormFieldNames.INPUT,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.inputLabel,
 			placeholder: c.I18N.inputPlaceholder,
 			helperText: c.I18N.inputHelperText,
+			rules: validationRuleRegExHelper(FormFieldNames.INPUT, c.REGEXP.fiscalNumber),
+			disabled: false,
+			// AUTOCOMPLETE
+			// options: personOptions,
+			// disableCloseOnSelect: false,
+		},
+		[FormFieldNames.OUTPUT_TYPE]: {
+			inputRef: useRef(),
+			type: FormInputType.SELECT,
+			name: FormFieldNames.OUTPUT_TYPE,
+			controlProps: commonControlProps,
+			fullWidth: true,
+			label: c.I18N.outputTypeLabel,
+			// selection don't use placeHolder
+			// placeholder: c.VALUES.PHYSICAL_ASSET,
 			rules: {
-				validate: () => validateRegExpObjectProperty(getValues(FormFieldNames.INPUT), 'value', c.REGEXP.uuid)
+				validate: () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))
 					? true
-					: validationMessage('required', FormFieldNames.INPUT)
+					: validationMessage('required', FormFieldNames.OUTPUT_TYPE)
 			},
-			disabled: !personOptionsLoaded,
-			options: personOptions,
-			disableCloseOnSelect: false,
+			disabled: true,
+			options: [
+				{ title: c.I18N.entityTypeOptionPerson, value: EntityType.Person },
+				{ title: c.I18N.entityTypeOptionParticipant, value: EntityType.Participant },
+				{ title: c.I18N.entityTypeOptionCause, value: EntityType.Cause },
+			],
 		},
 		[FormFieldNames.OUTPUT]: {
 			inputRef: useRef(),
-			type: FormInputType.AUTOCOMPLETE,
+			type: FormInputType.SELECT,
 			name: FormFieldNames.OUTPUT,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.outputLabel,
 			placeholder: c.I18N.outputPlaceholder,
 			helperText: c.I18N.outputHelperText,
-			rules: {
-				validate: () => validateRegExpObjectProperty(getValues(FormFieldNames.OUTPUT), 'value', c.REGEXP.uuid)
-					? true
-					: validationMessage('required', FormFieldNames.OUTPUT)
-			},
+			// AUTOCOMPLETE
+			// rules: {
+			// 	validate: () => validateRegExpObjectProperty(getValues(FormFieldNames.OUTPUT), 'value', c.REGEXP.uuid)
+			// 		? true
+			// 		: validationMessage('required', FormFieldNames.OUTPUT)
+			// },
+			rules: validationRuleRegExHelper(FormFieldNames.OUTPUT, c.REGEXP.uuid),
 			disabled: !causeOptionsLoaded,
 			options: causeOptions,
-			disableCloseOnSelect: false,
+			// disableCloseOnSelect: false,
 		},
 		[FormFieldNames.QUANTITY]: {
 			inputRef: useRef(),
 			type: FormInputType.NUMBER,
 			name: FormFieldNames.QUANTITY,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.quantityLabel,
 			placeholder: c.I18N.quantityPlaceHolder,
@@ -283,7 +328,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			inputRef: useRef(),
 			type: FormInputType.SELECT,
 			name: FormFieldNames.CURRENCY,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.currencyLabel,
 			rules: {
@@ -304,7 +349,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.ASSET_ID,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.assetIdLabel,
 			placeholder: c.I18N.assetIdPlaceholder,
@@ -320,7 +365,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			inputRef: useRef(),
 			type: FormInputType.SELECT,
 			name: FormFieldNames.GOODS,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.goodsLabel,
 			placeholder: c.I18N.goodsPlaceHolder,
@@ -338,17 +383,17 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.LOCATION,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.locationLabel,
-			placeholder: c.I18N.locationPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location),
+			placeholder: c.I18N.locationPlaceHolder,			
+			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location, false),
 		},
 		[FormFieldNames.META_DATA]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.metaDataLabel,
 			placeholder: c.I18N.metaDataPlaceHolder,
@@ -362,7 +407,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA_INTERNAL,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.metaDataInternalLabel,
 			placeholder: c.I18N.metaDataPlaceHolder,

@@ -45,7 +45,7 @@ export const App: React.FC<Props> = () => {
     };
   }, [state.user.logged, profileCalled, profileQuery]);
 
-  // used to update state with profile data, diferent of profile page that fires mutations to bring all data
+  // used to update state with profile data, different of profile page that fires mutations to bring all data
   // require own useEffect to prevent error `Warning: Cannot update a component (`StateProvider`) while rendering a different component (`App`). To locate the bad setState() call inside `App``
   React.useEffect(() => {
     if (!profileLoaded && profileData) {

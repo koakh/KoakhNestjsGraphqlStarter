@@ -9,8 +9,8 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewCauseInput, useCauseNewMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, Tag } from '../../types';
-import { commonControlProps, currentFormatedDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { EntityType, FormDefaultValues, FormInputType, FormPropFields, Tag } from '../../types';
+import { commonControlProps, currentFormatDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	name: string,
@@ -20,7 +20,7 @@ type FormInputs = {
 	location?: string
 	// input/output entity object
 	input: string;
-	ambassadors?: string[],
+	ambassadors?: string,
 	tags: Tag[],
 	metaData?: any,
 	metaDataInternal?: any,
@@ -40,11 +40,11 @@ enum FormFieldNames {
 const defaultValues: FormDefaultValues = {
 	name: 'Save the world now 2020',
 	email: 'mail@swn.com',
-	ambassadors: ['0466c748-05fd-4d46-b381-4f1bb39458c7', '108f4bb0-2918-4340-a0c8-8b5fb5af249c'],
+	ambassadors: 'PT182692125 PT582692178',
 	// current plus one day/24h
-	startDate: currentFormatedDate(new Date(Date.now() + (( 3600 * 1000 * 24) * 0)), false),
+	startDate: currentFormatDate(new Date(Date.now() + (( 3600 * 1000 * 24) * 0)), false),
 	// current plus one day/24h*7
-	endDate: currentFormatedDate(new Date(Date.now() + (( 3600 * 1000 * 24) * 7)), false),
+	endDate: currentFormatDate(new Date(Date.now() + (( 3600 * 1000 * 24) * 7)), false),
 	location: '12.1890144,-28.5171909',
 	input: '4ea88521-031b-4279-9165-9c10e1839001',
 	tags: [
@@ -81,13 +81,12 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			const newCauseData: NewCauseInput = {
 				name: data.name,
 				email: data.email,
-				ambassadors: data.ambassadors,
+				ambassadors: data.ambassadors.split(' '),
 				startDate: data.startDate,
 				endDate: data.endDate,
 				location: data.location,
-				// TODO: must get owner type on chaincode side, from uuid
 				input: {
-					type: 'com.chain.solidary.model.person',
+					type: EntityType.Person,
 					id: data.input,
 				},
 				tags: data.tags.map((e: Tag) => e.value),
@@ -115,7 +114,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.NAME,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.causeLabel,
 			placeholder: c.I18N.causePlaceHolder,
@@ -125,7 +124,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.EMAIL,
 			name: FormFieldNames.EMAIL,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.emailLabel,
 			placeholder: c.I18N.emailPlaceHolder,
@@ -135,7 +134,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.DATE,
 			name: FormFieldNames.START_DATE,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.startDateLabel,
 			placeholder: c.I18N.datePlaceHolder,
@@ -145,7 +144,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.DATE,
 			name: FormFieldNames.END_DATE,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.endDateLabel,
 			placeholder: c.I18N.datePlaceHolder,
@@ -155,17 +154,18 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.LOCATION,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.locationLabel,
 			placeholder: c.I18N.locationPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location),
+			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location, false),
 		},
+		// TODO why causes have input? it is related with BELONGS TO Person, Participant etc
 		[FormFieldNames.INPUT]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.INPUT,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.inputLabel,
 			placeholder: c.I18N.inputPlaceholder,
@@ -176,18 +176,18 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.AMBASSADORS,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.ambassadorsLabel,
 			placeholder: c.I18N.ambassadorsPlaceHolder,
 			helperText: c.I18N.ambassadorsHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.uuidArray),
+			rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.fiscalNumberArray),
 		},
 		[FormFieldNames.TAGS]: {
 			inputRef: useRef(),
 			type: FormInputType.AUTOCOMPLETE,
 			name: FormFieldNames.TAGS,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.tagsLabel,
 			placeholder: c.I18N.tagsLabel,
@@ -205,7 +205,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.metaDataLabel,
 			placeholder: c.I18N.metaDataPlaceHolder,
@@ -219,7 +219,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA_INTERNAL,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.metaDataInternalLabel,
 			placeholder: c.I18N.metaDataPlaceHolder,
@@ -233,7 +233,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 
 	return (
 		<Fragment>
-			<PageTitle>{routes[RouteKey.ASSET_UPSERT_FORM].title}</PageTitle>
+			<PageTitle>{routes[RouteKey.CAUSE_UPSERT_FORM].title}</PageTitle>
 			<Box component='span' m={1}>
 				{/* 'handleSubmit' will validate your inputs before invoking 'onSubmit' */}
 				<form

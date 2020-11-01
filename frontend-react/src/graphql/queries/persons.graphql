@@ -18,7 +18,10 @@ query persons($skip: Int, $take: Int) {
 			id
 			# BOF ADDED to fix error Type MUST MATCH Participant Model Object ?
 			code
+			name
 			email
+			fiscalNumber
+			ambassadors
 			fundsBalance {
 				debit
 				credit

@@ -22,7 +22,7 @@ export const isValidJsonObject = (json: string): boolean => {
     // validate all elements of array
     if (Array.isArray(json)){
       Array.from(json).forEach(e => {
-        // don't reparse already object, use JSON.stringify to check if is valid
+        // don't re-parse already object, use JSON.stringify to check if is valid
         JSON.stringify(e);
       });
     } else {
@@ -105,7 +105,7 @@ export const calcElapsedTime = (start: Date, end: Date): ElapsedTime => {
 /**
  * Simple func to format Date
  */
-export const currentFormatedDate = (date: Date, withTime: boolean = true): string => {
+export const currentFormatDate = (date: Date, withTime: boolean = true): string => {
   const yy: string = date.getUTCFullYear().toString();
   const mo: string = (date.getUTCMonth() + 1).toString().padStart(2, '0');
   const dd: string = date.getUTCDate().toString().padStart(2, '0');
@@ -116,9 +116,3 @@ export const currentFormatedDate = (date: Date, withTime: boolean = true): strin
     ? `${yy}-${mo}-${dd} ${hh}:${mm}:${ss}`
     : `${yy}-${mo}-${dd}`;
 };
-
-/**
- * get property name from type, use like this nameof<FormInputs>('firstName'), returns type property
- * @param name property name
- */
-export const nameof = <T>(name: keyof T) => name;

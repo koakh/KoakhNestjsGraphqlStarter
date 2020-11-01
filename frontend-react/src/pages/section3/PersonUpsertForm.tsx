@@ -11,33 +11,36 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields} from '../../types';
-import { generateFormDefinition, getGraphQLApolloError, useStyles, validationMessage, commonControlProps } from '../../utils';
+import { generateFormDefinition, getGraphQLApolloError, useStyles, validationMessage, commonControlProps, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
+	firstName: string;
+	lastName: string;
 	username: string;
 	password: string;
 	passwordConfirmation: string;
 	fiscalNumber: string;
-	firstName: string;
-	lastName: string;
+	mobilePhone: string;
 	email: string;
 };
 enum FormFieldNames {
+	FIRST_NAME = 'firstName',
+	LAST_NAME = 'lastName',
 	USERNAME = 'username',
 	PASSWORD = 'password',
 	PASSWORD_CONFIRMATION = 'passwordConfirmation',
 	FISCAL_NUMBER = 'fiscalNumber',
-	FIRST_NAME = 'firstName',
-	LAST_NAME = 'lastName',
+	MOBILE_PHONE = 'mobilePhone',
 	EMAIL = 'email',
 };
 const defaultValues: FormDefaultValues = {
 	firstName: 'John',
 	lastName: 'Doe',
 	username: 'jonhdoe',
-	password: 'Aa123#12',
-	passwordConfirmation: 'Aa123#12',
+	password: 'Xx673!00',
+	passwordConfirmation: 'Xx673!00',
 	fiscalNumber: 'PT123123123',
+	mobilePhone: '+351936101188',
 	email: 'johndoe@mail.com',
 };
 
@@ -66,6 +69,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 				username: data.username,
 				password: data.password,
 				fiscalNumber: data.fiscalNumber,
+				mobilePhone: data.mobilePhone,
 				email: data.email,
 			};
 			const response = await personNewMutation({ variables: { newPersonData } })
@@ -93,14 +97,8 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 			// helperText: 'a valid first Name',
 			fullWidth: true,
 			className: classes.spacer,
-			rules: {
-				required: validationMessage('required', FormFieldNames.FIRST_NAME),
-				pattern: {
-					value: c.REGEXP.name,
-					message: validationMessage('invalid', FormFieldNames.FIRST_NAME),
-				},
-			},
-			controllProps: commonControlProps,
+			rules: validationRuleRegExHelper(FormFieldNames.FIRST_NAME, c.REGEXP.name),
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
 			inputRef: useRef(),
@@ -110,14 +108,8 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 			placeholder: 'Doe',
 			// helperText: 'a valid last name',
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.LAST_NAME),
-				pattern: {
-					value: c.REGEXP.name,
-					message: validationMessage('invalid', FormFieldNames.LAST_NAME),
-				},
-			},
-			controllProps: commonControlProps,
+			rules: validationRuleRegExHelper(FormFieldNames.LAST_NAME, c.REGEXP.name),
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.USERNAME]: {
 			inputRef: useRef(),
@@ -126,14 +118,8 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 			label: 'Username',
 			placeholder: 'johndoe',
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.USERNAME),
-				pattern: {
-					value: c.REGEXP.username,
-					message: validationMessage('invalid', FormFieldNames.USERNAME),
-				},
-			},
-			controllProps: commonControlProps,
+			rules: validationRuleRegExHelper(FormFieldNames.USERNAME, c.REGEXP.username),
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
 			inputRef: useRef(),
@@ -143,14 +129,18 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 			placeholder: 'PT218269128',
 			// helperText: 'a valid pt fiscal Number',
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.FISCAL_NUMBER),
-				pattern: {
-					value: c.REGEXP.fiscalNumber,
-					message: validationMessage('invalid', FormFieldNames.FISCAL_NUMBER),
-				},
-			},
-			controllProps: commonControlProps,
+			rules: validationRuleRegExHelper(FormFieldNames.FISCAL_NUMBER, c.REGEXP.fiscalNumber),
+			controlProps: commonControlProps,
+		},
+		[FormFieldNames.MOBILE_PHONE]: {
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.MOBILE_PHONE,
+			label: c.I18N.mobilePhoneLabel,
+			placeholder: c.I18N.mobilePhonePlaceHolder,
+			fullWidth: true,
+			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.mobilePhone),
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.EMAIL]: {
 			inputRef: useRef(),
@@ -160,14 +150,8 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 			placeholder: 'johndoe@example.com',
 			fullWidth: true,
 			className: classes.spacer,
-			rules: {
-				required: validationMessage('required', FormFieldNames.EMAIL),
-				pattern: {
-					value: c.REGEXP.email,
-					message: validationMessage('invalid', FormFieldNames.EMAIL),
-				},
-			},
-			controllProps: commonControlProps,
+			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.email),
+			controlProps: commonControlProps,
 		},
 	};
 

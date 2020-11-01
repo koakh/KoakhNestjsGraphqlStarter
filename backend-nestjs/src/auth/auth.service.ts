@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { SignOptions } from 'jsonwebtoken';
+import SignJwtTokenPayload from '../common/types/sign-jwt-token-payload';
 import { getEnvVariables as e } from '../common/env';
 import { GqlContextPayload } from '../types';
 import { UserService } from '../user/user.service';
@@ -21,7 +22,7 @@ export class AuthService {
       const authorized = this.bcryptValidate(pass, user.password);
       if (authorized) {
         // this will remove password from result leaving all the other properties
-        const { password,...result } = user;
+        const { password, ...result } = user;
         // we could do a database lookup in our validate() method to extract more information about the user,
         // resulting in a more enriched user object being available in our Request
         return result;
@@ -30,17 +31,17 @@ export class AuthService {
     return null;
   }
 
-  async signJwtToken(user: any, options?: SignOptions): Promise<AccessToken> {
+  async signJwtToken(signPayload: SignJwtTokenPayload, options?: SignOptions): Promise<AccessToken> {
     // note: we choose a property name of sub to hold our userId value to be consistent with JWT standards
-    const payload = { username: user.username, sub: user.userId, roles: user.roles };
+    const payload = { username: signPayload.username, sub: signPayload.userId, roles: signPayload.roles };
     return {
       // generate JWT from a subset of the user object properties
       accessToken: this.jwtService.sign(payload, options),
     };
   }
 
-  async signRefreshToken(user: any, tokenVersion: number, options?: SignOptions): Promise<AccessToken> {
-    const payload = { username: user.username, sub: user.userId, roles: user.roles, tokenVersion };
+  async signRefreshToken(signPayload: SignJwtTokenPayload, tokenVersion: number, options?: SignOptions): Promise<AccessToken> {
+    const payload = { username: signPayload.username, sub: signPayload.userId, roles: signPayload.roles, tokenVersion };
     return {
       // generate JWT from a subset of the user object properties
       accessToken: this.jwtService.sign(payload, {

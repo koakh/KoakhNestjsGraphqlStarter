@@ -1,6 +1,6 @@
 export enum UserRoles {
-  User = "USER",
-  Admin = "ADMIN"
+  User = 'USER',
+  Admin = 'ADMIN'
 }
 
 export type UserData = {
@@ -12,5 +12,5 @@ export type UserData = {
   email: string,
   roles: string[],
   createdDate: number,
-  metaData: Object,
+  metaData: any,
 }

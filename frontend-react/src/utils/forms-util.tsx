@@ -50,9 +50,9 @@ export const validationMessage = (messageType: 'required' | 'invalid', fieldName
  * @param fieldName 
  * @param regExp 
  */
-export const validationRuleRegExHelper = (fieldName: string, regExp: RegExp) => {
+export const validationRuleRegExHelper = (fieldName: string, regExp: RegExp, required: boolean = true) => {
   return {
-    required: validationMessage('required', fieldName),
+    required: (required) ? validationMessage('required', fieldName) : false,
     pattern: {
       value: regExp,
       message: validationMessage('invalid', fieldName),
@@ -65,19 +65,25 @@ export const validationRuleRegExHelper = (fieldName: string, regExp: RegExp) => 
  */
 export const getGraphQLApolloError = (apolloError: ApolloError): string => {
   let errorMessage = '';
-  // TODO remove !!
   if (apolloError) {
-    // if (typeof (apolloError.graphQLErrors[0]!!.extensions!!.exception!!.responses[0]!!.error!!.message) === 'string') {
-    //   errorMessage = apolloError.graphQLErrors[0].extensions.exception.responses[0].error.message;
-    // } else if (typeof (apolloError.graphQLErrors[0]!!.message as any).error!!.message === 'string') {
-    //   errorMessage = (apolloError.graphQLErrors[0]!!.message as any).error!!.message;
-    // } else if (typeof (apolloError.graphQLErrors[0].message as any).error === 'string') {
-    //   errorMessage = (apolloError.graphQLErrors[0].message as any).error;
-    // } else if (typeof (apolloError.message === 'string')) {
-    //   errorMessage = apolloError.message;
-    // }
-    errorMessage = apolloError.message
+    // errorMessage = apolloError.message
+    const propExists = (obj: any, path: any) => {
+      return !!path.split('.').reduce((obj: any, prop: any) => {
+        return obj && obj[prop] ? obj[prop] : undefined;
+      }, obj)
+    }
+
+    if (propExists(apolloError, 'graphQLErrors.0.extensions.exception.message.error')) {
+      errorMessage = apolloError.graphQLErrors[0].extensions.exception.message.error;
+    } else if (propExists(apolloError, 'graphQLErrors.0.extensions.exception.responses.0.error.message')) {
+      errorMessage = apolloError.graphQLErrors[0].extensions.exception.responses[0].error.message;
+    } else if (propExists(apolloError, 'graphQLErrors.0..message.error')) {
+      errorMessage = (apolloError.graphQLErrors[0].message as any).error;
+    } else if (propExists(apolloError, 'message')) {
+      errorMessage = apolloError.message;
+    }
   }
+
   return errorMessage;
 }
 
@@ -165,7 +171,7 @@ const generateTextField = (e: FormPropFields, control: Control<Record<string, an
   return (
     <Fragment key={e.name}>
       <Controller
-        as={<TextField inputRef={e.inputRef} {...e.controllProps} />}
+        as={<TextField inputRef={e.inputRef} {...e.controlProps} />}
         // text | password
         type={e.type}
         control={control}
@@ -176,7 +182,7 @@ const generateTextField = (e: FormPropFields, control: Control<Record<string, an
         placeholder={e.placeholder}
         fullWidth={e.fullWidth}
         rules={e.rules}
-        disabled={loading}
+        disabled={loading || e.disabled}
         onFocus={() => { e.inputRef.current.focus(); }}
       />
     </Fragment>
@@ -196,7 +202,7 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
               label={e.label}
               inputRef={e.inputRef}
             >
-              <MenuItem value={''}>{c.I18N.none}</MenuItem>
+              <MenuItem value={c.VALUES.undefined}>{c.I18N.undefined}</MenuItem>
               {/* use key or value */}
               {e.options && e.options.map((e: AutocompleteOption) => <MenuItem key={e.key ? e.key : e.value} value={e.value}>{e.title}</MenuItem>)}
             </Select>
@@ -220,12 +226,12 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
           placeholder={e.placeholder}
           // TODO: wip
           rules={e.rules}
-          disabled={loading}
-          defaultValue={''}
+          disabled={loading || e.disabled}
+          // defaultValue={undefined}
           onFocus={() => { e.inputRef.current.focus(); }}
         // TODO: this gives the margin problem in console
         // Failed prop type: Invalid prop `margin` of value `normal` supplied to 
-        // {...e.controllProps}
+        // {...e.controlProps}
         />
         <FormHelperText error={(errors[(e.name as any)] !== undefined)}>{(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}</FormHelperText>
       </FormControl>
@@ -349,7 +355,7 @@ const generateAutocomplete = (
                   error={(errors[(e.name)] !== undefined)}
                   helperText={(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}
                   {...params}
-                  {...e.controllProps}
+                  {...e.controlProps}
                 />
               )
             }}

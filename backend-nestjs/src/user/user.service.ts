@@ -47,7 +47,8 @@ export class UserService {
       Logger.error(JSON.stringify(error));
       const errorMessage: string = (error.responses[0]) ? error.responses[0].error.message : c.API_RESPONSE_INTERNAL_SERVER_ERROR;
       // throw new HttpException({ status: HttpStatus.CONFLICT, error: errorMessage }, HttpStatus.NOT_FOUND);
-      // don't show original error message, override it with a forbidden message equal to the one when fails password, more secure, this way we hide if username exists or not form hacking
+      // don't show original error message, override it with a forbidden message equal to the one when fails password, more secure,
+      // this way we hide if username exists or not form hacking
       throw new HttpException({ status: HttpStatus.FORBIDDEN, error: 'Forbidden', message: `Forbidden resource` }, HttpStatus.FORBIDDEN);
     }
   }

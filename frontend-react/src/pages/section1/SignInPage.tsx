@@ -47,7 +47,6 @@ type FormInputs = {
 	username: string;
 	password: string;
 };
-type FormInputsString = 'password' | 'username';
 enum FormFieldNames {
 	USERNAME = 'username',
 	PASSWORD = 'password',
@@ -151,7 +150,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 					message: validationMessage('invalid', FormFieldNames.USERNAME),
 				},
 			},
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.PASSWORD]: {
 			inputRef: useRef(),
@@ -161,13 +160,14 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 			placeholder: '12345678',
 			fullWidth: true,
 			rules: {
-				required: validationMessage('required', FormFieldNames.USERNAME),
-				pattern: {
-					value: c.REGEXP.password,
-					message: validationMessage('invalid', FormFieldNames.USERNAME),
-				},
+				required: validationMessage('required', FormFieldNames.PASSWORD),
+				// TODO: fix#28
+				// pattern: {
+				// 	value: c.REGEXP.password,
+				// 	message: validationMessage('invalid', FormFieldNames.PASSWORD),
+				// },
 			},
-			controllProps: {
+			controlProps: {
 				...commonControlProps,
 				// must be capitalized
 				InputProps: {

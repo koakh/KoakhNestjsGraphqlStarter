@@ -2,6 +2,7 @@ import { PersonsQuery, usePersonsLazyQuery } from '../generated/graphql';
 import { envVariables as e } from '../app/config';
 
 /**
+ * TODO: Not Used
  * getPersons hook helper
  */
 export const getPersons = async (): Promise<PersonsQuery> => {

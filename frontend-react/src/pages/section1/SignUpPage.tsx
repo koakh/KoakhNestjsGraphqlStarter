@@ -21,32 +21,33 @@ import { commonControlProps, generateFormDefinition, getGraphQLApolloError, vali
 import { copyrightProps, useStyles } from './SignInPage';
 
 type FormInputs = {
+	firstName: string;
+	lastName: string;
 	username: string;
 	password: string;
 	passwordConfirmation: string;
 	fiscalNumber: string;
-	firstName: string;
-	lastName: string;
+	mobilePhone: string;
 	email: string;
 };
-// TODO: cleanup
-type FormInputsString = 'password' | 'username' | 'passwordConfirmation' | 'fiscalNumber' | 'firstName' | 'lastName' | 'email';
 enum FormFieldNames {
+	FIRST_NAME = 'firstName',
+	LAST_NAME = 'lastName',
 	USERNAME = 'username',
 	PASSWORD = 'password',
 	PASSWORD_CONFIRMATION = 'passwordConfirmation',
 	FISCAL_NUMBER = 'fiscalNumber',
-	FIRST_NAME = 'firstName',
-	LAST_NAME = 'lastName',
+	MOBILE_PHONE = 'mobilePhone',
 	EMAIL = 'email',
 };
 const defaultValues: FormDefaultValues = {
 	firstName: 'John',
 	lastName: 'Doe',
 	username: 'jonhdoe',
-	password: 'Aa123#12',
-	passwordConfirmation: 'Aa123#12',
+	password: 'Xx673!00',
+	passwordConfirmation: 'Xx673!00',
 	fiscalNumber: 'PT123123123',
+	mobilePhone: '+351936101188',
 	email: 'johndoe@mail.com',
 };
 
@@ -78,6 +79,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 				username: data.username,
 				password: data.password,
 				fiscalNumber: data.fiscalNumber,
+				mobilePhone: data.mobilePhone,
 				email: data.email,
 			};
 			const response = await personNewMutation({ variables: { newPersonData } })
@@ -102,44 +104,48 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.FIRST_NAME,
+			// TODO add to i18n
 			label: 'First name',
 			placeholder: 'John',
 			helperText: 'a valid first Name',
 			fullWidth: true,
 			rules: validationRuleRegExHelper(FormFieldNames.FIRST_NAME, c.REGEXP.name),
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.LAST_NAME]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.LAST_NAME,
+			// TODO add to i18n
 			label: 'Last name',
 			placeholder: 'Doe',
 			helperText: 'a valid last name',
 			fullWidth: true,
 			rules: validationRuleRegExHelper(FormFieldNames.LAST_NAME, c.REGEXP.name),
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.USERNAME]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.USERNAME,
+			// TODO add to i18n
 			label: 'Username',
 			placeholder: 'johndoe',
 			fullWidth: true,
 			rules: validationRuleRegExHelper(FormFieldNames.USERNAME, c.REGEXP.name),
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.PASSWORD]: {
 			inputRef: useRef(),
 			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
 			// type: FormInputType.PASSWORD,
 			name: FormFieldNames.PASSWORD,
+			// TODO add to i18n
 			label: 'Password',
 			placeholder: '12345678',
 			fullWidth: true,
 			rules: validationRuleRegExHelper(FormFieldNames.PASSWORD, c.REGEXP.name),
-			controllProps: {
+			controlProps: {
 				...commonControlProps,
 				// must be capitalized
 				InputProps: {
@@ -160,6 +166,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			inputRef: useRef(),
 			type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
 			name: FormFieldNames.PASSWORD_CONFIRMATION,
+			// TODO add to i18n
 			label: 'Password confirmation',
 			placeholder: '12345678',
 			fullWidth: true,
@@ -169,28 +176,37 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					return getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION);
 				}
 			},
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.FISCAL_NUMBER,
-			label: 'Fiscal number',
-			placeholder: 'PT218269128',
-			helperText: 'a valid pt fiscal Number',
+			label: c.I18N.fiscalNumberLabel,
+			placeholder: c.I18N.fiscalNumberPlaceHolder,
 			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.FISCAL_NUMBER, c.REGEXP.name),
-			controllProps: commonControlProps,
+			rules: validationRuleRegExHelper(FormFieldNames.FISCAL_NUMBER, c.REGEXP.fiscalNumber),
+			controlProps: commonControlProps,
+		},
+		[FormFieldNames.MOBILE_PHONE]: {
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.MOBILE_PHONE,
+			label: c.I18N.mobilePhoneLabel,
+			placeholder: c.I18N.mobilePhonePlaceHolder,
+			fullWidth: true,
+			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.mobilePhone),
+			controlProps: commonControlProps,
 		},
 		[FormFieldNames.EMAIL]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.EMAIL,
-			label: 'Email',
-			placeholder: 'johndoe@example.com',
+			label: c.I18N.emailLabel,
+			placeholder: c.I18N.emailPlaceHolder,
 			fullWidth: true,
 			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.name),
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 		},
 	};
 

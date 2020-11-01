@@ -45,7 +45,7 @@ export type FormPropFields = {
   fullWidth?: boolean,
   className?: any,
   // pass arbitrary props
-  controllProps?: {
+  controlProps?: {
     // 'filled' | 'outlined' | 'standard',
     variant?: any,
     margin?: PropTypes.Margin,

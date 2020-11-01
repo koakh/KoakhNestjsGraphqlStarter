@@ -28,6 +28,7 @@
   - [Problems and Solutions with graphql-codegen](#problems-and-solutions-with-graphql-codegen)
     - [Error #1](#error-1)
     - [Error #2](#error-2)
+    - [Error #3: SyntaxError: Unexpected reserved word](#error-3-syntaxerror-unexpected-reserved-word)
   - [Configure react Router](#configure-react-router)
   - [Apollo resetStore /Cache](#apollo-resetstore-cache)
   - [Use JS-Cookie](#use-js-cookie)
@@ -53,6 +54,7 @@
 3. launch debug with F5 (https://app.solidarychain.com:3000)
 4. test login/logout and refresh-token
 5. test subscriptions
+6. npm run gen:graphql don't work with node 8.x
 
 ## Hosts
 
@@ -700,6 +702,26 @@ $ pkg:react:gen-graphql:watch
 @solidary-chain/frontend-react: > @solidary-chain/frontend-react@0.1.0 gen:graphql:watch /media/mario/Storage/Documents/Development/@SolidaryChain/solidarychain-development-monorepo/packages/frontend-react
 @solidary-chain/frontend-react: > NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --watch
 @solidary-chain/frontend-react: /media/mario/Storage/Documents/Development/@SolidaryChain/solidarychain-development-monorepo/node_modules/@graphql-toolkit/core/index.cjs.js:74
+```
+
+### Error #3: SyntaxError: Unexpected reserved word
+
+- [0.5.16 breaks node 8 compatibility](https://github.com/ardatan/graphql-toolkit/issues/259)
+
+> Solution: don't use node v8.x, use the project version of `node/v10.20.1` and it works has expected
+
+```shell
+$ npm run gen:graphql
+
+> @solidary-chain/frontend-react@0.1.0 gen:graphql /media/mario/storage/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/frontend-react
+> NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen
+
+/media/mario/storage/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/frontend-react/node_modules/@graphql-toolkit/core/index.cjs.js:74
+    for await (const loader of options.loaders) {
+        ^^^^^
+
+SyntaxError: Unexpected reserved word
+    at createScript (vm.js:80:10)
 ```
 
 ## Configure react Router

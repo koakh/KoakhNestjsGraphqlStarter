@@ -1,3 +1,9 @@
+export enum EntityType {
+  Participant = 'com.chain.solidary.model.participant',
+  Person = 'com.chain.solidary.model.person',
+  Cause = 'com.chain.solidary.model.cause'
+}
+
 export enum AssetType {
   physicalAsset = 'PHYSICAL_ASSET',
   digitalAsset = 'DIGITAL_ASSET',

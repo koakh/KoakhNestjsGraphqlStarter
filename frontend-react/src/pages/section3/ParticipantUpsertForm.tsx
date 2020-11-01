@@ -16,7 +16,8 @@ type FormInputs = {
 	code: string,
 	name: string,
 	email: string,
-	ambassadors?: string[],
+	fiscalNumber: string,
+	ambassadors?: string,
 	metaData?: any,
 	metaDataInternal?: any,
 };
@@ -24,6 +25,7 @@ enum FormFieldNames {
 	CODE = 'code',
 	NAME = 'name',
 	EMAIL = 'email',
+	FISCAL_NUMBER = 'fiscalNumber',
 	AMBASSADORS = 'ambassadors',
 	META_DATA = 'metaData',
 	META_DATA_INTERNAL = 'metaDataInternal',
@@ -32,7 +34,8 @@ const defaultValues: FormDefaultValues = {
 	code: 'wfp',
 	name: 'World Food Program',
 	email: 'mail@efp.com',
-	ambassadors: ['0466c748-05fd-4d46-b381-4f1bb39458c7', '108f4bb0-2918-4340-a0c8-8b5fb5af249c'],
+	fiscalNumber: 'PT500123001',
+	ambassadors: 'PT182692125 PT582692178',
 	metaData: '{}',
 	metaDataInternal: '{}',
 };
@@ -62,14 +65,15 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				code: data.code,
 				name: data.name,
 				email: data.email,
-				ambassadors: data.ambassadors,
+				fiscalNumber: data.fiscalNumber,
+				ambassadors: data.ambassadors.split(' '),
 				metaData: JSON.parse(data.metaData),
 				metaDataInternal: JSON.parse(data.metaDataInternal),
 			};
 			const response = await assetNewMutation({ variables: { newParticipantData: newParticipantData } });
 
 			if (response) {
-				// TODO: finishe result message
+				// TODO: finish result message in every forms
 				const payload = { message: `${c.I18N.signUpUserRegisteredSuccessfully} '${name}'` };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.SIGNUP_RESULT.path });
@@ -85,7 +89,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.CODE,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.codeLabel,
 			placeholder: c.I18N.codePlaceHolder,
@@ -95,7 +99,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.NAME,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.assetLabel,
 			placeholder: c.I18N.assetPlaceHolder,
@@ -105,28 +109,44 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			inputRef: useRef(),
 			type: FormInputType.EMAIL,
 			name: FormFieldNames.EMAIL,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.emailLabel,
 			placeholder: c.I18N.emailPlaceHolder,
 			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.email),
 		},
+		[FormFieldNames.FISCAL_NUMBER]: {
+			inputRef: useRef(),
+			type: FormInputType.TEXT,
+			name: FormFieldNames.FISCAL_NUMBER,
+			label: c.I18N.fiscalNumberLabel,
+			placeholder: c.I18N.fiscalNumberPlaceHolder,
+			fullWidth: true,
+			rules: {
+				required: validationMessage('required', FormFieldNames.FISCAL_NUMBER),
+				pattern: {
+					value: c.REGEXP.fiscalNumber,
+					message: validationMessage('invalid', FormFieldNames.FISCAL_NUMBER),
+				},
+			},
+			controlProps: commonControlProps,
+		},
 		[FormFieldNames.AMBASSADORS]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.AMBASSADORS,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.ambassadorsLabel,
 			placeholder: c.I18N.ambassadorsPlaceHolder,
 			helperText: c.I18N.ambassadorsHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.uuidArray),
+			rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.fiscalNumberArray),
 		},
 		[FormFieldNames.META_DATA]: {
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.metaDataLabel,
 			placeholder: c.I18N.metaDataPlaceHolder,
@@ -140,7 +160,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			inputRef: useRef(),
 			type: FormInputType.TEXT,
 			name: FormFieldNames.META_DATA_INTERNAL,
-			controllProps: commonControlProps,
+			controlProps: commonControlProps,
 			fullWidth: true,
 			label: c.I18N.metaDataInternalLabel,
 			placeholder: c.I18N.metaDataPlaceHolder,
