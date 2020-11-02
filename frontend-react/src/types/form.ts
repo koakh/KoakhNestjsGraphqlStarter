@@ -68,13 +68,13 @@ export type FormPropFields = {
   // true to keep open after select, rare used
   disableCloseOnSelect?: boolean,
   // functions
-  options?: AutocompleteOption[], // | ((control: Control<Record<string, any>>) => AutocompleteOption[]),
+  options?: () => AutocompleteAndSelectOptions[], // | ((control: Control<Record<string, any>>) => AutocompleteOption[]),
   visible?: boolean | ((control: Control<Record<string, any>>) => boolean),
   // events
   // onChange?: () => void,
 }
 // components: used for AutocompleteOption and Selection component
-export type AutocompleteOption = { key?: number, title: string, value: string | number | any };
+export type AutocompleteAndSelectOptions = { key?: number, title: string, value: string | number | any };
 
 // export type ExtraProps<ClassKey extends string = string> = {
 //   formDefinition: Record<string, FormPropFields>;

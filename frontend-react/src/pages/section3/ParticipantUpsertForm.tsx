@@ -10,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewParticipantInput, useParticipantNewMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields, ModelType } from '../../types';
-import { commonControlProps, generateFormDefinition, generateFormButtonsDiv, getGraphQLApolloError, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper, getInjected } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	code: string,
@@ -45,13 +45,11 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// hooks styles
 	const classes = useStyles();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	// hooks: apollo
 	const [assetNewMutation, { loading, error: apolloError }] = useParticipantNewMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
-	// used in result state message
-	const name = watch(FormFieldNames.NAME);
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug

@@ -34,7 +34,7 @@
     "uuid": "^8.3.0"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^1.14.0",
+    "@graphql-codegen/cli": "^1.19.0",
     "@graphql-codegen/introspection": "^1.14.0",
     "@graphql-codegen/typescript": "^1.14.0",
     "@graphql-codegen/typescript-operations": "^1.14.0",

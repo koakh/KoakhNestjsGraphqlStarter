@@ -8,9 +8,9 @@ import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
-import { NewTransactionInput, useCausesLazyQuery, usePersonsLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
-import { AutocompleteOption, CurrencyCode, FormDefaultValues, FormInputType, FormPropFields, ResourceType, Tag, TransactionType, EntityType, ModelType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validateRegExpObjectProperty, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
+import { AutocompleteAndSelectOptions, CurrencyCode, EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, ResourceType, Tag, TransactionType } from '../../types';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 let renderCount = 0;
 
@@ -91,7 +91,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// 	setPersonOptionsLoaded(true);
 	// }
 	// output personOptions: require [] array to be a reference, not a primitive
-	const [causeOptions, setCauseOptions] = useState<AutocompleteOption[]>([]);
+	const [causeOptions, setCauseOptions] = useState<AutocompleteAndSelectOptions[]>([]);
 	const [causeOptionsLoaded, setCauseOptionsLoaded] = useState<boolean>(false);
 	const [causeQuery, { data: causeQueryData, loading: causeQueryLoading, error: causeQueryError }] = useCausesLazyQuery({
 		fetchPolicy: e.apolloFetchPolicy,
@@ -104,11 +104,9 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		}));
 		setCauseOptionsLoaded(true);
 	}
-	// used in result state message
+	// watch
 	const transactionType = watch(FormFieldNames.TRANSACTION_TYPE);
 	const resourceType = watch(FormFieldNames.RESOURCE_TYPE);
-	// TODO remove after fix forword message
-	const name = transactionType;
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
@@ -119,32 +117,44 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// console.log(`input:${JSON.stringify(getValues(FormFieldNames.INPUT), undefined, 2)}`);
 	// console.log(`output:${JSON.stringify(getValues(FormFieldNames.OUTPUT), undefined, 2)}`);
 	// console.log(`transactionType:${getValues(FormFieldNames.TRANSACTION_TYPE)}`);
+	// console.log(`transactionType: [${transactionType}]`);
 	// console.log(`input:${getValues(FormFieldNames.INPUT)}`);
 	// console.log(`resourceType:${getValues(FormFieldNames.RESOURCE_TYPE)}`);
 	// console.log('TRANSACTION_TYPE', name);
 	if (transactionType === TransactionType.transferFunds && resourceType !== ResourceType.funds) {
-		setTimeout(() => {
-			// TODO
-			// setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.Funds);
-		}, 100);
+		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.funds); }, 100);
+	} else if (transactionType === TransactionType.transferVolunteeringHours && resourceType !== ResourceType.volunteeringHours) {
+		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.volunteeringHours); }, 100);
+	} else if (transactionType === TransactionType.transferGoods && resourceType !== ResourceType.genericGoods) {
+		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.genericGoods); }, 100);
+	} else if (transactionType === TransactionType.transferAsset && resourceType !== ResourceType.physicalAsset) {
+		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.physicalAsset); }, 100);
+	} else if (transactionType === c.VALUES.undefined && resourceType !== c.VALUES.undefined) {
+		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, c.VALUES.undefined); }, 100);
 	}
-	if (transactionType === TransactionType.transferVolunteeringHours && resourceType !== ResourceType.volunteeringHours) {
-		setTimeout(() => {
-			// TODO
-			// setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.VolunteeringHours);
-		}, 100);
-	}
-	if (transactionType === TransactionType.transferGoods && resourceType !== ResourceType.genericGoods) {
-		setTimeout(() => {
-			// TODO
-			// setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.GenericGoods);
-		}, 100);
-	}
-	if (transactionType === TransactionType.transferAsset && resourceType !== ResourceType.physicalAsset) {
-		setTimeout(() => {
-			// TODO
-			// setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.PhysicalAsset);
-		}, 100);
+
+	const resourceTypeOptions = () => {
+		switch (transactionType) {
+			case TransactionType.transferFunds:
+				return [
+					{ title: c.I18N.resourceTypeOptionFunds, value: ResourceType.funds },
+				]
+			case TransactionType.transferVolunteeringHours:
+				return [
+					{ title: c.I18N.resourceTypeOptionVolunteeringHours, value: ResourceType.volunteeringHours },
+				]
+			case TransactionType.transferGoods:
+				return [
+					{ title: c.I18N.resourceTypeOptionGenericGoods, value: ResourceType.genericGoods },
+				]
+			case TransactionType.transferAsset:
+				return [
+					{ title: c.I18N.resourceTypeOptionPhysicalAsset, value: ResourceType.physicalAsset },
+					{ title: c.I18N.resourceTypeOptionDigitalAsset, value: ResourceType.digitalAsset },
+				]
+			default:
+				return [];
+		}
 	}
 
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
@@ -206,7 +216,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					: validationMessage('required', FormFieldNames.TRANSACTION_TYPE)
 			},
 			// TODO can be object or function, better to always be a function
-			options: [
+			options: () => [
 				{ title: c.I18N.transactionTypeOptionTransferFunds, value: TransactionType.transferFunds },
 				{ title: c.I18N.transactionTypeOptionTransferVolunteeringHours, value: TransactionType.transferVolunteeringHours },
 				{ title: c.I18N.transactionTypeOptionTransferGoods, value: TransactionType.transferGoods },
@@ -227,15 +237,8 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('required', FormFieldNames.RESOURCE_TYPE)
 			},
-			// TODO array or function, to use dynamic options
-			options: [
-				{ title: c.I18N.resourceTypeOptionFunds, value: ResourceType.funds },
-				{ title: c.I18N.resourceTypeOptionVolunteeringHours, value: ResourceType.volunteeringHours },
-				{ title: c.I18N.resourceTypeOptionGenericGoods, value: ResourceType.genericGoods },
-				{ title: c.I18N.resourceTypeOptionPhysicalAsset, value: ResourceType.physicalAsset },
-				{ title: c.I18N.resourceTypeOptionDigitalAsset, value: ResourceType.digitalAsset },
-			],
-			disabled: !causeOptionsLoaded,
+			options: () => resourceTypeOptions(),
+			disabled: !causeOptionsLoaded || transactionType === c.VALUES.undefined,
 			// visible: (control) => {
 			// 	return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.TransferAsset);
 			// }
@@ -254,7 +257,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('required', FormFieldNames.INPUT_TYPE)
 			},
-			options: c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
+			options: () => c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
 			disabled: !causeOptionsLoaded,
 		},
 		[FormFieldNames.INPUT]: {
@@ -286,7 +289,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('required', FormFieldNames.OUTPUT_TYPE)
 			},
-			options: [
+			options: () => [
 				{ title: c.I18N.entityTypeOptionPerson, value: EntityType.person },
 				{ title: c.I18N.entityTypeOptionParticipant, value: EntityType.participant },
 				{ title: c.I18N.entityTypeOptionCause, value: EntityType.cause },
@@ -309,7 +312,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			// 		: validationMessage('required', FormFieldNames.OUTPUT)
 			// },
 			rules: validationRuleRegExHelper(FormFieldNames.OUTPUT, c.REGEXP.uuid),
-			options: causeOptions,
+			options: () => causeOptions,
 			disabled: !causeOptionsLoaded,
 			// disableCloseOnSelect: false,
 		},
@@ -339,11 +342,11 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('required', FormFieldNames.CURRENCY)
 			},
-			options: [
+			options: () => [
 				{ title: c.I18N.currencyCodeEur, value: CurrencyCode.eur },
 				{ title: c.I18N.currencyCodeUsd, value: CurrencyCode.usd },
 			],
-			disabled: !causeOptionsLoaded,			
+			disabled: !causeOptionsLoaded,
 			visible: (control) => {
 				// required to check if is undefined and assume true as a default
 				return (!control.getValues(FormFieldNames.TRANSACTION_TYPE) || control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferFunds);
@@ -359,7 +362,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			placeholder: c.I18N.assetIdPlaceholder,
 			helperText: c.I18N.assetIdHelperText,
 			rules: validationRuleRegExHelper(FormFieldNames.ASSET_ID, c.REGEXP.uuid),
-			disabled: !causeOptionsLoaded,			
+			disabled: !causeOptionsLoaded,
 			visible: (control) => {
 				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferAsset);
 			}
@@ -379,8 +382,8 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('invalid', FormFieldNames.GOODS)
 			},
-			options: c.GOODS_OPTIONS,
-			disabled: !causeOptionsLoaded,			
+			options: () => c.GOODS_OPTIONS,
+			disabled: !causeOptionsLoaded,
 			visible: (control) => {
 				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferGoods);
 			}
@@ -394,7 +397,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			label: c.I18N.locationLabel,
 			placeholder: c.I18N.locationPlaceHolder,
 			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location, false),
-			disabled: !causeOptionsLoaded,			
+			disabled: !causeOptionsLoaded,
 		},
 		[FormFieldNames.META_DATA]: {
 			inputRef: useRef(),
@@ -409,7 +412,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('invalid', FormFieldNames.META_DATA)
 			},
-			disabled: !causeOptionsLoaded,			
+			disabled: !causeOptionsLoaded,
 		},
 		[FormFieldNames.META_DATA_INTERNAL]: {
 			inputRef: useRef(),
@@ -424,7 +427,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('invalid', FormFieldNames.META_DATA_INTERNAL)
 			},
-			disabled: !causeOptionsLoaded,			
+			disabled: !causeOptionsLoaded,
 		},
 	};
 

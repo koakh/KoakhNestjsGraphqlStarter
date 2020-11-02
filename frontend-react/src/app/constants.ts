@@ -1,3 +1,5 @@
+/* eslint-disable no-template-curly-in-string */
+
 import { EntityType, GoodsOptions } from "../types";
 
 const VALUES: { [key: string]: string } = {

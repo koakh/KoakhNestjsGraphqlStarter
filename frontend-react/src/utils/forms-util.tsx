@@ -1,5 +1,8 @@
+/* eslint-disable no-template-curly-in-string */
+/* eslint-disable array-callback-return */
+
 /**
- * helper file with common jsx functionl stuff for dynamic forms
+ * helper file with common jsx functional stuff for dynamic forms
  */
 
 import { ApolloError } from '@apollo/client';
@@ -18,7 +21,7 @@ import { capitalCase, constantCase } from "change-case";
 import React, { Fragment } from 'react';
 import { Control, Controller, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '../app/constants';
-import { AutocompleteOption, FormInputType, FormPropFields } from '../types';
+import { AutocompleteAndSelectOptions, FormInputType, FormPropFields } from '../types';
 import { recordToArray } from './main-util';
 
 export const useStyles = makeStyles((theme) => ({
@@ -93,7 +96,7 @@ export const getGraphQLApolloError = (apolloError: ApolloError): string => {
  */
 export const addToAutocomplete = (name: string, control: Control<Record<string, any>>, value: string): void => {
   // clone
-  const result: Array<AutocompleteOption> = [...control.getValues(name)];
+  const result: Array<AutocompleteAndSelectOptions> = [...control.getValues(name)];
   const newTitle = capitalCase(value);
   const newValue = constantCase(value);
   if (result.length >= 0) {
@@ -138,34 +141,37 @@ export const generateFormButtonsDiv = (classes: Record<"root" | "button" | "spac
 // https://stackoverflow.com/questions/41112313/how-to-use-generics-with-arrow-functions-in-typescript-jsx-with-react?rq=1
 // use '<T extends {}>'
 // T is FormInputs
-export const generateFormDefinition = (formDefinition: any, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean, setValue?: any): JSX.Element[] => {
-  return recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => {
-    if (e.visible && (typeof e.visible === 'function' && !e.visible(control))) return;
-    switch (e.type) {
-      case FormInputType.TEXT:
-      case FormInputType.PASSWORD:
-      case FormInputType.DATE:
-      case FormInputType.EMAIL:
-      case FormInputType.COLOR:
-      case FormInputType.DATETIME:
-      case FormInputType.FILE:
-      case FormInputType.HIDDEN:
-      case FormInputType.IMAGE:
-      case FormInputType.MONTH:
-      case FormInputType.NUMBER:
-      case FormInputType.RANGE:
-      case FormInputType.TEL:
-      case FormInputType.TIME:
-      case FormInputType.URL:
-      case FormInputType.WEEK:
-        return generateTextField(e, control, errors, loading);
-      case FormInputType.SELECT:
-        return generateSelection(e, control, errors, loading);
-      case FormInputType.AUTOCOMPLETE:
-        return generateAutocomplete(e, control, errors, loading);
-    }
-  })
-}
+export const generateFormDefinition = (formDefinition: any, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean, setValue?: any): JSX.Element[] => recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => {
+  if (e.visible && (typeof e.visible === 'function' && !e.visible(control))) return;
+  let returnValue;
+  switch (e.type) {
+    case FormInputType.TEXT:
+    case FormInputType.PASSWORD:
+    case FormInputType.DATE:
+    case FormInputType.EMAIL:
+    case FormInputType.COLOR:
+    case FormInputType.DATETIME:
+    case FormInputType.FILE:
+    case FormInputType.HIDDEN:
+    case FormInputType.IMAGE:
+    case FormInputType.MONTH:
+    case FormInputType.NUMBER:
+    case FormInputType.RANGE:
+    case FormInputType.TEL:
+    case FormInputType.TIME:
+    case FormInputType.URL:
+    case FormInputType.WEEK:
+      returnValue = generateTextField(e, control, errors, loading);
+      break
+    case FormInputType.SELECT:
+      returnValue = generateSelection(e, control, errors, loading);
+      break
+    case FormInputType.AUTOCOMPLETE:
+      returnValue = generateAutocomplete(e, control, errors, loading);
+      break
+  }
+  return returnValue;
+});
 
 const generateTextField = (e: FormPropFields, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean): JSX.Element => {
   return (
@@ -204,7 +210,7 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
             >
               <MenuItem value={c.VALUES.undefined}>{c.I18N.undefined}</MenuItem>
               {/* use key or value */}
-              {e.options && e.options.map((e: AutocompleteOption) => <MenuItem key={e.key ? e.key : e.value} value={e.value}>{e.title}</MenuItem>)}
+              {e.options && e.options().map((e: AutocompleteAndSelectOptions) => <MenuItem key={e.key ? e.key : e.value} value={e.value}>{e.title}</MenuItem>)}
             </Select>
           }
           // render={({ onChange, onBlur, value, name, ...props }) => (
@@ -314,11 +320,11 @@ const generateAutocomplete = (
         control={control}
         rules={e.rules}
         render={({ onChange, ...props }) => (
-          // TOOD: use `as` crash when we clear tags
+          // TODO: use `as` crash when we clear tags
           //  as={
           <Autocomplete
             id={e.name}
-            options={e.options}
+            options={e.options()}
             multiple={e.multipleOptions}
             disableCloseOnSelect={e.disableCloseOnSelect}
             filterSelectedOptions

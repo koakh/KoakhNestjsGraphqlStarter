@@ -6,7 +6,7 @@
 
 ## TLDR
 
-- used node v10.12.0
+- used node `v10.12.0`, but works with node `v8.16.0` to
 
 ## Installation
 

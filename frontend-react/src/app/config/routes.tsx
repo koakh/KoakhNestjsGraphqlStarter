@@ -1,6 +1,6 @@
 import { AccountTree as AccountTreeIcon, AddBox as AddBoxIcon, Apartment as ApartmentIcon, Assessment as AssessmentIcon, DynamicFeed as DynamicFeedIcon, Explore as ExploreIcon, Fingerprint as FingerprintIcon, Home as HomeIcon, Loyalty as LoyaltyIcon, People as PeopleIcon, LocalPlay as LocalPlayIcon } from '@material-ui/icons';
 import React from 'react';
-import { CausesPage, CauseUpsertForm, CommunityPage, FeedPage, HomePage, ParticipantUpsertForm, PersonProfilePage, PersonQueryPage, PersonUpsertForm, SignInPage, SignUpPage, SignUpResultPage, StatePage, TimelinePage, TransactionAddedPage, TransactionUpsertForm, AssetUpsertForm } from '../../pages';
+import { CausesPage, CauseUpsertForm, CommunityPage, FeedPage, HomePage, ParticipantUpsertForm, PersonProfilePage, PersonQueryPage, PersonUpsertForm, SignInPage, SignUpPage, ResultPage, StatePage, TimelinePage, TransactionAddedPage, TransactionUpsertForm, AssetUpsertForm } from '../../pages';
 import { DrawerListItem, DrawerSections, RouteItem } from '../../types';
 import { getEnumKeyFromEnumValue } from '../../utils';
 
@@ -13,7 +13,7 @@ export enum RouteKey {
   PROFILE = 'PROFILE',
   SIGN_IN = 'SIGN_IN',
   SIGN_UP = 'SIGN_UP',
-  SIGNUP_RESULT = 'SIGNUP_RESULT',
+  RESULT_PAGE = 'SIGNUP_RESULT',
   STATE = 'STATE',
   TRANSACTIONS = 'TRANSACTIONS',
   TIMELINE = 'TIMELINE',
@@ -93,11 +93,11 @@ export const routes: Record<RouteKey, RouteItem> = {
     // section: DrawerSections.SECTION1,
     exact: true,
   },
-  [RouteKey.SIGNUP_RESULT]: {
-    title: 'SignUp Result Page',
-    label: 'SignUp Result Page',
-    path: '/signup-result',
-    component: SignUpResultPage,
+  [RouteKey.RESULT_PAGE]: {
+    title: 'Result Page',
+    label: 'Result Page',
+    path: '/result-page',
+    component: ResultPage,
     section: DrawerSections.SECTION1,
     exact: true,
     visible: false,

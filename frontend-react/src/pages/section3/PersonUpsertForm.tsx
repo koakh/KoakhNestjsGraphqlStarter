@@ -1,6 +1,5 @@
-import { Box, Typography } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
-import { Person } from '@material-ui/icons';
 import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
@@ -12,7 +11,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields, ModelType } from '../../types';
-import { generateFormDefinition, getGraphQLApolloError, useStyles, validationMessage, commonControlProps, validationRuleRegExHelper, getInjected } from '../../utils';
+import { commonControlProps, generateFormDefinition, getGraphQLApolloError, getInjected, useStyles, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	firstName: string;
@@ -50,13 +49,11 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 	// hooks styles
 	const classes = useStyles();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, errors, control, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	// hooks: apollo
 	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
-	// used in result state message
-	const username = watch(FormFieldNames.USERNAME);
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug

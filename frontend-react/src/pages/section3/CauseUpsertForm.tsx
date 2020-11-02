@@ -63,13 +63,11 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// hooks styles
 	const classes = useStyles();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	// hooks: apollo
 	const [causeNewMutation, { loading, error: apolloError }] = useCauseNewMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
-	// used in result state message
-	const name = watch(FormFieldNames.NAME);
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
@@ -189,7 +187,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 					: validationMessage('required', FormFieldNames.INPUT_TYPE)
 			},
 			disabled: false,
-			options: c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
+			options: () => c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
 		},
 		[FormFieldNames.INPUT]: {
 			inputRef: useRef(),
@@ -231,7 +229,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 					? true
 					: validationMessage('invalid', FormFieldNames.TAGS)
 			},
-			options: c.TAGS_OPTIONS,
+			options: () => c.TAGS_OPTIONS,
 			multipleOptions: true,
 			addToAutocomplete: true,
 		},

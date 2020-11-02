@@ -52,13 +52,11 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// hooks styles
 	const classes = useStyles();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	// hooks: apollo
 	const [assetNewMutation, { loading, error: apolloError }] = useAssetNewMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
-	// used in result state message
-	const name = watch(FormFieldNames.NAME);
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
@@ -112,7 +110,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 					? true
 					: validationMessage('required', FormFieldNames.ASSET_TYPE)
 			},
-			options: [
+			options: () => [
 				{ title: c.I18N.assetTypeOptionPhysicalAsset, value: AssetType.physicalAsset },
 				{ title: c.I18N.assetTypeOptionDigitalAsset, value: AssetType.digitalAsset },
 			],
@@ -173,7 +171,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 					? true
 					: validationMessage('invalid', FormFieldNames.TAGS)
 			},
-			options: c.TAGS_OPTIONS,
+			options: () => c.TAGS_OPTIONS,
 			multipleOptions: true,
 			addToAutocomplete: true,
 		},
