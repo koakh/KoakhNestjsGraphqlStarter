@@ -78,7 +78,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 			if (response) {
 				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.person, id: response.data.personRegister.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
-				history.push({ pathname: routes.SIGNUP_RESULT.path });
+				history.push({ pathname: routes.RESULT_PAGE.path });
 			}
 		} catch (error) {
 			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);

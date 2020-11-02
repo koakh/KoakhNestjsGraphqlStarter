@@ -10,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewAssetInput, useAssetNewMutation } from '../../generated/graphql';
 import { AssetType, EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, Tag } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	assetType: AssetType,
@@ -87,7 +87,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			if (response) {
 				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.asset, id: response.data.assetNew.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
-				history.push({ pathname: routes.SIGNUP_RESULT.path });
+				history.push({ pathname: routes.RESULT_PAGE.path });
 			}
 		} catch (error) {
 			// don't throw here else we catch react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
@@ -134,7 +134,13 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			label: c.I18N.ambassadorsLabel,
 			placeholder: c.I18N.ambassadorsPlaceHolder,
 			helperText: c.I18N.ambassadorsHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.fiscalNumberArray),
+			rules: {
+				// validate both regex uuid, fiscalNumber and mobilePhone
+				validate: () => {
+					const failValues = validateRegExpArrayWithValuesArray((getValues(FormFieldNames.AMBASSADORS) as string).split(' '), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]);
+					return (failValues.length > 0) ? `invalid id(s) ${failValues.join(' ')}` : true;
+				}
+			},
 		},
 		[FormFieldNames.OWNER]: {
 			inputRef: useRef(),

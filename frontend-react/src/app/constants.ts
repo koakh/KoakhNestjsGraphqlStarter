@@ -56,11 +56,11 @@ const I18N: { [key: string]: string } = {
   ambassadorsLabel: 'Ambassadors',
   // TODO: uuid
   ambassadorsPlaceHolder: 'PT182692128',
-  ambassadorsHelperText: 'valid ambassador fiscalNumber',
+  ambassadorsHelperText: 'valid ambassador\'s array, can be uuid, fiscalNumber or mobilePhone separated by space',
   ownerLabel: 'Owner',
   // TODO: uuid
   ownerPlaceHolder: 'PT182692128',
-  ownerHelperText: 'valid owner fiscalNumber',
+  ownerHelperText: 'valid owner id, can be uuid, fiscalNumber or mobilePhone',
   locationLabel: 'Location',
   locationPlaceHolder: '12.1890144,-28.5171909',
   tagsLabel: 'Tags',
@@ -81,12 +81,12 @@ const I18N: { [key: string]: string } = {
   inputLabel: 'Input',
   // TODO: uuid
   inputPlaceHolder: 'PT182692128',
-  inputHelperText: 'valid input entity',
+  inputHelperText: 'valid input entity id. can be uuid, fiscalNumber or mobilePhone',
   outputTypeLabel: 'Output type',
   outputLabel: 'Output',
   // TODO: uuid
   outputPlaceHolder: 'PT182692128',
-  outputHelperText: 'valid output entity',
+  outputHelperText: 'valid output entity id',
   codeLabel: 'code',
   codePlaceHolder: 'valid alfa numeric code format',
   transferTypeLabel: 'Transfer type',

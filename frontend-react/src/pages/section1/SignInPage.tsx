@@ -23,7 +23,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright, Props as CopyrightProps } from '../../components/material-ui/other/Copyright';
 import { LoginPersonInput, PersonProfileDocument, usePersonLoginMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
-import { generateFormDefinition, validationMessage, commonControlProps } from '../../utils';
+import { commonControlProps, generateFormDefinition, validationRuleRegExHelper } from '../../utils';
 
 export const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -143,13 +143,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 			label: 'Username',
 			placeholder: 'johndoe',
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.USERNAME),
-				pattern: {
-					value: c.REGEXP.username,
-					message: validationMessage('invalid', FormFieldNames.USERNAME),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.USERNAME, c.REGEXP.username),
 			controlProps: commonControlProps,
 		},
 		[FormFieldNames.PASSWORD]: {
@@ -159,14 +153,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 			label: 'Password',
 			placeholder: '12345678',
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.PASSWORD),
-				// TODO: fix#28
-				// pattern: {
-				// 	value: c.REGEXP.password,
-				// 	message: validationMessage('invalid', FormFieldNames.PASSWORD),
-				// },
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.PASSWORD, c.REGEXP.password),
 			controlProps: {
 				...commonControlProps,
 				// must be capitalized

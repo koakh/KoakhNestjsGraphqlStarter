@@ -49,7 +49,7 @@ export const commonControlProps: { [key: string]: string } = {
 export const validationMessage = (messageType: 'required' | 'invalid', fieldName: string,) => `${fieldName} is ${c.I18N[messageType]}`;
 
 /**
- * a simple helper to generate regExpt rules
+ * a simple helper to generate regExp rules
  * @param fieldName 
  * @param regExp 
  */
@@ -61,6 +61,34 @@ export const validationRuleRegExHelper = (fieldName: string, regExp: RegExp, req
       message: validationMessage('invalid', fieldName),
     },
   };
+}
+
+/**
+ * validate an array of regExp, returns true if any of the items in array return true, acts like OR
+ * @param value 
+ * @param regExpArray 
+ */
+export const validateRegExpArray = (value: string, regExpArray: RegExp[]): boolean => {
+  // returns true when match one predicated that match
+  return regExpArray.some((e: RegExp) => e.test(value));
+}
+
+/**
+ * validate an array of values and check if all values pass with any of the regExp
+ * @param values 
+ * @param regExpArray 
+ */
+export const validateRegExpArrayWithValuesArray = (values: string[], regExpArray: RegExp[]): string[] => {
+  const failValues: string[] = [];
+  values.forEach((v: string) => {
+    // test any value in any regExp
+    const result = regExpArray.some((e: RegExp) => e.test(v));
+    if (!result) {
+      failValues.push(v);
+    }
+  });
+  // return failValues to caller 
+  return failValues;
 }
 
 /**

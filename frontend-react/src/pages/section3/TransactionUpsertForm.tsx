@@ -10,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
 import { AutocompleteAndSelectOptions, CurrencyCode, EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, ResourceType, Tag, TransactionType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validateRegExpArray, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 let renderCount = 0;
 
@@ -113,14 +113,6 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	renderCount++;
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
 	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
-	// console.log(`goods:${JSON.stringify(getValues(FormFieldNames.GOODS), undefined, 2)}`);
-	// console.log(`input:${JSON.stringify(getValues(FormFieldNames.INPUT), undefined, 2)}`);
-	// console.log(`output:${JSON.stringify(getValues(FormFieldNames.OUTPUT), undefined, 2)}`);
-	// console.log(`transactionType:${getValues(FormFieldNames.TRANSACTION_TYPE)}`);
-	// console.log(`transactionType: [${transactionType}]`);
-	// console.log(`input:${getValues(FormFieldNames.INPUT)}`);
-	// console.log(`resourceType:${getValues(FormFieldNames.RESOURCE_TYPE)}`);
-	// console.log('TRANSACTION_TYPE', name);
 	if (transactionType === TransactionType.transferFunds && resourceType !== ResourceType.funds) {
 		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.funds); }, 100);
 	} else if (transactionType === TransactionType.transferVolunteeringHours && resourceType !== ResourceType.volunteeringHours) {
@@ -193,7 +185,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			if (response) {
 				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.transaction, id: response.data.transactionNew.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
-				history.push({ pathname: routes.SIGNUP_RESULT.path });
+				history.push({ pathname: routes.RESULT_PAGE.path });
 			}
 		} catch (error) {
 			// don't throw here else we catch react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
@@ -269,7 +261,12 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			label: c.I18N.inputLabel,
 			placeholder: c.I18N.inputPlaceholder,
 			helperText: c.I18N.inputHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.INPUT, c.REGEXP.fiscalNumber),
+			rules: {
+				// validate both regex uuid, fiscalNumber and mobilePhone
+				validate: () => validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])
+					? true
+					: validationMessage('required', FormFieldNames.INPUT)
+			},
 			disabled: !causeOptionsLoaded,
 			// AUTOCOMPLETE
 			// options: personOptions,

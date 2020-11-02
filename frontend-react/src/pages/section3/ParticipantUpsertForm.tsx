@@ -10,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewParticipantInput, useParticipantNewMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields, ModelType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidJsonObject, useStyles, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	code: string,
@@ -73,7 +73,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			if (response) {
 				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.participant, id: response.data.participantNew.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
-				history.push({ pathname: routes.SIGNUP_RESULT.path });
+				history.push({ pathname: routes.RESULT_PAGE.path });
 			}
 		} catch (error) {
 			// don't throw here else we catch react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
@@ -119,13 +119,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			label: c.I18N.fiscalNumberLabel,
 			placeholder: c.I18N.fiscalNumberPlaceHolder,
 			fullWidth: true,
-			rules: {
-				required: validationMessage('required', FormFieldNames.FISCAL_NUMBER),
-				pattern: {
-					value: c.REGEXP.fiscalNumber,
-					message: validationMessage('invalid', FormFieldNames.FISCAL_NUMBER),
-				},
-			},
+			rules: validationRuleRegExHelper(FormFieldNames.FISCAL_NUMBER, c.REGEXP.fiscalNumber),
 			controlProps: commonControlProps,
 		},
 		[FormFieldNames.AMBASSADORS]: {
@@ -137,7 +131,15 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			label: c.I18N.ambassadorsLabel,
 			placeholder: c.I18N.ambassadorsPlaceHolder,
 			helperText: c.I18N.ambassadorsHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.fiscalNumberArray),
+			// TODO clean up
+			// rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.fiscalNumberArray),
+			rules: {
+				// validate both regex uuid, fiscalNumber and mobilePhone
+				validate: () => {
+					const failValues = validateRegExpArrayWithValuesArray((getValues(FormFieldNames.AMBASSADORS) as string).split(' '), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]);
+					return (failValues.length > 0) ? `invalid id(s) ${failValues.join(' ')}` : true;
+				}
+			},
 		},
 		[FormFieldNames.META_DATA]: {
 			inputRef: useRef(),
