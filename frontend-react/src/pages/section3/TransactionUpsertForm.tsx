@@ -1,6 +1,7 @@
-import { Box } from '@material-ui/core';
+import { Box, Button, Grid } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
 import React, { Fragment, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
 import { envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
@@ -10,7 +11,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
 import { AutocompleteAndSelectOptions, CurrencyCode, EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, ResourceType, Tag, TransactionType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validateRegExpArray, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, generateTextField, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validateRegExpArray, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 let renderCount = 0;
 
@@ -43,6 +44,7 @@ enum FormFieldNames {
 	ASSET_ID = 'assetId',
 	GOODS = 'goods',
 	LOCATION = 'location',
+	GOODS_BAG = 'goodsBag',
 	TAGS = 'tags',
 	META_DATA = 'metaData',
 	META_DATA_INTERNAL = 'metaDataInternal',
@@ -60,6 +62,7 @@ const defaultValues: FormDefaultValues = {
 	assetId: '16834df0-766d-4cc8-8baa-b0c37338ca34',
 	goods: [],
 	location: '12.1890144,-28.5171909',
+	goodsBag: [{ firstName: 'Bill', lastName: 'Luo' }],
 	tags: [],
 	metaData: '{}',
 	metaDataInternal: '{}',
@@ -70,11 +73,21 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// hooks styles
 	const classes = useStyles();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset, getValues, setValue } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, watch, errors, control, reset, getValues, setValue, register } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	// hooks: apollo
 	const [transactionNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
+
+	const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
+		// control props comes from useForm (optional: if you are using FormContext)
+		control,
+		// unique name for your Field Array
+		name: 'goodsBag',
+		// default to "id", you can change the key name
+		// keyName: "id"
+	});
+
 	// not used anymore
 	// // input personOptions: require [] array to be a reference, not a primitive
 	// const [personOptions, setPersonOptions] = useState<AutocompleteOption[]>([]);
@@ -109,6 +122,82 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	const resourceType = watch(FormFieldNames.RESOURCE_TYPE);
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
+
+	// --- MOVE TO FILE ------------------------------------------------------
+
+	const goodsBag = watch('goodsBag');
+	console.log(goodsBag);
+	const goodsBagEan: FormPropFields = {
+		inputRef: useRef(),
+		type: FormInputType.TEXT,
+		// template string
+		name: null,
+		controlProps: commonControlProps,
+		fullWidth: true,
+		label: c.I18N.barCodeEan13Label,
+		placeholder: c.I18N.barCodeEan13PlaceHolder,
+		helperText: c.I18N.barCodeEan13HelperText,
+		disabled: !causeOptionsLoaded,
+	};
+	const goodsBagQuantity: FormPropFields = {
+		inputRef: useRef(),
+		type: FormInputType.TEXT,
+		// required existing property, will be overridden bellow
+		name: null,
+		controlProps: commonControlProps,
+		fullWidth: true,
+		label: c.I18N.quantityLabel,
+		placeholder: c.I18N.quantityPlaceHolder,
+		helperText: c.I18N.quantityHelperText,
+		disabled: !causeOptionsLoaded,
+	};
+	const customGoodsBag = (<Fragment>
+		{fields.map((item, index) => {
+			return (
+				<Grid key={item.id} container spacing={3}>
+					<Grid item xs={6}>
+						{generateTextField({
+							...goodsBagEan,
+							name: `goodsBag[${index}].firstName`,
+							defaultValue: item.firstName,
+						}, control, errors, loading)}
+					</Grid>
+					<Grid item xs={3}>
+						{generateTextField({
+							...goodsBagQuantity,
+							name: `goodsBag[${index}].lastName`,
+							defaultValue: item.lastName,
+						}, control, errors, loading)}
+					</Grid>
+					<Grid item xs={3}>
+						<Button
+							type='button'
+							variant='contained'
+							className={classes.buttonGoodsDelete}
+							disabled={loading}
+							onClick={() => remove(index)}
+							startIcon={<DeleteIcon />}
+							fullWidth
+						>
+							{c.I18N.delete}
+						</Button>
+					</Grid>
+				</Grid>
+			);
+		})}
+		<Button
+			type='button'
+			variant='contained'
+			className={classes.button}
+			disabled={loading}
+			onClick={() => append({ firstName: "appendBill", lastName: "appendLuo" })}
+		>
+			{c.I18N.add}
+		</Button>
+	</Fragment>);
+
+	// --- MOVE TO FILE ------------------------------------------------------
+
 	// debug
 	renderCount++;
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
@@ -207,7 +296,6 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('required', FormFieldNames.TRANSACTION_TYPE)
 			},
-			// TODO can be object or function, better to always be a function
 			options: () => [
 				{ title: c.I18N.transactionTypeOptionTransferFunds, value: TransactionType.transferFunds },
 				{ title: c.I18N.transactionTypeOptionTransferVolunteeringHours, value: TransactionType.transferVolunteeringHours },
@@ -384,6 +472,17 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			visible: (control) => {
 				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferGoods);
 			}
+		},
+		[FormFieldNames.GOODS_BAG]: {
+			inputRef: useRef(),
+			type: FormInputType.CUSTOM,
+			name: FormFieldNames.GOODS_BAG,
+			controlProps: commonControlProps,
+			fullWidth: true,
+			label: 'Goods bag',
+			placeholder: 'Goods placeHolder',
+			disabled: !causeOptionsLoaded,
+			custom: customGoodsBag
 		},
 		[FormFieldNames.LOCATION]: {
 			inputRef: useRef(),

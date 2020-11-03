@@ -16,6 +16,8 @@ const I18N: { [key: string]: string } = {
   reset: 'Reset',
   create: 'Create',
   update: 'Update',
+  delete: 'Delete',
+  add: 'Add',
   required: 'Required',
   invalid: 'Invalid',
   none: 'none',
@@ -79,12 +81,10 @@ const I18N: { [key: string]: string } = {
   datePlaceHolder: 'valid date format YYYY/MM/DD ',
   inputTypeLabel: 'Input type',
   inputLabel: 'Input',
-  // TODO: uuid
   inputPlaceHolder: 'PT182692128',
   inputHelperText: 'valid input entity id. can be uuid, fiscalNumber or mobilePhone',
   outputTypeLabel: 'Output type',
   outputLabel: 'Output',
-  // TODO: uuid
   outputPlaceHolder: 'PT182692128',
   outputHelperText: 'valid output entity id',
   codeLabel: 'code',
@@ -93,11 +93,15 @@ const I18N: { [key: string]: string } = {
   resourceTypeLabel: 'Resource type',
   quantityLabel: 'Quantity',
   quantityPlaceHolder: '28.82',
+  quantityHelperText: 'positive number', 
   currencyLabel: 'Currency',
   goodsLabel: 'Goods',
   goodsPlaceHolder: 'valid goods array',
   currencyCodeEur: 'EUR',
   currencyCodeUsd: 'USD',
+  barCodeEan13Label: 'EAN Barcode',
+  barCodeEan13PlaceHolder: '978020137962',
+  barCodeEan13HelperText: 'valid ean13 barcode'
 };
 
 const ENTITY_TYPE_OPTIONS = [

@@ -24,9 +24,11 @@ export enum FormInputType {
   TIME = 'time',
   URL = 'url',
   WEEK = 'week',
-  // TODO remove
+  // extend html type
   SELECT = 'select',
   AUTOCOMPLETE = 'autocomplete',
+  // can be anything
+  CUSTOM = 'custom',
 };
 export type FormInputPropsValue = { name: string, label: string, default: string | number | boolean }
 export type FormInputProps = Record<string, FormInputPropsValue>;
@@ -72,6 +74,9 @@ export type FormPropFields = {
   visible?: boolean | ((control: Control<Record<string, any>>) => boolean),
   // events
   // onChange?: () => void,
+  // custom
+  custom?: any,
+  defaultValue?: any;
 }
 // components: used for AutocompleteOption and Selection component
 export type AutocompleteAndSelectOptions = { key?: number, title: string, value: string | number | any };

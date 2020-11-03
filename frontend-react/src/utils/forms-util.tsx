@@ -24,6 +24,7 @@ import { appConstants as c } from '../app/constants';
 import { AutocompleteAndSelectOptions, FormInputType, FormPropFields } from '../types';
 import { recordToArray } from './main-util';
 
+// used outside in forms
 export const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -36,6 +37,10 @@ export const useStyles = makeStyles((theme) => ({
   button: {
     marginRight: theme.spacing(2),
   },
+  buttonGoodsDelete: {
+    marginTop: theme.spacing(2),
+    height: 54
+  }
 }));
 
 /**
@@ -141,7 +146,7 @@ export const addToAutocomplete = (name: string, control: Control<Record<string, 
 /**
  * helper to get common form buttons
  */
-export const generateFormButtonsDiv = (classes: Record<"root" | "button" | "spacer", string>, loading: boolean, handleResetHandler: () => void) => {
+export const generateFormButtonsDiv = (classes: Record<'root' | 'button' | 'buttonGoodsDelete' | 'spacer', string>, loading: boolean, handleResetHandler: () => void) => {
   return (
     <div className={classes.spacer}>
       <Button
@@ -197,11 +202,14 @@ export const generateFormDefinition = (formDefinition: any, control: Control<Rec
     case FormInputType.AUTOCOMPLETE:
       returnValue = generateAutocomplete(e, control, errors, loading);
       break
+    case FormInputType.CUSTOM:
+      returnValue = e.custom;
+      break
   }
   return returnValue;
 });
 
-const generateTextField = (e: FormPropFields, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean): JSX.Element => {
+export const generateTextField = (e: FormPropFields, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean): JSX.Element => {
   return (
     <Fragment key={e.name}>
       <Controller
@@ -218,6 +226,8 @@ const generateTextField = (e: FormPropFields, control: Control<Record<string, an
         rules={e.rules}
         disabled={loading || e.disabled}
         onFocus={() => { e.inputRef.current.focus(); }}
+        // added for custom type
+        defaultValue={e.defaultValue}
       />
     </Fragment>
   )
