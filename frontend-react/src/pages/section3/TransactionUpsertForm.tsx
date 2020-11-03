@@ -45,6 +45,7 @@ enum FormFieldNames {
 	GOODS = 'goods',
 	LOCATION = 'location',
 	GOODS_BAG = 'goodsBag',
+	GOODS_BAG_TOOLBAR = 'goodsBagToolbar',
 	TAGS = 'tags',
 	META_DATA = 'metaData',
 	META_DATA_INTERNAL = 'metaDataInternal',
@@ -148,10 +149,10 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		fullWidth: true,
 		label: c.I18N.quantityLabel,
 		placeholder: c.I18N.quantityPlaceHolder,
-		helperText: c.I18N.quantityHelperText,
 		disabled: !causeOptionsLoaded,
 	};
-	const customGoodsBag = (<Fragment>
+	// required a key, this belongs to the loop of form components
+	const customGoodsBag = (<Fragment key='goods'>
 		{fields.map((item, index) => {
 			return (
 				<Grid key={item.id} container spacing={3}>
