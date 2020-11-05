@@ -6,6 +6,8 @@
 	],
 	"settings": {
 		"cSpell.words": [
+			"Upsert",
+			"datetime",
 			"johndoe"
 		],
 		"workbench.colorCustomizations": {

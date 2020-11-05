@@ -17,7 +17,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright } from '../../components/material-ui/other/Copyright';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
-import { commonControlProps, generateFormDefinition, getGraphQLApolloError, parseTemplate as parseTemplate, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormDefinition, getGraphQLApolloError, parseTemplate, validationRuleRegExHelper } from '../../utils';
 import { copyrightProps, useStyles } from './SignInPage';
 
 type FormInputs = {

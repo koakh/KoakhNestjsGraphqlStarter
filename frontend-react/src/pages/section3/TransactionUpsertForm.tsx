@@ -74,13 +74,29 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// hooks styles
 	const classes = useStyles();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset, getValues, setValue, register } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, watch, errors, control, reset, getValues, setValue } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	// hooks: apollo
 	const [transactionNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
 	// hooks state
 	const [, dispatch] = useStateValue();
+	// effects
+	// TODO: https://www.pluralsight.com/guides/how-to-use-geolocation-call-in-reactjs
+	// TODO: https://developer.mozilla.org/pt-PT/docs/Web/API/Geolocation/Utilizacao_da_geolocalizacao
+	// useEffect(() => {
+	// 	debugger;
+	// 	navigator.geolocation.getCurrentPosition((position) => {
+	// 		debugger;
+	// 		console.log("Latitude is :", position.coords.latitude);
+	// 		console.log("Longitude is :", position.coords.longitude);
+	// 	});
+	// }, [])
+	// eslint-disable-next-line
 
-	const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
+	// TODO geoLocation
+	// const { location: currentLocation, error: currentError } = useCurrentLocation(c.GEOLOCATION_OPTIONS);
+	// console.log(`currentLocation:[${currentLocation}]`);
+
+	const { fields, append, remove, /*prepend, swap, move, insert*/ } = useFieldArray({
 		// control props comes from useForm (optional: if you are using FormContext)
 		control,
 		// unique name for your Field Array
@@ -126,7 +142,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 
 	// customBag definition
 	const goodsBag: any[] = watch('goodsBag');
-	console.log(goodsBag);
+	// console.log(goodsBag);
 	// https://stackoverflow.com/questions/54633690/how-can-i-use-multiple-refs-for-an-array-of-elements-with-hooks	
 	const maxGoodsItems = 10;
 	const goodsBagEanInputRef: any[] = [];
@@ -222,9 +238,9 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// 	lastTransferType = transactionType;
 	// 	setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, c.VALUES.undefined); }, 100);
 	// }
-	console.log('errors', JSON.stringify(errors, undefined, 2));
+	// console.log('errors', JSON.stringify(errors, undefined, 2));
+	// console.log(`values:${JSON.stringify(getValues(), undefined, 2)}`);
 	// if (errors[FormFieldNames.GOODS_BAG]) console.log('errors', JSON.stringify(errors[FormFieldNames.GOODS_BAG][0].barCode, undefined, 2));
-	console.log(`values:${JSON.stringify(getValues(), undefined, 2)}`);
 	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
 	if (transactionType === TransactionType.transferFunds && resourceType !== ResourceType.funds) {
 		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.funds); }, 100);
@@ -296,8 +312,9 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				metaData: JSON.parse(data.metaData),
 				metaDataInternal: JSON.parse(data.metaDataInternal),
 			};
+			// TODO cleanup
 			// console.log(JSON.stringify(data, undefined, 2));
-			console.log(JSON.stringify(newTransactionData, undefined, 2));
+			// console.log(JSON.stringify(newTransactionData, undefined, 2));
 			// debugger;
 			const response = await transactionNewMutation({ variables: { newTransactionData: newTransactionData } });
 

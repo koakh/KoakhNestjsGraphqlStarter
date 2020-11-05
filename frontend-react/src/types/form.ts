@@ -1,7 +1,6 @@
 import React from 'react';
 import { Control, Validate, ValidationRule, ValidationValueMessage } from 'react-hook-form';
 import { PropTypes } from '@material-ui/core';
-import { MutableRefObject } from 'react';
 
 // TODO refactor to FormTextFieldType
 // https://www.w3schools.com/html/html_form_input_types.asp

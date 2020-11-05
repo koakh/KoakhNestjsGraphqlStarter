@@ -99,6 +99,7 @@ const I18N: { [key: string]: string } = {
   currencyCodeEur: 'EUR',
   currencyCodeUsd: 'USD',
   barCodeEan13Label: 'EAN Barcode',
+  // https://generate.plus/en/number/ean
   barCodeEan13PlaceHolder: '978020137962',
   barCodeEan13HelperText: 'valid ean13 barcode',
 };
@@ -176,6 +177,14 @@ const COOKIES = {
 
 const DRAWER_WIDTH: number = 240;
 
+const GEOLOCATION_OPTIONS = {
+  enableHighAccuracy: true,
+  // 1 min (1000 ms * 60 sec * 1 minute = 60 000ms)
+  timeout: 1000 * 60 * 1,
+  // 24 hour
+  maximumAge: 1000 * 3600 * 24,
+};
+
 const REGEXP: { [key: string]: RegExp; } = {
   fiscalNumber: /^[A-Z]{2}[0-9]{9}$/i,
   // split by space `(\s...`  
@@ -221,5 +230,6 @@ export const appConstants = {
   DEFAULT_LOGIN_CREDENTIALS,
   COOKIES,
   DRAWER_WIDTH,
+  GEOLOCATION_OPTIONS,
   REGEXP,
 };
