@@ -10,7 +10,7 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
-import { AutocompleteAndSelectOptions, CurrencyCode, EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, ResourceType, Tag, TransactionType } from '../../types';
+import { AutocompleteAndSelectOptions, CurrencyCode, EntityType, FormDefaultValues, FormInputType, FormPropFields, GoodsBagItem, ModelType, ResourceType, Tag, TransactionType } from '../../types';
 import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, generateTextField, getGraphQLApolloError, isValidEnum, isValidJsonObject, parseTemplate, useStyles, validateRegExpArray, validationBarCodeExHelper, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 let renderCount = 0;
@@ -27,7 +27,7 @@ type FormInputs = {
 	currency: string;
 	assetId: string
 	goods: Array<any> //[GoodsInput!]
-	goodsBag: Array<{ barCode: string, quantity: number }>
+	goodsBag: Array<GoodsBagItem>
 	location?: string
 	tags: Tag[],
 	metaData?: any,
@@ -285,7 +285,13 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				quantity: Number(data.quantity),
 				currency: data.currency,
 				assetId: data.assetId,
-				goods: data.goods,
+				// old selection box
+				// goods: data.goods,
+				goods: goodsBag.map((e: GoodsBagItem) => {
+					return {
+						code: e.barCode, barCode: e.barCode, name: e.barCode, quantity: Number(e.quantity)
+					}
+				}),
 				location: data.location,
 				metaData: JSON.parse(data.metaData),
 				metaDataInternal: JSON.parse(data.metaDataInternal),

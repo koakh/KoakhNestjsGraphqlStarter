@@ -28,3 +28,8 @@ export interface GoodsOptionsValue {
   description: string;
   quantity: number;
 }
+
+export interface GoodsBagItem {
+  barCode: string,
+  quantity: number
+}
