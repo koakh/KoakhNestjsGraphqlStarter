@@ -44,6 +44,7 @@
   - [Material-UI: How to use select](#material-ui-how-to-use-select)
   - [Material-UI: How to use AutoComplete to add values](#material-ui-how-to-use-autocomplete-to-add-values)
   - [Material-UI : Select with Hook Forms](#material-ui--select-with-hook-forms)
+  - [React Form Hooks Field Array Validation Problem](#react-form-hooks-field-array-validation-problem)
 
 ## TLDR
 
@@ -964,3 +965,7 @@ type tag and press enter key
 ## Material-UI : Select with Hook Forms
 
 https://stackoverflow.com/questions/63236951/how-to-use-material-ui-select-with-react-hook-form
+
+## React Form Hooks Field Array Validation Problem
+
+https://stackoverflow.com/questions/60499557/react-hook-form-validation-not-working-with-custom-fields-array

@@ -11,7 +11,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields, ModelType } from '../../types';
-import { commonControlProps, generateFormDefinition, getGraphQLApolloError, getInjected, useStyles, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormDefinition, getGraphQLApolloError, parseTemplate, useStyles, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	firstName: string;
@@ -76,7 +76,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 				});
 
 			if (response) {
-				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.person, id: response.data.personRegister.id }) };
+				const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.person, id: response.data.personRegister.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.RESULT_PAGE.path });
 			}

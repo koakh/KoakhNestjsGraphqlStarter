@@ -18,8 +18,8 @@ const I18N: { [key: string]: string } = {
   update: 'Update',
   delete: 'Delete',
   add: 'Add',
-  required: 'Required',
-  invalid: 'Invalid',
+  required: 'required',
+  invalid: 'invalid',
   none: 'none',
   // messages
   loginFailed: 'login failed please try again...',
@@ -93,7 +93,6 @@ const I18N: { [key: string]: string } = {
   resourceTypeLabel: 'Resource type',
   quantityLabel: 'Quantity',
   quantityPlaceHolder: '28.82',
-  quantityHelperText: 'positive number', 
   currencyLabel: 'Currency',
   goodsLabel: 'Goods',
   goodsPlaceHolder: 'valid goods array',
@@ -101,7 +100,7 @@ const I18N: { [key: string]: string } = {
   currencyCodeUsd: 'USD',
   barCodeEan13Label: 'EAN Barcode',
   barCodeEan13PlaceHolder: '978020137962',
-  barCodeEan13HelperText: 'valid ean13 barcode'
+  barCodeEan13HelperText: 'valid ean13 barcode',
 };
 
 const ENTITY_TYPE_OPTIONS = [

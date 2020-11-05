@@ -11,7 +11,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
 import { AutocompleteAndSelectOptions, CurrencyCode, EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, ResourceType, Tag, TransactionType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, generateTextField, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validateRegExpArray, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, generateTextField, getGraphQLApolloError, isValidEnum, isValidJsonObject, parseTemplate, useStyles, validateRegExpArray, validationBarCodeExHelper, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 let renderCount = 0;
 
@@ -27,6 +27,7 @@ type FormInputs = {
 	currency: string;
 	assetId: string
 	goods: Array<any> //[GoodsInput!]
+	goodsBag: Array<{ barCode: string, quantity: number }>
 	location?: string
 	tags: Tag[],
 	metaData?: any,
@@ -45,7 +46,6 @@ enum FormFieldNames {
 	GOODS = 'goods',
 	LOCATION = 'location',
 	GOODS_BAG = 'goodsBag',
-	GOODS_BAG_TOOLBAR = 'goodsBagToolbar',
 	TAGS = 'tags',
 	META_DATA = 'metaData',
 	META_DATA_INTERNAL = 'metaDataInternal',
@@ -63,7 +63,7 @@ const defaultValues: FormDefaultValues = {
 	assetId: '16834df0-766d-4cc8-8baa-b0c37338ca34',
 	goods: [],
 	location: '12.1890144,-28.5171909',
-	goodsBag: [{ firstName: 'Bill', lastName: 'Luo' }],
+	goodsBag: [{ barCode: '', quantity: 1 }],
 	tags: [],
 	metaData: '{}',
 	metaDataInternal: '{}',
@@ -124,14 +124,19 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 
-	// --- MOVE TO FILE ------------------------------------------------------
-
-	const goodsBag = watch('goodsBag');
+	// customBag definition
+	const goodsBag: any[] = watch('goodsBag');
 	console.log(goodsBag);
+	// https://stackoverflow.com/questions/54633690/how-can-i-use-multiple-refs-for-an-array-of-elements-with-hooks	
+	const maxGoodsItems = 10;
+	const goodsBagEanInputRef: any[] = [];
+	goodsBagEanInputRef[0] = useRef(); goodsBagEanInputRef[1] = useRef(); goodsBagEanInputRef[2] = useRef(); goodsBagEanInputRef[3] = useRef(); goodsBagEanInputRef[4] = useRef(); goodsBagEanInputRef[5] = useRef(); goodsBagEanInputRef[6] = useRef(); goodsBagEanInputRef[7] = useRef(); goodsBagEanInputRef[8] = useRef(); goodsBagEanInputRef[9] = useRef();
+	const goodsBagQuantityInputRef: any[] = [];
+	goodsBagQuantityInputRef[0] = useRef(); goodsBagQuantityInputRef[1] = useRef(); goodsBagQuantityInputRef[2] = useRef(); goodsBagQuantityInputRef[3] = useRef(); goodsBagQuantityInputRef[4] = useRef(); goodsBagQuantityInputRef[5] = useRef(); goodsBagQuantityInputRef[6] = useRef(); goodsBagQuantityInputRef[7] = useRef(); goodsBagQuantityInputRef[8] = useRef(); goodsBagQuantityInputRef[9] = useRef();
+	// initialize any new refs, required to create refs outside of loop
 	const goodsBagEan: FormPropFields = {
-		inputRef: useRef(),
+		// inputRef: refs,
 		type: FormInputType.TEXT,
-		// template string
 		name: null,
 		controlProps: commonControlProps,
 		fullWidth: true,
@@ -141,9 +146,8 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		disabled: !causeOptionsLoaded,
 	};
 	const goodsBagQuantity: FormPropFields = {
-		inputRef: useRef(),
+		// inputRef: useRef(),
 		type: FormInputType.TEXT,
-		// required existing property, will be overridden bellow
 		name: null,
 		controlProps: commonControlProps,
 		fullWidth: true,
@@ -159,15 +163,29 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					<Grid item xs={6}>
 						{generateTextField({
 							...goodsBagEan,
-							name: `goodsBag[${index}].firstName`,
-							defaultValue: item.firstName,
+							inputRef: goodsBagEanInputRef[index],
+							name: `goodsBag[${index}].barCode`,
+							defaultValue: item.barCode,
+							rules: validationBarCodeExHelper(`goodsBag[${index}].barCode`, goodsBag[index]),
+							helperTextFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].barCode !== undefined
+								? errors[FormFieldNames.GOODS_BAG][index].barCode.message
+								: goodsBagEan.helperText,
+							errorFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].barCode !== undefined,
+							onFocusFn: () => goodsBagEanInputRef[index].current.focus()
 						}, control, errors, loading)}
 					</Grid>
 					<Grid item xs={3}>
 						{generateTextField({
 							...goodsBagQuantity,
-							name: `goodsBag[${index}].lastName`,
-							defaultValue: item.lastName,
+							inputRef: goodsBagQuantityInputRef[index],
+							name: `goodsBag[${index}].quantity`,
+							defaultValue: item.quantity,
+							rules: validationRuleRegExHelper(`goodsBag[${index}].quantity`, c.REGEXP.floatPositive),
+							helperTextFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].quantity !== undefined
+								? errors[FormFieldNames.GOODS_BAG][index].quantity.message
+								: '',
+							errorFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].quantity !== undefined,
+							onFocusFn: () => goodsBagQuantityInputRef[index].current.focus()
 						}, control, errors, loading)}
 					</Grid>
 					<Grid item xs={3}>
@@ -175,7 +193,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 							type='button'
 							variant='contained'
 							className={classes.buttonGoodsDelete}
-							disabled={loading}
+							disabled={loading || index === 0}
 							onClick={() => remove(index)}
 							startIcon={<DeleteIcon />}
 							fullWidth
@@ -190,18 +208,23 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			type='button'
 			variant='contained'
 			className={classes.button}
-			disabled={loading}
-			onClick={() => append({ firstName: "appendBill", lastName: "appendLuo" })}
+			disabled={loading || fields.length === maxGoodsItems}
+			onClick={() => append({ barCode: '', quantity: 1 })}
 		>
 			{c.I18N.add}
 		</Button>
 	</Fragment>);
 
-	// --- MOVE TO FILE ------------------------------------------------------
-
 	// debug
 	renderCount++;
-	// console.log('errors', JSON.stringify(errors, undefined, 2));
+
+	// if (lastTransferType !== transactionType) {
+	// 	lastTransferType = transactionType;
+	// 	setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, c.VALUES.undefined); }, 100);
+	// }
+	console.log('errors', JSON.stringify(errors, undefined, 2));
+	// if (errors[FormFieldNames.GOODS_BAG]) console.log('errors', JSON.stringify(errors[FormFieldNames.GOODS_BAG][0].barCode, undefined, 2));
+	console.log(`values:${JSON.stringify(getValues(), undefined, 2)}`);
 	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
 	if (transactionType === TransactionType.transferFunds && resourceType !== ResourceType.funds) {
 		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.funds); }, 100);
@@ -269,11 +292,11 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			};
 			// console.log(JSON.stringify(data, undefined, 2));
 			console.log(JSON.stringify(newTransactionData, undefined, 2));
-			debugger;
+			// debugger;
 			const response = await transactionNewMutation({ variables: { newTransactionData: newTransactionData } });
 
 			if (response) {
-				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.transaction, id: response.data.transactionNew.id }) };
+				const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.transaction, id: response.data.transactionNew.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.RESULT_PAGE.path });
 			}
@@ -453,27 +476,26 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferAsset);
 			}
 		},
-		// TODO | WIP
-		// add goods here
-		[FormFieldNames.GOODS]: {
-			inputRef: useRef(),
-			type: FormInputType.SELECT,
-			name: FormFieldNames.GOODS,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.goodsLabel,
-			placeholder: c.I18N.goodsPlaceHolder,
-			rules: {
-				validate: () => isValidJsonObject(getValues(FormFieldNames.GOODS))
-					? true
-					: validationMessage('invalid', FormFieldNames.GOODS)
-			},
-			options: () => c.GOODS_OPTIONS,
-			disabled: !causeOptionsLoaded,
-			visible: (control) => {
-				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferGoods);
-			}
-		},
+		// add goods here, old goods that use a selection of array goods, used for prototype
+		// [FormFieldNames.GOODS]: {
+		// 	inputRef: useRef(),
+		// 	type: FormInputType.SELECT,
+		// 	name: FormFieldNames.GOODS,
+		// 	controlProps: commonControlProps,
+		// 	fullWidth: true,
+		// 	label: c.I18N.goodsLabel,
+		// 	placeholder: c.I18N.goodsPlaceHolder,
+		// 	rules: {
+		// 		validate: () => isValidJsonObject(getValues(FormFieldNames.GOODS))
+		// 			? true
+		// 			: validationMessage('invalid', FormFieldNames.GOODS)
+		// 	},
+		// 	options: () => c.GOODS_OPTIONS,
+		// 	disabled: !causeOptionsLoaded,
+		// 	visible: (control) => {
+		// 		return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferGoods);
+		// 	}
+		// },
 		[FormFieldNames.GOODS_BAG]: {
 			inputRef: useRef(),
 			type: FormInputType.CUSTOM,
@@ -483,7 +505,10 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			label: 'Goods bag',
 			placeholder: 'Goods placeHolder',
 			disabled: !causeOptionsLoaded,
-			custom: customGoodsBag
+			custom: customGoodsBag,
+			visible: (control) => {
+				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferGoods);
+			}
 		},
 		[FormFieldNames.LOCATION]: {
 			inputRef: useRef(),

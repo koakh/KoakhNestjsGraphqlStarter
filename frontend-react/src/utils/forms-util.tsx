@@ -22,6 +22,7 @@ import React, { Fragment } from 'react';
 import { Control, Controller, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '../app/constants';
 import { AutocompleteAndSelectOptions, FormInputType, FormPropFields } from '../types';
+import { validateBarCode } from './barcode';
 import { recordToArray } from './main-util';
 
 // used outside in forms
@@ -65,6 +66,21 @@ export const validationRuleRegExHelper = (fieldName: string, regExp: RegExp, req
       value: regExp,
       message: validationMessage('invalid', fieldName),
     },
+  };
+}
+
+/**
+ * helper to validate barCode
+ * @param fieldName 
+ * @param value 
+ * @param required 
+ */
+export const validationBarCodeExHelper = (fieldName: string, value: any, required: boolean = true) => {
+  return {
+    required: (required) ? validationMessage('required', fieldName) : false,
+    validate: () => (value && value.barCode && validateBarCode(value.barCode))
+      ? true
+      : validationMessage('invalid', fieldName),
   };
 }
 
@@ -174,7 +190,7 @@ export const generateFormButtonsDiv = (classes: Record<'root' | 'button' | 'butt
 // https://stackoverflow.com/questions/41112313/how-to-use-generics-with-arrow-functions-in-typescript-jsx-with-react?rq=1
 // use '<T extends {}>'
 // T is FormInputs
-export const generateFormDefinition = (formDefinition: any, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean, setValue?: any): JSX.Element[] => recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => {
+export const generateFormDefinition = (formDefinition: any, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean/*, setValue?: any*/): JSX.Element[] => recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => {
   if (e.visible && (typeof e.visible === 'function' && !e.visible(control))) return;
   let returnValue;
   switch (e.type) {
@@ -210,6 +226,20 @@ export const generateFormDefinition = (formDefinition: any, control: Control<Rec
 });
 
 export const generateTextField = (e: FormPropFields, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean): JSX.Element => {
+  // inner function to maintain error cleaner
+  const errorHandler = (errors: DeepMap<any, FieldError>, e: FormPropFields) => {
+    return (typeof e.errorFn === 'function')
+      ? e.errorFn()
+      : (errors[(e.name)] !== undefined);
+  }
+  // inner function to maintain helperText cleaner
+  const helperTextHandler = (errors: DeepMap<any, FieldError>, e: FormPropFields) => {
+    return (typeof e.helperTextFn === 'function')
+      ? e.helperTextFn()
+      // show error or errorMessage or helperText
+      : (errors[(e.name)] !== undefined) ? errors[(e.name)].message : e.helperText
+  }
+
   return (
     <Fragment key={e.name}>
       <Controller
@@ -218,14 +248,20 @@ export const generateTextField = (e: FormPropFields, control: Control<Record<str
         type={e.type}
         control={control}
         name={(e.name as string)}
-        error={(errors[(e.name)] !== undefined)}
-        helperText={(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}
         label={e.label}
         placeholder={e.placeholder}
         fullWidth={e.fullWidth}
         rules={e.rules}
         disabled={loading || e.disabled}
-        onFocus={() => { e.inputRef.current.focus(); }}
+        // added for custom type
+        // error={(errors[(e.name)] !== undefined)}
+        error={errorHandler(errors, e)}
+        // added for custom type
+        // helperText={(errors[(e.name as any)] !== undefined) ? errors[(e.name as any)].message : e.helperText}
+        helperText={helperTextHandler(errors, e)}
+        // added for custom type
+        // onFocus={() => { e.inputRef.current.focus(); }}
+        onFocus={() => { (typeof e.onFocusFn === 'function') ? e.onFocusFn() : e.inputRef.current.focus(); }}
         // added for custom type
         defaultValue={e.defaultValue}
       />
@@ -271,7 +307,6 @@ const generateSelection = (e: FormPropFields, control: Control<Record<string, an
           // TODO: wip
           rules={e.rules}
           disabled={loading || e.disabled}
-          // defaultValue={undefined}
           onFocus={() => { e.inputRef.current.focus(); }}
         // TODO: this gives the margin problem in console
         // Failed prop type: Invalid prop `margin` of value `normal` supplied to 

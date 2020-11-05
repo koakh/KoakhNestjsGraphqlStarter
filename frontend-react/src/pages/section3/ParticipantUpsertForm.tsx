@@ -10,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewParticipantInput, useParticipantNewMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormInputType, FormPropFields, ModelType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, parseTemplate, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	code: string,
@@ -71,7 +71,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			const response = await assetNewMutation({ variables: { newParticipantData: newParticipantData } });
 
 			if (response) {
-				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.participant, id: response.data.participantNew.id }) };
+				const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.participant, id: response.data.participantNew.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.RESULT_PAGE.path });
 			}

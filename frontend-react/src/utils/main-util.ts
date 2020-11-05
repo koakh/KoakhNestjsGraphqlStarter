@@ -20,7 +20,7 @@ export const recordToArray = <T>(record: Record<string, T>) => {
 export const isValidJsonObject = (json: string): boolean => {
   try {
     // validate all elements of array
-    if (Array.isArray(json)){
+    if (Array.isArray(json)) {
       Array.from(json).forEach(e => {
         // don't re-parse already object, use JSON.stringify to check if is valid
         JSON.stringify(e);
@@ -123,4 +123,4 @@ export const currentFormatDate = (date: Date, withTime: boolean = true): string 
  * @param stringTemplate 
  * @param obj 
  */
-export const getInjected = (stringTemplate: string, obj: any) => stringTemplate.replace(/\${(.*?)}/g, (x, g) => obj[g]);
+export const parseTemplate = (stringTemplate: string, obj: any) => stringTemplate.replace(/\${(.*?)}/g, (x, g) => obj[g]);

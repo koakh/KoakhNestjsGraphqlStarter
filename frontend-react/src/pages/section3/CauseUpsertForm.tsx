@@ -10,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewCauseInput, useCauseNewMutation } from '../../generated/graphql';
 import { EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, Tag } from '../../types';
-import { commonControlProps, currentFormatDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, currentFormatDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, parseTemplate, isValidEnum, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	name: string,
@@ -99,7 +99,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			const response = await causeNewMutation({ variables: { newCauseData: newCauseData } });
 
 			if (response) {
-				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.cause, id: response.data.causeNew.id }) };
+				const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.cause, id: response.data.causeNew.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.RESULT_PAGE.path });
 			}

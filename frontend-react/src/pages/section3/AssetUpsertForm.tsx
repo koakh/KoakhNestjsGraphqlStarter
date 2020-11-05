@@ -10,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewAssetInput, useAssetNewMutation } from '../../generated/graphql';
 import { AssetType, EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, Tag } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, getInjected, isValidEnum, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, parseTemplate, isValidEnum, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 type FormInputs = {
 	assetType: AssetType,
@@ -85,7 +85,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			const response = await assetNewMutation({ variables: { newAssetData: newAssetData } });
 
 			if (response) {
-				const payload = { message: getInjected(c.I18N.newModelCreatedSuccessfully, { model: ModelType.asset, id: response.data.assetNew.id }) };
+				const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.asset, id: response.data.assetNew.id }) };
 				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				history.push({ pathname: routes.RESULT_PAGE.path });
 			}

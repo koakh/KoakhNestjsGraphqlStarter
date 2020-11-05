@@ -1,6 +1,7 @@
 import React from 'react';
 import { Control, Validate, ValidationRule, ValidationValueMessage } from 'react-hook-form';
 import { PropTypes } from '@material-ui/core';
+import { MutableRefObject } from 'react';
 
 // TODO refactor to FormTextFieldType
 // https://www.w3schools.com/html/html_form_input_types.asp
@@ -34,8 +35,8 @@ export type FormInputPropsValue = { name: string, label: string, default: string
 export type FormInputProps = Record<string, FormInputPropsValue>;
 export type FormDefaultValues = { [key: string]: string | number | boolean | string[] | any };
 export type FormPropFields = {
-  // as: JSX.Element,
-  inputRef: any,
+  // as: JSX.Element
+  inputRef?: any,
   // used only in textField inputs, other inputs don't use it like autocomplete and selection etc
   type: FormInputType,
   name: string,
@@ -76,7 +77,10 @@ export type FormPropFields = {
   // onChange?: () => void,
   // custom
   custom?: any,
-  defaultValue?: any;
+  defaultValue?: any,
+  errorFn?: () => boolean,
+  helperTextFn?: () => string,
+  onFocusFn?: () => void,
 }
 // components: used for AutocompleteOption and Selection component
 export type AutocompleteAndSelectOptions = { key?: number, title: string, value: string | number | any };
