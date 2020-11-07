@@ -55,7 +55,7 @@ enum FormFieldNames {
 const defaultValues: FormDefaultValues = {
 	firstName: 'John',
 	lastName: 'Doe',
-	username: 'jonhdoe',
+	username: 'johndoe',
 	password: 'Aa123#12',
 	passwordConfirmation: 'Aa123#12',
 	fiscalNumber: 'PT123123123',

@@ -10,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewAssetInput, useAssetNewMutation } from '../../generated/graphql';
 import { AssetType, EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, Tag } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, parseTemplate, isValidEnum, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, parseTemplate, isValidEnum, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper, validateRegExpArray } from '../../utils';
 
 type FormInputs = {
 	assetType: AssetType,
@@ -151,7 +151,12 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			label: c.I18N.ownerLabel,
 			placeholder: c.I18N.ownerPlaceholder,
 			helperText: c.I18N.ownerHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.OWNER, c.REGEXP.fiscalNumber),
+			rules: {
+				// validate both regex uuid, fiscalNumber and mobilePhone
+				validate: () => validateRegExpArray(getValues(FormFieldNames.OWNER), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])
+					? true
+					: validationMessage('required', FormFieldNames.OWNER)
+			},
 		},
 		[FormFieldNames.LOCATION]: {
 			inputRef: useRef(),

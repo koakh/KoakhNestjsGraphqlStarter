@@ -10,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewCauseInput, useCauseNewMutation } from '../../generated/graphql';
 import { EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, Tag } from '../../types';
-import { commonControlProps, currentFormatDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, parseTemplate, isValidEnum, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, currentFormatDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, parseTemplate, isValidEnum, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper, validateRegExpArray } from '../../utils';
 
 type FormInputs = {
 	name: string,
@@ -198,7 +198,12 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			label: c.I18N.inputLabel,
 			placeholder: c.I18N.inputPlaceholder,
 			helperText: c.I18N.inputHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.INPUT, c.REGEXP.fiscalNumber),
+			rules: {
+				// validate both regex uuid, fiscalNumber and mobilePhone
+				validate: () => validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])
+					? true
+					: validationMessage('required', FormFieldNames.INPUT)
+			},
 			disabled: false,
 			// AUTOCOMPLETE
 			// options: personOptions,
