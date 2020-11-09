@@ -78,7 +78,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// hooks react form
 	const { handleSubmit, watch, errors, control, reset, getValues, setValue } = useForm<FormInputs>({
 		// required to inject owner from state
-		defaultValues: { ...defaultValues, input: state.user.profile.id },
+		defaultValues: { ...defaultValues, input: state.user.profile.fiscalNumber },
 		...formCommonOptions
 	})
 	// hooks: apollo

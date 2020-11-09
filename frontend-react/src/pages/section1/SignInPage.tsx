@@ -123,9 +123,12 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 						lastName: user.lastName,
 						username: user.username,
 						email: user.email,
+						fiscalNumber: user.fiscalNumber,
+						mobilePhone: user.mobilePhone,
 						roles: user.roles
 					}
 				};
+				debugger;
 				dispatch({ type: ActionType.SIGNED_IN_USER, payload });
 				// use history to send user to homepage, after awaiting for response object, 
 				history.push('/');

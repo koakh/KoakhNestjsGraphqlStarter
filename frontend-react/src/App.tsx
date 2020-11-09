@@ -57,6 +57,8 @@ export const App: React.FC<Props> = () => {
           lastName: profileData.personProfile.lastName,
           username: profileData.personProfile.username,
           email: profileData.personProfile.email,
+          fiscalNumber: profileData.personProfile.fiscalNumber,
+          mobilePhone: profileData.personProfile.mobilePhone,
           roles: profileData.personProfile.roles
         }
       };

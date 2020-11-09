@@ -70,7 +70,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// hooks react form
 	const { handleSubmit, errors, control, reset, getValues } = useForm<FormInputs>({
 		// required to inject owner from state
-		defaultValues: { ...defaultValues, input: state.user.profile.id },
+		defaultValues: { ...defaultValues, input: state.user.profile.fiscalNumber },
 		...formCommonOptions
 	});
 	// extract error message
