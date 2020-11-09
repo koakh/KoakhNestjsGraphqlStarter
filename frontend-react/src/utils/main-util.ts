@@ -17,7 +17,8 @@ export const recordToArray = <T>(record: Record<string, T>) => {
 /**
  * check if is a valid json object, or array of valid objects
  */
-export const isValidJsonObject = (json: string): boolean => {
+export const isValidJsonObject = (json: string, required: boolean = false): boolean => {
+  if (!json && !required) return true;
   try {
     // validate all elements of array
     if (Array.isArray(json)) {

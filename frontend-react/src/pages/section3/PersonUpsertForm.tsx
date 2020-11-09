@@ -1,17 +1,17 @@
 import { Box } from '@material-ui/core';
 import Button from '@material-ui/core/Button/Button';
-import React, { Fragment, useRef } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
-import { formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldEmail, commonFormFieldFirstName, commonFormFieldFiscalNumber, commonFormFieldLastName, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldMobilePhone, commonFormFieldPassword, commonFormFieldPasswordConfirmation, commonFormFieldUsername, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, ModelType } from '../../types';
-import { commonControlProps, generateFormDefinition, getGraphQLApolloError, parseTemplate, useStyles, validationRuleRegExHelper } from '../../utils';
+import { FormDefaultValues, FormPropFields, ModelType } from '../../types';
+import { generateFormDefinition, getGraphQLApolloError, isValidJsonObject, parseTemplate, useStyles } from '../../utils';
 
 type FormInputs = {
 	firstName: string;
@@ -22,6 +22,8 @@ type FormInputs = {
 	fiscalNumber: string;
 	mobilePhone: string;
 	email: string;
+	metaData?: any,
+	metaDataInternal?: any,
 };
 enum FormFieldNames {
 	FIRST_NAME = 'firstName',
@@ -32,16 +34,20 @@ enum FormFieldNames {
 	FISCAL_NUMBER = 'fiscalNumber',
 	MOBILE_PHONE = 'mobilePhone',
 	EMAIL = 'email',
+	META_DATA = 'metaData',
+	META_DATA_INTERNAL = 'metaDataInternal',
 };
 const defaultValues: FormDefaultValues = {
 	firstName: 'John',
 	lastName: 'Doe',
 	username: 'johndoe',
-	password: 'Xx673!00',
-	passwordConfirmation: 'Xx673!00',
+	password: 'Aa456#45',
+	passwordConfirmation: 'Aa456#45',
 	fiscalNumber: 'PT123123123',
 	mobilePhone: '+351936101188',
 	email: 'johndoe@mail.com',
+	metaData: '',
+	metaDataInternal: '',
 };
 
 // use RouteComponentProps to get history props from Route
@@ -49,7 +55,8 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 	// hooks styles
 	const classes = useStyles();
 	// hooks react form
-	const { handleSubmit, errors, control, reset } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const [showPassword, setShowPassword] = useState(false);
 	// hooks: apollo
 	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
 	// hooks state
@@ -58,17 +65,23 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
+	console.log(`metaData:${getValues(FormFieldNames.META_DATA)}`);
+	console.log(`metaDataInternal:${getValues(FormFieldNames.META_DATA_INTERNAL)}`);
 
+	const handlePasswordVisibility = () => setShowPassword(!showPassword);
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
 			// alert(JSON.stringify(data, undefined, 2));
+			setShowPassword(false);
 			const newPersonData: NewPersonInput = {
 				username: data.username,
 				password: data.password,
 				fiscalNumber: data.fiscalNumber,
 				mobilePhone: data.mobilePhone,
 				email: data.email,
+				metaData: JSON.parse(data.metaData),
+				metaDataInternal: JSON.parse(data.metaDataInternal),
 			};
 			const response = await personNewMutation({ variables: { newPersonData } })
 				.catch(error => {
@@ -81,75 +94,41 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 				history.push({ pathname: routes.RESULT_PAGE.path });
 			}
 		} catch (error) {
+			setShowPassword(false);
 			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		}
 	};
 
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.FIRST_NAME]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.FIRST_NAME,
-			label: 'First name',
-			placeholder: 'John',
-			// helperText: 'a valid first Name',
-			fullWidth: true,
-			className: classes.spacer,
-			rules: validationRuleRegExHelper(FormFieldNames.FIRST_NAME, c.REGEXP.name),
-			controlProps: commonControlProps,
+			...commonFormFieldFirstName(useRef(), FormFieldNames.FIRST_NAME)
 		},
 		[FormFieldNames.LAST_NAME]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.LAST_NAME,
-			label: 'Last name',
-			placeholder: 'Doe',
-			// helperText: 'a valid last name',
-			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.LAST_NAME, c.REGEXP.name),
-			controlProps: commonControlProps,
+			...commonFormFieldLastName(useRef(), FormFieldNames.LAST_NAME)
 		},
 		[FormFieldNames.USERNAME]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.USERNAME,
-			label: 'Username',
-			placeholder: 'johndoe',
-			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.USERNAME, c.REGEXP.username),
-			controlProps: commonControlProps,
+			...commonFormFieldUsername(useRef(), FormFieldNames.USERNAME)
+		},
+		[FormFieldNames.PASSWORD]: {
+			...commonFormFieldPassword(useRef(), FormFieldNames.PASSWORD, showPassword, handlePasswordVisibility)
+		},
+		[FormFieldNames.PASSWORD_CONFIRMATION]: {
+			...commonFormFieldPasswordConfirmation(useRef(), FormFieldNames.PASSWORD_CONFIRMATION, showPassword, () => getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION))
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.FISCAL_NUMBER,
-			label: 'Fiscal number',
-			placeholder: 'PT218269128',
-			// helperText: 'a valid pt fiscal Number',
-			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.FISCAL_NUMBER, c.REGEXP.fiscalNumber),
-			controlProps: commonControlProps,
+			...commonFormFieldFiscalNumber(useRef(), FormFieldNames.FISCAL_NUMBER)
 		},
 		[FormFieldNames.MOBILE_PHONE]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.MOBILE_PHONE,
-			label: c.I18N.mobilePhoneLabel,
-			placeholder: c.I18N.mobilePhonePlaceHolder,
-			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.mobilePhone),
-			controlProps: commonControlProps,
+			...commonFormFieldMobilePhone(useRef(), FormFieldNames.MOBILE_PHONE)
 		},
 		[FormFieldNames.EMAIL]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.EMAIL,
-			label: 'Email',
-			placeholder: 'johndoe@example.com',
-			fullWidth: true,
-			className: classes.spacer,
-			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.email),
-			controlProps: commonControlProps,
+			...commonFormFieldEmail(useRef(), FormFieldNames.EMAIL)
+		},
+		[FormFieldNames.META_DATA]: {
+			...commonFormFieldMetadata(useRef(), FormFieldNames.META_DATA, () => isValidJsonObject(getValues(FormFieldNames.META_DATA))),
+		},
+		[FormFieldNames.META_DATA_INTERNAL]: {
+			...commonFormFieldMetadataInternal(useRef(), FormFieldNames.META_DATA_INTERNAL, () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL)))
 		},
 	};
 

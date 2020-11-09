@@ -5,25 +5,21 @@ import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import Container from '@material-ui/core/Container';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, setAccessToken } from '../../app';
-import { envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldPassword, commonFormFieldUsername, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert/AlertMessage';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright, Props as CopyrightProps } from '../../components/material-ui/other/Copyright';
 import { LoginPersonInput, PersonProfileDocument, usePersonLoginMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields } from '../../types';
-import { commonControlProps, generateFormDefinition, validationRuleRegExHelper } from '../../utils';
+import { FormDefaultValues, FormPropFields } from '../../types';
+import { generateFormDefinition } from '../../utils';
 
 export const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -66,12 +62,20 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 	// styles
 	const classes = useStyles();
 	// get hooks
-	const [, dispatch] = useStateValue();
+	const [state, dispatch] = useStateValue();
 	// hooks react form
 	const { handleSubmit, errors, control } = useForm<FormInputs>({ defaultValues, ...formCommonOptions });
 	const [showPassword, setShowPassword] = useState(false);
 	// hooks: apollo
 	const [personLoginMutation, { loading, error: apolloError }] = usePersonLoginMutation();
+
+	// require to clean up message after render
+	useEffect(() => {
+		setTimeout(() => {
+			dispatch({ type: ActionType.RESULT_MESSAGE, payload: {} });
+		}, c.VALUES.resultMessageTimeOut)
+		return () => { }
+	}, [dispatch]);
 
 	const handlePasswordVisibility = () => setShowPassword(!showPassword);
 	const handleSubmitHandler = async (data: FormInputs) => {
@@ -137,39 +141,10 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.USERNAME]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.USERNAME,
-			label: 'Username',
-			placeholder: 'johndoe',
-			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.USERNAME, c.REGEXP.username),
-			controlProps: commonControlProps,
+			...commonFormFieldUsername(useRef(), FormFieldNames.USERNAME)
 		},
 		[FormFieldNames.PASSWORD]: {
-			inputRef: useRef(),
-			type: showPassword ? FormInputType.TEXT : FormInputType.PASSWORD,
-			name: FormFieldNames.PASSWORD,
-			label: 'Password',
-			placeholder: '12345678',
-			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.PASSWORD, c.REGEXP.password),
-			controlProps: {
-				...commonControlProps,
-				// must be capitalized
-				InputProps: {
-					endAdornment: (
-						<InputAdornment position='end'>
-							<IconButton
-								aria-label='toggle password visibility'
-								onClick={handlePasswordVisibility}
-							>
-								{showPassword ? <VisibilityIcon /> : <VisibilityIconOff />}
-							</IconButton>
-						</InputAdornment>
-					)
-				},
-			},
+			...commonFormFieldPassword(useRef(), FormFieldNames.PASSWORD, showPassword, handlePasswordVisibility)
 		},
 	};
 
@@ -216,9 +191,16 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 				</form>
 			</div>
 			{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={c.I18N.loginFailed} />}
+			{/* show signUpUserRegisteredSuccessfully */}
+			{state.resultMessage && <Box component='span' m={1}>
+				<AlertMessage severity={AlertSeverityType.SUCCESS} message={state.resultMessage} />
+			</Box>}
 			<Box mt={8}>
 				<Copyright {...copyrightProps} />
 			</Box>
+      <Box component='span' m={1}>
+        <AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.signInWip} />
+      </Box>
 		</Container>
 	);
 }

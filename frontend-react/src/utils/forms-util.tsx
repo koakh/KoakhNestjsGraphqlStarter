@@ -385,7 +385,7 @@ const generateAutocomplete = (
   //   </Fragment>
   // );
 
-  // working but before use cleaner version from codesandbox
+  // working but before use cleaner version from codeSandbox
   return (
     <Fragment key={e.name}>
       <Controller

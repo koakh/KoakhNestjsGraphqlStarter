@@ -10,11 +10,9 @@ export const useCurrentLocation = (options = {}) => {
   const [location, setLocation] = useState<{ latitude: string, longitude: string }>();
   // store error message in state
   const [error, setError] = useState<string>();
-
   // Success handler for geoLocation's `getCurrentPosition` method
   const handleSuccess = (pos: any) => {
     const { latitude, longitude } = pos.coords;
-
     setLocation({ latitude, longitude });
   };
 
@@ -25,7 +23,6 @@ export const useCurrentLocation = (options = {}) => {
 
   useEffect(() => {
     const { geolocation } = navigator;
-
     // If the geolocation is not defined in the used browser we handle it as an error
     if (!geolocation) {
       setError("Geolocation is not supported.");

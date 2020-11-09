@@ -3,14 +3,14 @@ import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
-import { formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldAmbassadors, commonFormFieldCode, commonFormFieldEmail, commonFormFieldFiscalNumber, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldAssetName, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewParticipantInput, useParticipantNewMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormInputType, FormPropFields, ModelType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, parseTemplate, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { FormDefaultValues, FormPropFields, ModelType } from '../../types';
+import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, parseTemplate, useStyles, validateRegExpArrayWithValuesArray } from '../../utils';
 
 type FormInputs = {
 	code: string,
@@ -36,8 +36,8 @@ const defaultValues: FormDefaultValues = {
 	email: 'mail@efp.com',
 	fiscalNumber: 'PT500123002',
 	ambassadors: 'PT182692125 PT582692178',
-	metaData: '{}',
-	metaDataInternal: '{}',
+	metaData: '',
+	metaDataInternal: '',
 };
 
 // use RouteComponentProps to get history props from Route
@@ -83,91 +83,28 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.CODE]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.CODE,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.codeLabel,
-			placeholder: c.I18N.codePlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.CODE, c.REGEXP.alphaNumeric),
+			...commonFormFieldCode(useRef(), FormFieldNames.CODE)
 		},
 		[FormFieldNames.NAME]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.NAME,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.assetLabel,
-			placeholder: c.I18N.assetPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.NAME, c.REGEXP.name),
-		},
-		[FormFieldNames.EMAIL]: {
-			inputRef: useRef(),
-			type: FormInputType.EMAIL,
-			name: FormFieldNames.EMAIL,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.emailLabel,
-			placeholder: c.I18N.emailPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.email),
+			...commonFormFieldAssetName(useRef(), FormFieldNames.NAME)
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.FISCAL_NUMBER,
-			label: c.I18N.fiscalNumberLabel,
-			placeholder: c.I18N.fiscalNumberPlaceHolder,
-			fullWidth: true,
-			rules: validationRuleRegExHelper(FormFieldNames.FISCAL_NUMBER, c.REGEXP.fiscalNumber),
-			controlProps: commonControlProps,
+			...commonFormFieldFiscalNumber(useRef(), FormFieldNames.FISCAL_NUMBER)
+		},
+		[FormFieldNames.EMAIL]: {
+			...commonFormFieldEmail(useRef(), FormFieldNames.EMAIL)
 		},
 		[FormFieldNames.AMBASSADORS]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.AMBASSADORS,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.ambassadorsLabel,
-			placeholder: c.I18N.ambassadorsPlaceHolder,
-			helperText: c.I18N.ambassadorsHelperText,
-			// TODO clean up
-			// rules: validationRuleRegExHelper(FormFieldNames.AMBASSADORS, c.REGEXP.fiscalNumberArray),
-			rules: {
-				// validate both regex uuid, fiscalNumber and mobilePhone
-				validate: () => {
-					const failValues = validateRegExpArrayWithValuesArray((getValues(FormFieldNames.AMBASSADORS) as string).split(' '), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]);
-					return (failValues.length > 0) ? `invalid id(s) ${failValues.join(' ')}` : true;
-				}
-			},
+			...commonFormFieldAmbassadors(useRef(), FormFieldNames.AMBASSADORS, () => {
+				const failValues = validateRegExpArrayWithValuesArray((getValues(FormFieldNames.AMBASSADORS) as string).split(' '), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]);
+				return (failValues.length > 0) ? `invalid id(s) ${failValues.join(' ')}` : true;
+			})
 		},
 		[FormFieldNames.META_DATA]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.META_DATA,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.metaDataLabel,
-			placeholder: c.I18N.metaDataPlaceHolder,
-			rules: {
-				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA))
-					? true
-					: validationMessage('invalid', FormFieldNames.META_DATA)
-			},
+			...commonFormFieldMetadata(useRef(), FormFieldNames.META_DATA, () => isValidJsonObject(getValues(FormFieldNames.META_DATA))),
 		},
 		[FormFieldNames.META_DATA_INTERNAL]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.META_DATA_INTERNAL,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.metaDataInternalLabel,
-			placeholder: c.I18N.metaDataPlaceHolder,
-			rules: {
-				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL))
-					? true
-					: validationMessage('invalid', FormFieldNames.META_DATA_INTERNAL)
-			},
+			...commonFormFieldMetadataInternal(useRef(), FormFieldNames.META_DATA_INTERNAL, () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL)))
 		},
 	};
 

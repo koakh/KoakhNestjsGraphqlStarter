@@ -43,8 +43,8 @@ const defaultValues: FormDefaultValues = {
 		{ title: 'Nature', value: 'NATURE' },
 		{ title: 'Economy', value: 'ECONOMY' },
 	],
-	metaData: '{}',
-	metaDataInternal: '{}',
+	metaData: '',
+	metaDataInternal: '',
 };
 
 // use RouteComponentProps to get history props from Route

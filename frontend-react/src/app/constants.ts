@@ -2,8 +2,10 @@
 
 import { EntityType, GoodsOptions } from "../types";
 
-const VALUES: { [key: string]: string } = {
+const VALUES: { [key: string]: any } = {
   undefined: 'UNDEFINED',
+  // used in signIn to clear message
+  resultMessageTimeOut: 5000, 
 }
 
 const I18N: { [key: string]: string } = {
@@ -28,6 +30,8 @@ const I18N: { [key: string]: string } = {
   nonAccountSignUp: 'Don\'t have an account? Sign Up',
   rememberMe: 'Remember me',
   forgotPassword: 'Forgot password?',
+  // wip: messages
+  signInWip: 'wip: required send email activation code, finish remember me, ...',
   // template
   signUpUserRegisteredSuccessfully: 'User registered successfully! You can login with \'${username}\'',
   newModelCreatedSuccessfully: 'New ${model} id: \'${id}\' created successfully!',
@@ -56,11 +60,9 @@ const I18N: { [key: string]: string } = {
   assetLabel: 'Asset description',
   assetPlaceHolder: 'Wheelchair cum bed (Motorized)',
   ambassadorsLabel: 'Ambassadors',
-  // TODO: uuid
-  ambassadorsPlaceHolder: 'PT182692128',
+  ambassadorsPlaceHolder: 'PT182692128 +351936208811 a342f19f-9e26-44c1-ae78-6fd8b0955d47',
   ambassadorsHelperText: 'valid ambassador\'s array, can be uuid, fiscalNumber or mobilePhone separated by space',
   ownerLabel: 'Owner',
-  // TODO: uuid
   ownerPlaceHolder: 'PT182692128',
   ownerHelperText: 'valid owner id, can be uuid, fiscalNumber or mobilePhone',
   locationLabel: 'Location',
@@ -68,8 +70,8 @@ const I18N: { [key: string]: string } = {
   tagsLabel: 'Tags',
   tagsPlaceHolder: 'one or more tags',
   metaDataLabel: 'Metadata',
-  metaDataInternalLabel: 'Metadata',
-  metaDataPlaceHolder: 'arbitrary json object',
+  metaDataInternalLabel: 'Metadata internal',
+  metaDataPlaceHolder: 'arbitrary json object ex { "key": "value" }',
   emailLabel: 'Email',
   emailPlaceHolder: 'valid email',
   mobilePhoneLabel: 'Mobile phone',
@@ -102,6 +104,21 @@ const I18N: { [key: string]: string } = {
   // https://generate.plus/en/number/ean
   barCodeEan13PlaceHolder: '978020137962',
   barCodeEan13HelperText: 'valid ean13 barcode',
+  firstNameLabel: 'First name',
+  firstNamePlaceHolder: 'John',
+  firstNameHelperText: 'valid first Name',
+  lastNameLabel: 'Last name',
+  lastNamePlaceholder: 'Doe',
+  lastNameHelperText: 'valid last name',
+  userNameLabel: 'Username',
+  userNamePlaceholder: 'johndoe',
+  userNameHelperText: 'valid username',
+  passWordLabel: 'Password',
+  passWordPlaceholder: 'Ab912#11',
+  passWordHelperText: 'valid password',
+  passWordConfirmationLabel: 'Password confirmation',
+  passWordConfirmationPlaceholder: 'Ab912#11',
+  passWordConfirmationHelperText: 'must match password',
 };
 
 const ENTITY_TYPE_OPTIONS = [
@@ -203,7 +220,7 @@ const REGEXP: { [key: string]: RegExp; } = {
   // multi lingual, you'd probably be better off validating against characters you don't want to allow
   // match names with Capitalization after the first character
   // firstAndLastName: /^([A-Z][a-zA-Z]*)$/,
-  name: /^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/i,
+  name: /^[ A-Za-z0-9^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{2,100}$/i,
   alphaNumeric: /^[ A-Za-z0-9_@./#&+-:]*$/i,
   date: /^((?:19|20)\d\d)-(0?[1-9]|1[012])-([12][0-9]|3[01]|0?[1-9])$/i,
   // latitude/longitude coordinates

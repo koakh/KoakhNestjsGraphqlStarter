@@ -3,14 +3,14 @@ import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c } from '../../app';
-import { formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldAmbassadors, commonFormFieldCauseName, commonFormFieldEmail, commonFormFieldEndDate, commonFormFieldInputEntity, commonFormFieldInputTypeEntity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldStartDate, commonFormFieldTags, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewCauseInput, useCauseNewMutation } from '../../generated/graphql';
-import { EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, Tag } from '../../types';
-import { commonControlProps, currentFormatDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, parseTemplate, isValidEnum, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper, validateRegExpArray } from '../../utils';
+import { EntityType, FormDefaultValues, FormPropFields, ModelType, Tag } from '../../types';
+import { currentFormatDate, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, parseTemplate, useStyles, validateRegExpArray, validateRegExpArrayWithValuesArray } from '../../utils';
 
 type FormInputs = {
 	name: string,
@@ -54,8 +54,8 @@ const defaultValues: FormDefaultValues = {
 		{ title: 'Nature', value: 'NATURE' },
 		{ title: 'Economy', value: 'ECONOMY' },
 	],
-	metaData: '{}',
-	metaDataInternal: '{}',
+	metaData: '',
+	metaDataInternal: '',
 };
 
 // use RouteComponentProps to get history props from Route
@@ -73,8 +73,8 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// debug
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
 	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
-	console.log(`startDate:${getValues(FormFieldNames.START_DATE)}`);
-	console.log(`endDate:${new Date(getValues(FormFieldNames.END_DATE)).getTime()}`);
+	// console.log(`startDate:${getValues(FormFieldNames.START_DATE)}`);
+	// console.log(`endDate:${new Date(getValues(FormFieldNames.END_DATE)).getTime()}`);
 
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
@@ -90,9 +90,9 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 					type: data.inputType,
 					id: data.input,
 				},
-				tags: data.tags.map((e: Tag) => e.value),
-				metaData: JSON.parse(data.metaData),
-				metaDataInternal: JSON.parse(data.metaDataInternal),
+				tags: data.tags ? data.tags.map((e: Tag) => e.value) : [],
+				metaData: data.metaData ? JSON.parse(data.metaData) : null,
+				metaDataInternal: data.metaData ? JSON.parse(data.metaDataInternal) : null,
 			};
 			// console.log(JSON.stringify(data, undefined, 2));
 			// console.log(JSON.stringify(newCauseData, undefined, 2));
@@ -111,166 +111,61 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.NAME]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.NAME,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.causeLabel,
-			placeholder: c.I18N.causePlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.NAME, c.REGEXP.alphaNumeric),
+			...commonFormFieldCauseName(useRef(), FormFieldNames.NAME)
 		},
 		[FormFieldNames.EMAIL]: {
-			inputRef: useRef(),
-			type: FormInputType.EMAIL,
-			name: FormFieldNames.EMAIL,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.emailLabel,
-			placeholder: c.I18N.emailPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.EMAIL, c.REGEXP.email),
+			...commonFormFieldEmail(useRef(), FormFieldNames.EMAIL)
 		},
 		[FormFieldNames.START_DATE]: {
-			inputRef: useRef(),
-			type: FormInputType.DATE,
-			name: FormFieldNames.START_DATE,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.startDateLabel,
-			placeholder: c.I18N.datePlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.START_DATE, c.REGEXP.date),
+			...commonFormFieldStartDate(useRef(), FormFieldNames.START_DATE)
 		},
 		[FormFieldNames.END_DATE]: {
-			inputRef: useRef(),
-			type: FormInputType.DATE,
-			name: FormFieldNames.END_DATE,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.endDateLabel,
-			placeholder: c.I18N.datePlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.END_DATE, c.REGEXP.date),
+			...commonFormFieldEndDate(useRef(), FormFieldNames.END_DATE)
 		},
 		[FormFieldNames.LOCATION]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.LOCATION,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.locationLabel,
-			placeholder: c.I18N.locationPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location, false),
+			...commonFormFieldLocation(useRef(), FormFieldNames.LOCATION)
 		},
-		// TODO why causes have input? it is related with BELONGS TO Person, Participant etc
-		// [FormFieldNames.INPUT]: {
-		// 	inputRef: useRef(),
-		// 	type: FormInputType.TEXT,
-		// 	name: FormFieldNames.INPUT,
-		// 	controlProps: commonControlProps,
-		// 	fullWidth: true,
-		// 	label: c.I18N.inputLabel,
-		// 	placeholder: c.I18N.inputPlaceholder,
-		// 	helperText: c.I18N.inputHelperText,
-		// 	rules: validationRuleRegExHelper(FormFieldNames.INPUT, c.REGEXP.uuid),
-		// },
 		[FormFieldNames.INPUT_TYPE]: {
-			inputRef: useRef(),
-			type: FormInputType.SELECT,
-			name: FormFieldNames.INPUT_TYPE,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.inputTypeLabel,
-			// selection don't use placeHolder
-			// placeholder: c.VALUES.PHYSICAL_ASSET,
-			rules: {
-				validate: () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))
-					? true
-					: validationMessage('required', FormFieldNames.INPUT_TYPE)
-			},
-			disabled: false,
-			options: () => c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
+			...commonFormFieldInputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE)))
 		},
 		[FormFieldNames.INPUT]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.INPUT,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.inputLabel,
-			placeholder: c.I18N.inputPlaceholder,
-			helperText: c.I18N.inputHelperText,
-			rules: {
-				// validate both regex uuid, fiscalNumber and mobilePhone
-				validate: () => validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])
-					? true
-					: validationMessage('required', FormFieldNames.INPUT)
-			},
-			disabled: false,
-			// AUTOCOMPLETE
-			// options: personOptions,
-			// disableCloseOnSelect: false,
+			...commonFormFieldInputEntity(useRef(), FormFieldNames.INPUT, () => validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]))
 		},
 		[FormFieldNames.AMBASSADORS]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.AMBASSADORS,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.ambassadorsLabel,
-			placeholder: c.I18N.ambassadorsPlaceHolder,
-			helperText: c.I18N.ambassadorsHelperText,
-			rules: {
-				// validate both regex uuid, fiscalNumber and mobilePhone
-				validate: () => {
-					const failValues = validateRegExpArrayWithValuesArray((getValues(FormFieldNames.AMBASSADORS) as string).split(' '), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]);
-					return (failValues.length > 0) ? `invalid id(s) ${failValues.join(' ')}` : true;
-				}
-			},
+			...commonFormFieldAmbassadors(useRef(), FormFieldNames.AMBASSADORS, () => {
+				const failValues = validateRegExpArrayWithValuesArray((getValues(FormFieldNames.AMBASSADORS) as string).split(' '), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]);
+				return (failValues.length > 0) ? `invalid id(s) ${failValues.join(' ')}` : true;
+			})
 		},
 		[FormFieldNames.TAGS]: {
-			inputRef: useRef(),
-			type: FormInputType.AUTOCOMPLETE,
-			name: FormFieldNames.TAGS,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.tagsLabel,
-			placeholder: c.I18N.tagsLabel,
-			helperText: c.I18N.tagsPlaceHolder,
-			rules: {
-				validate: () => (getValues(FormFieldNames.TAGS) as string[]).length > 0
-					? true
-					: validationMessage('invalid', FormFieldNames.TAGS)
-			},
-			options: () => c.TAGS_OPTIONS,
-			multipleOptions: true,
-			addToAutocomplete: true,
+			// tags required inputRef outside of function else crash with `TypeError: Cannot read property 'current' of undefined` 
+			// inputRef: useRef(),
+			...commonFormFieldTags(useRef(), FormFieldNames.TAGS, () => (getValues(FormFieldNames.TAGS) as string[]).length > 0),
 		},
+		// TODO
+		// [FormFieldNames.TAGS]: {
+		// 	inputRef: useRef(),
+		// 	type: FormInputType.AUTOCOMPLETE,
+		// 	name: FormFieldNames.TAGS,
+		// 	controlProps: commonControlProps,
+		// 	fullWidth: true,
+		// 	label: c.I18N.tagsLabel,
+		// 	placeholder: c.I18N.tagsLabel,
+		// 	helperText: c.I18N.tagsPlaceHolder,
+		// 	rules: {
+		// 		validate: () => (getValues(FormFieldNames.TAGS) as string[]).length > 0
+		// 			? true
+		// 			: validationMessage('invalid', FormFieldNames.TAGS)
+		// 	},
+		// 	options: () => c.TAGS_OPTIONS,
+		// 	multipleOptions: true,
+		// 	addToAutocomplete: true,
+		// },
 		[FormFieldNames.META_DATA]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.META_DATA,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.metaDataLabel,
-			placeholder: c.I18N.metaDataPlaceHolder,
-			rules: {
-				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA))
-					? true
-					: validationMessage('invalid', FormFieldNames.META_DATA)
-			},
+			...commonFormFieldMetadata(useRef(), FormFieldNames.META_DATA, () => isValidJsonObject(getValues(FormFieldNames.META_DATA))),
 		},
 		[FormFieldNames.META_DATA_INTERNAL]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.META_DATA_INTERNAL,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.metaDataInternalLabel,
-			placeholder: c.I18N.metaDataPlaceHolder,
-			rules: {
-				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL))
-					? true
-					: validationMessage('invalid', FormFieldNames.META_DATA_INTERNAL)
-			},
+			...commonFormFieldMetadataInternal(useRef(), FormFieldNames.META_DATA_INTERNAL, () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL)))
 		},
 	};
 

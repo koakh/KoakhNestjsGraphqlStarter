@@ -10,6 +10,7 @@ interface Props { }
 export const ResultPage: React.FC<Props> = () => {
   // get hook
   const [state] = useStateValue();
+
   return (
     <Fragment>
       <PageTitle>{routes[RouteKey.RESULT_PAGE].title}</PageTitle>

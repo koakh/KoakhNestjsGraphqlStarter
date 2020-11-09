@@ -45,7 +45,7 @@ export const PersonQueryPage: React.FC<Props> = () => {
       {pageTitle}
       <Box component='span' m={1}>
         {data.persons.map((e: Person) =>
-          <Typography key={e.id}>{e.id} : {e.firstName} : {e.lastName} : {e.email} : {e.username}</Typography>
+          <Typography key={e.id}>{e.id} : {e.firstName} : {e.lastName} : {e.email} : {e.username} : {e.fiscalNumber} : {e.mobilePhone}</Typography>
         )}
       </Box>
     </Fragment>

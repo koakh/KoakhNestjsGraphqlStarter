@@ -59,14 +59,13 @@ const defaultValues: FormDefaultValues = {
 	output: c.VALUES.undefined,
 	quantity: 1,
 	currency: 'EUR',
-	// TODO
-	assetId: '16834df0-766d-4cc8-8baa-b0c37338ca34',
+	assetId: '',
 	goods: [],
 	location: '12.1890144,-28.5171909',
 	goodsBag: [{ barCode: '', quantity: 1 }],
 	tags: [],
-	metaData: '{}',
-	metaDataInternal: '{}',
+	metaData: '',
+	metaDataInternal: '',
 };
 
 // use RouteComponentProps to get history props from Route
@@ -83,16 +82,14 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// TODO: https://www.pluralsight.com/guides/how-to-use-geolocation-call-in-reactjs
 	// TODO: https://developer.mozilla.org/pt-PT/docs/Web/API/Geolocation/Utilizacao_da_geolocalizacao
 	// useEffect(() => {
-	// 	debugger;
 	// 	navigator.geolocation.getCurrentPosition((position) => {
-	// 		debugger;
 	// 		console.log("Latitude is :", position.coords.latitude);
 	// 		console.log("Longitude is :", position.coords.longitude);
 	// 	});
 	// }, [])
-	// eslint-disable-next-line
-
+	
 	// TODO geoLocation
+	// eslint-disable-next-line
 	// const { location: currentLocation, error: currentError } = useCurrentLocation(c.GEOLOCATION_OPTIONS);
 	// console.log(`currentLocation:[${currentLocation}]`);
 

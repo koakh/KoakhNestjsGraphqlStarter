@@ -45,6 +45,9 @@
   - [Material-UI: How to use AutoComplete to add values](#material-ui-how-to-use-autocomplete-to-add-values)
   - [Material-UI : Select with Hook Forms](#material-ui--select-with-hook-forms)
   - [React Form Hooks Field Array Validation Problem](#react-form-hooks-field-array-validation-problem)
+  - [Location](#location)
+  - [GeoLocation Problem](#geolocation-problem)
+  - [Other Location Alternatives](#other-location-alternatives)
 
 ## TLDR
 
@@ -969,3 +972,27 @@ https://stackoverflow.com/questions/63236951/how-to-use-material-ui-select-with-
 ## React Form Hooks Field Array Validation Problem
 
 https://stackoverflow.com/questions/60499557/react-hook-form-validation-not-working-with-custom-fields-array
+
+## Location
+
+- [Use Geolocation API with React Hooks](https://norbertbartos.tech/blog/use-geolocation-api-with-react-hooks/)
+- [Repo](https://github.com/NorbertB29/geolocation-api-hook)
+
+- [How to Use Geolocation Call in ReactJS](https://www.pluralsight.com/guides/how-to-use-geolocation-call-in-reactjs)
+- [Creating React usePosition() hook for getting browser’s geolocation](https://itnext.io/creating-react-useposition-hook-for-getting-browsers-geolocation-2f27fc1d96de)
+
+- [User Location](https://developers.google.com/web/fundamentals/native-hardware/user-location)
+
+## GeoLocation Problem
+
+```shell
+Location Error: Network location provider at 'https://www.googleapis.com/' : No response received.
+```
+
+test in mozilla [page](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API)
+
+scroll down, seems not working
+
+## Other Location Alternatives
+
+https://ipwhois.io/documentation
