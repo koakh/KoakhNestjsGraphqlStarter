@@ -1,11 +1,16 @@
 /* eslint-disable no-template-curly-in-string */
 
-import { EntityType, GoodsOptions } from "../types";
+import { AssetType, EntityType, GoodsOptions } from "../types";
+
+export const mokeFormData = false;
 
 const VALUES: { [key: string]: any } = {
   undefined: 'UNDEFINED',
   // used in signIn to clear message
-  resultMessageTimeOut: 5000, 
+  resultMessageTimeOut: 5000,
+  mokeAmbassadors: '4ea88521-031b-4279-9165-9c10e1839000 4ea88521-031b-4279-9165-9c10e1839001',
+  mokeLocation: '12.1890144,-28.5171909',
+  mokePassword: 'Aa456#45',
 }
 
 const I18N: { [key: string]: string } = {
@@ -54,6 +59,7 @@ const I18N: { [key: string]: string } = {
   assetTypeLabel: 'Asset type',
   causeLabel: 'Cause name',
   causePlaceHolder: 'Save the world today',
+  causeInputStarterLabel: 'Cause input starter',
   assetIdLabel: 'Asset Id',
   assetIdPlaceholder: '16834df0-766d-4cc8-8baa-b0c37338ca34',
   assetIdHelperText: 'valid asset id',
@@ -125,6 +131,11 @@ const ENTITY_TYPE_OPTIONS = [
   { title: I18N.entityTypeOptionPerson, value: EntityType.person },
   { title: I18N.entityTypeOptionParticipant, value: EntityType.participant },
   { title: I18N.entityTypeOptionCause, value: EntityType.cause },
+];
+
+const ASSET_TYPE_OPTIONS = [
+  { title: I18N.assetTypeOptionPhysicalAsset, value: AssetType.physicalAsset },
+  { title: I18N.assetTypeOptionDigitalAsset, value: AssetType.digitalAsset },
 ];
 
 const PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS = [
@@ -241,6 +252,7 @@ export const appConstants = {
   VALUES,
   I18N,
   ENTITY_TYPE_OPTIONS,
+  ASSET_TYPE_OPTIONS,
   PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
   TAGS_OPTIONS,
   GOODS_OPTIONS,

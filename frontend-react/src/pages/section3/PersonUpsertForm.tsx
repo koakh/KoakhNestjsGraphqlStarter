@@ -1,9 +1,8 @@
 import { Box } from '@material-ui/core';
-import Button from '@material-ui/core/Button/Button';
 import React, { Fragment, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
-import { appConstants as c } from '../../app';
+import { appConstants as c, mokeFormData } from '../../app';
 import { commonFormFieldEmail, commonFormFieldFirstName, commonFormFieldFiscalNumber, commonFormFieldLastName, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldMobilePhone, commonFormFieldPassword, commonFormFieldPasswordConfirmation, commonFormFieldUsername, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
@@ -11,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormPropFields, ModelType } from '../../types';
-import { generateFormDefinition, getGraphQLApolloError, isValidJsonObject, parseTemplate, useStyles } from '../../utils';
+import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, parseTemplate, useStyles } from '../../utils';
 
 type FormInputs = {
 	firstName: string;
@@ -38,14 +37,14 @@ enum FormFieldNames {
 	META_DATA_INTERNAL = 'metaDataInternal',
 };
 const defaultValues: FormDefaultValues = {
-	firstName: 'John',
-	lastName: 'Doe',
-	username: 'johndoe',
-	password: 'Aa456#45',
-	passwordConfirmation: 'Aa456#45',
-	fiscalNumber: 'PT123123123',
-	mobilePhone: '+351936101188',
-	email: 'johndoe@mail.com',
+	firstName: mokeFormData ? 'John' : '',
+	lastName: mokeFormData ? 'Doe' : '',
+	username: mokeFormData ? 'johndoe' : '',
+	password: mokeFormData ? c.VALUES.mokePassword : '',
+	passwordConfirmation: mokeFormData ? c.VALUES.mokePassword : '',
+	fiscalNumber: mokeFormData ? 'PT123123123' : '',
+	mobilePhone: mokeFormData ? '+351936101188' : '',
+	email: mokeFormData ? 'johndoe@mail.com' : '',
 	metaData: '',
 	metaDataInternal: '',
 };
@@ -80,8 +79,8 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 				fiscalNumber: data.fiscalNumber,
 				mobilePhone: data.mobilePhone,
 				email: data.email,
-				metaData: JSON.parse(data.metaData),
-				metaDataInternal: JSON.parse(data.metaDataInternal),
+				metaData: data.metaData ? JSON.parse(data.metaData) : {},
+				metaDataInternal: data.metaDataInternal ? JSON.parse(data.metaDataInternal) : {},
 			};
 			const response = await personNewMutation({ variables: { newPersonData } })
 				.catch(error => {
@@ -142,25 +141,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
 					{generateFormDefinition(formDefinition, control, errors, loading)}
-					<div className={classes.spacer}>
-						<Button
-							type='submit'
-							variant='contained'
-							className={classes.button}
-							disabled={loading}
-						>
-							{c.I18N.create}
-						</Button>
-						<Button
-							type='reset'
-							variant='contained'
-							className={classes.button}
-							disabled={loading}
-							onClick={() => handleResetHandler()}
-						>
-							Reset
-					</Button>
-					</div>
+					{generateFormButtonsDiv(classes, loading, handleResetHandler)}
 				</form>
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}

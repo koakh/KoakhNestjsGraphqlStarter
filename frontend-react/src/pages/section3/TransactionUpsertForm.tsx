@@ -3,7 +3,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import React, { Fragment, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
-import { appConstants as c } from '../../app';
+import { appConstants as c, mokeFormData } from '../../app';
 import { envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
@@ -54,6 +54,7 @@ const defaultValues: FormDefaultValues = {
 	transactionType: c.VALUES.undefined,
 	resourceType: c.VALUES.undefined,
 	inputType: EntityType.person,
+	// inject by user profile id state
 	input: '',
 	outputType: EntityType.cause,
 	output: c.VALUES.undefined,
@@ -61,7 +62,7 @@ const defaultValues: FormDefaultValues = {
 	currency: 'EUR',
 	assetId: '',
 	goods: [],
-	location: '12.1890144,-28.5171909',
+	location: mokeFormData ? c.VALUES.mokeLocation : '',
 	goodsBag: [{ barCode: '', quantity: 1 }],
 	tags: [],
 	metaData: '',
@@ -72,12 +73,16 @@ const defaultValues: FormDefaultValues = {
 export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// hooks styles
 	const classes = useStyles();
+	// hooks state
+	const [state, dispatch] = useStateValue();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset, getValues, setValue } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, watch, errors, control, reset, getValues, setValue } = useForm<FormInputs>({
+		// required to inject owner from state
+		defaultValues: { ...defaultValues, input: state.user.profile.id },
+		...formCommonOptions
+	})
 	// hooks: apollo
 	const [transactionNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
-	// hooks state
-	const [, dispatch] = useStateValue();
 	// effects
 	// TODO: https://www.pluralsight.com/guides/how-to-use-geolocation-call-in-reactjs
 	// TODO: https://developer.mozilla.org/pt-PT/docs/Web/API/Geolocation/Utilizacao_da_geolocalizacao
@@ -306,8 +311,8 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					}
 				}),
 				location: data.location,
-				metaData: JSON.parse(data.metaData),
-				metaDataInternal: JSON.parse(data.metaDataInternal),
+				metaData: data.metaData ? JSON.parse(data.metaData) : {},
+				metaDataInternal: data.metaDataInternal ? JSON.parse(data.metaDataInternal) : {},
 			};
 			// TODO cleanup
 			// console.log(JSON.stringify(data, undefined, 2));

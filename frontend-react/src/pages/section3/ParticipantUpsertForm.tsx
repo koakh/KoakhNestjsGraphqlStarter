@@ -2,7 +2,7 @@ import { Box } from '@material-ui/core';
 import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
-import { appConstants as c } from '../../app';
+import { appConstants as c, mokeFormData } from '../../app';
 import { commonFormFieldAmbassadors, commonFormFieldCode, commonFormFieldEmail, commonFormFieldFiscalNumber, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldAssetName, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
@@ -31,11 +31,11 @@ enum FormFieldNames {
 	META_DATA_INTERNAL = 'metaDataInternal',
 };
 const defaultValues: FormDefaultValues = {
-	code: 'wfp',
-	name: 'World Food Program',
-	email: 'mail@efp.com',
-	fiscalNumber: 'PT500123002',
-	ambassadors: 'PT182692125 PT582692178',
+	code: mokeFormData ? 'wfp' : '',
+	name: mokeFormData ? 'World Food Program' : '',
+	email: mokeFormData ? 'mail@efp.com' : '',
+	fiscalNumber: mokeFormData ? 'PT500123002' : '',
+	ambassadors: mokeFormData ? 'PT182692125 PT582692178': '',
 	metaData: '',
 	metaDataInternal: '',
 };
@@ -65,8 +65,8 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				email: data.email,
 				fiscalNumber: data.fiscalNumber,
 				ambassadors: data.ambassadors.split(' '),
-				metaData: JSON.parse(data.metaData),
-				metaDataInternal: JSON.parse(data.metaDataInternal),
+				metaData: data.metaData ? JSON.parse(data.metaData) : {},
+				metaDataInternal: data.metaDataInternal ? JSON.parse(data.metaDataInternal) : {},
 			};
 			const response = await assetNewMutation({ variables: { newParticipantData: newParticipantData } });
 

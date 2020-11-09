@@ -35,6 +35,10 @@ export const useStyles = makeStyles((theme) => ({
   spacer: {
     marginBottom: theme.spacing(2),
   },
+  formButtonsDiv: {
+    paddingTop: theme.spacing(2),
+    // backgroundColor: '#ff0000',
+  },
   button: {
     marginRight: theme.spacing(2),
   },
@@ -162,9 +166,9 @@ export const addToAutocomplete = (name: string, control: Control<Record<string, 
 /**
  * helper to get common form buttons
  */
-export const generateFormButtonsDiv = (classes: Record<'root' | 'button' | 'buttonGoodsDelete' | 'spacer', string>, loading: boolean, handleResetHandler: () => void) => {
+export const generateFormButtonsDiv = (classes: Record<'button' | 'formButtonsDiv', string>, loading: boolean, handleResetHandler: () => void) => {
   return (
-    <div className={classes.spacer}>
+    <div className={classes.formButtonsDiv}>
       <Button
         type='submit'
         variant='contained'

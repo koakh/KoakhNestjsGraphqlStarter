@@ -138,6 +138,23 @@ export const commonFormFieldEmail = (inputRef: MutableRefObject<any>, formFieldN
 
 // asset
 
+export const commonFormFieldAssetType = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
+  return {
+    inputRef,
+    name: formFieldName,
+    type: FormInputType.SELECT,
+    controlProps: commonControlProps,
+    fullWidth: true,
+    label: c.I18N.assetType,
+    rules: {
+      validate: () => validate()
+        ? true
+        : validationMessage('required', formFieldName)
+    },
+    options: () => c.ASSET_TYPE_OPTIONS,
+  }
+}
+
 export const commonFormFieldAssetName = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
   return {
     inputRef,
@@ -163,6 +180,25 @@ export const commonFormFieldCauseName = (inputRef: MutableRefObject<any>, formFi
     label: c.I18N.causeLabel,
     placeholder: c.I18N.causePlaceHolder,
     rules: validationRuleRegExHelper(formFieldName, c.REGEXP.name),
+  }
+}
+
+export const commonFormFieldAssetOwner = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
+  return {
+    inputRef,
+    name: formFieldName,
+    type: FormInputType.TEXT,
+    controlProps: commonControlProps,
+    fullWidth: true,
+    label: c.I18N.ownerLabel,
+    placeholder: c.I18N.ownerPlaceholder,
+    helperText: c.I18N.ownerHelperText,
+    rules: {
+      // validate both regex uuid, fiscalNumber and mobilePhone
+      validate: () => validate()
+        ? true
+        : validationMessage('required', formFieldName)
+    },
   }
 }
 

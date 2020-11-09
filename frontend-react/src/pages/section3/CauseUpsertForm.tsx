@@ -2,7 +2,7 @@ import { Box } from '@material-ui/core';
 import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
-import { appConstants as c } from '../../app';
+import { appConstants as c, mokeFormData } from '../../app';
 import { commonFormFieldAmbassadors, commonFormFieldCauseName, commonFormFieldEmail, commonFormFieldEndDate, commonFormFieldInputEntity, commonFormFieldInputTypeEntity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldStartDate, commonFormFieldTags, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
@@ -40,15 +40,16 @@ enum FormFieldNames {
 	META_DATA_INTERNAL = 'metaDataInternal',
 };
 const defaultValues: FormDefaultValues = {
-	name: 'Save the world now 2020',
-	email: 'mail@swn.com',
-	ambassadors: 'PT182692125 PT582692178',
+	name: mokeFormData ? 'Save the world now 2020': '',
+	email: mokeFormData ? 'mail@swn.com': '',
+	ambassadors: mokeFormData ? 'PT182692125 PT582692178': '',
 	// current plus one day/24h
 	startDate: currentFormatDate(new Date(Date.now() + ((3600 * 1000 * 24) * 0)), false),
 	// current plus one day/24h*7
 	endDate: currentFormatDate(new Date(Date.now() + ((3600 * 1000 * 24) * 7)), false),
-	location: '12.1890144,-28.5171909',
-	inputType: c.VALUES.undefined,
+	location: mokeFormData ? c.VALUES.mokeLocation : '',
+	inputType: EntityType.person,
+	// inject by user profile id state
 	input: '',
 	tags: [
 		{ title: 'Nature', value: 'NATURE' },
@@ -62,12 +63,16 @@ const defaultValues: FormDefaultValues = {
 export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// hooks styles
 	const classes = useStyles();
-	// hooks react form
-	const { handleSubmit, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	// hooks state
+	const [state, dispatch] = useStateValue();
 	// hooks: apollo
 	const [causeNewMutation, { loading, error: apolloError }] = useCauseNewMutation();
-	// hooks state
-	const [, dispatch] = useStateValue();
+	// hooks react form
+	const { handleSubmit, errors, control, reset, getValues } = useForm<FormInputs>({
+		// required to inject owner from state
+		defaultValues: { ...defaultValues, input: state.user.profile.id },
+		...formCommonOptions
+	});
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
@@ -113,9 +118,6 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 		[FormFieldNames.NAME]: {
 			...commonFormFieldCauseName(useRef(), FormFieldNames.NAME)
 		},
-		[FormFieldNames.EMAIL]: {
-			...commonFormFieldEmail(useRef(), FormFieldNames.EMAIL)
-		},
 		[FormFieldNames.START_DATE]: {
 			...commonFormFieldStartDate(useRef(), FormFieldNames.START_DATE)
 		},
@@ -125,11 +127,18 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 		[FormFieldNames.LOCATION]: {
 			...commonFormFieldLocation(useRef(), FormFieldNames.LOCATION)
 		},
+		[FormFieldNames.EMAIL]: {
+			...commonFormFieldEmail(useRef(), FormFieldNames.EMAIL)
+		},
 		[FormFieldNames.INPUT_TYPE]: {
-			...commonFormFieldInputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE)))
+			...commonFormFieldInputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))),
 		},
 		[FormFieldNames.INPUT]: {
-			...commonFormFieldInputEntity(useRef(), FormFieldNames.INPUT, () => validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]))
+			...commonFormFieldInputEntity(useRef(), FormFieldNames.INPUT, () => validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])),
+			label: c.I18N.causeInputStarterLabel,
+		},
+		[FormFieldNames.TAGS]: {
+			...commonFormFieldTags(useRef(), FormFieldNames.TAGS, () => (getValues(FormFieldNames.TAGS) as string[]).length > 0),
 		},
 		[FormFieldNames.AMBASSADORS]: {
 			...commonFormFieldAmbassadors(useRef(), FormFieldNames.AMBASSADORS, () => {
@@ -137,30 +146,6 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 				return (failValues.length > 0) ? `invalid id(s) ${failValues.join(' ')}` : true;
 			})
 		},
-		[FormFieldNames.TAGS]: {
-			// tags required inputRef outside of function else crash with `TypeError: Cannot read property 'current' of undefined` 
-			// inputRef: useRef(),
-			...commonFormFieldTags(useRef(), FormFieldNames.TAGS, () => (getValues(FormFieldNames.TAGS) as string[]).length > 0),
-		},
-		// TODO
-		// [FormFieldNames.TAGS]: {
-		// 	inputRef: useRef(),
-		// 	type: FormInputType.AUTOCOMPLETE,
-		// 	name: FormFieldNames.TAGS,
-		// 	controlProps: commonControlProps,
-		// 	fullWidth: true,
-		// 	label: c.I18N.tagsLabel,
-		// 	placeholder: c.I18N.tagsLabel,
-		// 	helperText: c.I18N.tagsPlaceHolder,
-		// 	rules: {
-		// 		validate: () => (getValues(FormFieldNames.TAGS) as string[]).length > 0
-		// 			? true
-		// 			: validationMessage('invalid', FormFieldNames.TAGS)
-		// 	},
-		// 	options: () => c.TAGS_OPTIONS,
-		// 	multipleOptions: true,
-		// 	addToAutocomplete: true,
-		// },
 		[FormFieldNames.META_DATA]: {
 			...commonFormFieldMetadata(useRef(), FormFieldNames.META_DATA, () => isValidJsonObject(getValues(FormFieldNames.META_DATA))),
 		},

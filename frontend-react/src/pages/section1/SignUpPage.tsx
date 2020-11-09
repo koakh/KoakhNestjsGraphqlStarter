@@ -7,7 +7,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
-import { appConstants as c } from '../../app';
+import { appConstants as c, mokeFormData } from '../../app';
 import { commonFormFieldEmail, commonFormFieldFirstName, commonFormFieldFiscalNumber, commonFormFieldLastName, commonFormFieldMobilePhone, commonFormFieldPassword, commonFormFieldPasswordConfirmation, commonFormFieldUsername, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
@@ -39,14 +39,14 @@ enum FormFieldNames {
 	EMAIL = 'email',
 };
 const defaultValues: FormDefaultValues = {
-	firstName: 'John',
-	lastName: 'Doe',
-	username: 'johndoe',
-	password: 'Aa456#45',
-	passwordConfirmation: 'Aa456#45',
-	fiscalNumber: 'PT123123123',
-	mobilePhone: '+351936101188',
-	email: 'johndoe@mail.com',
+	firstName: mokeFormData ? 'John' : '',
+	lastName: mokeFormData ? 'Doe' : '',
+	username: mokeFormData ? 'johndoe' : '',
+	password: mokeFormData ? c.VALUES.mokePassword : '',
+	passwordConfirmation: mokeFormData ? c.VALUES.mokePassword : '',
+	fiscalNumber: mokeFormData ? 'PT123123123' : '',
+	mobilePhone: mokeFormData ? '+351936101188' : '',
+	email: mokeFormData ? 'johndoe@mail.com' : '',
 };
 
 // use RouteComponentProps to get history props from Route

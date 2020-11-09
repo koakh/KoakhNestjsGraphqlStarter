@@ -2,15 +2,15 @@ import { Box } from '@material-ui/core';
 import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
-import { appConstants as c } from '../../app';
-import { formCommonOptions, RouteKey, routes } from '../../app/config';
+import { appConstants as c, mokeFormData } from '../../app';
+import { commonFormFieldAmbassadors, commonFormFieldAssetName, commonFormFieldAssetOwner, commonFormFieldAssetType, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldTags, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewAssetInput, useAssetNewMutation } from '../../generated/graphql';
-import { AssetType, EntityType, FormDefaultValues, FormInputType, FormPropFields, ModelType, Tag } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, parseTemplate, isValidEnum, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray, validationMessage, validationRuleRegExHelper, validateRegExpArray } from '../../utils';
+import { AssetType, EntityType, FormDefaultValues, FormPropFields, ModelType, Tag } from '../../types';
+import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, parseTemplate, useStyles, validateRegExpArray, validateRegExpArrayWithValuesArray } from '../../utils';
 
 type FormInputs = {
 	assetType: AssetType,
@@ -35,10 +35,11 @@ enum FormFieldNames {
 };
 const defaultValues: FormDefaultValues = {
 	assetType: c.VALUES.undefined,
-	name: 'Wheel chair',
-	ambassadors: 'PT182692125 PT582692178',
-	owner: 'PT182692125',
-	location: '12.1890144,-28.5171909',
+	name: mokeFormData ? 'Wheel chair' : '',
+	ambassadors: mokeFormData ? c.VALUES.mokeAmbassadors : '',
+	// inject by user profile id state
+	owner: '',
+	location: mokeFormData ? c.VALUES.mokeLocation : '',
 	tags: [
 		{ title: 'Nature', value: 'NATURE' },
 		{ title: 'Economy', value: 'ECONOMY' },
@@ -51,8 +52,14 @@ const defaultValues: FormDefaultValues = {
 export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// hooks styles
 	const classes = useStyles();
+	// hooks state
+	const [state] = useStateValue();
 	// hooks react form
-	const { handleSubmit, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
+	const { handleSubmit, errors, control, reset, getValues } = useForm<FormInputs>({
+		// required to inject owner from state
+		defaultValues: { ...defaultValues, owner: state.user.profile.id },
+		...formCommonOptions
+	})
 	// hooks: apollo
 	const [assetNewMutation, { loading, error: apolloError }] = useAssetNewMutation();
 	// hooks state
@@ -77,8 +84,8 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 				},
 				location: data.location,
 				tags: data.tags.map((e: Tag) => e.value),
-				metaData: JSON.parse(data.metaData),
-				metaDataInternal: JSON.parse(data.metaDataInternal),
+				metaData: data.metaData ? JSON.parse(data.metaData) : {},
+				metaDataInternal: data.metaDataInternal ? JSON.parse(data.metaDataInternal) : {},
 			};
 			// console.log(JSON.stringify(data, undefined, 2));
 			// console.log(JSON.stringify(newAssetData, undefined, 2));
@@ -97,122 +104,31 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.ASSET_TYPE]: {
-			inputRef: useRef(),
-			type: FormInputType.SELECT,
-			name: FormFieldNames.ASSET_TYPE,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.assetType,
-			// selection don't use placeHolder
-			// placeholder: c.VALUES.PHYSICAL_ASSET,
-			rules: {
-				validate: () => isValidEnum(AssetType, getValues(FormFieldNames.ASSET_TYPE))
-					? true
-					: validationMessage('required', FormFieldNames.ASSET_TYPE)
-			},
-			options: () => [
-				{ title: c.I18N.assetTypeOptionPhysicalAsset, value: AssetType.physicalAsset },
-				{ title: c.I18N.assetTypeOptionDigitalAsset, value: AssetType.digitalAsset },
-			],
+			...commonFormFieldAssetType(useRef(), FormFieldNames.ASSET_TYPE, () => isValidEnum(AssetType, getValues(FormFieldNames.ASSET_TYPE))),
 		},
 		[FormFieldNames.NAME]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.NAME,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.assetLabel,
-			placeholder: c.I18N.assetPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.NAME, c.REGEXP.name),
-		},
-		[FormFieldNames.AMBASSADORS]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.AMBASSADORS,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.ambassadorsLabel,
-			placeholder: c.I18N.ambassadorsPlaceHolder,
-			helperText: c.I18N.ambassadorsHelperText,
-			rules: {
-				// validate both regex uuid, fiscalNumber and mobilePhone
-				validate: () => {
-					const failValues = validateRegExpArrayWithValuesArray((getValues(FormFieldNames.AMBASSADORS) as string).split(' '), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]);
-					return (failValues.length > 0) ? `invalid id(s) ${failValues.join(' ')}` : true;
-				}
-			},
+			...commonFormFieldAssetName(useRef(), FormFieldNames.NAME),
 		},
 		[FormFieldNames.OWNER]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.OWNER,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.ownerLabel,
-			placeholder: c.I18N.ownerPlaceholder,
-			helperText: c.I18N.ownerHelperText,
-			rules: {
-				// validate both regex uuid, fiscalNumber and mobilePhone
-				validate: () => validateRegExpArray(getValues(FormFieldNames.OWNER), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])
-					? true
-					: validationMessage('required', FormFieldNames.OWNER)
-			},
+			...commonFormFieldAssetOwner(useRef(), FormFieldNames.OWNER, () => validateRegExpArray(getValues(FormFieldNames.OWNER), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])),
+		},
+		[FormFieldNames.AMBASSADORS]: {
+			...commonFormFieldAmbassadors(useRef(), FormFieldNames.AMBASSADORS, () => {
+				const failValues = validateRegExpArrayWithValuesArray((getValues(FormFieldNames.AMBASSADORS) as string).split(' '), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]);
+				return (failValues.length > 0) ? `invalid id(s) ${failValues.join(' ')}` : true;
+			})
 		},
 		[FormFieldNames.LOCATION]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.LOCATION,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.locationLabel,
-			placeholder: c.I18N.locationPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location, false),
+			...commonFormFieldLocation(useRef(), FormFieldNames.LOCATION)
 		},
 		[FormFieldNames.TAGS]: {
-			inputRef: useRef(),
-			type: FormInputType.AUTOCOMPLETE,
-			name: FormFieldNames.TAGS,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.tagsLabel,
-			placeholder: c.I18N.tagsLabel,
-			helperText: c.I18N.tagsPlaceHolder,
-			rules: {
-				validate: () => (getValues(FormFieldNames.TAGS) as string[]).length > 0
-					? true
-					: validationMessage('invalid', FormFieldNames.TAGS)
-			},
-			options: () => c.TAGS_OPTIONS,
-			multipleOptions: true,
-			addToAutocomplete: true,
+			...commonFormFieldTags(useRef(), FormFieldNames.TAGS, () => (getValues(FormFieldNames.TAGS) as string[]).length > 0),
 		},
 		[FormFieldNames.META_DATA]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.META_DATA,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.metaDataLabel,
-			placeholder: c.I18N.metaDataPlaceHolder,
-			rules: {
-				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA))
-					? true
-					: validationMessage('invalid', FormFieldNames.META_DATA)
-			},
+			...commonFormFieldMetadata(useRef(), FormFieldNames.META_DATA, () => isValidJsonObject(getValues(FormFieldNames.META_DATA))),
 		},
 		[FormFieldNames.META_DATA_INTERNAL]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.META_DATA_INTERNAL,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.metaDataInternalLabel,
-			placeholder: c.I18N.metaDataPlaceHolder,
-			rules: {
-				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL))
-					? true
-					: validationMessage('invalid', FormFieldNames.META_DATA_INTERNAL)
-			},
+			...commonFormFieldMetadataInternal(useRef(), FormFieldNames.META_DATA_INTERNAL, () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL)))
 		},
 	};
 
