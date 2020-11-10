@@ -4,7 +4,7 @@ import React, { Fragment, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldTags, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
@@ -64,7 +64,7 @@ const defaultValues: FormDefaultValues = {
 	goods: [],
 	location: mokeFormData ? c.VALUES.mokeLocation : '',
 	goodsBag: [{ barCode: '', quantity: 1 }],
-	tags: [],
+	tags: mokeFormData ? c.VALUES.mokeTags : [],
 	metaData: '',
 	metaDataInternal: '',
 };
@@ -92,7 +92,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// 		console.log("Longitude is :", position.coords.longitude);
 	// 	});
 	// }, [])
-	
+
 	// TODO geoLocation
 	// eslint-disable-next-line
 	// const { location: currentLocation, error: currentError } = useCurrentLocation(c.GEOLOCATION_OPTIONS);
@@ -423,11 +423,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					? true
 					: validationMessage('required', FormFieldNames.OUTPUT_TYPE)
 			},
-			options: () => [
-				{ title: c.I18N.entityTypeOptionPerson, value: EntityType.person },
-				{ title: c.I18N.entityTypeOptionParticipant, value: EntityType.participant },
-				{ title: c.I18N.entityTypeOptionCause, value: EntityType.cause },
-			],
+			options: () => c.ENTITY_TYPE_OPTIONS,
 			disabled: true,
 		},
 		[FormFieldNames.OUTPUT]: {
@@ -545,6 +541,9 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			placeholder: c.I18N.locationPlaceHolder,
 			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location, false),
 			disabled: !causeOptionsLoaded,
+		},
+		[FormFieldNames.TAGS]: {
+			...commonFormFieldTags(useRef(), FormFieldNames.TAGS, () => (getValues(FormFieldNames.TAGS) as string[]).length > 0),
 		},
 		[FormFieldNames.META_DATA]: {
 			inputRef: useRef(),

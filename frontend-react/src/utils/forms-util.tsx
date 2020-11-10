@@ -36,7 +36,8 @@ export const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   formButtonsDiv: {
-    paddingTop: theme.spacing(2),
+    // TODO: require to fix first for goodsForm
+    // paddingTop: theme.spacing(2),
     // backgroundColor: '#ff0000',
   },
   button: {
@@ -195,7 +196,7 @@ export const generateFormButtonsDiv = (classes: Record<'button' | 'formButtonsDi
 // use '<T extends {}>'
 // T is FormInputs
 export const generateFormDefinition = (formDefinition: any, control: Control<Record<string, any>>, errors: DeepMap<any, FieldError>, loading: boolean/*, setValue?: any*/): JSX.Element[] => recordToArray<FormPropFields>(formDefinition).map((e: FormPropFields) => {
-  if (e.visible && (typeof e.visible === 'function' && !e.visible(control))) return;
+  if (e.visible === false || (typeof e.visible === 'function' && !e.visible(control))) return;
   let returnValue;
   switch (e.type) {
     case FormInputType.TEXT:

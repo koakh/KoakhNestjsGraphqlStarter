@@ -6,11 +6,16 @@ export const mokeFormData = false;
 
 const VALUES: { [key: string]: any } = {
   undefined: 'UNDEFINED',
+  defaultCurrency: 'EUR',
   // used in signIn to clear message
   resultMessageTimeOut: 5000,
   mokeAmbassadors: '4ea88521-031b-4279-9165-9c10e1839000 4ea88521-031b-4279-9165-9c10e1839001',
   mokeLocation: '12.1890144,-28.5171909',
   mokePassword: 'Aa456#45',
+  mokeTags: [
+		{ title: 'Nature', value: 'NATURE' },
+		{ title: 'Economy', value: 'ECONOMY' },
+	],
 }
 
 const I18N: { [key: string]: string } = {

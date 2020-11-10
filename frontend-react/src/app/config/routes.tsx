@@ -1,6 +1,6 @@
-import { AccountTree as AccountTreeIcon, AddBox as AddBoxIcon, Apartment as ApartmentIcon, Assessment as AssessmentIcon, DynamicFeed as DynamicFeedIcon, Explore as ExploreIcon, Fingerprint as FingerprintIcon, Home as HomeIcon, Loyalty as LoyaltyIcon, People as PeopleIcon, LocalPlay as LocalPlayIcon } from '@material-ui/icons';
+import { AccountTree as AccountTreeIcon, AddBox as AddBoxIcon, Apartment as ApartmentIcon, Assessment as AssessmentIcon, DynamicFeed as DynamicFeedIcon, Explore as ExploreIcon, Fingerprint as FingerprintIcon, Home as HomeIcon, LocalMall as LocalMallIcon, LocalPlay as LocalPlayIcon, Loyalty as LoyaltyIcon, People as PeopleIcon } from '@material-ui/icons';
 import React from 'react';
-import { CausesPage, CauseUpsertForm, CommunityPage, FeedPage, HomePage, ParticipantUpsertForm, PersonProfilePage, PersonQueryPage, PersonUpsertForm, SignInPage, SignUpPage, ResultPage, StatePage, TimelinePage, TransactionAddedPage, TransactionUpsertForm, AssetUpsertForm } from '../../pages';
+import { AssetUpsertForm, CausesPage, CauseUpsertForm, CommunityPage, FeedPage, HomePage, ParticipantUpsertForm, PersonProfilePage, PersonQueryPage, PersonUpsertForm, ResultPage, SignInPage, SignUpPage, StatePage, TimelinePage, TransactionAddedPage, TransactionGoodsForm, TransactionUpsertForm } from '../../pages';
 import { DrawerListItem, DrawerSections, RouteItem } from '../../types';
 import { getEnumKeyFromEnumValue } from '../../utils';
 
@@ -25,6 +25,7 @@ export enum RouteKey {
   PARTICIPANT_UPSERT_FORM = 'PARTICIPANT_UPSERT_FORM',
   PERSON_UPSERT_FORM = 'PERSON_UPSERT_FORM',
   TRANSACTION_UPSERT_FORM = 'TRANSACTION_UPSERT_FORM',
+  TRANSACTION_GOODS_FORM = 'TRANSACTION_GOODS_FORM',
 }
 
 // route
@@ -176,6 +177,14 @@ export const routes: Record<RouteKey, RouteItem> = {
     component: TransactionUpsertForm,
     section: DrawerSections.SECTION3,
     drawerIcon: <AccountTreeIcon />,
+  },
+  [RouteKey.TRANSACTION_GOODS_FORM]: {
+    title: 'Goods Transaction',
+    label: 'Goods Transaction',
+    path: '/goods-transaction',
+    component: TransactionGoodsForm,
+    section: DrawerSections.SECTION4,
+    drawerIcon: <LocalMallIcon />,
   },
 };
 

@@ -128,7 +128,6 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 						roles: user.roles
 					}
 				};
-				debugger;
 				dispatch({ type: ActionType.SIGNED_IN_USER, payload });
 				// use history to send user to homepage, after awaiting for response object, 
 				history.push('/');

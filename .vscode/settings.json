@@ -4,11 +4,12 @@
     "Upsert",
     "datetime",
     "johndoe",
-    "johndoe",
     "koakh",
     "middlewares",
     "nestjs",
-    "prestart"
+    "prestart",
+    "signin",
+    "signup"
   ],
   "peacock.remoteColor": "#00b3e6",
   "workbench.colorCustomizations": {

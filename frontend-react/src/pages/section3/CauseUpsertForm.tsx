@@ -51,10 +51,7 @@ const defaultValues: FormDefaultValues = {
 	inputType: EntityType.person,
 	// inject by user profile id state
 	input: '',
-	tags: [
-		{ title: 'Nature', value: 'NATURE' },
-		{ title: 'Economy', value: 'ECONOMY' },
-	],
+	tags: mokeFormData ? c.VALUES.mokeTags : [],
 	metaData: '',
 	metaDataInternal: '',
 };
