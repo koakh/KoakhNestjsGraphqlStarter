@@ -36,9 +36,8 @@ export const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   formButtonsDiv: {
-    // TODO: require to fix first for goodsForm
-    // paddingTop: theme.spacing(2),
-    // backgroundColor: '#ff0000',
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
   button: {
     marginRight: theme.spacing(2),
@@ -46,6 +45,11 @@ export const useStyles = makeStyles((theme) => ({
   buttonGoodsDelete: {
     marginTop: theme.spacing(2),
     height: 54
+  },
+  buttonGoodsAdd: {
+    marginRight: theme.spacing(2),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   }
 }));
 

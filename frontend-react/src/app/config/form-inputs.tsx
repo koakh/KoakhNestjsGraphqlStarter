@@ -3,7 +3,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
 import React, { MutableRefObject } from 'react';
 import { appConstants as c } from '..';
-import { FormInputType, FormPropFields } from '../../types';
+import { AutocompleteAndSelectOptions, FormInputType, FormPropFields } from '../../types';
 import { commonControlProps, validationMessage, validationRuleRegExHelper } from '../../utils';
 
 // common formDefinition, to be shared in project, where are used in more than one place
@@ -356,3 +356,53 @@ export const commonFormFieldTags = (inputRef: MutableRefObject<any>, formFieldNa
 
 // transaction
 
+export const commonFormFieldOutputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
+  return {
+    inputRef,
+    name: formFieldName,
+    type: FormInputType.SELECT,
+    controlProps: commonControlProps,
+    fullWidth: true,
+    label: c.I18N.outputTypeLabel,
+    rules: {
+      validate: () => validate()
+        ? true
+        : validationMessage('required', formFieldName)
+    },
+    options: () => c.ENTITY_TYPE_OPTIONS,
+    disabled: true,
+    visible: false,
+  }
+}
+
+export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, options: () => AutocompleteAndSelectOptions[], disabled: boolean): FormPropFields => {
+  return {
+    inputRef,
+    name: formFieldName,
+    type: FormInputType.SELECT,
+    controlProps: commonControlProps,
+    fullWidth: true,
+    label: c.I18N.outputLabel,
+    placeholder: c.I18N.outputPlaceholder,
+    helperText: c.I18N.outputHelperText,
+    rules: validationRuleRegExHelper(formFieldName, c.REGEXP.uuid),
+    // args
+    options,
+    disabled,
+  }
+}
+
+export const commonFormFieldGoodsBadEan = (inputRef: MutableRefObject<any>, formFieldName: string, disabled: boolean): FormPropFields => {
+  return {
+		// inputRef: refs // will be initialized in fieldsMap
+		type: FormInputType.TEXT,
+		name: null,
+		controlProps: commonControlProps,
+		fullWidth: true,
+		label: c.I18N.barCodeEan13Label,
+		placeholder: c.I18N.barCodeEan13PlaceHolder,
+    helperText: c.I18N.barCodeEan13HelperText,
+    // args
+    disabled,
+  }
+}

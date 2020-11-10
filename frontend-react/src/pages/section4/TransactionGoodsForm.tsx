@@ -4,7 +4,7 @@ import React, { Fragment, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldGoodsBadEan, commonFormFieldOutputTypeEntity, commonFormFieldOutputEntity, envVariables as e, formCommonOptions, RouteKey, routes, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
@@ -88,18 +88,10 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	goodsBagQuantityInputRef[0] = useRef(); goodsBagQuantityInputRef[1] = useRef(); goodsBagQuantityInputRef[2] = useRef(); goodsBagQuantityInputRef[3] = useRef(); goodsBagQuantityInputRef[4] = useRef(); goodsBagQuantityInputRef[5] = useRef(); goodsBagQuantityInputRef[6] = useRef(); goodsBagQuantityInputRef[7] = useRef(); goodsBagQuantityInputRef[8] = useRef(); goodsBagQuantityInputRef[9] = useRef();
 	// initialize any new refs, required to create refs outside of loop
 	const goodsBagEan: FormPropFields = {
-		// inputRef: refs,
-		type: FormInputType.TEXT,
-		name: null,
-		controlProps: commonControlProps,
-		fullWidth: true,
-		label: c.I18N.barCodeEan13Label,
-		placeholder: c.I18N.barCodeEan13PlaceHolder,
-		helperText: c.I18N.barCodeEan13HelperText,
-		disabled: !causeOptionsLoaded,
+		...commonFormFieldGoodsBadEan(useRef(), FormFieldNames.OUTPUT_TYPE, !causeOptionsLoaded),
 	};
 	const goodsBagQuantity: FormPropFields = {
-		// inputRef: useRef(),
+		// inputRef: refs // will be initialized in fieldsMap
 		type: FormInputType.TEXT,
 		name: null,
 		controlProps: commonControlProps,
@@ -160,7 +152,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		<Button
 			type='button'
 			variant='contained'
-			className={classes.button}
+			className={classes.buttonGoodsAdd}
 			disabled={loading || fields.length === maxGoodsItems}
 			onClick={() => append({ barCode: '', quantity: 1 })}
 		>
@@ -214,35 +206,10 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.OUTPUT_TYPE]: {
-			inputRef: useRef(),
-			type: FormInputType.SELECT,
-			name: FormFieldNames.OUTPUT_TYPE,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.outputTypeLabel,
-			// selection don't use placeHolder
-			// placeholder: c.VALUES.PHYSICAL_ASSET,
-			rules: {
-				validate: () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))
-					? true
-					: validationMessage('required', FormFieldNames.OUTPUT_TYPE)
-			},
-			options: () => c.ENTITY_TYPE_OPTIONS,
-			disabled: true,
-			visible: false,
+			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.OUTPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))),
 		},
 		[FormFieldNames.OUTPUT]: {
-			inputRef: useRef(),
-			type: FormInputType.SELECT,
-			name: FormFieldNames.OUTPUT,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.outputLabel,
-			placeholder: c.I18N.outputPlaceholder,
-			helperText: c.I18N.outputHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.OUTPUT, c.REGEXP.uuid),
-			options: () => causeOptions,
-			disabled: !causeOptionsLoaded,
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, () => causeOptions, !causeOptionsLoaded),
 		},
 		[FormFieldNames.GOODS_BAG]: {
 			inputRef: useRef(),
@@ -260,46 +227,17 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 			// }
 		},
 		[FormFieldNames.LOCATION]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.LOCATION,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.locationLabel,
-			placeholder: c.I18N.locationPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location, false),
+			...commonFormFieldLocation(useRef(), FormFieldNames.LOCATION),
 			disabled: !causeOptionsLoaded,
 			visible: false,
 		},
 		[FormFieldNames.META_DATA]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.META_DATA,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.metaDataLabel,
-			placeholder: c.I18N.metaDataPlaceHolder,
-			rules: {
-				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA))
-					? true
-					: validationMessage('invalid', FormFieldNames.META_DATA)
-			},
+			...commonFormFieldMetadata(useRef(), FormFieldNames.META_DATA, () => isValidJsonObject(getValues(FormFieldNames.META_DATA))),
 			disabled: !causeOptionsLoaded,
 			visible: false,
 		},
 		[FormFieldNames.META_DATA_INTERNAL]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.META_DATA_INTERNAL,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.metaDataInternalLabel,
-			placeholder: c.I18N.metaDataPlaceHolder,
-			rules: {
-				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL))
-					? true
-					: validationMessage('invalid', FormFieldNames.META_DATA_INTERNAL)
-			},
+			...commonFormFieldMetadataInternal(useRef(), FormFieldNames.META_DATA_INTERNAL, () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL))),
 			disabled: !causeOptionsLoaded,
 			visible: false,
 		},

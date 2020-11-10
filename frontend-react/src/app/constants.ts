@@ -2,7 +2,7 @@
 
 import { AssetType, EntityType, GoodsOptions } from "../types";
 
-export const mokeFormData = false;
+export const mokeFormData = true;
 
 const VALUES: { [key: string]: any } = {
   undefined: 'UNDEFINED',
