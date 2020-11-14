@@ -1,17 +1,16 @@
-import { Box, Button, Grid } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
+import { Box } from '@material-ui/core';
 import React, { Fragment, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldGoodsBagEan, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
 import { AutocompleteAndSelectOptions, EntityType, FormDefaultValues, FormInputType, FormPropFields, GoodsBagItem, ModelType, ResourceType, Tag, TransactionType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, generateTextField, getGraphQLApolloError, isValidEnum, isValidJsonObject, parseTemplate, useStyles, validationBarCodeExHelper, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, parseTemplate, useStyles } from '../../utils';
 
 let renderCount = 0;
 
@@ -95,6 +94,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	const goodsBagQuantity: FormPropFields = {
 		...commonFormFieldGoodsBagQuantity(!causeOptionsLoaded),
 	};
+	// TODO: cleanup this refactored code
 	// const goodsBagQuantity: FormPropFields = {
 	// 	// inputRef: refs // will be initialized in fieldsMap
 	// 	type: FormInputType.TEXT,
@@ -106,64 +106,88 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	// 	disabled: !causeOptionsLoaded,
 	// };
 	// required a key, this belongs to the loop of form components
-	const customGoodsBag = (<Fragment key='goods'>
-		{fields.map((item, index) => {
-			return (
-				<Grid key={item.id} container spacing={3}>
-					<Grid item xs={6}>
-						{generateTextField({
-							...goodsBagEan,
-							inputRef: goodsBagEanInputRef[index],
-							name: `goodsBag[${index}].barCode`,
-							defaultValue: item.barCode,
-							rules: validationBarCodeExHelper(`goodsBag[${index}].barCode`, goodsBag[index]),
-							helperTextFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].barCode !== undefined
-								? errors[FormFieldNames.GOODS_BAG][index].barCode.message
-								: goodsBagEan.helperText,
-							errorFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].barCode !== undefined,
-							onFocusFn: () => goodsBagEanInputRef[index].current.focus()
-						}, control, errors, loading)}
-					</Grid>
-					<Grid item xs={3}>
-						{generateTextField({
-							...goodsBagQuantity,
-							inputRef: goodsBagQuantityInputRef[index],
-							name: `goodsBag[${index}].quantity`,
-							defaultValue: item.quantity,
-							rules: validationRuleRegExHelper(`goodsBag[${index}].quantity`, c.REGEXP.floatPositive),
-							helperTextFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].quantity !== undefined
-								? errors[FormFieldNames.GOODS_BAG][index].quantity.message
-								: '',
-							errorFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].quantity !== undefined,
-							onFocusFn: () => goodsBagQuantityInputRef[index].current.focus()
-						}, control, errors, loading)}
-					</Grid>
-					<Grid item xs={3}>
-						<Button
-							type='button'
-							variant='contained'
-							className={classes.buttonGoodsDelete}
-							disabled={loading || index === 0}
-							onClick={() => remove(index)}
-							startIcon={<DeleteIcon />}
-							fullWidth
-						>
-							{c.I18N.delete}
-						</Button>
-					</Grid>
-				</Grid>
-			);
-		})}
-		<Button
-			type='button'
-			variant='contained'
-			className={classes.buttonGoodsAdd}
-			disabled={loading || !causeOptionsLoaded || fields.length === maxGoodsItems}
-			onClick={() => append({ barCode: '', quantity: 1 })}
-		>
-			{c.I18N.add}
-		</Button>
-	</Fragment>);
+	// const customGoodsBag = (<Fragment key='goods'>
+	// 	{fields.map((item, index) => {
+	// 		return (
+	// 			<Grid key={item.id} container spacing={3}>
+	// 				<Grid item xs={6}>
+	// 					{generateTextField({
+	// 						...goodsBagEan,
+	// 						inputRef: goodsBagEanInputRef[index],
+	// 						name: `goodsBag[${index}].barCode`,
+	// 						defaultValue: item.barCode,
+	// 						rules: validationBarCodeExHelper(`goodsBag[${index}].barCode`, goodsBag[index]),
+	// 						helperTextFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].barCode !== undefined
+	// 							? errors[FormFieldNames.GOODS_BAG][index].barCode.message
+	// 							: goodsBagEan.helperText,
+	// 						errorFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].barCode !== undefined,
+	// 						onFocusFn: () => goodsBagEanInputRef[index].current.focus()
+	// 					}, control, errors, loading)}
+	// 				</Grid>
+	// 				<Grid item xs={3}>
+	// 					{generateTextField({
+	// 						...goodsBagQuantity,
+	// 						inputRef: goodsBagQuantityInputRef[index],
+	// 						name: `goodsBag[${index}].quantity`,
+	// 						defaultValue: item.quantity,
+	// 						rules: validationRuleRegExHelper(`goodsBag[${index}].quantity`, c.REGEXP.floatPositive),
+	// 						helperTextFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].quantity !== undefined
+	// 							? errors[FormFieldNames.GOODS_BAG][index].quantity.message
+	// 							: '',
+	// 						errorFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].quantity !== undefined,
+	// 						onFocusFn: () => goodsBagQuantityInputRef[index].current.focus()
+	// 					}, control, errors, loading)}
+	// 				</Grid>
+	// 				<Grid item xs={3}>
+	// 					<Button
+	// 						type='button'
+	// 						variant='contained'
+	// 						className={classes.buttonGoodsDelete}
+	// 						disabled={loading || index === 0}
+	// 						onClick={() => remove(index)}
+	// 						startIcon={<DeleteIcon />}
+	// 						fullWidth
+	// 					>
+	// 						{c.I18N.delete}
+	// 					</Button>
+	// 				</Grid>
+	// 			</Grid>
+	// 		);
+	// 	})}
+	// 	<Button
+	// 		type='button'
+	// 		variant='contained'
+	// 		className={classes.buttonGoodsAdd}
+	// 		disabled={loading || !causeOptionsLoaded || fields.length === maxGoodsItems}
+	// 		onClick={() => append({ barCode: '', quantity: 1 })}
+	// 	>
+	// 		{c.I18N.add}
+	// 	</Button>
+	// </Fragment>);
+
+	// call function with all this magic local references
+	const customGoodsBag = commonFormFieldGoodsBag(
+		// FormFieldNames.GOODS_BAG was replaced with formFieldName
+		FormFieldNames.GOODS_BAG,
+		// useStyles
+		classes,
+		// useForm,
+		control,
+		errors,
+		// useFieldArray
+		remove,
+		append,
+		// other
+		loading,
+		fields,
+		goodsBag,
+		goodsBagEan,
+		goodsBagQuantity,
+		goodsBagEanInputRef,
+		goodsBagQuantityInputRef,
+		causeOptionsLoaded,
+		maxGoodsItems,
+	)
 
 	// debug
 	renderCount++;

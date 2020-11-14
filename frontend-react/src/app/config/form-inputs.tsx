@@ -448,8 +448,8 @@ export const commonFormFieldGoodsBag = (
   goodsBagQuantityInputRef: any[],
   causeOptionsLoaded: boolean,
   maxGoodsItems: number,
-
 ): JSX.Element => {
+  // required a key `key='goods'`, this belongs to the loop of form components, without it we have errors
   return (<Fragment key='goods'>
     {fields.map((item: any, index: number) => {
       return (
