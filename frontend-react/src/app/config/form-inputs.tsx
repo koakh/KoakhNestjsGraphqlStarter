@@ -1,10 +1,12 @@
-import { IconButton, InputAdornment } from '@material-ui/core';
+import { Button, Grid, IconButton, InputAdornment } from '@material-ui/core';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
-import React, { MutableRefObject } from 'react';
+import React, { Fragment, MutableRefObject } from 'react';
+import { ArrayField, Control, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '..';
 import { AutocompleteAndSelectOptions, FormInputType, FormPropFields } from '../../types';
-import { commonControlProps, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateTextField, validationBarCodeExHelper, validationMessage, validationRuleRegExHelper } from '../../utils';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 // common formDefinition, to be shared in project, where are used in more than one place
 
@@ -392,17 +394,118 @@ export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, for
   }
 }
 
-export const commonFormFieldGoodsBadEan = (inputRef: MutableRefObject<any>, formFieldName: string, disabled: boolean): FormPropFields => {
+export const commonFormFieldGoodsBagEan = (disabled: boolean): FormPropFields => {
   return {
-		// inputRef: refs // will be initialized in fieldsMap
-		type: FormInputType.TEXT,
-		name: null,
-		controlProps: commonControlProps,
-		fullWidth: true,
-		label: c.I18N.barCodeEan13Label,
-		placeholder: c.I18N.barCodeEan13PlaceHolder,
+    // inputRef: refs // will be initialized in fieldsMap
+    type: FormInputType.TEXT,
+    name: null,
+    controlProps: commonControlProps,
+    fullWidth: true,
+    label: c.I18N.barCodeEan13Label,
+    placeholder: c.I18N.barCodeEan13PlaceHolder,
     helperText: c.I18N.barCodeEan13HelperText,
     // args
     disabled,
   }
+}
+
+export const commonFormFieldGoodsBagQuantity = (disabled: boolean): FormPropFields => {
+  return {
+    // inputRef: refs // will be initialized in fieldsMap
+    type: FormInputType.TEXT,
+    name: null,
+    controlProps: commonControlProps,
+    fullWidth: true,
+    label: c.I18N.quantityLabel,
+    placeholder: c.I18N.quantityPlaceHolder,
+    // args
+    disabled,
+  }
+}
+
+/**
+ * this will render jsx and not a common FormPropFields 
+ * @param disabled 
+ */
+export const commonFormFieldGoodsBag = (
+  // FormFieldNames.GOODS_BAG was replaced with formFieldName
+  formFieldName: string,
+  // useStyles
+  classes: any,
+  // useForm,
+  control: Control<any>,
+  errors: DeepMap<any, FieldError>,
+  // useFieldArray
+  remove: (index?: number | number[]) => void,
+  append: (value: Partial<Record<string, any>> | Partial<Record<string, any>>[], shouldFocus?: boolean) => void,
+  // other
+  loading: boolean,
+  fields: Partial<ArrayField<Record<string, any>>>,
+  goodsBag: any[],
+  goodsBagEan:FormPropFields,
+  goodsBagQuantity: FormPropFields,
+  goodsBagEanInputRef: any[],
+  goodsBagQuantityInputRef: any[],
+  causeOptionsLoaded: boolean,
+  maxGoodsItems: number,
+
+): JSX.Element => {
+  return (<Fragment key='goods'>
+    {fields.map((item: any, index: number) => {
+      return (
+        <Grid key={item.id} container spacing={3}>
+          <Grid item xs={6}>
+            {generateTextField({
+              ...goodsBagEan,
+              inputRef: goodsBagEanInputRef[index],
+              name: `goodsBag[${index}].barCode`,
+              defaultValue: item.barCode,
+              rules: validationBarCodeExHelper(`goodsBag[${index}].barCode`, goodsBag[index]),
+              helperTextFn: () => errors[formFieldName] && errors[formFieldName][index] && errors[formFieldName][index].barCode !== undefined
+                ? errors[formFieldName][index].barCode.message
+                : goodsBagEan.helperText,
+              errorFn: () => errors[formFieldName] && errors[formFieldName][index] && errors[formFieldName][index].barCode !== undefined,
+              onFocusFn: () => goodsBagEanInputRef[index].current.focus()
+            }, control, errors, loading)}
+          </Grid>
+          <Grid item xs={3}>
+            {generateTextField({
+              ...goodsBagQuantity,
+              inputRef: goodsBagQuantityInputRef[index],
+              name: `goodsBag[${index}].quantity`,
+              defaultValue: item.quantity,
+              rules: validationRuleRegExHelper(`goodsBag[${index}].quantity`, c.REGEXP.floatPositive),
+              helperTextFn: () => errors[formFieldName] && errors[formFieldName][index] && errors[formFieldName][index].quantity !== undefined
+                ? errors[formFieldName][index].quantity.message
+                : '',
+              errorFn: () => errors[formFieldName] && errors[formFieldName][index] && errors[formFieldName][index].quantity !== undefined,
+              onFocusFn: () => goodsBagQuantityInputRef[index].current.focus()
+            }, control, errors, loading)}
+          </Grid>
+          <Grid item xs={3}>
+            <Button
+              type='button'
+              variant='contained'
+              className={classes.buttonGoodsDelete}
+              disabled={loading || index === 0}
+              onClick={() => remove(index)}
+              startIcon={<DeleteIcon />}
+              fullWidth
+            >
+              {c.I18N.delete}
+            </Button>
+          </Grid>
+        </Grid>
+      );
+    })}
+    <Button
+      type='button'
+      variant='contained'
+      className={classes.buttonGoodsAdd}
+      disabled={loading || !causeOptionsLoaded || fields.length === maxGoodsItems}
+      onClick={() => append({ barCode: '', quantity: 1 })}
+    >
+      {c.I18N.add}
+    </Button>
+  </Fragment>)
 }

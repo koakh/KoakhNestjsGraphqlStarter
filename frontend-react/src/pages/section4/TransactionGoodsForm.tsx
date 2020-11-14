@@ -4,7 +4,7 @@ import React, { Fragment, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldGoodsBadEan, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldGoodsBagEan, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
@@ -50,7 +50,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	// hooks state
 	const [state, dispatch] = useStateValue();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset, getValues } = useForm<FormInputs>({defaultValues,...formCommonOptions});
+	const { handleSubmit, watch, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions });
 	// hooks: apollo
 	const [transactionNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
 	const { fields, append, remove } = useFieldArray({
@@ -82,24 +82,29 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	// customBag definition
 	const goodsBag: any[] = watch('goodsBag');
 	const maxGoodsItems = 10;
+	// initialize any new refs, required to create refs outside of loop
 	const goodsBagEanInputRef: any[] = [];
 	goodsBagEanInputRef[0] = useRef(); goodsBagEanInputRef[1] = useRef(); goodsBagEanInputRef[2] = useRef(); goodsBagEanInputRef[3] = useRef(); goodsBagEanInputRef[4] = useRef(); goodsBagEanInputRef[5] = useRef(); goodsBagEanInputRef[6] = useRef(); goodsBagEanInputRef[7] = useRef(); goodsBagEanInputRef[8] = useRef(); goodsBagEanInputRef[9] = useRef();
 	const goodsBagQuantityInputRef: any[] = [];
 	goodsBagQuantityInputRef[0] = useRef(); goodsBagQuantityInputRef[1] = useRef(); goodsBagQuantityInputRef[2] = useRef(); goodsBagQuantityInputRef[3] = useRef(); goodsBagQuantityInputRef[4] = useRef(); goodsBagQuantityInputRef[5] = useRef(); goodsBagQuantityInputRef[6] = useRef(); goodsBagQuantityInputRef[7] = useRef(); goodsBagQuantityInputRef[8] = useRef(); goodsBagQuantityInputRef[9] = useRef();
-	// initialize any new refs, required to create refs outside of loop
+	// goodsBagEan
 	const goodsBagEan: FormPropFields = {
-		...commonFormFieldGoodsBadEan(useRef(), FormFieldNames.OUTPUT_TYPE, !causeOptionsLoaded),
+		...commonFormFieldGoodsBagEan(!causeOptionsLoaded),
 	};
+	// goodsBagQuantity
 	const goodsBagQuantity: FormPropFields = {
-		// inputRef: refs // will be initialized in fieldsMap
-		type: FormInputType.TEXT,
-		name: null,
-		controlProps: commonControlProps,
-		fullWidth: true,
-		label: c.I18N.quantityLabel,
-		placeholder: c.I18N.quantityPlaceHolder,
-		disabled: !causeOptionsLoaded,
+		...commonFormFieldGoodsBagQuantity(!causeOptionsLoaded),
 	};
+	// const goodsBagQuantity: FormPropFields = {
+	// 	// inputRef: refs // will be initialized in fieldsMap
+	// 	type: FormInputType.TEXT,
+	// 	name: null,
+	// 	controlProps: commonControlProps,
+	// 	fullWidth: true,
+	// 	label: c.I18N.quantityLabel,
+	// 	placeholder: c.I18N.quantityPlaceHolder,
+	// 	disabled: !causeOptionsLoaded,
+	// };
 	// required a key, this belongs to the loop of form components
 	const customGoodsBag = (<Fragment key='goods'>
 		{fields.map((item, index) => {
