@@ -24,6 +24,7 @@
     "graphql": "^15.3.0",
     "jwt-decode": "^2.2.0",
     "react": "^16.13.1",
+    "react-barcode-reader": "0.0.2",
     "react-dom": "^16.13.1",
     "react-hook-form": "^6.8.3",
     "react-router-dom": "^5.2.0",

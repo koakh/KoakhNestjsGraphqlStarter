@@ -9,7 +9,8 @@ const VALUES: { [key: string]: any } = {
   defaultCurrency: 'EUR',
   // used in signIn to clear message
   resultMessageTimeOut: 5000,
-  mokeAmbassadors: '4ea88521-031b-4279-9165-9c10e1839000 4ea88521-031b-4279-9165-9c10e1839001',
+  // admin, johndoe
+  mokeAmbassadors: '4ea88521-031b-4279-9165-9c10e1839000 PT282692124',
   mokeLocation: '12.1890144,-28.5171909',
   mokePassword: 'Aa456#45',
   mokeTags: [
@@ -41,7 +42,7 @@ const I18N: { [key: string]: string } = {
   rememberMe: 'Remember me',
   forgotPassword: 'Forgot password?',
   // wip: messages
-  signInWip: 'wip: required send email activation code, finish remember me, ...',
+  signInWip: 'wip: required send email activation code, otp code, finish remember me, and other stuff...',
   // template
   signUpUserRegisteredSuccessfully: 'User registered successfully! You can login with \'${username}\'',
   newModelCreatedSuccessfully: 'New ${model} id: \'${id}\' created successfully!',

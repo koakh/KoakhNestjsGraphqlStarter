@@ -42,7 +42,7 @@ enum FormFieldNames {
 const defaultValues: FormDefaultValues = {
 	name: mokeFormData ? 'Save the world now 2020': '',
 	email: mokeFormData ? 'mail@swn.com': '',
-	ambassadors: mokeFormData ? 'PT182692125 PT582692178': '',
+	ambassadors: mokeFormData ? c.VALUES.mokeAmbassadors: '',
 	// current plus one day/24h
 	startDate: currentFormatDate(new Date(Date.now() + ((3600 * 1000 * 24) * 0)), false),
 	// current plus one day/24h*7

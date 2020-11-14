@@ -4,14 +4,14 @@ import React, { Fragment, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldGoodsBadEan, commonFormFieldOutputTypeEntity, commonFormFieldOutputEntity, envVariables as e, formCommonOptions, RouteKey, routes, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal } from '../../app/config';
+import { commonFormFieldGoodsBadEan, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
 import { AutocompleteAndSelectOptions, EntityType, FormDefaultValues, FormInputType, FormPropFields, GoodsBagItem, ModelType, ResourceType, Tag, TransactionType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, generateTextField, getGraphQLApolloError, isValidEnum, isValidJsonObject, parseTemplate, useStyles, validationBarCodeExHelper, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, generateTextField, getGraphQLApolloError, isValidEnum, isValidJsonObject, parseTemplate, useStyles, validationBarCodeExHelper, validationRuleRegExHelper } from '../../utils';
 
 let renderCount = 0;
 
@@ -36,7 +36,7 @@ enum FormFieldNames {
 const defaultValues: FormDefaultValues = {
 	outputType: EntityType.cause,
 	output: c.VALUES.undefined,
-	goodsBag: [{ barCode: '', quantity: 1 }],
+	goodsBag: [{ barCode: '7121187425042', quantity: 1 }],
 	location: mokeFormData ? c.VALUES.mokeLocation : '',
 	tags: mokeFormData ? c.VALUES.mokeTags : [],
 	metaData: '',
@@ -153,7 +153,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 			type='button'
 			variant='contained'
 			className={classes.buttonGoodsAdd}
-			disabled={loading || fields.length === maxGoodsItems}
+			disabled={loading || !causeOptionsLoaded || fields.length === maxGoodsItems}
 			onClick={() => append({ barCode: '', quantity: 1 })}
 		>
 			{c.I18N.add}
@@ -174,10 +174,9 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 					id: state.user.profile.id,
 				},
 				output: {
-					type: data.outputType,
+					type: EntityType.cause,
 					id: data.output,
 				},
-				currency: c.VALUES.defaultCurrency,
 				goods: goodsBag.map((e: GoodsBagItem) => {
 					return {
 						code: e.barCode, barCode: e.barCode, name: e.barCode, quantity: Number(e.quantity)
@@ -189,8 +188,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 			};
 			// TODO cleanup
 			// console.log(JSON.stringify(data, undefined, 2));
-			// console.log(JSON.stringify(newTransactionData, undefined, 2));
-			// debugger;
+			console.log(JSON.stringify(newTransactionData, undefined, 2));
 			const response = await transactionNewMutation({ variables: { newTransactionData: newTransactionData } });
 
 			if (response) {
@@ -200,7 +198,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 			}
 		} catch (error) {
 			// don't throw here else we catch react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
-			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
+			// console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		}
 	};
 
@@ -253,7 +251,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
 					{generateFormDefinition(formDefinition, control, errors, loading)}
-					{generateFormButtonsDiv(classes, loading, handleResetHandler)}
+					{generateFormButtonsDiv(classes, loading || !causeOptionsLoaded, handleResetHandler)}
 				</form>
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}

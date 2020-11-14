@@ -226,7 +226,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			type='button'
 			variant='contained'
 			className={classes.button}
-			disabled={loading || fields.length === maxGoodsItems}
+			disabled={loading || !causeOptionsLoaded || fields.length === maxGoodsItems}
 			onClick={() => append({ barCode: '', quantity: 1 })}
 		>
 			{c.I18N.add}
@@ -587,7 +587,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
 					{generateFormDefinition(formDefinition, control, errors, loading)}
-					{generateFormButtonsDiv(classes, loading, handleResetHandler)}
+					{generateFormButtonsDiv(classes, loading || !causeOptionsLoaded, handleResetHandler)}
 				</form>
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}

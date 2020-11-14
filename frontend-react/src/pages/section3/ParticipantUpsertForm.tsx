@@ -34,8 +34,8 @@ const defaultValues: FormDefaultValues = {
 	code: mokeFormData ? 'wfp' : '',
 	name: mokeFormData ? 'World Food Program' : '',
 	email: mokeFormData ? 'mail@efp.com' : '',
-	fiscalNumber: mokeFormData ? 'PT500123002' : '',
-	ambassadors: mokeFormData ? 'PT182692125 PT582692178': '',
+	fiscalNumber: mokeFormData ? 'PT500123005' : '',
+	ambassadors: mokeFormData ? c.VALUES.mokeAmbassadors: '',
 	metaData: '',
 	metaDataInternal: '',
 };
