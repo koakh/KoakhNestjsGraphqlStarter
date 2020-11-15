@@ -37,7 +37,7 @@ enum FormFieldNames {
 const defaultValues: FormDefaultValues = {
 	outputType: EntityType.cause,
 	output: c.VALUES.undefined,
-	goodsBag: [{ barCode: '7121187425042', quantity: 1 }],
+	goodsBag: [{ barCode: '', quantity: 1 }],
 	location: mokeFormData ? c.VALUES.mokeLocation : '',
 	tags: mokeFormData ? c.VALUES.mokeTags : [],
 	metaData: '',
@@ -51,7 +51,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	// hooks state
 	const [state, dispatch] = useStateValue();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions });
+	const { handleSubmit, watch, errors, control, reset, getValues, setValue } = useForm<FormInputs>({ defaultValues, ...formCommonOptions });
 	// hooks: apollo
 	const [transactionNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
 	const { fields, append, remove } = useFieldArray({
@@ -87,7 +87,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	const errorMessage = getGraphQLApolloError(apolloError);
 
 	// customBag definition
-	const goodsBag: any[] = watch('goodsBag');
+	const goodsBag: Array<GoodsBagItem> = watch('goodsBag');
 	const maxGoodsItems = 10;
 	// initialize any new refs, required to create refs outside of loop
 	const goodsBagEanInputRef: any[] = [];
@@ -239,11 +239,34 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		}
 	};
 
+	// console.log(`goodsBag: [${JSON.stringify(goodsBag, undefined, 2)}]`);
+
+	// TODO add INC / DEC Buttons useful for Touch Mobile to inc dec/ if (disable - if 1)
+	// TODO: add type
+	// TODO notes get product info from api in graphql server, store info in neo4j NODE Product
+	// TODO : only add if is a valid eancode use lib npm, else show TOAST invalid barCode
+	// { barCode: '', quantity: 1 }
+	const addToGoodsBag = (goodsBagArg: Array<GoodsBagItem>, barCode: string) => {
+		const index = goodsBagArg.findIndex((e: GoodsBagItem) => e.barCode === barCode);
+		// add quantity
+		if (index > -1) {
+			++goodsBagArg[index].quantity;
+			setValue(`goodsBag[${index}].quantity`, goodsBagArg[index].quantity);
+		} else {
+			// get first empty input, useful to fill first, and other empty that was added
+			const indexEmpty = goodsBagArg.findIndex((e: GoodsBagItem) => {
+				return e.barCode === ''
+			});
+			console.log(`indexEmpty: [${indexEmpty}]`);
+			if (indexEmpty > -1) {
+				setValue(`goodsBag[${indexEmpty}].barCode`, barCode);
+				setValue(`goodsBag[${indexEmpty}].quantity`, 1);
+			} else {
+				append({ barCode, quantity: 1 });
+			}
+		}
+	}
 	// barcodeReader handlers
-	// let handleBarcodeReaderScan = (data: any) => {
-	// 	debugger;
-	// 	setBarCodeResult({ result: data })
-	// };
 	const handleBarcodeReaderError = (error: any) => {
 		console.error(error);
 	}
@@ -252,8 +275,11 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	const handleBarcodeReaderScan = useCallback(
 		(data: any) => {
 			console.log(`read data '${data}'`);
+			addToGoodsBag(goodsBag, data);
 		},
-		[], // Tells React to memoize regardless of arguments.
+		// TODO: the trick is use [goodsBag] to pass current reference
+		// Tells React to memoize regardless of arguments.
+		[goodsBag],
 	);
 
 	const formDefinition: Record<string, FormPropFields> = {
