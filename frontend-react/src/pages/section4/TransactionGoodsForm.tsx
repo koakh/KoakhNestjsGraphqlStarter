@@ -1,5 +1,7 @@
-import { Box } from '@material-ui/core';
-import React, { Fragment, useRef, useState } from 'react';
+import { Box, Button, ButtonGroup, Switch } from '@material-ui/core';
+import React, { Fragment, useCallback, useRef, useState } from 'react';
+import BarcodeReader from 'react-barcode-reader';
+// import { useBarcodeScanner} from 'react-barcode-reader'
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
@@ -60,6 +62,12 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		// default to "id", you can change the key name
 		// keyName: "id"
 	});
+	// useState
+	const [barCodeResult, setBarCodeResult] = useState<{ result: string }>({ result: 'no result scanned' })
+	const [scanning, setScanning] = useState(false);
+	const handleToggleScan = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setScanning(event.target.checked);
+	};
 
 	// output personOptions: require [] array to be a reference, not a primitive
 	const [causeOptions, setCauseOptions] = useState<AutocompleteAndSelectOptions[]>([]);
@@ -178,7 +186,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		remove,
 		append,
 		// other
-		loading,
+		loading || scanning,
 		fields,
 		goodsBag,
 		goodsBagEan,
@@ -231,6 +239,23 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		}
 	};
 
+	// barcodeReader handlers
+	// let handleBarcodeReaderScan = (data: any) => {
+	// 	debugger;
+	// 	setBarCodeResult({ result: data })
+	// };
+	const handleBarcodeReaderError = (error: any) => {
+		console.error(error);
+	}
+	// handleBarcodeReaderScan = handleBarcodeReaderScan.bind(this);
+	// hw to use bind in rfc: https://stackoverflow.com/questions/53215067/how-can-i-bind-function-with-hooks-in-react
+	const handleBarcodeReaderScan = useCallback(
+		(data: any) => {
+			console.log(`read data '${data}'`);
+		},
+		[], // Tells React to memoize regardless of arguments.
+	);
+
 	const formDefinition: Record<string, FormPropFields> = {
 		[FormFieldNames.OUTPUT_TYPE]: {
 			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.OUTPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))),
@@ -280,12 +305,23 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
 					{generateFormDefinition(formDefinition, control, errors, loading)}
+					<Switch
+						checked={scanning}
+						onChange={handleToggleScan}
+						name='toggleScan'
+					/>
 					{generateFormButtonsDiv(classes, loading || !causeOptionsLoaded, handleResetHandler)}
 				</form>
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 			</Box>
+			{/* TODO */}
+			<BarcodeReader
+				timeBeforeScanTest={250}
+				onScan={handleBarcodeReaderScan}
+				onError={handleBarcodeReaderError}
+			/>
 		</Fragment >
 	);
 }
