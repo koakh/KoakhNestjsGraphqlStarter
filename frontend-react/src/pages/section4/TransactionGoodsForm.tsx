@@ -173,6 +173,16 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	// 	</Button>
 	// </Fragment>);
 
+	// TODO: share with transactions how? DUPLICATE
+	const handleIncreaseDecreaseGood = (goodsBagArg: Array<GoodsBagItem>, index: number, value: number) => {
+		const namePrefix = `goodsBag[${index}]`;
+		// increase quantity			
+		goodsBagArg[index].quantity = goodsBagArg[index].quantity + value;
+		setValue(`${namePrefix}.quantity`, goodsBagArg[index].quantity);
+		// trigger validation
+		trigger(`${namePrefix}.barCode`);
+		trigger(`${namePrefix}.quantity`);
+	}
 	// call function with all this magic local references
 	const customGoodsBag = commonFormFieldGoodsBag(
 		// FormFieldNames.GOODS_BAG was replaced with formFieldName
@@ -185,6 +195,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		// useFieldArray
 		remove,
 		append,
+		handleIncreaseDecreaseGood,
 		// other
 		loading || scanning,
 		fields,
@@ -239,9 +250,9 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		}
 	};
 
-	// console.log(`goodsBag: [${JSON.stringify(goodsBag, undefined, 2)}]`);
+	console.log(`goodsBag: [${JSON.stringify(goodsBag, undefined, 2)}]`);
 
-		// TODO on submit keeps is same page, but shows toast, same for other forms, clean from and show toast message
+	// TODO on submit keeps is same page, but shows toast, same for other forms, clean from and show toast message
 	// TODO add INC / DEC Buttons useful for Touch Mobile to inc dec/ if (disable - if 1)
 	// TODO: add type
 	// TODO notes get product info from api in graphql server, store info in neo4j NODE Product
@@ -249,23 +260,28 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	// { barCode: '', quantity: 1 }
 	const addToGoodsBag = (goodsBagArg: Array<GoodsBagItem>, barCode: string) => {
 		const index = goodsBagArg.findIndex((e: GoodsBagItem) => e.barCode === barCode);
+		const namePrefix = `goodsBag[${index}]`;
 		// add quantity
 		if (index > -1) {
-			++goodsBagArg[index].quantity;
-			setValue(`goodsBag[${index}].quantity`, goodsBagArg[index].quantity);
-trigger(`goodsBag[${index}].barCode`);
-trigger(`goodsBag[${index}].quantity`);
+			handleIncreaseDecreaseGood(goodsBagArg, index, 1);
+			// // increase quantity
+			// ++goodsBagArg[index].quantity;
+			// setValue(`${namePrefix}.quantity`, goodsBagArg[index].quantity);
+			// // trigger validation
+			// trigger(`${namePrefix}.barCode`);
+			// trigger(`${namePrefix}.quantity`);
 		} else {
 			// get first empty input, useful to fill first, and other empty that was added
 			const indexEmpty = goodsBagArg.findIndex((e: GoodsBagItem) => {
 				return e.barCode === ''
 			});
-			console.log(`indexEmpty: [${indexEmpty}]`);
+			// if found an empty slot
 			if (indexEmpty > -1) {
 				setValue(`goodsBag[${indexEmpty}].barCode`, barCode);
 				setValue(`goodsBag[${indexEmpty}].quantity`, 1);
-trigger(`goodsBag[${index}].barCode`);
-trigger(`goodsBag[${index}].quantity`);
+				// trigger validation
+				trigger(`${namePrefix}.barCode`);
+				trigger(`${namePrefix}.quantity`);
 			} else {
 				append({ barCode, quantity: 1 });
 			}

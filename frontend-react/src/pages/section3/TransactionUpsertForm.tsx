@@ -75,7 +75,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// hooks state
 	const [state, dispatch] = useStateValue();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset, getValues, setValue } = useForm<FormInputs>({
+	const { handleSubmit, watch, errors, control, reset, getValues, setValue, trigger } = useForm<FormInputs>({
 		// required to inject owner from state
 		defaultValues: { ...defaultValues, input: state.user.profile.fiscalNumber },
 		...formCommonOptions
@@ -220,6 +220,16 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// 	</Button>
 	// </Fragment>);
 
+	// TODO: share with transactions how? DUPLICATE
+	const handleIncreaseDecreaseGood = (goodsBagArg: Array<GoodsBagItem>, index: number, value: number) => {
+		const namePrefix = `goodsBag[${index}]`;
+		// increase quantity			
+		goodsBagArg[index].quantity = goodsBagArg[index].quantity + value;
+		setValue(`${namePrefix}.quantity`, goodsBagArg[index].quantity);
+		// trigger validation
+		trigger(`${namePrefix}.barCode`);
+		trigger(`${namePrefix}.quantity`);
+	};	
 	// call function with all this magic local references
 	const customGoodsBag = commonFormFieldGoodsBag(
 		// FormFieldNames.GOODS_BAG was replaced with formFieldName
@@ -232,6 +242,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		// useFieldArray
 		remove,
 		append,
+		handleIncreaseDecreaseGood,
 		// other
 		loading,
 		fields,

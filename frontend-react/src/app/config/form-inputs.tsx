@@ -4,7 +4,7 @@ import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
 import React, { Fragment, MutableRefObject } from 'react';
 import { ArrayField, Control, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '..';
-import { AutocompleteAndSelectOptions, FormInputType, FormPropFields } from '../../types';
+import { AutocompleteAndSelectOptions, FormInputType, FormPropFields, GoodsBagItem } from '../../types';
 import { commonControlProps, generateTextField, validationBarCodeExHelper, validationMessage, validationRuleRegExHelper } from '../../utils';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
@@ -440,6 +440,7 @@ export const commonFormFieldGoodsBag = (
   // useFieldArray
   remove: (index?: number | number[]) => void,
   append: (value: Partial<Record<string, any>> | Partial<Record<string, any>>[], shouldFocus?: boolean) => void,
+  handleIncreaseDecreaseGood: (goodsBagArg: Array<GoodsBagItem>, index: number, value: number) => void,
   // other
   loading: boolean,
   fields: Partial<ArrayField<Record<string, any>>>,
@@ -489,8 +490,8 @@ export const commonFormFieldGoodsBag = (
             <IconButton
               className={classes.buttonGoodsActions}
               aria-label={c.I18N.decrease}
-              disabled={loading || index === 0}
-              onClick={() => remove(index)}
+              disabled={loading || goodsBag[index] && goodsBag[index].quantity <= 1 }
+              onClick={() => handleIncreaseDecreaseGood(goodsBag, index, -1)}
               size='small'
             >
               <RemoveIcon />
@@ -498,8 +499,8 @@ export const commonFormFieldGoodsBag = (
             <IconButton
               className={classes.buttonGoodsActions}
               aria-label={c.I18N.increase}
-              disabled={loading || index === 0}
-              onClick={() => remove(index)}
+              disabled={loading}
+              onClick={() => handleIncreaseDecreaseGood(goodsBag, index, 1)}
               size='small'
             >
               <AddIcon />
