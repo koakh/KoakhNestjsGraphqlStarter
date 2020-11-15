@@ -7,6 +7,8 @@ import { appConstants as c } from '..';
 import { AutocompleteAndSelectOptions, FormInputType, FormPropFields } from '../../types';
 import { commonControlProps, generateTextField, validationBarCodeExHelper, validationMessage, validationRuleRegExHelper } from '../../utils';
 import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 
 // common formDefinition, to be shared in project, where are used in more than one place
 
@@ -442,7 +444,7 @@ export const commonFormFieldGoodsBag = (
   loading: boolean,
   fields: Partial<ArrayField<Record<string, any>>>,
   goodsBag: any[],
-  goodsBagEan:FormPropFields,
+  goodsBagEan: FormPropFields,
   goodsBagQuantity: FormPropFields,
   goodsBagEanInputRef: any[],
   goodsBagQuantityInputRef: any[],
@@ -454,7 +456,7 @@ export const commonFormFieldGoodsBag = (
     {fields.map((item: any, index: number) => {
       return (
         <Grid key={item.id} container spacing={3}>
-          <Grid item xs={6}>
+          <Grid item xs>
             {generateTextField({
               ...goodsBagEan,
               inputRef: goodsBagEanInputRef[index],
@@ -482,18 +484,35 @@ export const commonFormFieldGoodsBag = (
               onFocusFn: () => goodsBagQuantityInputRef[index].current.focus()
             }, control, errors, loading)}
           </Grid>
-          <Grid item xs={3}>
-            <Button
-              type='button'
-              variant='contained'
-              className={classes.buttonGoodsDelete}
+          {/* the trick is using auto in buttons */}
+          <Grid item xs='auto'>
+            <IconButton
+              className={classes.buttonGoodsActions}
+              aria-label={c.I18N.decrease}
               disabled={loading || index === 0}
               onClick={() => remove(index)}
-              startIcon={<DeleteIcon />}
-              fullWidth
+              size='small'
             >
-              {c.I18N.delete}
-            </Button>
+              <RemoveIcon />
+            </IconButton>
+            <IconButton
+              className={classes.buttonGoodsActions}
+              aria-label={c.I18N.increase}
+              disabled={loading || index === 0}
+              onClick={() => remove(index)}
+              size='small'
+            >
+              <AddIcon />
+            </IconButton>
+            <IconButton
+              className={classes.buttonGoodsActions}
+              aria-label={c.I18N.delete}
+              disabled={loading || index === 0}
+              onClick={() => remove(index)}
+              size='small'
+            >
+              <DeleteIcon />
+            </IconButton>
           </Grid>
         </Grid>
       );

@@ -30,6 +30,8 @@ const I18N: { [key: string]: string } = {
   create: 'Create',
   update: 'Update',
   delete: 'Delete',
+  increase: 'Increase',
+  decrease: 'Decrease',
   add: 'Add',
   required: 'required',
   invalid: 'invalid',

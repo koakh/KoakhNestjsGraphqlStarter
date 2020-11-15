@@ -8,6 +8,7 @@
 import { ApolloError } from '@apollo/client';
 import { Button, FormHelperText } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
+import { red } from '@material-ui/core/colors';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -35,6 +36,10 @@ export const useStyles = makeStyles((theme) => ({
   spacer: {
     marginBottom: theme.spacing(2),
   },
+  // helper
+  redColor: {
+    backgroundColor: 'red',
+  },
   formButtonsDiv: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
@@ -42,9 +47,9 @@ export const useStyles = makeStyles((theme) => ({
   button: {
     marginRight: theme.spacing(2),
   },
-  buttonGoodsDelete: {
+  buttonGoodsActions: {
     marginTop: theme.spacing(2),
-    height: 54
+    height: 54,
   },
   buttonGoodsAdd: {
     marginRight: theme.spacing(2),

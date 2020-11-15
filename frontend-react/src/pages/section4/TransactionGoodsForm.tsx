@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, Switch } from '@material-ui/core';
+import { Box, Switch } from '@material-ui/core';
 import React, { Fragment, useCallback, useRef, useState } from 'react';
 import BarcodeReader from 'react-barcode-reader';
 // import { useBarcodeScanner} from 'react-barcode-reader'
@@ -51,7 +51,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	// hooks state
 	const [state, dispatch] = useStateValue();
 	// hooks react form
-	const { handleSubmit, watch, errors, control, reset, getValues, setValue } = useForm<FormInputs>({ defaultValues, ...formCommonOptions });
+	const { handleSubmit, watch, errors, control, reset, getValues, setValue, trigger } = useForm<FormInputs>({ defaultValues, ...formCommonOptions });
 	// hooks: apollo
 	const [transactionNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
 	const { fields, append, remove } = useFieldArray({
@@ -241,6 +241,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 
 	// console.log(`goodsBag: [${JSON.stringify(goodsBag, undefined, 2)}]`);
 
+		// TODO on submit keeps is same page, but shows toast, same for other forms, clean from and show toast message
 	// TODO add INC / DEC Buttons useful for Touch Mobile to inc dec/ if (disable - if 1)
 	// TODO: add type
 	// TODO notes get product info from api in graphql server, store info in neo4j NODE Product
@@ -252,6 +253,8 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		if (index > -1) {
 			++goodsBagArg[index].quantity;
 			setValue(`goodsBag[${index}].quantity`, goodsBagArg[index].quantity);
+trigger(`goodsBag[${index}].barCode`);
+trigger(`goodsBag[${index}].quantity`);
 		} else {
 			// get first empty input, useful to fill first, and other empty that was added
 			const indexEmpty = goodsBagArg.findIndex((e: GoodsBagItem) => {
@@ -261,6 +264,8 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 			if (indexEmpty > -1) {
 				setValue(`goodsBag[${indexEmpty}].barCode`, barCode);
 				setValue(`goodsBag[${indexEmpty}].quantity`, 1);
+trigger(`goodsBag[${index}].barCode`);
+trigger(`goodsBag[${index}].quantity`);
 			} else {
 				append({ barCode, quantity: 1 });
 			}
