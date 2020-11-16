@@ -17,8 +17,8 @@ import RemoveIcon from '@material-ui/icons/Remove';
 export const commonFormFieldFirstName = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
     label: c.I18N.firstNameLabel,
     placeholder: c.I18N.firstNamePlaceHolder,
     helperText: c.I18N.firstNameHelperText,
@@ -30,8 +30,8 @@ export const commonFormFieldFirstName = (inputRef: MutableRefObject<any>, formFi
 export const commonFormFieldLastName = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
     label: c.I18N.lastNameLabel,
     placeholder: c.I18N.lastNamePlaceHolder,
     helperText: c.I18N.lastNameHelperText,
@@ -44,8 +44,8 @@ export const commonFormFieldLastName = (inputRef: MutableRefObject<any>, formFie
 export const commonFormFieldUsername = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
     label: c.I18N.userNameLabel,
     placeholder: c.I18N.userNamePlaceholder,
     helperText: c.I18N.userNameHelperText,
@@ -58,8 +58,8 @@ export const commonFormFieldUsername = (inputRef: MutableRefObject<any>, formFie
 export const commonFormFieldPassword = (inputRef: MutableRefObject<any>, formFieldName: string, showPassword: boolean, handlePasswordVisibility: () => void): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
+    name: formFieldName,
     label: c.I18N.passWordLabel,
     placeholder: c.I18N.passWordPlaceholder,
     helperText: c.I18N.passWordHelperText,
@@ -87,8 +87,8 @@ export const commonFormFieldPassword = (inputRef: MutableRefObject<any>, formFie
 export const commonFormFieldPasswordConfirmation = (inputRef: MutableRefObject<any>, formFieldName: string, showPassword: boolean, validate: () => boolean): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: (showPassword) ? FormInputType.TEXT : FormInputType.PASSWORD,
+    name: formFieldName,
     label: c.I18N.passWordConfirmationLabel,
     placeholder: c.I18N.passWordConfirmationPlaceholder,
     helperText: c.I18N.passWordConfirmationHelperText,
@@ -104,8 +104,8 @@ export const commonFormFieldPasswordConfirmation = (inputRef: MutableRefObject<a
 export const commonFormFieldFiscalNumber = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
     label: c.I18N.fiscalNumberLabel,
     placeholder: c.I18N.fiscalNumberPlaceHolder,
     fullWidth: true,
@@ -117,8 +117,8 @@ export const commonFormFieldFiscalNumber = (inputRef: MutableRefObject<any>, for
 export const commonFormFieldMobilePhone = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
     label: c.I18N.mobilePhoneLabel,
     placeholder: c.I18N.mobilePhonePlaceHolder,
     fullWidth: true,
@@ -130,8 +130,8 @@ export const commonFormFieldMobilePhone = (inputRef: MutableRefObject<any>, form
 export const commonFormFieldEmail = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.EMAIL,
+    name: formFieldName,
     label: c.I18N.emailLabel,
     placeholder: c.I18N.emailPlaceHolder,
     fullWidth: true,
@@ -145,11 +145,11 @@ export const commonFormFieldEmail = (inputRef: MutableRefObject<any>, formFieldN
 export const commonFormFieldAssetType = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.SELECT,
+    name: formFieldName,
+    label: c.I18N.assetType,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.assetType,
     rules: {
       validate: () => validate()
         ? true
@@ -162,26 +162,26 @@ export const commonFormFieldAssetType = (inputRef: MutableRefObject<any>, formFi
 export const commonFormFieldAssetName = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
+    label: c.I18N.assetLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.assetLabel,
     placeholder: c.I18N.assetPlaceHolder,
     rules: validationRuleRegExHelper(formFieldName, c.REGEXP.name),
   }
 }
 
-// asset
+// cause
 
 export const commonFormFieldCauseName = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
+    label: c.I18N.causeLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.causeLabel,
     placeholder: c.I18N.causePlaceHolder,
     rules: validationRuleRegExHelper(formFieldName, c.REGEXP.name),
   }
@@ -190,11 +190,11 @@ export const commonFormFieldCauseName = (inputRef: MutableRefObject<any>, formFi
 export const commonFormFieldAssetOwner = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
+    label: c.I18N.ownerLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.ownerLabel,
     placeholder: c.I18N.ownerPlaceholder,
     helperText: c.I18N.ownerHelperText,
     rules: {
@@ -211,11 +211,11 @@ export const commonFormFieldAssetOwner = (inputRef: MutableRefObject<any>, formF
 export const commonFormFieldCode = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
+    label: c.I18N.codeLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.codeLabel,
     placeholder: c.I18N.codePlaceHolder,
     rules: validationRuleRegExHelper(formFieldName, c.REGEXP.alphaNumeric),
   }
@@ -224,11 +224,11 @@ export const commonFormFieldCode = (inputRef: MutableRefObject<any>, formFieldNa
 export const commonFormFieldLocation = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
+    label: c.I18N.locationLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.locationLabel,
     placeholder: c.I18N.locationPlaceHolder,
     rules: validationRuleRegExHelper(formFieldName, c.REGEXP.location, false),
   }
@@ -237,11 +237,11 @@ export const commonFormFieldLocation = (inputRef: MutableRefObject<any>, formFie
 export const commonFormFieldAmbassadors = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean | string): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
+    label: c.I18N.ambassadorsLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.ambassadorsLabel,
     placeholder: c.I18N.ambassadorsPlaceHolder,
     helperText: c.I18N.ambassadorsHelperText,
     rules: {
@@ -253,11 +253,11 @@ export const commonFormFieldAmbassadors = (inputRef: MutableRefObject<any>, form
 export const commonFormFieldMetadata = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
+    label: c.I18N.metaDataLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.metaDataLabel,
     placeholder: c.I18N.metaDataPlaceHolder,
     rules: {
       validate: () => validate()
@@ -280,11 +280,11 @@ export const commonFormFieldMetadataInternal = (inputRef: MutableRefObject<any>,
 export const commonFormFieldStartDate = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.DATE,
+    name: formFieldName,
+    label: c.I18N.startDateLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.startDateLabel,
     placeholder: c.I18N.datePlaceHolder,
     rules: validationRuleRegExHelper(formFieldName, c.REGEXP.date),
   }
@@ -303,11 +303,11 @@ export const commonFormFieldEndDate = (inputRef: MutableRefObject<any>, formFiel
 export const commonFormFieldInputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.SELECT,
+    name: formFieldName,
+    label: c.I18N.inputTypeLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.inputTypeLabel,
     disabled: false,
     options: () => c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
     rules: {
@@ -321,11 +321,11 @@ export const commonFormFieldInputTypeEntity = (inputRef: MutableRefObject<any>, 
 export const commonFormFieldInputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.TEXT,
+    name: formFieldName,
+    label: c.I18N.inputLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.inputLabel,
     placeholder: c.I18N.inputPlaceholder,
     helperText: c.I18N.inputHelperText,
     disabled: false,
@@ -342,57 +342,89 @@ export const commonFormFieldTags = (inputRef: MutableRefObject<any>, formFieldNa
     inputRef,
     type: FormInputType.AUTOCOMPLETE,
     name: formFieldName,
+    label: c.I18N.tagsLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.tagsLabel,
     placeholder: c.I18N.tagsLabel,
     helperText: c.I18N.tagsPlaceHolder,
-    options: () => c.TAGS_OPTIONS,
-    multipleOptions: true,
-    addToAutocomplete: true,
     rules: {
       validate: () => validate()
         ? true
         : validationMessage('invalid', formFieldName)
     },
+    options: () => c.TAGS_OPTIONS,
+    multipleOptions: true,
+    addToAutocomplete: true,
   }
 }
 
 // transaction
 
+export const commonFormFieldAssetId = (inputRef: MutableRefObject<any>, formFieldName: string, visible: () => boolean): FormPropFields => {
+  return {
+    inputRef,
+    type: FormInputType.TEXT,
+    name: formFieldName,
+    label: c.I18N.assetIdLabel,
+    controlProps: commonControlProps,
+    fullWidth: true,
+    placeholder: c.I18N.assetIdPlaceholder,
+    helperText: c.I18N.assetIdHelperText,
+    rules: validationRuleRegExHelper(formFieldName, c.REGEXP.uuid),
+    disabled: false,
+    visible,
+  }
+}
+
 export const commonFormFieldOutputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.SELECT,
+    name: formFieldName,
+    label: c.I18N.outputTypeLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.outputTypeLabel,
     rules: {
       validate: () => validate()
         ? true
         : validationMessage('required', formFieldName)
     },
     options: () => c.ENTITY_TYPE_OPTIONS,
-    disabled: true,
-    visible: false,
   }
 }
 
-export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, options: () => AutocompleteAndSelectOptions[], disabled: boolean): FormPropFields => {
+export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, options: () => AutocompleteAndSelectOptions[], disabled: boolean, visible: () => boolean): FormPropFields => {
   return {
     inputRef,
-    name: formFieldName,
     type: FormInputType.SELECT,
+    name: formFieldName,
+    label: c.I18N.outputLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.outputLabel,
     placeholder: c.I18N.outputPlaceholder,
     helperText: c.I18N.outputHelperText,
     rules: validationRuleRegExHelper(formFieldName, c.REGEXP.uuid),
     // args
     options,
     disabled,
+    visible,
+  }
+}
+
+export const commonFormFieldGoodsBagInput = (inputRef: MutableRefObject<any>, formFieldName: string, custom: JSX.Element, disabled: boolean, visible: () => boolean): FormPropFields => {
+  return {
+    inputRef,
+    type: FormInputType.CUSTOM,
+    name: formFieldName,
+    label: 'Goods bag',
+    controlProps: commonControlProps,
+    fullWidth: true,
+    placeholder: 'Goods placeHolder',
+    // custom
+    custom,
+    // args
+    disabled,
+    visible
   }
 }
 
@@ -401,9 +433,9 @@ export const commonFormFieldGoodsBagEan = (disabled: boolean): FormPropFields =>
     // inputRef: refs // will be initialized in fieldsMap
     type: FormInputType.TEXT,
     name: null,
+    label: c.I18N.barCodeEan13Label,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.barCodeEan13Label,
     placeholder: c.I18N.barCodeEan13PlaceHolder,
     helperText: c.I18N.barCodeEan13HelperText,
     // args
@@ -414,11 +446,11 @@ export const commonFormFieldGoodsBagEan = (disabled: boolean): FormPropFields =>
 export const commonFormFieldGoodsBagQuantity = (disabled: boolean): FormPropFields => {
   return {
     // inputRef: refs // will be initialized in fieldsMap
-    type: FormInputType.TEXT,
     name: null,
+    type: FormInputType.TEXT,
+    label: c.I18N.quantityLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    label: c.I18N.quantityLabel,
     placeholder: c.I18N.quantityPlaceHolder,
     // args
     disabled,
@@ -490,7 +522,7 @@ export const commonFormFieldGoodsBag = (
             <IconButton
               className={classes.buttonGoodsActions}
               aria-label={c.I18N.decrease}
-              disabled={loading || (goodsBag[index] && goodsBag[index].quantity <= 1) }
+              disabled={loading || (goodsBag[index] && goodsBag[index].quantity <= 1)}
               onClick={() => handleIncreaseDecreaseGood(goodsBag, index, -1)}
               size='small'
             >

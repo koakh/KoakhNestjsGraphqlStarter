@@ -3,7 +3,7 @@ import React, { Fragment, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagQuantity, commonFormFieldTags, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldAssetId, commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagInput, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, commonFormFieldTags, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
@@ -57,7 +57,7 @@ const defaultValues: FormDefaultValues = {
 	inputType: EntityType.person,
 	// inject by user profile id state
 	input: '',
-	outputType: EntityType.cause,
+	outputType: c.VALUES.undefined,
 	output: c.VALUES.undefined,
 	quantity: 1,
 	currency: 'EUR',
@@ -198,6 +198,8 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// watch
 	const transactionType = watch(FormFieldNames.TRANSACTION_TYPE);
 	const resourceType = watch(FormFieldNames.RESOURCE_TYPE);
+	// require to use watch else getValues(FormFieldNames.x) don't work has expected
+	const outputType = watch(FormFieldNames.OUTPUT_TYPE);
 
 	if (transactionType === TransactionType.transferFunds && resourceType !== ResourceType.funds) {
 		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.funds); }, 100);
@@ -321,6 +323,12 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			// 	return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.TransferAsset);
 			// }
 		},
+		[FormFieldNames.ASSET_ID]: {
+			...commonFormFieldAssetId(useRef(), FormFieldNames.ASSET_ID, () => {
+				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferAsset)
+			}),
+			disabled: !causeOptionsLoaded,
+		},
 		[FormFieldNames.INPUT_TYPE]: {
 			inputRef: useRef(),
 			type: FormInputType.SELECT,
@@ -358,42 +366,50 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			// options: personOptions,
 			// disableCloseOnSelect: false,
 		},
+		// [FormFieldNames.OUTPUT_TYPE]: {
+		// 	inputRef: useRef(),
+		// 	type: FormInputType.SELECT,
+		// 	name: FormFieldNames.OUTPUT_TYPE,
+		// 	controlProps: commonControlProps,
+		// 	fullWidth: true,
+		// 	label: c.I18N.outputTypeLabel,
+		// 	// selection don't use placeHolder
+		// 	// placeholder: c.VALUES.PHYSICAL_ASSET,
+		// 	rules: {
+		// 		validate: () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))
+		// 			? true
+		// 			: validationMessage('required', FormFieldNames.OUTPUT_TYPE)
+		// 	},
+		// 	options: () => c.ENTITY_TYPE_OPTIONS,
+		// 	disabled: true,
+		// },
 		[FormFieldNames.OUTPUT_TYPE]: {
-			inputRef: useRef(),
-			type: FormInputType.SELECT,
-			name: FormFieldNames.OUTPUT_TYPE,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.outputTypeLabel,
-			// selection don't use placeHolder
-			// placeholder: c.VALUES.PHYSICAL_ASSET,
-			rules: {
-				validate: () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))
-					? true
-					: validationMessage('required', FormFieldNames.OUTPUT_TYPE)
-			},
-			options: () => c.ENTITY_TYPE_OPTIONS,
-			disabled: true,
+			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.OUTPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))),
 		},
+		// [FormFieldNames.OUTPUT]: {
+		// 	inputRef: useRef(),
+		// 	type: FormInputType.SELECT,
+		// 	name: FormFieldNames.OUTPUT,
+		// 	controlProps: commonControlProps,
+		// 	fullWidth: true,
+		// 	label: c.I18N.outputLabel,
+		// 	placeholder: c.I18N.outputPlaceholder,
+		// 	helperText: c.I18N.outputHelperText,
+		// 	// AUTOCOMPLETE
+		// 	// rules: {
+		// 	// 	validate: () => validateRegExpObjectProperty(getValues(FormFieldNames.OUTPUT), 'value', c.REGEXP.uuid)
+		// 	// 		? true
+		// 	// 		: validationMessage('required', FormFieldNames.OUTPUT)
+		// 	// },
+		// 	rules: validationRuleRegExHelper(FormFieldNames.OUTPUT, c.REGEXP.uuid),
+		// 	options: () => causeOptions,
+		// 	disabled: !causeOptionsLoaded,
+		// 	// disableCloseOnSelect: false,
+		// },
 		[FormFieldNames.OUTPUT]: {
-			inputRef: useRef(),
-			type: FormInputType.SELECT,
-			name: FormFieldNames.OUTPUT,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.outputLabel,
-			placeholder: c.I18N.outputPlaceholder,
-			helperText: c.I18N.outputHelperText,
-			// AUTOCOMPLETE
-			// rules: {
-			// 	validate: () => validateRegExpObjectProperty(getValues(FormFieldNames.OUTPUT), 'value', c.REGEXP.uuid)
-			// 		? true
-			// 		: validationMessage('required', FormFieldNames.OUTPUT)
-			// },
-			rules: validationRuleRegExHelper(FormFieldNames.OUTPUT, c.REGEXP.uuid),
-			options: () => causeOptions,
-			disabled: !causeOptionsLoaded,
-			// disableCloseOnSelect: false,
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, () => causeOptions, !causeOptionsLoaded, () => {
+				return (outputType === EntityType.cause);
+			}),
 		},
 		[FormFieldNames.QUANTITY]: {
 			inputRef: useRef(),
@@ -431,98 +447,48 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				return (!control.getValues(FormFieldNames.TRANSACTION_TYPE) || control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferFunds);
 			}
 		},
-		[FormFieldNames.ASSET_ID]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.ASSET_ID,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.assetIdLabel,
-			placeholder: c.I18N.assetIdPlaceholder,
-			helperText: c.I18N.assetIdHelperText,
-			rules: validationRuleRegExHelper(FormFieldNames.ASSET_ID, c.REGEXP.uuid),
-			disabled: !causeOptionsLoaded,
-			visible: (control) => {
-				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferAsset);
-			}
-		},
-		// add goods here, old goods that use a selection of array goods, used for prototype
-		// [FormFieldNames.GOODS]: {
+		// [FormFieldNames.ASSET_ID]: {
 		// 	inputRef: useRef(),
-		// 	type: FormInputType.SELECT,
-		// 	name: FormFieldNames.GOODS,
+		// 	type: FormInputType.TEXT,
+		// 	name: FormFieldNames.ASSET_ID,
 		// 	controlProps: commonControlProps,
 		// 	fullWidth: true,
-		// 	label: c.I18N.goodsLabel,
-		// 	placeholder: c.I18N.goodsPlaceHolder,
-		// 	rules: {
-		// 		validate: () => isValidJsonObject(getValues(FormFieldNames.GOODS))
-		// 			? true
-		// 			: validationMessage('invalid', FormFieldNames.GOODS)
-		// 	},
-		// 	options: () => c.GOODS_OPTIONS,
+		// 	label: c.I18N.assetIdLabel,
+		// 	placeholder: c.I18N.assetIdPlaceholder,
+		// 	helperText: c.I18N.assetIdHelperText,
+		// 	rules: validationRuleRegExHelper(FormFieldNames.ASSET_ID, c.REGEXP.uuid),
 		// 	disabled: !causeOptionsLoaded,
 		// 	visible: (control) => {
-		// 		return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferGoods);
+		// 		return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferAsset);
 		// 	}
 		// },
-		[FormFieldNames.GOODS_BAG]: {
-			inputRef: useRef(),
-			type: FormInputType.CUSTOM,
-			name: FormFieldNames.GOODS_BAG,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: 'Goods bag',
-			placeholder: 'Goods placeHolder',
+		[FormFieldNames.ASSET_ID]: {
+			...commonFormFieldAssetId(useRef(), FormFieldNames.ASSET_ID, () => {
+				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferAsset)
+			}),
 			disabled: !causeOptionsLoaded,
-			custom: customGoodsBag,
-			visible: (control) => {
+		},
+		[FormFieldNames.GOODS_BAG]: {
+			...commonFormFieldGoodsBagInput(useRef(), FormFieldNames.GOODS_BAG, customGoodsBag, !causeOptionsLoaded, () => {
 				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferGoods);
-			}
+			}),
 		},
 		[FormFieldNames.LOCATION]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.LOCATION,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.locationLabel,
-			placeholder: c.I18N.locationPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.LOCATION, c.REGEXP.location, false),
+			...commonFormFieldLocation(useRef(), FormFieldNames.LOCATION),
 			disabled: !causeOptionsLoaded,
 		},
 		[FormFieldNames.TAGS]: {
 			...commonFormFieldTags(useRef(), FormFieldNames.TAGS, () => (getValues(FormFieldNames.TAGS) as string[]).length > 0),
 		},
 		[FormFieldNames.META_DATA]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.META_DATA,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.metaDataLabel,
-			placeholder: c.I18N.metaDataPlaceHolder,
-			rules: {
-				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA))
-					? true
-					: validationMessage('invalid', FormFieldNames.META_DATA)
-			},
+			...commonFormFieldMetadata(useRef(), FormFieldNames.META_DATA, () => isValidJsonObject(getValues(FormFieldNames.META_DATA))),
 			disabled: !causeOptionsLoaded,
+			visible: false,
 		},
 		[FormFieldNames.META_DATA_INTERNAL]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.META_DATA_INTERNAL,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.metaDataInternalLabel,
-			placeholder: c.I18N.metaDataPlaceHolder,
-			rules: {
-				validate: () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL))
-					? true
-					: validationMessage('invalid', FormFieldNames.META_DATA_INTERNAL)
-			},
+			...commonFormFieldMetadataInternal(useRef(), FormFieldNames.META_DATA_INTERNAL, () => isValidJsonObject(getValues(FormFieldNames.META_DATA_INTERNAL))),
 			disabled: !causeOptionsLoaded,
+			visible: false,
 		},
 	};
 

@@ -5,7 +5,7 @@ import BarcodeReader from 'react-barcode-reader';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagInput, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
@@ -42,7 +42,7 @@ enum FormFieldNames {
 const defaultValues: FormDefaultValues = {
 	inputType: EntityType.person,
 	input: '',
-	outputType: EntityType.cause,
+	outputType: c.VALUES.undefined,
 	output: c.VALUES.undefined,
 	goodsBag: [{ barCode: '', quantity: 1 }],
 	location: mokeFormData ? c.VALUES.mokeLocation : '',
@@ -152,6 +152,9 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 
 	// EOF of `DRY code shared with transactions & goods`
 
+	// require to use watch else getValues(FormFieldNames.x) don't work has expected
+	const outputType = watch(FormFieldNames.OUTPUT_TYPE);
+
 	// TODO
 	// console.log(JSON.stringify(data, undefined, 2));
 	// console.log(JSON.stringify(newTransactionData, undefined, 2));
@@ -251,19 +254,12 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.OUTPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))),
 		},
 		[FormFieldNames.OUTPUT]: {
-			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, () => causeOptions, !causeOptionsLoaded),
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, () => causeOptions, !causeOptionsLoaded, () => {
+				return (outputType === EntityType.cause);
+			}),
 		},
 		[FormFieldNames.GOODS_BAG]: {
-			inputRef: useRef(),
-			type: FormInputType.CUSTOM,
-			name: FormFieldNames.GOODS_BAG,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: 'Goods bag',
-			placeholder: 'Goods placeHolder',
-			disabled: !causeOptionsLoaded,
-			custom: customGoodsBag,
-			// `visible: (control) => `removed from goodsForm, must exists in transactionForm
+			...commonFormFieldGoodsBagInput(useRef(), FormFieldNames.GOODS_BAG, customGoodsBag, !causeOptionsLoaded, () => true),
 		},
 		[FormFieldNames.LOCATION]: {
 			...commonFormFieldLocation(useRef(), FormFieldNames.LOCATION),
@@ -303,15 +299,15 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 			</Box>
+			<SnackbarMessage message={c.I18N.snackbarTransactionSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />
+			<Box component='span' m={1}>
+				<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionGoodsFormWip} />
+			</Box>
 			<BarcodeReader
 				timeBeforeScanTest={250}
 				onScan={handleBarcodeReaderScan}
 				onError={handleBarcodeReaderError}
 			/>
-			<Box component='span' m={1}>
-				<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionGoodsFormWip} />
-			</Box>
-			<SnackbarMessage message={c.I18N.snackbarTransactionSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />
 		</Fragment >
 	);
 }
