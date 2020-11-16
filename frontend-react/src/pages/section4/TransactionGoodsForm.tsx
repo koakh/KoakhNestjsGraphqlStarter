@@ -5,7 +5,7 @@ import BarcodeReader from 'react-barcode-reader';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldInputTypeEntity, commonFormFieldInputEntity, commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
@@ -53,15 +53,22 @@ const defaultValues: FormDefaultValues = {
 
 // use RouteComponentProps to get history props from Route
 export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history }) => {
+	// BOF of `DRY code shared with transactions & goods`
+
 	// hooks styles
 	const classes = useStyles();
 	// hooks state
 	// eslint-disable-next-line
 	const [state, dispatch] = useStateValue();
+	// snackBar state
+	const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
 	// hooks react form
 	const { handleSubmit, watch, errors, control, reset, getValues, setValue, trigger } = useForm<FormInputs>({ defaultValues, ...formCommonOptions });
 	// hooks: apollo
 	const [transactionNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
+	// extract error message
+	const errorMessage = getGraphQLApolloError(apolloError);
+
 	const { fields, append, remove } = useFieldArray({
 		// control props comes from useForm (optional: if you are using FormContext)
 		control,
@@ -70,15 +77,6 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		// default to "id", you can change the key name
 		// keyName: "id"
 	});
-	// useState
-	// TODO cleanUp
-	// const [barCodeResult, setBarCodeResult] = useState<{ result: string }>({ result: 'no result scanned' })
-	// TODO cleanUp scanning
-	// const [scanning, setScanning] = useState(false);
-	// const handleToggleScan = (event: React.ChangeEvent<HTMLInputElement>) => {
-	// 	setScanning(event.target.checked);
-	// };
-	const [open, setOpen] = React.useState<boolean>(false);
 
 	// output personOptions: require [] array to be a reference, not a primitive
 	const [causeOptions, setCauseOptions] = useState<AutocompleteAndSelectOptions[]>([]);
@@ -94,8 +92,6 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		}));
 		setCauseOptionsLoaded(true);
 	}
-	// extract error message
-	const errorMessage = getGraphQLApolloError(apolloError);
 
 	// customBag definition
 	const goodsBag: Array<GoodsBagItem> = watch('goodsBag');
@@ -114,7 +110,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		...commonFormFieldGoodsBagQuantity(!causeOptionsLoaded),
 	};
 
-	// TODO: share with transactions how? DUPLICATE
+	// DRY function shared with transactions & goods, have setValue, trigger, let it be simple
 	const handleIncreaseDecreaseGood = (goodsBagArg: Array<GoodsBagItem>, index: number, value: number) => {
 		const namePrefix = `goodsBag[${index}]`;
 		// increase quantity			
@@ -124,6 +120,8 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		trigger(`${namePrefix}.barCode`);
 		trigger(`${namePrefix}.quantity`);
 	}
+
+	// DRY function shared with transactions & goods
 	// call function with all this magic local references
 	const customGoodsBag = commonFormFieldGoodsBag(
 		// FormFieldNames.GOODS_BAG was replaced with formFieldName
@@ -138,8 +136,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		append,
 		handleIncreaseDecreaseGood,
 		// other
-		// TODO cleanUp scanning
-		loading /*|| scanning*/,
+		loading,
 		fields,
 		goodsBag,
 		goodsBagEan,
@@ -152,6 +149,12 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 
 	// debug
 	renderCount++;
+
+	// EOF of `DRY code shared with transactions & goods`
+
+	// TODO
+	// console.log(JSON.stringify(data, undefined, 2));
+	// console.log(JSON.stringify(newTransactionData, undefined, 2));
 
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
@@ -176,9 +179,8 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 				metaData: data.metaData ? JSON.parse(data.metaData) : {},
 				metaDataInternal: data.metaDataInternal ? JSON.parse(data.metaDataInternal) : {},
 			};
-			// TODO cleanUp scanning
-			// console.log(JSON.stringify(data, undefined, 2));
-			console.log(JSON.stringify(newTransactionData, undefined, 2));
+
+			// fire mutation
 			const response = await transactionNewMutation({ variables: { newTransactionData: newTransactionData } });
 
 			if (response) {
@@ -186,7 +188,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 				// const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.transaction, id: response.data.transactionNew.id }) };
 				// dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				// history.push({ pathname: routes.RESULT_PAGE.path });
-				setOpen(true);
+				setSnackbarOpen(true);
 				reset();
 			}
 		} catch (error) {
@@ -195,11 +197,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		}
 	};
 
-	// console.log(`goodsBag: [${JSON.stringify(goodsBag, undefined, 2)}]`);
-
-	// TODO notes get product info from api in graphql server, store info in neo4j NODE Product
-	// TODO : only add if is a valid eancode use lib npm, else show TOAST invalid barCode
-	// { barCode: '', quantity: 1 }
+	// barCode handler function
 	const addToGoodsBag = (goodsBagArg: Array<GoodsBagItem>, barCode: string) => {
 		const index = goodsBagArg.findIndex((e: GoodsBagItem) => e.barCode === barCode);
 		const namePrefix = `goodsBag[${index}]`;
@@ -234,13 +232,15 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 			console.log(`read data '${data}'`);
 			addToGoodsBag(goodsBag, data);
 		},
-		// TODO: the trick is use [goodsBag] to pass current reference
-		// Tells React to memoize regardless of arguments.
+		// bind of class components is used with useCallback
+		// the trick is use [goodsBag] to pass current reference
+		// tells React to memoize regardless of arguments.
 		// eslint-disable-next-line
 		[goodsBag],
 	);
 
 	const formDefinition: Record<string, FormPropFields> = {
+		// TODO
 		// [FormFieldNames.INPUT_TYPE]: {
 		// 	...commonFormFieldInputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))),
 		// },
@@ -263,10 +263,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 			placeholder: 'Goods placeHolder',
 			disabled: !causeOptionsLoaded,
 			custom: customGoodsBag,
-			// TODO: removed from goodsForm, must exists in transactionForm
-			// visible: (control) => {
-			// 	return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferGoods);
-			// }
+			// `visible: (control) => `removed from goodsForm, must exists in transactionForm
 		},
 		[FormFieldNames.LOCATION]: {
 			...commonFormFieldLocation(useRef(), FormFieldNames.LOCATION),
@@ -311,11 +308,10 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 				onScan={handleBarcodeReaderScan}
 				onError={handleBarcodeReaderError}
 			/>
-			{/* TODO: improve message */}
-      <Box component='span' m={1}>
-        <AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionGoodsFormWip} />
-      </Box>
-			<SnackbarMessage message={'transaction successful!'} severity={SnackbarSeverityType.SUCCESS} open={open} setOpen={setOpen}/>
+			<Box component='span' m={1}>
+				<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionGoodsFormWip} />
+			</Box>
+			<SnackbarMessage message={c.I18N.snackbarTransactionSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />
 		</Fragment >
 	);
 }

@@ -8,6 +8,7 @@ import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
+import { SnackbarMessage, SnackbarSeverityType } from '../../components/snackbar-message/SnackbarMessage';
 import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
 import { AutocompleteAndSelectOptions, CurrencyCode, EntityType, FormDefaultValues, FormInputType, FormPropFields, GoodsBagItem, ModelType, ResourceType, Tag, TransactionType } from '../../types';
 import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, parseTemplate, useStyles, validateRegExpArray, validationMessage, validationRuleRegExHelper } from '../../utils';
@@ -49,6 +50,7 @@ enum FormFieldNames {
 	META_DATA = 'metaData',
 	META_DATA_INTERNAL = 'metaDataInternal',
 };
+
 const defaultValues: FormDefaultValues = {
 	transactionType: c.VALUES.undefined,
 	resourceType: c.VALUES.undefined,
@@ -70,18 +72,7 @@ const defaultValues: FormDefaultValues = {
 
 // use RouteComponentProps to get history props from Route
 export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
-	// hooks styles
-	const classes = useStyles();
-	// hooks state
-	const [state, dispatch] = useStateValue();
-	// hooks react form
-	const { handleSubmit, watch, errors, control, reset, getValues, setValue, trigger } = useForm<FormInputs>({
-		// required to inject owner from state
-		defaultValues: { ...defaultValues, input: state.user.profile.fiscalNumber },
-		...formCommonOptions
-	})
-	// hooks: apollo
-	const [transactionNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
+	// ----------------------------------------------------------------------------------------------------
 	// effects
 	// TODO: https://www.pluralsight.com/guides/how-to-use-geolocation-call-in-reactjs
 	// TODO: https://developer.mozilla.org/pt-PT/docs/Web/API/Geolocation/Utilizacao_da_geolocalizacao
@@ -96,8 +87,28 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// eslint-disable-next-line
 	// const { location: currentLocation, error: currentError } = useCurrentLocation(c.GEOLOCATION_OPTIONS);
 	// console.log(`currentLocation:[${currentLocation}]`);
+	// ----------------------------------------------------------------------------------------------------
 
-	const { fields, append, remove, /*prepend, swap, move, insert*/ } = useFieldArray({
+	// BOF of `DRY code shared with transactions & goods`
+
+	// hooks styles
+	const classes = useStyles();
+	// hooks state
+	const [state, dispatch] = useStateValue();
+	// snackBar state
+	const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
+	// hooks react form
+	const { handleSubmit, watch, errors, control, reset, getValues, setValue, trigger } = useForm<FormInputs>({
+		// required to inject owner from state
+		defaultValues: { ...defaultValues, input: state.user.profile.fiscalNumber },
+		...formCommonOptions
+	})
+	// hooks: apollo
+	const [transactionNewMutation, { loading, error: apolloError }] = useTransactionNewMutation();
+	// extract error message
+	const errorMessage = getGraphQLApolloError(apolloError);
+
+	const { fields, append, remove } = useFieldArray({
 		// control props comes from useForm (optional: if you are using FormContext)
 		control,
 		// unique name for your Field Array
@@ -106,21 +117,6 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		// keyName: "id"
 	});
 
-	// not used anymore
-	// // input personOptions: require [] array to be a reference, not a primitive
-	// const [personOptions, setPersonOptions] = useState<AutocompleteOption[]>([]);
-	// const [personOptionsLoaded, setPersonOptionsLoaded] = useState<boolean>(false);
-	// const [personQuery, { data: personQueryData, loading: personQueryLoading, error: personQueryError }] = usePersonsLazyQuery({
-	// 	fetchPolicy: e.apolloFetchPolicy,
-	// 	variables: { skip: 0, take: 50 }
-	// });
-	// if (!personQueryData && !personQueryLoading) { personQuery(); };
-	// if (!personOptionsLoaded && personQueryData && !personQueryLoading && !personQueryError) {
-	// 	setPersonOptions(personQueryData.persons.map((e) => {
-	// 		return { title: `${e.fiscalNumber}: ${e.username}`, value: e.id }
-	// 	}));
-	// 	setPersonOptionsLoaded(true);
-	// }
 	// output personOptions: require [] array to be a reference, not a primitive
 	const [causeOptions, setCauseOptions] = useState<AutocompleteAndSelectOptions[]>([]);
 	const [causeOptionsLoaded, setCauseOptionsLoaded] = useState<boolean>(false);
@@ -135,16 +131,9 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		}));
 		setCauseOptionsLoaded(true);
 	}
-	// watch
-	const transactionType = watch(FormFieldNames.TRANSACTION_TYPE);
-	const resourceType = watch(FormFieldNames.RESOURCE_TYPE);
-	// extract error message
-	const errorMessage = getGraphQLApolloError(apolloError);
 
 	// customBag definition
 	const goodsBag: any[] = watch('goodsBag');
-	// console.log(goodsBag);
-	// https://stackoverflow.com/questions/54633690/how-can-i-use-multiple-refs-for-an-array-of-elements-with-hooks	
 	const maxGoodsItems = 10;
 	// initialize any new refs, required to create refs outside of loop
 	const goodsBagEanInputRef: any[] = [];
@@ -160,7 +149,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		...commonFormFieldGoodsBagQuantity(!causeOptionsLoaded),
 	};
 
-	// TODO: share with transactions how? DUPLICATE
+	// DRY function shared with transactions & goods, have setValue, trigger, let it be simple
 	const handleIncreaseDecreaseGood = (goodsBagArg: Array<GoodsBagItem>, index: number, value: number) => {
 		const namePrefix = `goodsBag[${index}]`;
 		// increase quantity			
@@ -169,7 +158,8 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		// trigger validation
 		trigger(`${namePrefix}.barCode`);
 		trigger(`${namePrefix}.quantity`);
-	};	
+	};
+
 	// call function with all this magic local references
 	const customGoodsBag = commonFormFieldGoodsBag(
 		// FormFieldNames.GOODS_BAG was replaced with formFieldName
@@ -198,14 +188,17 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// debug
 	renderCount++;
 
-	// if (lastTransferType !== transactionType) {
-	// 	lastTransferType = transactionType;
-	// 	setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, c.VALUES.undefined); }, 100);
-	// }
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
 	// console.log(`values:${JSON.stringify(getValues(), undefined, 2)}`);
 	// if (errors[FormFieldNames.GOODS_BAG]) console.log('errors', JSON.stringify(errors[FormFieldNames.GOODS_BAG][0].barCode, undefined, 2));
 	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
+
+	// EOF of `DRY code shared with transactions & goods`
+
+	// watch
+	const transactionType = watch(FormFieldNames.TRANSACTION_TYPE);
+	const resourceType = watch(FormFieldNames.RESOURCE_TYPE);
+
 	if (transactionType === TransactionType.transferFunds && resourceType !== ResourceType.funds) {
 		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.funds); }, 100);
 	} else if (transactionType === TransactionType.transferVolunteeringHours && resourceType !== ResourceType.volunteeringHours) {
@@ -245,11 +238,6 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
-			// TODO: wip create a map function
-			// const keys = Object.values(data);
-			// const newTransactionDataTest: any = keys.map((e) => { return { [e]: (data as any)[e] } });
-			// debugger;
-			// TODO only send data from current transactionType
 			const newTransactionData: NewTransactionInput = {
 				transactionType: data.transactionType,
 				resourceType: data.resourceType,
@@ -265,8 +253,6 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				quantity: Number(data.quantity),
 				currency: data.currency,
 				assetId: data.assetId,
-				// old selection box
-				// goods: data.goods,
 				goods: goodsBag.map((e: GoodsBagItem) => {
 					return {
 						code: e.barCode, barCode: e.barCode, name: e.barCode, quantity: Number(e.quantity)
@@ -276,20 +262,21 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				metaData: data.metaData ? JSON.parse(data.metaData) : {},
 				metaDataInternal: data.metaDataInternal ? JSON.parse(data.metaDataInternal) : {},
 			};
-			// TODO cleanup
-			// console.log(JSON.stringify(data, undefined, 2));
-			// console.log(JSON.stringify(newTransactionData, undefined, 2));
-			// debugger;
+
+			// fire mutation
 			const response = await transactionNewMutation({ variables: { newTransactionData: newTransactionData } });
 
 			if (response) {
-				const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.transaction, id: response.data.transactionNew.id }) };
-				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
-				history.push({ pathname: routes.RESULT_PAGE.path });
+				// TODO: cleanup old result message
+				// const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.transaction, id: response.data.transactionNew.id }) };
+				// dispatch({ type: ActionType.RESULT_MESSAGE, payload });
+				// history.push({ pathname: routes.RESULT_PAGE.path });
+				setSnackbarOpen(true);
+				reset();
 			}
 		} catch (error) {
 			// don't throw here else we catch react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
-			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
+			// console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		}
 	};
 
@@ -554,6 +541,10 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
+				<SnackbarMessage message={c.I18N.snackbarTransactionSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />
+				<Box component='span' m={1}>
+					<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionUpsertFormWip} />
+				</Box>
 			</Box>
 		</Fragment >
 	);

@@ -43,8 +43,10 @@ const I18N: { [key: string]: string } = {
   nonAccountSignUp: 'Don\'t have an account? Sign Up',
   rememberMe: 'Remember me',
   forgotPassword: 'Forgot password?',
+  snackbarTransactionSuccess: 'transaction successful!',
   // wip: messages
   signInWip: 'wip: required send email activation code, otp code, finish remember me, and other stuff...',
+  transactionUpsertFormWip: 'wip: enable add output type, if cause show selection box, else show input person or participant. filter causes based on onGoing/active causes',
   transactionGoodsFormWip: 'wip: only show onGoing causes (dateRange), use barCode to get product info from api (graph graphql server), store info in node product, and return it...',
   // template
   signUpUserRegisteredSuccessfully: 'User registered successfully! You can login with \'${username}\'',
