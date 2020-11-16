@@ -1,7 +1,7 @@
 import Box from '@material-ui/core/Box';
 import React, { Fragment } from 'react';
 import { envVariables as e } from '../../app/config/env';
-import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
+import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { usePersonProfileQuery } from '../../generated/graphql';
 import { PageTitle } from '../../components/material-ui/typography';

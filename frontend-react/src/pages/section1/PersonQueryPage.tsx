@@ -3,7 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import React, { Fragment } from 'react';
 import { getAccessToken } from '../../app';
 import { envVariables as e, routes, RouteKey } from '../../app/config';
-import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
+import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { Person, usePersonsLazyQuery } from '../../generated/graphql';

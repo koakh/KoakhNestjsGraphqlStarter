@@ -490,7 +490,7 @@ export const commonFormFieldGoodsBag = (
             <IconButton
               className={classes.buttonGoodsActions}
               aria-label={c.I18N.decrease}
-              disabled={loading || goodsBag[index] && goodsBag[index].quantity <= 1 }
+              disabled={loading || (goodsBag[index] && goodsBag[index].quantity <= 1) }
               onClick={() => handleIncreaseDecreaseGood(goodsBag, index, -1)}
               size='small'
             >

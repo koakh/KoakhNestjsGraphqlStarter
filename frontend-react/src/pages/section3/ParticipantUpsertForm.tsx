@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
 import { commonFormFieldAmbassadors, commonFormFieldCode, commonFormFieldEmail, commonFormFieldFiscalNumber, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldAssetName, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
-import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
+import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewParticipantInput, useParticipantNewMutation } from '../../generated/graphql';

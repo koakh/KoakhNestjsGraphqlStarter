@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
 import { commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagQuantity, commonFormFieldTags, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
-import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
+import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
@@ -159,66 +159,6 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	const goodsBagQuantity: FormPropFields = {
 		...commonFormFieldGoodsBagQuantity(!causeOptionsLoaded),
 	};
-	// TODO: cleanup this refactored code
-	// // required a key, this belongs to the loop of form components
-	// const customGoodsBag = (<Fragment key='goods'>
-	// 	{fields.map((item, index) => {
-	// 		return (
-	// 			<Grid key={item.id} container spacing={3}>
-	// 				<Grid item xs={6}>
-	// 					{generateTextField({
-	// 						...goodsBagEan,
-	// 						inputRef: goodsBagEanInputRef[index],
-	// 						name: `goodsBag[${index}].barCode`,
-	// 						defaultValue: item.barCode,
-	// 						rules: validationBarCodeExHelper(`goodsBag[${index}].barCode`, goodsBag[index]),
-	// 						helperTextFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].barCode !== undefined
-	// 							? errors[FormFieldNames.GOODS_BAG][index].barCode.message
-	// 							: goodsBagEan.helperText,
-	// 						errorFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].barCode !== undefined,
-	// 						onFocusFn: () => goodsBagEanInputRef[index].current.focus()
-	// 					}, control, errors, loading)}
-	// 				</Grid>
-	// 				<Grid item xs={3}>
-	// 					{generateTextField({
-	// 						...goodsBagQuantity,
-	// 						inputRef: goodsBagQuantityInputRef[index],
-	// 						name: `goodsBag[${index}].quantity`,
-	// 						defaultValue: item.quantity,
-	// 						rules: validationRuleRegExHelper(`goodsBag[${index}].quantity`, c.REGEXP.floatPositive),
-	// 						helperTextFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].quantity !== undefined
-	// 							? errors[FormFieldNames.GOODS_BAG][index].quantity.message
-	// 							: '',
-	// 						errorFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].quantity !== undefined,
-	// 						onFocusFn: () => goodsBagQuantityInputRef[index].current.focus()
-	// 					}, control, errors, loading)}
-	// 				</Grid>
-	// 				<Grid item xs={3}>
-	// 					<Button
-	// 						type='button'
-	// 						variant='contained'
-	// 						className={classes.buttonGoodsDelete}
-	// 						disabled={loading || index === 0}
-	// 						onClick={() => remove(index)}
-	// 						startIcon={<DeleteIcon />}
-	// 						fullWidth
-	// 					>
-	// 						{c.I18N.delete}
-	// 					</Button>
-	// 				</Grid>
-	// 			</Grid>
-	// 		);
-	// 	})}
-	// 	<Button
-	// 		type='button'
-	// 		variant='contained'
-	// 		className={classes.button}
-	// 		disabled={loading || !causeOptionsLoaded || fields.length === maxGoodsItems}
-	// 		onClick={() => append({ barCode: '', quantity: 1 })}
-	// 	>
-	// 		{c.I18N.add}
-	// 	</Button>
-	// </Fragment>);
 
 	// TODO: share with transactions how? DUPLICATE
 	const handleIncreaseDecreaseGood = (goodsBagArg: Array<GoodsBagItem>, index: number, value: number) => {

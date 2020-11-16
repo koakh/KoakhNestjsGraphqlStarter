@@ -2,7 +2,7 @@ import { Box } from '@material-ui/core';
 import React, { Fragment } from 'react';
 import { RouteKey, routes } from '../../app/config';
 import { useStateValue } from '../../app/state';
-import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
+import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { PageTitle } from '../../components/material-ui/typography';
 
 interface Props { }

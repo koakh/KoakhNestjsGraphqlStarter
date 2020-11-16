@@ -14,7 +14,7 @@ import { RouteComponentProps } from 'react-router';
 import { appConstants as c, setAccessToken } from '../../app';
 import { commonFormFieldPassword, commonFormFieldUsername, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
-import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert/AlertMessage';
+import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message/AlertMessage';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright, Props as CopyrightProps } from '../../components/material-ui/other/Copyright';
 import { LoginPersonInput, PersonProfileDocument, usePersonLoginMutation } from '../../generated/graphql';

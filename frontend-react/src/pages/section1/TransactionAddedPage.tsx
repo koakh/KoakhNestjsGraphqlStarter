@@ -1,6 +1,6 @@
 import { Box, Typography } from '@material-ui/core';
 import React, { Fragment } from 'react';
-import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
+import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { PageTitle } from '../../components/material-ui/typography';
 import { TransactionAddedSubscription, useTransactionAddedSubscription } from '../../generated/graphql';
 

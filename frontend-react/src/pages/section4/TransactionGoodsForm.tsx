@@ -1,22 +1,25 @@
-import { Box, Switch } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import React, { Fragment, useCallback, useRef, useState } from 'react';
 import BarcodeReader from 'react-barcode-reader';
 // import { useBarcodeScanner} from 'react-barcode-reader'
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
-import { ActionType, useStateValue } from '../../app/state';
-import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert';
+import { commonFormFieldInputTypeEntity, commonFormFieldInputEntity, commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { useStateValue } from '../../app/state';
+import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
+import { SnackbarMessage, SnackbarSeverityType } from '../../components/snackbar-message';
 import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
-import { AutocompleteAndSelectOptions, EntityType, FormDefaultValues, FormInputType, FormPropFields, GoodsBagItem, ModelType, ResourceType, Tag, TransactionType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, parseTemplate, useStyles } from '../../utils';
+import { AutocompleteAndSelectOptions, EntityType, FormDefaultValues, FormInputType, FormPropFields, GoodsBagItem, ResourceType, Tag, TransactionType } from '../../types';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles } from '../../utils';
 
 let renderCount = 0;
 
 type FormInputs = {
+	inputType: EntityType;
+	input: string;
 	outputType: EntityType;
 	output: string;
 	goodsBag: Array<GoodsBagItem>
@@ -26,6 +29,8 @@ type FormInputs = {
 	metaDataInternal?: any,
 };
 enum FormFieldNames {
+	INPUT_TYPE = 'inputType',
+	INPUT = 'input',
 	OUTPUT_TYPE = 'outputType',
 	OUTPUT = 'output',
 	GOODS_BAG = 'goodsBag',
@@ -35,6 +40,8 @@ enum FormFieldNames {
 	META_DATA_INTERNAL = 'metaDataInternal',
 };
 const defaultValues: FormDefaultValues = {
+	inputType: EntityType.person,
+	input: '',
 	outputType: EntityType.cause,
 	output: c.VALUES.undefined,
 	goodsBag: [{ barCode: '', quantity: 1 }],
@@ -49,6 +56,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	// hooks styles
 	const classes = useStyles();
 	// hooks state
+	// eslint-disable-next-line
 	const [state, dispatch] = useStateValue();
 	// hooks react form
 	const { handleSubmit, watch, errors, control, reset, getValues, setValue, trigger } = useForm<FormInputs>({ defaultValues, ...formCommonOptions });
@@ -63,11 +71,14 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		// keyName: "id"
 	});
 	// useState
-	const [barCodeResult, setBarCodeResult] = useState<{ result: string }>({ result: 'no result scanned' })
-	const [scanning, setScanning] = useState(false);
-	const handleToggleScan = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setScanning(event.target.checked);
-	};
+	// TODO cleanUp
+	// const [barCodeResult, setBarCodeResult] = useState<{ result: string }>({ result: 'no result scanned' })
+	// TODO cleanUp scanning
+	// const [scanning, setScanning] = useState(false);
+	// const handleToggleScan = (event: React.ChangeEvent<HTMLInputElement>) => {
+	// 	setScanning(event.target.checked);
+	// };
+	const [open, setOpen] = React.useState<boolean>(false);
 
 	// output personOptions: require [] array to be a reference, not a primitive
 	const [causeOptions, setCauseOptions] = useState<AutocompleteAndSelectOptions[]>([]);
@@ -102,76 +113,6 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	const goodsBagQuantity: FormPropFields = {
 		...commonFormFieldGoodsBagQuantity(!causeOptionsLoaded),
 	};
-	// TODO: cleanup this refactored code
-	// const goodsBagQuantity: FormPropFields = {
-	// 	// inputRef: refs // will be initialized in fieldsMap
-	// 	type: FormInputType.TEXT,
-	// 	name: null,
-	// 	controlProps: commonControlProps,
-	// 	fullWidth: true,
-	// 	label: c.I18N.quantityLabel,
-	// 	placeholder: c.I18N.quantityPlaceHolder,
-	// 	disabled: !causeOptionsLoaded,
-	// };
-	// required a key, this belongs to the loop of form components
-	// const customGoodsBag = (<Fragment key='goods'>
-	// 	{fields.map((item, index) => {
-	// 		return (
-	// 			<Grid key={item.id} container spacing={3}>
-	// 				<Grid item xs={6}>
-	// 					{generateTextField({
-	// 						...goodsBagEan,
-	// 						inputRef: goodsBagEanInputRef[index],
-	// 						name: `goodsBag[${index}].barCode`,
-	// 						defaultValue: item.barCode,
-	// 						rules: validationBarCodeExHelper(`goodsBag[${index}].barCode`, goodsBag[index]),
-	// 						helperTextFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].barCode !== undefined
-	// 							? errors[FormFieldNames.GOODS_BAG][index].barCode.message
-	// 							: goodsBagEan.helperText,
-	// 						errorFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].barCode !== undefined,
-	// 						onFocusFn: () => goodsBagEanInputRef[index].current.focus()
-	// 					}, control, errors, loading)}
-	// 				</Grid>
-	// 				<Grid item xs={3}>
-	// 					{generateTextField({
-	// 						...goodsBagQuantity,
-	// 						inputRef: goodsBagQuantityInputRef[index],
-	// 						name: `goodsBag[${index}].quantity`,
-	// 						defaultValue: item.quantity,
-	// 						rules: validationRuleRegExHelper(`goodsBag[${index}].quantity`, c.REGEXP.floatPositive),
-	// 						helperTextFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].quantity !== undefined
-	// 							? errors[FormFieldNames.GOODS_BAG][index].quantity.message
-	// 							: '',
-	// 						errorFn: () => errors[FormFieldNames.GOODS_BAG] && errors[FormFieldNames.GOODS_BAG][index] && errors[FormFieldNames.GOODS_BAG][index].quantity !== undefined,
-	// 						onFocusFn: () => goodsBagQuantityInputRef[index].current.focus()
-	// 					}, control, errors, loading)}
-	// 				</Grid>
-	// 				<Grid item xs={3}>
-	// 					<Button
-	// 						type='button'
-	// 						variant='contained'
-	// 						className={classes.buttonGoodsDelete}
-	// 						disabled={loading || index === 0}
-	// 						onClick={() => remove(index)}
-	// 						startIcon={<DeleteIcon />}
-	// 						fullWidth
-	// 					>
-	// 						{c.I18N.delete}
-	// 					</Button>
-	// 				</Grid>
-	// 			</Grid>
-	// 		);
-	// 	})}
-	// 	<Button
-	// 		type='button'
-	// 		variant='contained'
-	// 		className={classes.buttonGoodsAdd}
-	// 		disabled={loading || !causeOptionsLoaded || fields.length === maxGoodsItems}
-	// 		onClick={() => append({ barCode: '', quantity: 1 })}
-	// 	>
-	// 		{c.I18N.add}
-	// 	</Button>
-	// </Fragment>);
 
 	// TODO: share with transactions how? DUPLICATE
 	const handleIncreaseDecreaseGood = (goodsBagArg: Array<GoodsBagItem>, index: number, value: number) => {
@@ -197,7 +138,8 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		append,
 		handleIncreaseDecreaseGood,
 		// other
-		loading || scanning,
+		// TODO cleanUp scanning
+		loading /*|| scanning*/,
 		fields,
 		goodsBag,
 		goodsBagEan,
@@ -234,15 +176,18 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 				metaData: data.metaData ? JSON.parse(data.metaData) : {},
 				metaDataInternal: data.metaDataInternal ? JSON.parse(data.metaDataInternal) : {},
 			};
-			// TODO cleanup
+			// TODO cleanUp scanning
 			// console.log(JSON.stringify(data, undefined, 2));
 			console.log(JSON.stringify(newTransactionData, undefined, 2));
 			const response = await transactionNewMutation({ variables: { newTransactionData: newTransactionData } });
 
 			if (response) {
-				const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.transaction, id: response.data.transactionNew.id }) };
-				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
-				history.push({ pathname: routes.RESULT_PAGE.path });
+				// TODO: cleanUp
+				// const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.transaction, id: response.data.transactionNew.id }) };
+				// dispatch({ type: ActionType.RESULT_MESSAGE, payload });
+				// history.push({ pathname: routes.RESULT_PAGE.path });
+				setOpen(true);
+				reset();
 			}
 		} catch (error) {
 			// don't throw here else we catch react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
@@ -250,11 +195,8 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		}
 	};
 
-	console.log(`goodsBag: [${JSON.stringify(goodsBag, undefined, 2)}]`);
+	// console.log(`goodsBag: [${JSON.stringify(goodsBag, undefined, 2)}]`);
 
-	// TODO on submit keeps is same page, but shows toast, same for other forms, clean from and show toast message
-	// TODO add INC / DEC Buttons useful for Touch Mobile to inc dec/ if (disable - if 1)
-	// TODO: add type
 	// TODO notes get product info from api in graphql server, store info in neo4j NODE Product
 	// TODO : only add if is a valid eancode use lib npm, else show TOAST invalid barCode
 	// { barCode: '', quantity: 1 }
@@ -264,12 +206,6 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		// add quantity
 		if (index > -1) {
 			handleIncreaseDecreaseGood(goodsBagArg, index, 1);
-			// // increase quantity
-			// ++goodsBagArg[index].quantity;
-			// setValue(`${namePrefix}.quantity`, goodsBagArg[index].quantity);
-			// // trigger validation
-			// trigger(`${namePrefix}.barCode`);
-			// trigger(`${namePrefix}.quantity`);
 		} else {
 			// get first empty input, useful to fill first, and other empty that was added
 			const indexEmpty = goodsBagArg.findIndex((e: GoodsBagItem) => {
@@ -292,7 +228,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		console.error(error);
 	}
 	// handleBarcodeReaderScan = handleBarcodeReaderScan.bind(this);
-	// hw to use bind in rfc: https://stackoverflow.com/questions/53215067/how-can-i-bind-function-with-hooks-in-react
+	// how to use bind in rfc: https://stackoverflow.com/questions/53215067/how-can-i-bind-function-with-hooks-in-react
 	const handleBarcodeReaderScan = useCallback(
 		(data: any) => {
 			console.log(`read data '${data}'`);
@@ -300,10 +236,17 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		},
 		// TODO: the trick is use [goodsBag] to pass current reference
 		// Tells React to memoize regardless of arguments.
+		// eslint-disable-next-line
 		[goodsBag],
 	);
 
 	const formDefinition: Record<string, FormPropFields> = {
+		// [FormFieldNames.INPUT_TYPE]: {
+		// 	...commonFormFieldInputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))),
+		// },
+		// [FormFieldNames.INPUT]: {
+		// 	...commonFormFieldInputEntity(useRef(), FormFieldNames.INPUT, () => causeOptions, !causeOptionsLoaded),
+		// },
 		[FormFieldNames.OUTPUT_TYPE]: {
 			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.OUTPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))),
 		},
@@ -344,7 +287,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 
 	return (
 		<Fragment>
-			<PageTitle>{routes[RouteKey.TRANSACTION_UPSERT_FORM].title} [{renderCount}]</PageTitle>
+			<PageTitle>{routes[RouteKey.TRANSACTION_GOODS_FORM].title} [{renderCount}]</PageTitle>
 			<Box component='span' m={1}>
 				{/* 'handleSubmit' will validate your inputs before invoking 'onSubmit' */}
 				<form
@@ -352,23 +295,27 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
 					{generateFormDefinition(formDefinition, control, errors, loading)}
-					<Switch
+					{/* TODO cleanUp <Switch
 						checked={scanning}
 						onChange={handleToggleScan}
 						name='toggleScan'
-					/>
+					/> */}
 					{generateFormButtonsDiv(classes, loading || !causeOptionsLoaded, handleResetHandler)}
 				</form>
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 			</Box>
-			{/* TODO */}
 			<BarcodeReader
 				timeBeforeScanTest={250}
 				onScan={handleBarcodeReaderScan}
 				onError={handleBarcodeReaderError}
 			/>
+			{/* TODO: improve message */}
+      <Box component='span' m={1}>
+        <AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionGoodsFormWip} />
+      </Box>
+			<SnackbarMessage message={'transaction successful!'} severity={SnackbarSeverityType.SUCCESS} open={open} setOpen={setOpen}/>
 		</Fragment >
 	);
 }

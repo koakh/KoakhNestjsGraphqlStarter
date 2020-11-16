@@ -45,6 +45,7 @@ const I18N: { [key: string]: string } = {
   forgotPassword: 'Forgot password?',
   // wip: messages
   signInWip: 'wip: required send email activation code, otp code, finish remember me, and other stuff...',
+  transactionGoodsFormWip: 'wip: only show onGoing causes (dateRange), use barCode to get product info from api (graph graphql server), store info in node product, and return it...',
   // template
   signUpUserRegisteredSuccessfully: 'User registered successfully! You can login with \'${username}\'',
   newModelCreatedSuccessfully: 'New ${model} id: \'${id}\' created successfully!',
