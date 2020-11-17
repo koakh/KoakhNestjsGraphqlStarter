@@ -254,7 +254,8 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.OUTPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))),
 		},
 		[FormFieldNames.OUTPUT]: {
-			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, outputType, () => causeOptions, !causeOptionsLoaded,
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, outputType, !causeOptionsLoaded,
+				() => causeOptions,
 				// visible
 				() => { return (outputType !== c.VALUES.undefined); },
 				// validate

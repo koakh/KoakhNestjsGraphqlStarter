@@ -3,7 +3,7 @@ import React, { Fragment, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldAssetId, commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagInput, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, commonFormFieldTags, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldAssetId, commonFormFieldCurrency, commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagInput, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, commonFormFieldQuantity, commonFormFieldTags, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
@@ -407,47 +407,61 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		// 	// disableCloseOnSelect: false,
 		// },
 		[FormFieldNames.OUTPUT]: {
-			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, outputType, () => causeOptions, !causeOptionsLoaded,
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, outputType, !causeOptionsLoaded, 
+				() => causeOptions,
 				// visible
 				() => { return (outputType !== c.VALUES.undefined); },
 				// validate
-				() => { return validateRegExpArray(getValues(FormFieldNames.OUTPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]) })
+				() => { return validateRegExpArray(getValues(FormFieldNames.OUTPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]) }
+			)
 		},
+		// [FormFieldNames.QUANTITY]: {
+		// 	inputRef: useRef(),
+		// 	type: FormInputType.NUMBER,
+		// 	name: FormFieldNames.QUANTITY,
+		// 	controlProps: commonControlProps,
+		// 	fullWidth: true,
+		// 	label: c.I18N.quantityLabel,
+		// 	placeholder: c.I18N.quantityPlaceHolder,
+		// 	rules: validationRuleRegExHelper(FormFieldNames.QUANTITY, c.REGEXP.floatPositive),
+		// 	disabled: !causeOptionsLoaded,
+		// 	visible: (control) => {
+		// 		return (control.getValues(FormFieldNames.TRANSACTION_TYPE) !== TransactionType.transferGoods && control.getValues(FormFieldNames.TRANSACTION_TYPE) !== c.VALUES.undefined);
+		// 	},
+		// },
 		[FormFieldNames.QUANTITY]: {
-			inputRef: useRef(),
-			type: FormInputType.NUMBER,
-			name: FormFieldNames.QUANTITY,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.quantityLabel,
-			placeholder: c.I18N.quantityPlaceHolder,
-			rules: validationRuleRegExHelper(FormFieldNames.QUANTITY, c.REGEXP.floatPositive),
-			disabled: !causeOptionsLoaded,
-			visible: (control) => {
-				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) !== TransactionType.transferGoods && control.getValues(FormFieldNames.TRANSACTION_TYPE) !== c.VALUES.undefined);
-			},
+			...commonFormFieldQuantity(useRef(), FormFieldNames.QUANTITY, !causeOptionsLoaded, () => {
+				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) !== c.VALUES.undefined && transactionType !== TransactionType.transferGoods);
+			}),
 		},
+		// [FormFieldNames.CURRENCY]: {
+		// 	inputRef: useRef(),
+		// 	type: FormInputType.SELECT,
+		// 	name: FormFieldNames.CURRENCY,
+		// 	controlProps: commonControlProps,
+		// 	fullWidth: true,
+		// 	label: c.I18N.currencyLabel,
+		// 	rules: {
+		// 		validate: () => isValidEnum(CurrencyCode, getValues(FormFieldNames.CURRENCY))
+		// 			? true
+		// 			: validationMessage('required', FormFieldNames.CURRENCY)
+		// 	},
+		// 	options: () => [
+		// 		{ title: c.I18N.currencyCodeEur, value: CurrencyCode.eur },
+		// 		{ title: c.I18N.currencyCodeUsd, value: CurrencyCode.usd },
+		// 	],
+		// 	disabled: !causeOptionsLoaded,
+		// 	visible: (control) => {
+		// 		// required to check if is undefined and assume true as a default
+		// 		return (!control.getValues(FormFieldNames.TRANSACTION_TYPE) || control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferFunds);
+		// 	}
+		// },
 		[FormFieldNames.CURRENCY]: {
-			inputRef: useRef(),
-			type: FormInputType.SELECT,
-			name: FormFieldNames.CURRENCY,
-			controlProps: commonControlProps,
-			fullWidth: true,
-			label: c.I18N.currencyLabel,
-			rules: {
-				validate: () => isValidEnum(CurrencyCode, getValues(FormFieldNames.CURRENCY))
-					? true
-					: validationMessage('required', FormFieldNames.CURRENCY)
-			},
-			options: () => [
-				{ title: c.I18N.currencyCodeEur, value: CurrencyCode.eur },
-				{ title: c.I18N.currencyCodeUsd, value: CurrencyCode.usd },
-			],
-			disabled: !causeOptionsLoaded,
-			visible: (control) => {
+			...commonFormFieldCurrency(useRef(), FormFieldNames.CURRENCY, !causeOptionsLoaded,
+				() => isValidEnum(CurrencyCode, getValues(FormFieldNames.CURRENCY)),
 				// required to check if is undefined and assume true as a default
-				return (!control.getValues(FormFieldNames.TRANSACTION_TYPE) || control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferFunds);
-			}
+				() => (transactionType && transactionType === TransactionType.transferFunds),
+			)
 		},
 		// [FormFieldNames.ASSET_ID]: {
 		// 	inputRef: useRef(),

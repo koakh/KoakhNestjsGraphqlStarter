@@ -4,7 +4,7 @@ import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
 import React, { Fragment, MutableRefObject } from 'react';
 import { ArrayField, Control, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '..';
-import { AutocompleteAndSelectOptions, EntityType, FormInputType, FormPropFields, GoodsBagItem } from '../../types';
+import { AutocompleteAndSelectOptions, CurrencyCode, EntityType, FormInputType, FormPropFields, GoodsBagItem } from '../../types';
 import { commonControlProps, generateTextField, validationBarCodeExHelper, validationMessage, validationRuleRegExHelper } from '../../utils';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
@@ -206,6 +206,46 @@ export const commonFormFieldAssetOwner = (inputRef: MutableRefObject<any>, formF
   }
 }
 
+// simplified version to work in cause
+export const commonFormFieldCauseInputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
+  return {
+    inputRef,
+    type: FormInputType.SELECT,
+    name: formFieldName,
+    label: c.I18N.inputTypeLabel,
+    controlProps: commonControlProps,
+    fullWidth: true,
+    disabled: false,
+    options: () => c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
+    rules: {
+      validate: () => validate()
+        ? true
+        : validationMessage('required', formFieldName)
+    },
+  }
+}
+
+// simplified version to work in cause
+export const commonFormFieldCauseInputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
+  return {
+    inputRef,
+    type: FormInputType.TEXT,
+    name: formFieldName,
+    label: c.I18N.inputLabel,
+    controlProps: commonControlProps,
+    fullWidth: true,
+    placeholder: c.I18N.inputPlaceholder,
+    helperText: c.I18N.inputHelperText,
+    disabled: false,
+    rules: {
+      validate: () => validate()
+        ? true
+        : validationMessage('required', formFieldName)
+    },
+  }
+}
+
+
 // shared
 
 export const commonFormFieldCode = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
@@ -300,40 +340,109 @@ export const commonFormFieldEndDate = (inputRef: MutableRefObject<any>, formFiel
   }
 }
 
-export const commonFormFieldInputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
+// TODO deprecated now re-use output
+// export const commonFormFieldInputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
+//   return {
+//     inputRef,
+//     type: FormInputType.SELECT,
+//     name: formFieldName,
+//     label: c.I18N.inputTypeLabel,
+//     controlProps: commonControlProps,
+//     fullWidth: true,
+//     disabled: false,
+//     options: () => c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
+//     rules: {
+//       validate: () => validate()
+//         ? true
+//         : validationMessage('required', formFieldName)
+//     },
+//   }
+// }
+
+// export const commonFormFieldInputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
+//   return {
+//     inputRef,
+//     type: FormInputType.TEXT,
+//     name: formFieldName,
+//     label: c.I18N.inputLabel,
+//     controlProps: commonControlProps,
+//     fullWidth: true,
+//     placeholder: c.I18N.inputPlaceholder,
+//     helperText: c.I18N.inputHelperText,
+//     disabled: false,
+//     rules: {
+//       validate: () => validate()
+//         ? true
+//         : validationMessage('required', formFieldName)
+//     },
+//   }
+// }
+
+export const commonFormFieldOutputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
   return {
     inputRef,
     type: FormInputType.SELECT,
     name: formFieldName,
-    label: c.I18N.inputTypeLabel,
+    label: c.I18N.outputTypeLabel,
     controlProps: commonControlProps,
     fullWidth: true,
-    disabled: false,
-    options: () => c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
     rules: {
       validate: () => validate()
         ? true
         : validationMessage('required', formFieldName)
     },
+    options: () => c.ENTITY_TYPE_OPTIONS,
   }
 }
 
-export const commonFormFieldInputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
+// render a selection or input based on currentEntityType
+// validate is only used in text input, optional for selection
+export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, currentEntityType: EntityType, disabled: boolean, options: () => AutocompleteAndSelectOptions[], visible: () => boolean, validate?: () => boolean): FormPropFields => {
+  return (currentEntityType == EntityType.cause)
+    ? {
+      inputRef,
+      type: FormInputType.SELECT,
+      name: formFieldName,
+      label: c.I18N.outputLabel,
+      controlProps: commonControlProps,
+      fullWidth: true,
+      rules: validationRuleRegExHelper(formFieldName, c.REGEXP.uuid),
+      // args
+      options,
+      disabled,
+      visible,
+    }
+    : {
+      inputRef,
+      type: FormInputType.TEXT,
+      name: formFieldName,
+      label: c.I18N.outputLabel,
+      controlProps: commonControlProps,
+      fullWidth: true,
+      placeholder: c.I18N.outputPlaceholder,
+      helperText: c.I18N.outputHelperText,
+      rules: {
+        validate: () => validate()
+          ? true
+          : validationMessage('required', formFieldName)
+      },
+      // args
+      disabled,
+      visible
+    }
+}
+
+export const commonFormFieldInputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
   return {
-    inputRef,
-    type: FormInputType.TEXT,
-    name: formFieldName,
+    ...commonFormFieldOutputTypeEntity(inputRef, formFieldName, validate),
+    label: c.I18N.inputTypeLabel,
+  }
+}
+
+export const commonFormFieldInputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, currentEntityType: EntityType, options: () => AutocompleteAndSelectOptions[], disabled: boolean, visible: () => boolean, validate?: () => boolean): FormPropFields => {
+  return {
+    ...commonFormFieldOutputEntity(inputRef, formFieldName, currentEntityType, disabled, options, visible),
     label: c.I18N.inputLabel,
-    controlProps: commonControlProps,
-    fullWidth: true,
-    placeholder: c.I18N.inputPlaceholder,
-    helperText: c.I18N.inputHelperText,
-    disabled: false,
-    rules: {
-      validate: () => validate()
-        ? true
-        : validationMessage('required', formFieldName)
-    },
   }
 }
 
@@ -372,62 +481,47 @@ export const commonFormFieldAssetId = (inputRef: MutableRefObject<any>, formFiel
     helperText: c.I18N.assetIdHelperText,
     rules: validationRuleRegExHelper(formFieldName, c.REGEXP.uuid),
     disabled: false,
+    // args
     visible,
   }
 }
 
-export const commonFormFieldOutputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
+export const commonFormFieldQuantity = (inputRef: MutableRefObject<any>, formFieldName: string, disabled: boolean, visible: () => boolean): FormPropFields => {
+  return {
+    inputRef,
+    type: FormInputType.NUMBER,
+    name: formFieldName,
+    label: c.I18N.quantityLabel,
+    controlProps: commonControlProps,
+    fullWidth: true,
+    placeholder: c.I18N.quantityPlaceHolder,
+    rules: validationRuleRegExHelper(formFieldName, c.REGEXP.floatPositive),
+    // args
+    disabled,
+    visible,
+  }
+}
+
+export const commonFormFieldCurrency = (inputRef: MutableRefObject<any>, formFieldName: string, disabled: boolean, validate: () => boolean, visible: () => boolean): FormPropFields => {
   return {
     inputRef,
     type: FormInputType.SELECT,
     name: formFieldName,
-    label: c.I18N.outputTypeLabel,
     controlProps: commonControlProps,
     fullWidth: true,
+    label: c.I18N.currencyLabel,
     rules: {
       validate: () => validate()
         ? true
         : validationMessage('required', formFieldName)
     },
-    options: () => c.ENTITY_TYPE_OPTIONS,
+    options: () => [
+      { title: c.I18N.currencyCodeEur, value: CurrencyCode.eur },
+      { title: c.I18N.currencyCodeUsd, value: CurrencyCode.usd },
+    ],
+    disabled,
+    visible,
   }
-}
-
-// render a selection or input based on currentEntityType
-// validate is only used in text input, optional for selection
-export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, currentEntityType: EntityType, options: () => AutocompleteAndSelectOptions[], disabled: boolean, visible: () => boolean, validate?: () => boolean): FormPropFields => {
-  return (currentEntityType == EntityType.cause)
-    ? {
-      inputRef,
-      type: FormInputType.SELECT,
-      name: formFieldName,
-      label: c.I18N.outputLabel,
-      controlProps: commonControlProps,
-      fullWidth: true,
-      rules: validationRuleRegExHelper(formFieldName, c.REGEXP.uuid),
-      // args
-      options,
-      disabled,
-      visible,
-    }
-    : {
-      inputRef,
-      type: FormInputType.TEXT,
-      name: formFieldName,
-      label: c.I18N.outputLabel,
-      controlProps: commonControlProps,
-      fullWidth: true,
-      placeholder: c.I18N.outputPlaceholder,
-      helperText: c.I18N.outputHelperText,
-      rules: {
-        validate: () => validate()
-          ? true
-          : validationMessage('required', formFieldName)
-      },
-      // args
-      disabled,
-      visible
-    }
 }
 
 export const commonFormFieldGoodsBagInput = (inputRef: MutableRefObject<any>, formFieldName: string, custom: JSX.Element, disabled: boolean, visible: () => boolean): FormPropFields => {

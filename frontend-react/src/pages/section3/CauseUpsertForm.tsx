@@ -3,7 +3,7 @@ import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldAmbassadors, commonFormFieldCauseName, commonFormFieldEmail, commonFormFieldEndDate, commonFormFieldInputEntity, commonFormFieldInputTypeEntity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldStartDate, commonFormFieldTags, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldAmbassadors, commonFormFieldCauseInputEntity, commonFormFieldCauseInputTypeEntity, commonFormFieldCauseName, commonFormFieldEmail, commonFormFieldEndDate, commonFormFieldInputEntity, commonFormFieldInputTypeEntity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldStartDate, commonFormFieldTags, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
@@ -128,10 +128,10 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			...commonFormFieldEmail(useRef(), FormFieldNames.EMAIL)
 		},
 		[FormFieldNames.INPUT_TYPE]: {
-			...commonFormFieldInputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))),
+			...commonFormFieldCauseInputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))),
 		},
 		[FormFieldNames.INPUT]: {
-			...commonFormFieldInputEntity(useRef(), FormFieldNames.INPUT, () => validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])),
+			...commonFormFieldCauseInputEntity(useRef(), FormFieldNames.INPUT, () => validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])),
 			label: c.I18N.causeInputStarterLabel,
 		},
 		[FormFieldNames.TAGS]: {
