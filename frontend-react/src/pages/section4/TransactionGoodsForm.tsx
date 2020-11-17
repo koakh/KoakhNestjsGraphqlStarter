@@ -1,4 +1,4 @@
-import { Box } from '@material-ui/core';
+import { Box, FormControlLabel, Switch } from '@material-ui/core';
 import React, { Fragment, useCallback, useRef, useState } from 'react';
 import BarcodeReader from 'react-barcode-reader';
 // import { useBarcodeScanner} from 'react-barcode-reader'
@@ -61,6 +61,8 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	// hooks state
 	// eslint-disable-next-line
 	const [state, dispatch] = useStateValue();
+	// state
+	const [locked, setLocked] = useState<boolean>(false)
 	// snackBar state
 	const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
 	// hooks react form
@@ -156,23 +158,32 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	// require to use watch else getValues(FormFieldNames.x) don't work has expected
 	const inputType = watch(FormFieldNames.INPUT_TYPE);
 	const outputType = watch(FormFieldNames.OUTPUT_TYPE);
+	const output = watch(FormFieldNames.OUTPUT);
 
 	// TODO
 	// console.log(JSON.stringify(data, undefined, 2));
 	// console.log(JSON.stringify(newTransactionData, undefined, 2));
 
-	const handleResetHandler = async () => { reset(defaultValues, {}) };
+	// locked switch
+	const handleLockedSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setLocked(event.target.checked);
+	};
+
+	const handleResetHandler = async () => { reset(defaultValues, {}); setLocked(false); };
 	const handleSubmitHandler = async (data: FormInputs) => {
 		try {
 			const newTransactionData: NewTransactionInput = {
 				transactionType: TransactionType.transferGoods,
 				resourceType: ResourceType.genericGoods,
 				input: {
-					type: EntityType.person,
-					id: state.user.profile.id,
+					// type: EntityType.person,
+					// id: state.user.profile.id,
+					type: data.inputType,
+					id: data.input,
 				},
 				output: {
-					type: EntityType.cause,
+					// type: EntityType.cause,
+					type: data.outputType,
 					id: data.output,
 				},
 				goods: goodsBag.map((e: GoodsBagItem) => {
@@ -194,7 +205,10 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 				// dispatch({ type: ActionType.RESULT_MESSAGE, payload });
 				// history.push({ pathname: routes.RESULT_PAGE.path });
 				setSnackbarOpen(true);
-				reset();
+				// reset();
+				// reset();
+				setValue(`goodsBag`, defaultValues.goodsBag);
+				setValue('input', '');
 			}
 		} catch (error) {
 			// don't throw here else we catch react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
@@ -254,9 +268,9 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		// },
 		[FormFieldNames.INPUT_TYPE]: {
 			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))),
+			disabled: !causeOptionsLoaded || locked,
 			// override outputLabel
 			label: c.I18N.inputTypeLabel,
-			disabled: !causeOptionsLoaded,
 		},
 		[FormFieldNames.INPUT]: {
 			...commonFormFieldOutputEntity(useRef(), FormFieldNames.INPUT, inputType,
@@ -272,6 +286,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		},
 		[FormFieldNames.OUTPUT_TYPE]: {
 			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.OUTPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))),
+			disabled: !causeOptionsLoaded || locked,
 		},
 		[FormFieldNames.OUTPUT]: {
 			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, outputType,
@@ -281,7 +296,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 				// validate
 				() => { return validateRegExpArray(getValues(FormFieldNames.OUTPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]) }
 			),
-			disabled: !causeOptionsLoaded,
+			disabled: !causeOptionsLoaded || locked,
 		},
 		[FormFieldNames.GOODS_BAG]: {
 			...commonFormFieldGoodsBagInput(useRef(), FormFieldNames.GOODS_BAG, customGoodsBag),
@@ -313,17 +328,20 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 					onSubmit={handleSubmit((data) => handleSubmitHandler(data))}
 				>
 					{generateFormDefinition(formDefinition, control, errors, loading)}
-					{/* TODO cleanUp <Switch
-						checked={scanning}
-						onChange={handleToggleScan}
-						name='toggleScan'
-					/> */}
 					{generateFormButtonsDiv(classes, loading || !causeOptionsLoaded, handleResetHandler)}
+					<FormControlLabel control={
+						<Switch
+							name='toggleLocked'
+							checked={locked}
+							onChange={handleLockedSwitch}
+							disabled={!(causeOptionsLoaded && inputType && outputType && output)}
+						/>}
+						label="Locked"
+					/>
 				</form>
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
-			</Box>
 			<SnackbarMessage message={c.I18N.snackbarTransactionSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />
 			<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionGoodsFormWip} />
 			<BarcodeReader
@@ -331,6 +349,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 				onScan={handleBarcodeReaderScan}
 				onError={handleBarcodeReaderError}
 			/>
+			</Box>
 		</Fragment >
 	);
 }

@@ -190,12 +190,12 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// debug
 	renderCount++;
 
+	// EOF of `DRY code shared with transactions & goods`
+
 	// console.log('errors', JSON.stringify(errors, undefined, 2));
 	// console.log(`values:${JSON.stringify(getValues(), undefined, 2)}`);
 	// if (errors[FormFieldNames.GOODS_BAG]) console.log('errors', JSON.stringify(errors[FormFieldNames.GOODS_BAG][0].barCode, undefined, 2));
 	// console.log(`tags:${JSON.stringify(getValues(FormFieldNames.TAGS), undefined, 2)}`);
-
-	// EOF of `DRY code shared with transactions & goods`
 
 	// watch
 	const transactionType = watch(FormFieldNames.TRANSACTION_TYPE);
@@ -445,7 +445,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		// 	fullWidth: true,
 		// 	label: c.I18N.quantityLabel,
 		// 	placeholder: c.I18N.quantityPlaceHolder,
-		// 	rules: validationRuleRegExHelper(FormFieldNames.QUANTITY, c.REGEXP.floatPositive),
+		// 	rules: validationRuleRegExHelper(FormFieldNames.QUANTITY, c.REGEXP.integerPositiveNonZero),
 		// 	disabled: !causeOptionsLoaded,
 		// 	visible: (control) => {
 		// 		return (control.getValues(FormFieldNames.TRANSACTION_TYPE) !== TransactionType.transferGoods && control.getValues(FormFieldNames.TRANSACTION_TYPE) !== c.VALUES.undefined);

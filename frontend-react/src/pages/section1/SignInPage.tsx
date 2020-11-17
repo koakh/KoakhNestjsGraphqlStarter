@@ -37,6 +37,9 @@ export const useStyles = makeStyles((theme) => ({
 		width: '100%',
 		marginTop: theme.spacing(1),
 	},
+	spacerTop: {
+		marginTop: theme.spacing(2),
+	},
 }));
 
 type FormInputs = {
@@ -192,15 +195,15 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 					{loading && <LinearIndeterminate />}
 				</form>
 			</div>
-			{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={c.I18N.loginFailed} />}
+			{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={c.I18N.loginFailed} className={classes.spacerTop} />}
 			{/* show signUpUserRegisteredSuccessfully */}
 			{state.resultMessage && <Box component='span' m={1}>
-				<AlertMessage severity={AlertSeverityType.SUCCESS} message={state.resultMessage} />
+				<AlertMessage severity={AlertSeverityType.SUCCESS} message={state.resultMessage} className={classes.spacerTop} />
 			</Box>}
-			<Box mt={8}>
+			<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.signInWip} className={classes.spacerTop} />
+			<Box mt={2}>
 				<Copyright {...copyrightProps} />
 			</Box>
-			<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.signInWip} />
 		</Container>
 	);
 }

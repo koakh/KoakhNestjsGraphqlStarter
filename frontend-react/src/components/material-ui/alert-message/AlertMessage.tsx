@@ -13,13 +13,14 @@ interface Props {
   title?: string;
   message: string;
   severity: AlertSeverityType;
+  className?: string;
 }
 
-export const AlertMessage: React.FC<Props> = (props: Props) => {
+export const AlertMessage: React.FC<Props> = ({title, message, severity, className}) => {
   return (
-    <Alert severity={props.severity}>
-      {props.title && <AlertTitle>{props.title}</AlertTitle>}
-      {props.message}
+    <Alert severity={severity} className={className}>
+      {title && <AlertTitle>{title}</AlertTitle>}
+      {message}
     </Alert>
   )
 }

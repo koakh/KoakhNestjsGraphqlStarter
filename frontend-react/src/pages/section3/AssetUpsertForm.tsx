@@ -4,13 +4,14 @@ import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
 import { commonFormFieldAmbassadors, commonFormFieldAssetName, commonFormFieldAssetOwner, commonFormFieldAssetType, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldTags, formCommonOptions, RouteKey, routes } from '../../app/config';
-import { ActionType, useStateValue } from '../../app/state';
+import { useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
+import { SnackbarMessage, SnackbarSeverityType } from '../../components/snackbar-message';
 import { NewAssetInput, useAssetNewMutation } from '../../generated/graphql';
-import { AssetType, EntityType, FormDefaultValues, FormPropFields, ModelType, Tag } from '../../types';
-import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, parseTemplate, useStyles, validateRegExpArray, validateRegExpArrayWithValuesArray } from '../../utils';
+import { AssetType, EntityType, FormDefaultValues, FormPropFields, Tag } from '../../types';
+import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validateRegExpArray, validateRegExpArrayWithValuesArray } from '../../utils';
 
 type FormInputs = {
 	assetType: AssetType,
@@ -54,6 +55,8 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	const classes = useStyles();
 	// hooks state
 	const [state] = useStateValue();
+	// snackBar state
+	const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
 	// hooks react form
 	const { handleSubmit, errors, control, reset, getValues } = useForm<FormInputs>({
 		// required to inject owner from state
@@ -62,8 +65,6 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	})
 	// hooks: apollo
 	const [assetNewMutation, { loading, error: apolloError }] = useAssetNewMutation();
-	// hooks state
-	const [, dispatch] = useStateValue();
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
 	// debug
@@ -92,9 +93,12 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			const response = await assetNewMutation({ variables: { newAssetData: newAssetData } });
 
 			if (response) {
-				const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.asset, id: response.data.assetNew.id }) };
-				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
-				history.push({ pathname: routes.RESULT_PAGE.path });
+				// TODO: cleanup old result message
+				// const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.asset, id: response.data.assetNew.id }) };
+				// dispatch({ type: ActionType.RESULT_MESSAGE, payload });
+				// history.push({ pathname: routes.RESULT_PAGE.path });
+				setSnackbarOpen(true);
+				reset();
 			}
 		} catch (error) {
 			// don't throw here else we catch react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
@@ -147,6 +151,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
+				<SnackbarMessage message={c.I18N.snackbarAssetUpsertSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />
 			</Box>
 		</Fragment >
 	);

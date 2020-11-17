@@ -3,7 +3,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import React, { Dispatch, SetStateAction } from 'react';
 
-const autoHideDuration= 6000;
+const autoHideDuration = 6000;
 
 export enum SnackbarSeverityType {
   ERROR = 'error',
@@ -25,11 +25,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     '& > * + *': {
       marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(2),
     },
   },
 }));
 
-export const SnackbarMessage: React.FC<Props> = (props: Props) => {
+export const SnackbarMessage: React.FC<Props> = ({message, severity, setOpen, open}) => {
   const classes = useStyles();
   // const [open, setOpen] = React.useState(false);
 
@@ -37,14 +38,14 @@ export const SnackbarMessage: React.FC<Props> = (props: Props) => {
     if (reason === 'clickaway') {
       return;
     }
-    props.setOpen(false);
+    setOpen(false);
   };
 
   return (
     <div className={classes.root}>
-      <Snackbar open={props.open} autoHideDuration={autoHideDuration} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={props.severity}>
-        {props.message}
+      <Snackbar open={open} autoHideDuration={autoHideDuration} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={severity}>
+          {message}
         </Alert>
       </Snackbar>
     </div>

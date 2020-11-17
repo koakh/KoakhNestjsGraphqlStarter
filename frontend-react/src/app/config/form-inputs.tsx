@@ -618,7 +618,7 @@ export const commonFormFieldGoodsBag = (
               inputRef: goodsBagQuantityInputRef[index],
               name: `goodsBag[${index}].quantity`,
               defaultValue: item.quantity,
-              rules: validationRuleRegExHelper(`goodsBag[${index}].quantity`, c.REGEXP.floatPositive),
+              rules: validationRuleRegExHelper(`goodsBag[${index}].quantity`, c.REGEXP.integerPositiveNonZero),
               helperTextFn: () => errors[formFieldName] && errors[formFieldName][index] && errors[formFieldName][index].quantity !== undefined
                 ? errors[formFieldName][index].quantity.message
                 : '',

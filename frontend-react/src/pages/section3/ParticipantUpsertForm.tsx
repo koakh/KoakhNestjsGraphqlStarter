@@ -3,14 +3,14 @@ import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldAmbassadors, commonFormFieldCode, commonFormFieldEmail, commonFormFieldFiscalNumber, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldAssetName, formCommonOptions, RouteKey, routes } from '../../app/config';
-import { ActionType, useStateValue } from '../../app/state';
+import { commonFormFieldAmbassadors, commonFormFieldAssetName, commonFormFieldCode, commonFormFieldEmail, commonFormFieldFiscalNumber, commonFormFieldMetadata, commonFormFieldMetadataInternal, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
+import { SnackbarMessage, SnackbarSeverityType } from '../../components/snackbar-message';
 import { NewParticipantInput, useParticipantNewMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormPropFields, ModelType } from '../../types';
-import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, parseTemplate, useStyles, validateRegExpArrayWithValuesArray } from '../../utils';
+import { FormDefaultValues, FormPropFields } from '../../types';
+import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray } from '../../utils';
 
 type FormInputs = {
 	code: string,
@@ -35,7 +35,7 @@ const defaultValues: FormDefaultValues = {
 	name: mokeFormData ? 'World Food Program' : '',
 	email: mokeFormData ? 'mail@efp.com' : '',
 	fiscalNumber: mokeFormData ? 'PT500123005' : '',
-	ambassadors: mokeFormData ? c.VALUES.mokeAmbassadors: '',
+	ambassadors: mokeFormData ? c.VALUES.mokeAmbassadors : '',
 	metaData: '',
 	metaDataInternal: '',
 };
@@ -44,17 +44,14 @@ const defaultValues: FormDefaultValues = {
 export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// hooks styles
 	const classes = useStyles();
+	// snackBar state
+	const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
 	// hooks react form
 	const { handleSubmit, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	// hooks: apollo
 	const [assetNewMutation, { loading, error: apolloError }] = useParticipantNewMutation();
-	// hooks state
-	const [, dispatch] = useStateValue();
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
-	// debug
-	// console.log('errors', JSON.stringify(errors, undefined, 2));
-	// console.log(`assetType:${getValues(FormFieldNames.ASSET_TYPE)}`);
 
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
@@ -71,9 +68,12 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			const response = await assetNewMutation({ variables: { newParticipantData: newParticipantData } });
 
 			if (response) {
-				const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.participant, id: response.data.participantNew.id }) };
-				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
-				history.push({ pathname: routes.RESULT_PAGE.path });
+				// TODO: cleanup old result message
+				// const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.participant, id: response.data.participantNew.id }) };
+				// dispatch({ type: ActionType.RESULT_MESSAGE, payload });
+				// history.push({ pathname: routes.RESULT_PAGE.path });
+				setSnackbarOpen(true);
+				reset();
 			}
 		} catch (error) {
 			// don't throw here else we catch react app, errorMessage is managed in `getGraphQLApolloError(apolloError)`
@@ -108,6 +108,10 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		},
 	};
 
+	// debug
+	// console.log('errors', JSON.stringify(errors, undefined, 2));
+	// console.log(`assetType:${getValues(FormFieldNames.ASSET_TYPE)}`);
+
 	return (
 		<Fragment>
 			<PageTitle>{routes[RouteKey.PARTICIPANT_UPSERT_FORM].title}</PageTitle>
@@ -123,6 +127,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
+				<SnackbarMessage message={c.I18N.snackbarParticipantUpsertSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />
 			</Box>
 		</Fragment >
 	);

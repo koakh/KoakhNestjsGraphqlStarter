@@ -35,6 +35,9 @@ export const useStyles = makeStyles((theme) => ({
   spacer: {
     marginBottom: theme.spacing(2),
   },
+  spacerTop: {
+    marginTop: theme.spacing(2),
+  },
   // helper
   redColor: {
     backgroundColor: 'red',
@@ -54,7 +57,7 @@ export const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
-  }
+  },
 }));
 
 /**

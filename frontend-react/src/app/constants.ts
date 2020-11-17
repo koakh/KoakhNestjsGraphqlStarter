@@ -44,10 +44,14 @@ const I18N: { [key: string]: string } = {
   nonAccountSignUp: 'Don\'t have an account? Sign Up',
   rememberMe: 'Remember me',
   forgotPassword: 'Forgot password?',
-  snackbarTransactionSuccess: 'transaction successful!',
+  snackbarAssetUpsertSuccess:'asset upsert successful!',
+  snackbarCauseUpsertSuccess:'cause upsert successful!',
+  snackbarParticipantUpsertSuccess:'participant upsert successful!',
+  snackbarPersonUpsertSuccess:'person upsert successful!',
+  snackbarTransactionUpsertSuccess: 'transaction upsert successful!',
   // wip: messages
   signInWip: 'wip: required send email activation code, otp code, finish remember me, and other stuff...',
-  transactionUpsertFormWip: 'wip: enable add output type, if cause show selection box, else show input person or participant. filter causes based on onGoing/active causes',
+  transactionUpsertFormWip: 'wip: filter causes based on ongoing/active causes',
   transactionGoodsFormWip: 'wip: only show onGoing causes (dateRange), use barCode to get product info from api (graph graphql server), store info in node product, and return it...',
   // template
   signUpUserRegisteredSuccessfully: 'User registered successfully! You can login with \'${username}\'',
@@ -243,7 +247,7 @@ const REGEXP: { [key: string]: RegExp; } = {
   // multi lingual, you'd probably be better off validating against characters you don't want to allow
   // match names with Capitalization after the first character
   // firstAndLastName: /^([A-Z][a-zA-Z]*)$/,
-  name: /^[ A-Za-z0-9^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{2,100}$/i,
+  name: /^[ A-Za-z\u00C0-\u00ff0-9^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{2,100}$/i,
   alphaNumeric: /^[ A-Za-z0-9_@./#&+-:]*$/i,
   date: /^((?:19|20)\d\d)-(0?[1-9]|1[012])-([12][0-9]|3[01]|0?[1-9])$/i,
   // latitude/longitude coordinates
@@ -251,13 +255,19 @@ const REGEXP: { [key: string]: RegExp; } = {
   uuid: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
   // split by space `(\s...`  
   uuidArray: /^([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})(\s[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})*$/i,
+  // positive integer
+  integer: /^\d+$/,
+  // positive integer excluding 0
+  integerPositiveNonZero: /^[1-9]\d*$/,
   // positive and negative
   float: /^[+-]?((\d+(\.\d*)?)|(\.\d+))$/,
   floatPositive: /^((\d+(\.\d*)?)|(\.\d+))$/i,
   // currency code
   // currencyCode: /^(?:[A-Z]{3} [0-9]+(?:\.[0-9]+)?)|(?:[0-9]+(?:\.[0-9]+)? [A-Z]{3})$/i,
   // phone number ex +351936282828
-  mobilePhone: /^(?!\b(0)\1+\b)(\+?\d{1,3}[. -]?)?\(?\d{3}\)?([. -]?)\d{3}\3\d{4}$/i,
+  // mobilePhone: /^(?!\b(0)\1+\b)(\+?\d{1,3}[. -]?)?\(?\d{3}\)?([. -]?)\d{3}\3\d{4}$/i,
+  // https://phoneregex.com/
+  mobilePhone: /\+(9[976]\d|8[987530]\d|6[987]\d|5[90]\d|42\d|3[875]\d|2[98654321]\d|9[8543210]|8[6421]|6[6543210]|5[87654321]|4[987654310]|3[9643210]|2[70]|7|1)\d{1,14}$/i,
 }
 
 export const appConstants = {

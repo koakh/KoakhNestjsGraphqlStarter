@@ -4,13 +4,13 @@ import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
 import { commonFormFieldEmail, commonFormFieldFirstName, commonFormFieldFiscalNumber, commonFormFieldLastName, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldMobilePhone, commonFormFieldPassword, commonFormFieldPasswordConfirmation, commonFormFieldUsername, formCommonOptions, RouteKey, routes } from '../../app/config';
-import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
+import { SnackbarMessage, SnackbarSeverityType } from '../../components/snackbar-message';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
-import { FormDefaultValues, FormPropFields, ModelType } from '../../types';
-import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, parseTemplate, useStyles } from '../../utils';
+import { FormDefaultValues, FormPropFields } from '../../types';
+import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, useStyles } from '../../utils';
 
 type FormInputs = {
 	firstName: string;
@@ -53,20 +53,17 @@ const defaultValues: FormDefaultValues = {
 export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 	// hooks styles
 	const classes = useStyles();
+	// snackBar state
+	const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
 	// hooks react form
 	const { handleSubmit, errors, control, reset, getValues } = useForm<FormInputs>({ defaultValues, ...formCommonOptions })
 	const [showPassword, setShowPassword] = useState(false);
 	// hooks: apollo
 	const [personNewMutation, { loading, error: apolloError }] = usePersonRegisterMutation();
-	// hooks state
-	const [, dispatch] = useStateValue();
 	// extract error message
 	const errorMessage = getGraphQLApolloError(apolloError);
-	// debug
-	// console.log('errors', JSON.stringify(errors, undefined, 2));
-	console.log(`metaData:${getValues(FormFieldNames.META_DATA)}`);
-	console.log(`metaDataInternal:${getValues(FormFieldNames.META_DATA_INTERNAL)}`);
 
+	// handlers
 	const handlePasswordVisibility = () => setShowPassword(!showPassword);
 	const handleResetHandler = async () => { reset(defaultValues, {}) };
 	const handleSubmitHandler = async (data: FormInputs) => {
@@ -88,9 +85,12 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 				});
 
 			if (response) {
-				const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.person, id: response.data.personRegister.id }) };
-				dispatch({ type: ActionType.RESULT_MESSAGE, payload });
-				history.push({ pathname: routes.RESULT_PAGE.path });
+				// TODO: cleanup old result message
+				// const payload = { message: parseTemplate(c.I18N.newModelCreatedSuccessfully, { model: ModelType.person, id: response.data.personRegister.id }) };
+				// dispatch({ type: ActionType.RESULT_MESSAGE, payload });
+				// history.push({ pathname: routes.RESULT_PAGE.path });
+				setSnackbarOpen(true);
+				reset();
 			}
 		} catch (error) {
 			setShowPassword(false);
@@ -131,6 +131,11 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 		},
 	};
 
+	// debug
+	// console.log('errors', JSON.stringify(errors, undefined, 2));
+	// console.log(`metaData:${getValues(FormFieldNames.META_DATA)}`);
+	// console.log(`metaDataInternal:${getValues(FormFieldNames.META_DATA_INTERNAL)}`);
+
 	return (
 		<Fragment>
 			<PageTitle>{routes[RouteKey.PERSON_UPSERT_FORM].title}</PageTitle>
@@ -146,6 +151,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
+				<SnackbarMessage message={c.I18N.snackbarPersonUpsertSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />
 			</Box>
 		</Fragment >
 	);
