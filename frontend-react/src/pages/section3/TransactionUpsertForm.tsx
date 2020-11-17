@@ -13,6 +13,7 @@ import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } fr
 import { AutocompleteAndSelectOptions, CurrencyCode, EntityType, FormDefaultValues, FormInputType, FormPropFields, GoodsBagItem, ResourceType, Tag, TransactionType } from '../../types';
 import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validateRegExpArray, validationMessage } from '../../utils';
 
+// eslint-disable-next-line
 let renderCount = 0;
 
 type FormInputs = {
@@ -94,6 +95,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// hooks styles
 	const classes = useStyles();
 	// hooks state
+	// eslint-disable-next-line	
 	const [state, dispatch] = useStateValue();
 	// snackBar state
 	const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
@@ -374,13 +376,14 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		// 	// disableCloseOnSelect: false,
 		// },
 		[FormFieldNames.INPUT]: {
-			...commonFormFieldOutputEntity(useRef(), FormFieldNames.INPUT, inputType, !causeOptionsLoaded, 
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.INPUT, inputType,
 				() => causeOptions,
 				// visible
 				() => { return (inputType !== c.VALUES.undefined); },
 				// validate
 				() => { return validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]) }
 			),
+			disabled: !causeOptionsLoaded,
 			// override outputLabel
 			label: c.I18N.inputLabel,
 		},
@@ -425,13 +428,14 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		// 	// disableCloseOnSelect: false,
 		// },
 		[FormFieldNames.OUTPUT]: {
-			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, outputType, !causeOptionsLoaded, 
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, outputType,
 				() => causeOptions,
 				// visible
 				() => { return (outputType !== c.VALUES.undefined); },
 				// validate
 				() => { return validateRegExpArray(getValues(FormFieldNames.OUTPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]) }
-			)
+			),
+			disabled: !causeOptionsLoaded,
 		},
 		// [FormFieldNames.QUANTITY]: {
 		// 	inputRef: useRef(),
@@ -448,9 +452,10 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		// 	},
 		// },
 		[FormFieldNames.QUANTITY]: {
-			...commonFormFieldQuantity(useRef(), FormFieldNames.QUANTITY, !causeOptionsLoaded, () => {
+			...commonFormFieldQuantity(useRef(), FormFieldNames.QUANTITY, () => {
 				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) !== c.VALUES.undefined && transactionType !== TransactionType.transferGoods);
 			}),
+			disabled: !causeOptionsLoaded,
 		},
 		// [FormFieldNames.CURRENCY]: {
 		// 	inputRef: useRef(),
@@ -475,11 +480,12 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		// 	}
 		// },
 		[FormFieldNames.CURRENCY]: {
-			...commonFormFieldCurrency(useRef(), FormFieldNames.CURRENCY, !causeOptionsLoaded,
+			...commonFormFieldCurrency(useRef(), FormFieldNames.CURRENCY,
 				() => isValidEnum(CurrencyCode, getValues(FormFieldNames.CURRENCY)),
 				// required to check if is undefined and assume true as a default
 				() => (transactionType && transactionType === TransactionType.transferFunds),
-			)
+			),
+			disabled: !causeOptionsLoaded,
 		},
 		// [FormFieldNames.ASSET_ID]: {
 		// 	inputRef: useRef(),
@@ -503,9 +509,10 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			disabled: !causeOptionsLoaded,
 		},
 		[FormFieldNames.GOODS_BAG]: {
-			...commonFormFieldGoodsBagInput(useRef(), FormFieldNames.GOODS_BAG, customGoodsBag, !causeOptionsLoaded, () => {
+			...commonFormFieldGoodsBagInput(useRef(), FormFieldNames.GOODS_BAG, customGoodsBag, () => {
 				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) === TransactionType.transferGoods);
 			}),
+			disabled: !causeOptionsLoaded,
 		},
 		[FormFieldNames.LOCATION]: {
 			...commonFormFieldLocation(useRef(), FormFieldNames.LOCATION),
@@ -528,7 +535,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 
 	return (
 		<Fragment>
-			<PageTitle>{routes[RouteKey.TRANSACTION_UPSERT_FORM].title} [{renderCount}]</PageTitle>
+			<PageTitle>{routes[RouteKey.TRANSACTION_UPSERT_FORM].title}</PageTitle>
 			<Box component='span' m={1}>
 				{/* 'handleSubmit' will validate your inputs before invoking 'onSubmit' */}
 				<form
@@ -542,9 +549,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 				<SnackbarMessage message={c.I18N.snackbarTransactionSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />
-				<Box component='span' m={1}>
-					<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionUpsertFormWip} />
-				</Box>
+				<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionUpsertFormWip} />
 			</Box>
 		</Fragment >
 	);

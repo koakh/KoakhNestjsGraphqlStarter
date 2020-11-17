@@ -12,9 +12,10 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { SnackbarMessage, SnackbarSeverityType } from '../../components/snackbar-message';
 import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
-import { AutocompleteAndSelectOptions, EntityType, FormDefaultValues, FormInputType, FormPropFields, GoodsBagItem, ResourceType, Tag, TransactionType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validateRegExpArray } from '../../utils';
+import { AutocompleteAndSelectOptions, EntityType, FormDefaultValues, FormPropFields, GoodsBagItem, ResourceType, Tag, TransactionType } from '../../types';
+import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validateRegExpArray } from '../../utils';
 
+// eslint-disable-next-line
 let renderCount = 0;
 
 type FormInputs = {
@@ -258,13 +259,14 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 			disabled: !causeOptionsLoaded,
 		},
 		[FormFieldNames.INPUT]: {
-			...commonFormFieldOutputEntity(useRef(), FormFieldNames.INPUT, inputType, !causeOptionsLoaded, 
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.INPUT, inputType,
 				() => causeOptions,
 				// visible
 				() => { return (inputType !== c.VALUES.undefined); },
 				// validate
 				() => { return validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]) }
 			),
+			disabled: !causeOptionsLoaded,
 			// override outputLabel
 			label: c.I18N.inputLabel,
 		},
@@ -272,15 +274,17 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.OUTPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))),
 		},
 		[FormFieldNames.OUTPUT]: {
-			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, outputType, !causeOptionsLoaded,
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, outputType,
 				() => causeOptions,
 				// visible
 				() => { return (outputType !== c.VALUES.undefined); },
 				// validate
-				() => { return validateRegExpArray(getValues(FormFieldNames.OUTPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]) })
+				() => { return validateRegExpArray(getValues(FormFieldNames.OUTPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]) }
+			),
+			disabled: !causeOptionsLoaded,
 		},
 		[FormFieldNames.GOODS_BAG]: {
-			...commonFormFieldGoodsBagInput(useRef(), FormFieldNames.GOODS_BAG, customGoodsBag, !causeOptionsLoaded, () => true),
+			...commonFormFieldGoodsBagInput(useRef(), FormFieldNames.GOODS_BAG, customGoodsBag),
 		},
 		[FormFieldNames.LOCATION]: {
 			...commonFormFieldLocation(useRef(), FormFieldNames.LOCATION),
@@ -301,7 +305,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 
 	return (
 		<Fragment>
-			<PageTitle>{routes[RouteKey.TRANSACTION_GOODS_FORM].title} [{renderCount}]</PageTitle>
+			<PageTitle>{routes[RouteKey.TRANSACTION_GOODS_FORM].title}</PageTitle>
 			<Box component='span' m={1}>
 				{/* 'handleSubmit' will validate your inputs before invoking 'onSubmit' */}
 				<form
@@ -321,9 +325,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 				{loading && <LinearIndeterminate />}
 			</Box>
 			<SnackbarMessage message={c.I18N.snackbarTransactionSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />
-			<Box component='span' m={1}>
-				<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionGoodsFormWip} />
-			</Box>
+			<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionGoodsFormWip} />
 			<BarcodeReader
 				timeBeforeScanTest={250}
 				onScan={handleBarcodeReaderScan}

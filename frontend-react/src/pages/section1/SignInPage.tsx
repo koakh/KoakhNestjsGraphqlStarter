@@ -200,9 +200,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 			<Box mt={8}>
 				<Copyright {...copyrightProps} />
 			</Box>
-      <Box component='span' m={1}>
-        <AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.signInWip} />
-      </Box>
+			<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.signInWip} />
 		</Container>
 	);
 }

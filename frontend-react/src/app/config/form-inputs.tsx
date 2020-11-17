@@ -1,4 +1,7 @@
 import { Button, Grid, IconButton, InputAdornment } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
+import RemoveIcon from '@material-ui/icons/Remove';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
 import React, { Fragment, MutableRefObject } from 'react';
@@ -6,9 +9,6 @@ import { ArrayField, Control, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '..';
 import { AutocompleteAndSelectOptions, CurrencyCode, EntityType, FormInputType, FormPropFields, GoodsBagItem } from '../../types';
 import { commonControlProps, generateTextField, validationBarCodeExHelper, validationMessage, validationRuleRegExHelper } from '../../utils';
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
 
 // common formDefinition, to be shared in project, where are used in more than one place
 
@@ -147,7 +147,7 @@ export const commonFormFieldAssetType = (inputRef: MutableRefObject<any>, formFi
     inputRef,
     type: FormInputType.SELECT,
     name: formFieldName,
-    label: c.I18N.assetType,
+    label: c.I18N.assetTypeLabel,
     controlProps: commonControlProps,
     fullWidth: true,
     rules: {
@@ -399,8 +399,8 @@ export const commonFormFieldOutputTypeEntity = (inputRef: MutableRefObject<any>,
 // TODO refactor to commonInputOutput, remove label, required in arg
 // render a selection or input based on currentEntityType
 // validate is only used in text input, optional for selection
-export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, currentEntityType: EntityType, disabled: boolean, options: () => AutocompleteAndSelectOptions[], visible: () => boolean, validate?: () => boolean): FormPropFields => {
-  return (currentEntityType == EntityType.cause)
+export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, currentEntityType: EntityType, options: () => AutocompleteAndSelectOptions[], visible: () => boolean, validate?: () => boolean): FormPropFields => {
+  return (currentEntityType === EntityType.cause)
     ? {
       inputRef,
       type: FormInputType.SELECT,
@@ -411,7 +411,6 @@ export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, for
       rules: validationRuleRegExHelper(formFieldName, c.REGEXP.uuid),
       // args
       options,
-      disabled,
       visible,
     }
     : {
@@ -428,9 +427,7 @@ export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, for
           ? true
           : validationMessage('required', formFieldName)
       },
-      // args
-      disabled,
-      visible
+      visible,
     }
 }
 
@@ -441,7 +438,7 @@ export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, for
 //   }
 // }
 
-// export const commonFormFieldInputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, currentEntityType: EntityType, options: () => AutocompleteAndSelectOptions[], disabled: boolean, visible: () => boolean, validate?: () => boolean): FormPropFields => {
+// export const commonFormFieldInputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, currentEntityType: EntityType, options: () => AutocompleteAndSelectOptions[], visible: () => boolean, validate?: () => boolean): FormPropFields => {
 //   return {
 //     ...commonFormFieldOutputEntity(inputRef, formFieldName, currentEntityType, disabled, options, visible),
 //     label: c.I18N.inputLabel,
@@ -488,7 +485,7 @@ export const commonFormFieldAssetId = (inputRef: MutableRefObject<any>, formFiel
   }
 }
 
-export const commonFormFieldQuantity = (inputRef: MutableRefObject<any>, formFieldName: string, disabled: boolean, visible: () => boolean): FormPropFields => {
+export const commonFormFieldQuantity = (inputRef: MutableRefObject<any>, formFieldName: string, visible: () => boolean): FormPropFields => {
   return {
     inputRef,
     type: FormInputType.NUMBER,
@@ -499,12 +496,11 @@ export const commonFormFieldQuantity = (inputRef: MutableRefObject<any>, formFie
     placeholder: c.I18N.quantityPlaceHolder,
     rules: validationRuleRegExHelper(formFieldName, c.REGEXP.floatPositive),
     // args
-    disabled,
     visible,
   }
 }
 
-export const commonFormFieldCurrency = (inputRef: MutableRefObject<any>, formFieldName: string, disabled: boolean, validate: () => boolean, visible: () => boolean): FormPropFields => {
+export const commonFormFieldCurrency = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean, visible: () => boolean): FormPropFields => {
   return {
     inputRef,
     type: FormInputType.SELECT,
@@ -521,12 +517,11 @@ export const commonFormFieldCurrency = (inputRef: MutableRefObject<any>, formFie
       { title: c.I18N.currencyCodeEur, value: CurrencyCode.eur },
       { title: c.I18N.currencyCodeUsd, value: CurrencyCode.usd },
     ],
-    disabled,
     visible,
   }
 }
 
-export const commonFormFieldGoodsBagInput = (inputRef: MutableRefObject<any>, formFieldName: string, custom: JSX.Element, disabled: boolean, visible: () => boolean): FormPropFields => {
+export const commonFormFieldGoodsBagInput = (inputRef: MutableRefObject<any>, formFieldName: string, custom: JSX.Element, visible?: () => boolean): FormPropFields => {
   return {
     inputRef,
     type: FormInputType.CUSTOM,
@@ -538,7 +533,6 @@ export const commonFormFieldGoodsBagInput = (inputRef: MutableRefObject<any>, fo
     // custom
     custom,
     // args
-    disabled,
     visible
   }
 }
