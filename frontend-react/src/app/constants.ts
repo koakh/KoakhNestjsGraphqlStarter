@@ -5,7 +5,8 @@ import { AssetType, EntityType, GoodsOptions } from "../types";
 export const mokeFormData = true;
 
 const VALUES: { [key: string]: any } = {
-  undefined: 'UNDEFINED',
+  // used in selection box's, unselected value
+  undefined: '',
   defaultCurrency: 'EUR',
   // used in signIn to clear message
   resultMessageTimeOut: 5000,
@@ -55,7 +56,7 @@ const I18N: { [key: string]: string } = {
   assetTypeOptionPhysicalAsset: 'Physical asset',
   assetTypeOptionDigitalAsset: 'Digital asset',
   entityTypeOptionPerson: 'Person',
-  entityTypeOptionParticipant: 'Participant',
+  entityTypeOptionParticipant: 'Organization',
   entityTypeOptionCause: 'Cause',
   transactionTypeOptionTransferFunds: 'Transfer funds',
   transactionTypeOptionTransferVolunteeringHours: 'Transfer volunteering hours',
@@ -105,7 +106,7 @@ const I18N: { [key: string]: string } = {
   outputTypeLabel: 'Output type',
   outputLabel: 'Output',
   outputPlaceHolder: 'PT182692128',
-  outputHelperText: 'valid output entity id',
+  outputHelperText: 'valid output entity id. can be uuid, fiscalNumber or mobilePhone',
   codeLabel: 'code',
   codePlaceHolder: 'valid alfa numeric code format',
   transferTypeLabel: 'Transfer type',

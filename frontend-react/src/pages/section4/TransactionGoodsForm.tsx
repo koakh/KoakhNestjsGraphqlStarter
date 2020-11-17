@@ -13,7 +13,7 @@ import { PageTitle } from '../../components/material-ui/typography';
 import { SnackbarMessage, SnackbarSeverityType } from '../../components/snackbar-message';
 import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
 import { AutocompleteAndSelectOptions, EntityType, FormDefaultValues, FormInputType, FormPropFields, GoodsBagItem, ResourceType, Tag, TransactionType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles } from '../../utils';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validateRegExpArray } from '../../utils';
 
 let renderCount = 0;
 
@@ -254,9 +254,11 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.OUTPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))),
 		},
 		[FormFieldNames.OUTPUT]: {
-			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, () => causeOptions, !causeOptionsLoaded, () => {
-				return (outputType === EntityType.cause);
-			}),
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, outputType, () => causeOptions, !causeOptionsLoaded,
+				// visible
+				() => { return (outputType !== c.VALUES.undefined); },
+				// validate
+				() => { return validateRegExpArray(getValues(FormFieldNames.OUTPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]) })
 		},
 		[FormFieldNames.GOODS_BAG]: {
 			...commonFormFieldGoodsBagInput(useRef(), FormFieldNames.GOODS_BAG, customGoodsBag, !causeOptionsLoaded, () => true),

@@ -4,7 +4,7 @@ import VisibilityIconOff from '@material-ui/icons/VisibilityOff';
 import React, { Fragment, MutableRefObject } from 'react';
 import { ArrayField, Control, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '..';
-import { AutocompleteAndSelectOptions, FormInputType, FormPropFields, GoodsBagItem } from '../../types';
+import { AutocompleteAndSelectOptions, EntityType, FormInputType, FormPropFields, GoodsBagItem } from '../../types';
 import { commonControlProps, generateTextField, validationBarCodeExHelper, validationMessage, validationRuleRegExHelper } from '../../utils';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
@@ -393,22 +393,41 @@ export const commonFormFieldOutputTypeEntity = (inputRef: MutableRefObject<any>,
   }
 }
 
-export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, options: () => AutocompleteAndSelectOptions[], disabled: boolean, visible: () => boolean): FormPropFields => {
-  return {
-    inputRef,
-    type: FormInputType.SELECT,
-    name: formFieldName,
-    label: c.I18N.outputLabel,
-    controlProps: commonControlProps,
-    fullWidth: true,
-    placeholder: c.I18N.outputPlaceholder,
-    helperText: c.I18N.outputHelperText,
-    rules: validationRuleRegExHelper(formFieldName, c.REGEXP.uuid),
-    // args
-    options,
-    disabled,
-    visible,
-  }
+// render a selection or input based on currentEntityType
+// validate is only used in text input, optional for selection
+export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, currentEntityType: EntityType, options: () => AutocompleteAndSelectOptions[], disabled: boolean, visible: () => boolean, validate?: () => boolean): FormPropFields => {
+  return (currentEntityType == EntityType.cause)
+    ? {
+      inputRef,
+      type: FormInputType.SELECT,
+      name: formFieldName,
+      label: c.I18N.outputLabel,
+      controlProps: commonControlProps,
+      fullWidth: true,
+      rules: validationRuleRegExHelper(formFieldName, c.REGEXP.uuid),
+      // args
+      options,
+      disabled,
+      visible,
+    }
+    : {
+      inputRef,
+      type: FormInputType.TEXT,
+      name: formFieldName,
+      label: c.I18N.outputLabel,
+      controlProps: commonControlProps,
+      fullWidth: true,
+      placeholder: c.I18N.outputPlaceholder,
+      helperText: c.I18N.outputHelperText,
+      rules: {
+        validate: () => validate()
+          ? true
+          : validationMessage('required', formFieldName)
+      },
+      // args
+      disabled,
+      visible
+    }
 }
 
 export const commonFormFieldGoodsBagInput = (inputRef: MutableRefObject<any>, formFieldName: string, custom: JSX.Element, disabled: boolean, visible: () => boolean): FormPropFields => {

@@ -147,9 +147,9 @@ export const routes: Record<RouteKey, RouteItem> = {
     drawerIcon: <PeopleIcon />,
   },
   [RouteKey.PARTICIPANT_UPSERT_FORM]: {
-    title: 'New Participant',
-    label: 'New Participant',
-    path: '/new-participant',
+    title: 'New Organization',
+    label: 'New Organization',
+    path: '/new-organization',
     component: ParticipantUpsertForm,
     section: DrawerSections.SECTION3,
     drawerIcon: <ApartmentIcon />,

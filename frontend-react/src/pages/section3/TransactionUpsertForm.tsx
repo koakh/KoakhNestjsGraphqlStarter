@@ -407,9 +407,11 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 		// 	// disableCloseOnSelect: false,
 		// },
 		[FormFieldNames.OUTPUT]: {
-			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, () => causeOptions, !causeOptionsLoaded, () => {
-				return (outputType === EntityType.cause);
-			}),
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.OUTPUT, outputType, () => causeOptions, !causeOptionsLoaded,
+				// visible
+				() => { return (outputType !== c.VALUES.undefined); },
+				// validate
+				() => { return validateRegExpArray(getValues(FormFieldNames.OUTPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]) })
 		},
 		[FormFieldNames.QUANTITY]: {
 			inputRef: useRef(),
@@ -422,7 +424,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			rules: validationRuleRegExHelper(FormFieldNames.QUANTITY, c.REGEXP.floatPositive),
 			disabled: !causeOptionsLoaded,
 			visible: (control) => {
-				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) !== TransactionType.transferGoods);
+				return (control.getValues(FormFieldNames.TRANSACTION_TYPE) !== TransactionType.transferGoods && control.getValues(FormFieldNames.TRANSACTION_TYPE) !== c.VALUES.undefined);
 			},
 		},
 		[FormFieldNames.CURRENCY]: {
