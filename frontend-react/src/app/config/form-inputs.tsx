@@ -378,6 +378,7 @@ export const commonFormFieldEndDate = (inputRef: MutableRefObject<any>, formFiel
 //   }
 // }
 
+// TODO refactor to commonInputOutput, remove label, required in arg
 export const commonFormFieldOutputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
   return {
     inputRef,
@@ -395,6 +396,7 @@ export const commonFormFieldOutputTypeEntity = (inputRef: MutableRefObject<any>,
   }
 }
 
+// TODO refactor to commonInputOutput, remove label, required in arg
 // render a selection or input based on currentEntityType
 // validate is only used in text input, optional for selection
 export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, currentEntityType: EntityType, disabled: boolean, options: () => AutocompleteAndSelectOptions[], visible: () => boolean, validate?: () => boolean): FormPropFields => {
@@ -432,19 +434,19 @@ export const commonFormFieldOutputEntity = (inputRef: MutableRefObject<any>, for
     }
 }
 
-export const commonFormFieldInputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
-  return {
-    ...commonFormFieldOutputTypeEntity(inputRef, formFieldName, validate),
-    label: c.I18N.inputTypeLabel,
-  }
-}
+// export const commonFormFieldInputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
+//   return {
+//     ...commonFormFieldOutputTypeEntity(inputRef, formFieldName, validate),
+//     label: c.I18N.inputTypeLabel,
+//   }
+// }
 
-export const commonFormFieldInputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, currentEntityType: EntityType, options: () => AutocompleteAndSelectOptions[], disabled: boolean, visible: () => boolean, validate?: () => boolean): FormPropFields => {
-  return {
-    ...commonFormFieldOutputEntity(inputRef, formFieldName, currentEntityType, disabled, options, visible),
-    label: c.I18N.inputLabel,
-  }
-}
+// export const commonFormFieldInputEntity = (inputRef: MutableRefObject<any>, formFieldName: string, currentEntityType: EntityType, options: () => AutocompleteAndSelectOptions[], disabled: boolean, visible: () => boolean, validate?: () => boolean): FormPropFields => {
+//   return {
+//     ...commonFormFieldOutputEntity(inputRef, formFieldName, currentEntityType, disabled, options, visible),
+//     label: c.I18N.inputLabel,
+//   }
+// }
 
 export const commonFormFieldTags = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
   return {

@@ -40,7 +40,7 @@ enum FormFieldNames {
 	META_DATA_INTERNAL = 'metaDataInternal',
 };
 const defaultValues: FormDefaultValues = {
-	inputType: EntityType.person,
+	inputType: c.VALUES.undefined,
 	input: '',
 	outputType: c.VALUES.undefined,
 	output: c.VALUES.undefined,
@@ -153,6 +153,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	// EOF of `DRY code shared with transactions & goods`
 
 	// require to use watch else getValues(FormFieldNames.x) don't work has expected
+	const inputType = watch(FormFieldNames.INPUT_TYPE);
 	const outputType = watch(FormFieldNames.OUTPUT_TYPE);
 
 	// TODO
@@ -250,6 +251,23 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 		// [FormFieldNames.INPUT]: {
 		// 	...commonFormFieldInputEntity(useRef(), FormFieldNames.INPUT, () => causeOptions, !causeOptionsLoaded),
 		// },
+		[FormFieldNames.INPUT_TYPE]: {
+			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))),
+			// override outputLabel
+			label: c.I18N.inputTypeLabel,
+			disabled: !causeOptionsLoaded,
+		},
+		[FormFieldNames.INPUT]: {
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.INPUT, inputType, !causeOptionsLoaded, 
+				() => causeOptions,
+				// visible
+				() => { return (inputType !== c.VALUES.undefined); },
+				// validate
+				() => { return validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]) }
+			),
+			// override outputLabel
+			label: c.I18N.inputLabel,
+		},
 		[FormFieldNames.OUTPUT_TYPE]: {
 			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.OUTPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.OUTPUT_TYPE))),
 		},

@@ -32,9 +32,9 @@
   - [Configure react Router](#configure-react-router)
   - [Apollo resetStore /Cache](#apollo-resetstore-cache)
   - [Use JS-Cookie](#use-js-cookie)
-  - [When we change cc models like adding new props to model...missing the following properties from type  'Person': identities, createdDate](#when-we-change-cc-models-like-adding-new-props-to-modelmissing-the-following-properties-from-type-person-identities-createddate)
+  - [When we change cc models like adding new props to model...missing the following properties from type  'Person': identities, createdDate](#when-we-change-cc-models-like-adding-new-props-to-modelmissing-the-following-properties-from-type--person-identities-createddate)
   - [Error: GraphQL error: [object Object]](#error-graphql-error-object-object)
-  - [React router Property 'message' does not exist on type '{}'.  TS2339](#react-router-property-message-does-not-exist-on-type--ts2339)
+  - [React router Property 'message' does not exist on type '{}'.  TS2339](#react-router-property-message-does-not-exist-on-type---ts2339)
   - [WebSocketLink authToken Subscriptions](#websocketlink-authtoken-subscriptions)
   - [WebSocketLink : WebSocket connection to wss graphql failed: WebSocket is closed before the connection is established.react apollo WebSocket connection to 'wss://solidarychain.com/graphql' failed: WebSocket is closed before the connection is established.](#websocketlink--websocket-connection-to-wss-graphql-failed-websocket-is-closed-before-the-connection-is-establishedreact-apollo-websocket-connection-to-wsssolidarychaincomgraphql-failed-websocket-is-closed-before-the-connection-is-established)
   - [Add Material-UI and React Router](#add-material-ui-and-react-router)
@@ -48,6 +48,7 @@
   - [Location](#location)
   - [GeoLocation Problem](#geolocation-problem)
   - [Other Location Alternatives](#other-location-alternatives)
+  - [How can I use multiple refs for an array of elements with hooks?](#how-can-i-use-multiple-refs-for-an-array-of-elements-with-hooks)
 
 ## TLDR
 
@@ -996,3 +997,11 @@ scroll down, seems not working
 ## Other Location Alternatives
 
 https://ipwhois.io/documentation
+
+## How can I use multiple refs for an array of elements with hooks?
+
+> used in
+
+- [How can I use multiple refs for an array of elements with hooks?](https://stackoverflow.com/questions/54633690/how-can-i-use-multiple-refs-for-an-array-of-elements-with-hooks)
+
+seems we cannot use refs in arrau

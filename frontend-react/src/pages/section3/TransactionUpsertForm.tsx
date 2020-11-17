@@ -4,14 +4,14 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
 import { commonFormFieldAssetId, commonFormFieldCurrency, commonFormFieldGoodsBag, commonFormFieldGoodsBagEan, commonFormFieldGoodsBagInput, commonFormFieldGoodsBagQuantity, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldOutputEntity, commonFormFieldOutputTypeEntity, commonFormFieldQuantity, commonFormFieldTags, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
-import { ActionType, useStateValue } from '../../app/state';
+import { useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
 import { SnackbarMessage, SnackbarSeverityType } from '../../components/snackbar-message/SnackbarMessage';
 import { NewTransactionInput, useCausesLazyQuery, useTransactionNewMutation } from '../../generated/graphql';
-import { AutocompleteAndSelectOptions, CurrencyCode, EntityType, FormDefaultValues, FormInputType, FormPropFields, GoodsBagItem, ModelType, ResourceType, Tag, TransactionType } from '../../types';
-import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, parseTemplate, useStyles, validateRegExpArray, validationMessage, validationRuleRegExHelper } from '../../utils';
+import { AutocompleteAndSelectOptions, CurrencyCode, EntityType, FormDefaultValues, FormInputType, FormPropFields, GoodsBagItem, ResourceType, Tag, TransactionType } from '../../types';
+import { commonControlProps, generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidEnum, isValidJsonObject, useStyles, validateRegExpArray, validationMessage } from '../../utils';
 
 let renderCount = 0;
 
@@ -199,6 +199,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	const transactionType = watch(FormFieldNames.TRANSACTION_TYPE);
 	const resourceType = watch(FormFieldNames.RESOURCE_TYPE);
 	// require to use watch else getValues(FormFieldNames.x) don't work has expected
+	const inputType = watch(FormFieldNames.INPUT_TYPE);
 	const outputType = watch(FormFieldNames.OUTPUT_TYPE);
 
 	if (transactionType === TransactionType.transferFunds && resourceType !== ResourceType.funds) {
@@ -329,42 +330,59 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			}),
 			disabled: !causeOptionsLoaded,
 		},
+		// [FormFieldNames.INPUT_TYPE]: {
+		// 	inputRef: useRef(),
+		// 	type: FormInputType.SELECT,
+		// 	name: FormFieldNames.INPUT_TYPE,
+		// 	controlProps: commonControlProps,
+		// 	fullWidth: true,
+		// 	label: c.I18N.inputTypeLabel,
+		// 	// selection don't use placeHolder
+		// 	// placeholder: c.VALUES.PHYSICAL_ASSET,
+		// 	rules: {
+		// 		validate: () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))
+		// 			? true
+		// 			: validationMessage('required', FormFieldNames.INPUT_TYPE)
+		// 	},
+		// 	options: () => c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
+		// 	disabled: !causeOptionsLoaded,
+		// },
 		[FormFieldNames.INPUT_TYPE]: {
-			inputRef: useRef(),
-			type: FormInputType.SELECT,
-			name: FormFieldNames.INPUT_TYPE,
-			controlProps: commonControlProps,
-			fullWidth: true,
+			...commonFormFieldOutputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))),
+			// override outputLabel
 			label: c.I18N.inputTypeLabel,
-			// selection don't use placeHolder
-			// placeholder: c.VALUES.PHYSICAL_ASSET,
-			rules: {
-				validate: () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))
-					? true
-					: validationMessage('required', FormFieldNames.INPUT_TYPE)
-			},
-			options: () => c.PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS,
 			disabled: !causeOptionsLoaded,
 		},
+		// [FormFieldNames.INPUT]: {
+		// 	inputRef: useRef(),
+		// 	type: FormInputType.TEXT,
+		// 	name: FormFieldNames.INPUT,
+		// 	controlProps: commonControlProps,
+		// 	fullWidth: true,
+		// 	label: c.I18N.inputLabel,
+		// 	placeholder: c.I18N.inputPlaceholder,
+		// 	helperText: c.I18N.inputHelperText,
+		// 	rules: {
+		// 		// validate both regex uuid, fiscalNumber and mobilePhone
+		// 		validate: () => validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])
+		// 			? true
+		// 			: validationMessage('required', FormFieldNames.INPUT)
+		// 	},
+		// 	disabled: !causeOptionsLoaded,
+		// 	// AUTOCOMPLETE
+		// 	// options: personOptions,
+		// 	// disableCloseOnSelect: false,
+		// },
 		[FormFieldNames.INPUT]: {
-			inputRef: useRef(),
-			type: FormInputType.TEXT,
-			name: FormFieldNames.INPUT,
-			controlProps: commonControlProps,
-			fullWidth: true,
+			...commonFormFieldOutputEntity(useRef(), FormFieldNames.INPUT, inputType, !causeOptionsLoaded, 
+				() => causeOptions,
+				// visible
+				() => { return (inputType !== c.VALUES.undefined); },
+				// validate
+				() => { return validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]) }
+			),
+			// override outputLabel
 			label: c.I18N.inputLabel,
-			placeholder: c.I18N.inputPlaceholder,
-			helperText: c.I18N.inputHelperText,
-			rules: {
-				// validate both regex uuid, fiscalNumber and mobilePhone
-				validate: () => validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])
-					? true
-					: validationMessage('required', FormFieldNames.INPUT)
-			},
-			disabled: !causeOptionsLoaded,
-			// AUTOCOMPLETE
-			// options: personOptions,
-			// disableCloseOnSelect: false,
 		},
 		// [FormFieldNames.OUTPUT_TYPE]: {
 		// 	inputRef: useRef(),
