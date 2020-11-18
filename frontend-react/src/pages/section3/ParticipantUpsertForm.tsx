@@ -10,7 +10,7 @@ import { PageTitle } from '../../components/material-ui/typography';
 import { SnackbarMessage, SnackbarSeverityType } from '../../components/snackbar-message';
 import { NewParticipantInput, useParticipantNewMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormPropFields } from '../../types';
-import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, useStyles, validateRegExpArrayWithValuesArray } from '../../utils';
+import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, useStyles, validateFiscalNumber, validateRegExpArrayWithValuesArray } from '../../utils';
 
 type FormInputs = {
 	code: string,
@@ -34,7 +34,7 @@ const defaultValues: FormDefaultValues = {
 	code: mokeFormData ? 'wfp' : '',
 	name: mokeFormData ? 'World Food Program' : '',
 	email: mokeFormData ? 'mail@efp.com' : '',
-	fiscalNumber: mokeFormData ? 'PT500123005' : '',
+	fiscalNumber: mokeFormData ? 'PT500128006' : '',
 	ambassadors: mokeFormData ? c.VALUES.mokeAmbassadors : '',
 	metaData: '',
 	metaDataInternal: '',
@@ -89,7 +89,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			...commonFormFieldAssetName(useRef(), FormFieldNames.NAME)
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
-			...commonFormFieldFiscalNumber(useRef(), FormFieldNames.FISCAL_NUMBER)
+			...commonFormFieldFiscalNumber(useRef(), FormFieldNames.FISCAL_NUMBER, () => validateFiscalNumber(getValues(FormFieldNames.FISCAL_NUMBER)))
 		},
 		[FormFieldNames.EMAIL]: {
 			...commonFormFieldEmail(useRef(), FormFieldNames.EMAIL)
@@ -124,7 +124,7 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					{generateFormDefinition(formDefinition, control, errors, loading)}
 					{generateFormButtonsDiv(classes, loading, handleResetHandler)}
 				</form>
-				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
+				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} className={classes.spacer}/>}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 				<SnackbarMessage message={c.I18N.snackbarParticipantUpsertSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />

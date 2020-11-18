@@ -11,7 +11,7 @@ export const TimelinePage: React.FC<Props> = () => {
       <PageTitle>{routes[RouteKey.TIMELINE].title}</PageTitle>
       <Box component='span' m={1}>
         <Typography paragraph>
-          receive all models, person, participant, etc, create a subscription common for all models
+        Donec viverra dolor aliquam sapien eleifend, faucibus vulputate massa luctus. Phasellus non pharetra neque. Vestibulum consectetur vehicula iaculis. Fusce imperdiet risus quis ipsum fermentum, a viverra tortor blandit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. 
       </Typography>
       </Box>
     </Fragment>

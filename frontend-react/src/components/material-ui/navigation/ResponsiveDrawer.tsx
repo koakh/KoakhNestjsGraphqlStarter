@@ -238,7 +238,7 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
   // get current section from first section item
   let currentSection: DrawerSections | undefined = drawerSections[0][0].section;
   drawerSections.forEach((section, sectionIndex) => {
-    // check if currentSection changed
+    // check if currentSection changed: IF CRASH here is because we loop a section without items, check if all sections has one item minimum
     if (currentSection !== section[0].section) {
       currentSection = section[0].section;
       listItems.push(<Divider key={sectionIndex} />);

@@ -15,7 +15,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright } from '../../components/material-ui/other/Copyright';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormPropFields } from '../../types';
-import { generateFormDefinition, getGraphQLApolloError, parseTemplate } from '../../utils';
+import { validateFiscalNumber, generateFormDefinition, getGraphQLApolloError, parseTemplate } from '../../utils';
 import { copyrightProps, useStyles } from './SignInPage';
 
 type FormInputs = {
@@ -114,7 +114,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 			...commonFormFieldPasswordConfirmation(useRef(), FormFieldNames.PASSWORD_CONFIRMATION, showPassword, () => getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION))
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
-			...commonFormFieldFiscalNumber(useRef(), FormFieldNames.FISCAL_NUMBER)
+			...commonFormFieldFiscalNumber(useRef(), FormFieldNames.FISCAL_NUMBER, () => validateFiscalNumber(getValues(FormFieldNames.FISCAL_NUMBER)))
 		},
 		[FormFieldNames.MOBILE_PHONE]: {
 			...commonFormFieldMobilePhone(useRef(), FormFieldNames.MOBILE_PHONE)
@@ -168,7 +168,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					{loading && <LinearIndeterminate />}
 				</form>
 			</div>
-			{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
+			{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage}/>}
 			{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 			<Box mt={8}>
 				<Copyright {...copyrightProps} />

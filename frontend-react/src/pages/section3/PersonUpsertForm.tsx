@@ -10,7 +10,7 @@ import { PageTitle } from '../../components/material-ui/typography';
 import { SnackbarMessage, SnackbarSeverityType } from '../../components/snackbar-message';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
 import { FormDefaultValues, FormPropFields } from '../../types';
-import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, useStyles } from '../../utils';
+import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, isValidJsonObject, useStyles, validateFiscalNumber } from '../../utils';
 
 type FormInputs = {
 	firstName: string;
@@ -42,8 +42,8 @@ const defaultValues: FormDefaultValues = {
 	username: mokeFormData ? 'janedoe' : '',
 	password: mokeFormData ? c.VALUES.mokePassword : '',
 	passwordConfirmation: mokeFormData ? c.VALUES.mokePassword : '',
-	fiscalNumber: mokeFormData ? 'PT282692125' : '',
-	mobilePhone: mokeFormData ? '+351936200002' : '',
+	fiscalNumber: mokeFormData ? 'PT282692126' : '',
+	mobilePhone: mokeFormData ? '+351936200003' : '',
 	email: mokeFormData ? 'janedoe@mail.com' : '',
 	metaData: '',
 	metaDataInternal: '',
@@ -115,7 +115,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 			...commonFormFieldPasswordConfirmation(useRef(), FormFieldNames.PASSWORD_CONFIRMATION, showPassword, () => getValues(FormFieldNames.PASSWORD) === getValues(FormFieldNames.PASSWORD_CONFIRMATION))
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
-			...commonFormFieldFiscalNumber(useRef(), FormFieldNames.FISCAL_NUMBER)
+			...commonFormFieldFiscalNumber(useRef(), FormFieldNames.FISCAL_NUMBER, () => validateFiscalNumber(getValues(FormFieldNames.FISCAL_NUMBER)))
 		},
 		[FormFieldNames.MOBILE_PHONE]: {
 			...commonFormFieldMobilePhone(useRef(), FormFieldNames.MOBILE_PHONE)
@@ -148,7 +148,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 					{generateFormDefinition(formDefinition, control, errors, loading)}
 					{generateFormButtonsDiv(classes, loading, handleResetHandler)}
 				</form>
-				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
+				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} className={classes.spacer}/>}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 				<SnackbarMessage message={c.I18N.snackbarPersonUpsertSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />

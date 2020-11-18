@@ -116,8 +116,8 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 	// DRY function shared with transactions & goods, have setValue, trigger, let it be simple
 	const handleIncreaseDecreaseGood = (goodsBagArg: Array<GoodsBagItem>, index: number, value: number) => {
 		const namePrefix = `goodsBag[${index}]`;
-		// increase quantity			
-		goodsBagArg[index].quantity = goodsBagArg[index].quantity + value;
+		// increase quantity, require to parseInt ex when user types on input it will be a string
+		goodsBagArg[index].quantity = parseInt(goodsBagArg[index].quantity.toString()) + value;
 		setValue(`${namePrefix}.quantity`, goodsBagArg[index].quantity);
 		// trigger validation
 		trigger(`${namePrefix}.barCode`);
@@ -339,7 +339,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 						label="Locked"
 					/>
 				</form>
-				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
+				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} className={classes.spacer}/>}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 			<SnackbarMessage message={c.I18N.snackbarTransactionSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />

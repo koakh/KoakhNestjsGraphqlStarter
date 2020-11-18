@@ -1,6 +1,7 @@
 import { AccountTree as AccountTreeIcon, AddBox as AddBoxIcon, Apartment as ApartmentIcon, Assessment as AssessmentIcon, DynamicFeed as DynamicFeedIcon, Explore as ExploreIcon, Fingerprint as FingerprintIcon, Home as HomeIcon, LocalMall as LocalMallIcon, LocalPlay as LocalPlayIcon, Loyalty as LoyaltyIcon, People as PeopleIcon } from '@material-ui/icons';
 import React from 'react';
-import { AssetUpsertForm, CausesPage, CauseUpsertForm, CommunityPage, FeedPage, HomePage, ParticipantUpsertForm, PersonProfilePage, PersonQueryPage, PersonUpsertForm, ResultPage, SignInPage, SignUpPage, StatePage, TimelinePage, TransactionAddedPage, TransactionGoodsForm, TransactionUpsertForm } from '../../pages';
+import { AssetsQueryPage, AssetUpsertForm, CausesQueryPage, CauseUpsertForm, DashBoardPage, FeedPage, HomePage, ParticipantsQueryPage, ParticipantUpsertForm, PersonProfilePage, PersonQueryPage, PersonUpsertForm, ResultPage, SignInPage, SignUpPage, StatePage, TimelinePage, TransactionGoodsForm, TransactionSubscriptionPage, TransactionUpsertForm } from '../../pages';
+import { CommunityPage } from '../../pages/section1/CommunityPage';
 import { DrawerListItem, DrawerSections, RouteItem } from '../../types';
 import { getEnumKeyFromEnumValue } from '../../utils';
 
@@ -9,17 +10,23 @@ export const subStrCode = (code: string) => code.substr(0, 28);
 
 export enum RouteKey {
   HOME = 'HOME',
-  PERSON_QUERY = 'PERSON_QUERY',
+  // section1
   PROFILE = 'PROFILE',
   SIGN_IN = 'SIGN_IN',
   SIGN_UP = 'SIGN_UP',
   RESULT_PAGE = 'RESULT_PAGE',
   STATE = 'STATE',
-  TRANSACTIONS = 'TRANSACTIONS',
+  DASHBOARD = 'DASHBOARD',
   TIMELINE = 'TIMELINE',
   FEED = 'FEED',
-  CAUSES = 'CAUSES',
   COMMUNITY = 'COMMUNITY',
+  // section2
+  PERSONS = 'PERSONS',
+  PARTICIPANTS = 'PARTICIPANTS',
+  CAUSES = 'CAUSES',
+  ASSETS = 'ASSETS',
+  TRANSACTIONS = 'TRANSACTIONS',
+  // section3
   ASSET_UPSERT_FORM = 'ASSET_UPSERT_FORM',
   CAUSE_UPSERT_FORM = 'CAUSE_UPSERT_FORM',
   PARTICIPANT_UPSERT_FORM = 'PARTICIPANT_UPSERT_FORM',
@@ -28,6 +35,7 @@ export enum RouteKey {
   TRANSACTION_GOODS_FORM = 'TRANSACTION_GOODS_FORM',
 }
 
+// TODO: add title and label to i18n
 // route
 export const routes: Record<RouteKey, RouteItem> = {
   // SECTION0
@@ -48,26 +56,21 @@ export const routes: Record<RouteKey, RouteItem> = {
     component: PersonProfilePage,
     section: DrawerSections.SECTION1,
     drawerIcon: <FingerprintIcon />,
-    exact: true,
-    // visible: true,
   },
-  [RouteKey.PERSON_QUERY]: {
-    title: 'Persons',
-    label: 'Persons',
-    path: '/persons',
-    component: PersonQueryPage,
+  [RouteKey.DASHBOARD]: {
+    title: 'DashBoard',
+    label: 'DashBoard',
+    path: '/dashBoard',
+    component: DashBoardPage,
     section: DrawerSections.SECTION1,
-    // drawerIcon: USE DEFAULT HERE,
-    exact: true,
   },
-  [RouteKey.TRANSACTIONS]: {
-    title: 'Transactions',
-    label: 'Transactions',
-    path: '/transactions',
-    component: TransactionAddedPage,
+  [RouteKey.FEED]: {
+    title: 'Feed',
+    label: 'Feed',
+    path: '/feed',
+    component: FeedPage,
     section: DrawerSections.SECTION1,
-    // drawerIcon: USE DEFAULT HERE,
-    exact: true,
+    drawerIcon: <DynamicFeedIcon />,
   },
   [RouteKey.TIMELINE]: {
     title: 'TimeLine',
@@ -76,23 +79,14 @@ export const routes: Record<RouteKey, RouteItem> = {
     component: TimelinePage,
     section: DrawerSections.SECTION1,
   },
-  [RouteKey.SIGN_IN]: {
-    title: 'SignIn',
-    label: 'SignIn',
-    path: '/signin',
-    component: SignInPage,
-    // section: DrawerSections.SECTION1,
-    // drawerIcon: USE DEFAULT HERE,
+  [RouteKey.STATE]: {
+    title: 'State',
+    label: 'State',
+    path: '/state',
+    component: StatePage,
+    section: DrawerSections.SECTION1,
     exact: true,
     visible: false,
-  },
-  [RouteKey.SIGN_UP]: {
-    title: 'SignUp',
-    label: 'SignUp',
-    path: '/signup',
-    component: SignUpPage,
-    // section: DrawerSections.SECTION1,
-    exact: true,
   },
   [RouteKey.RESULT_PAGE]: {
     title: 'Result Page',
@@ -100,42 +94,70 @@ export const routes: Record<RouteKey, RouteItem> = {
     path: '/result-page',
     component: ResultPage,
     section: DrawerSections.SECTION1,
-    exact: true,
     visible: false,
-  },
-  [RouteKey.STATE]: {
-    title: 'State',
-    label: 'State',
-    path: '/state',
-    component: StatePage,
-    section: DrawerSections.SECTION1,
-    // drawerIcon: USE DEFAULT HERE,
-    exact: true,
-  },
-  // SECTION2
-  [RouteKey.FEED]: {
-    title: 'Feed',
-    label: 'Feed',
-    path: '/feed',
-    component: FeedPage,
-    section: DrawerSections.SECTION2,
-    drawerIcon: <DynamicFeedIcon />,
-  },
-  [RouteKey.CAUSES]: {
-    title: 'Causes',
-    label: 'Causes',
-    path: '/causes',
-    component: CausesPage,
-    section: DrawerSections.SECTION2,
-    drawerIcon: <ExploreIcon />,
   },
   [RouteKey.COMMUNITY]: {
     title: 'Community',
     label: 'Community',
     path: '/community',
     component: CommunityPage,
-    section: DrawerSections.SECTION2,
+    section: DrawerSections.SECTION1,
     drawerIcon: <LoyaltyIcon />,
+    visible: false,
+  },
+  [RouteKey.SIGN_IN]: {
+    title: 'SignIn',
+    label: 'SignIn',
+    path: '/signin',
+    component: SignInPage,
+    // section: NO SECTION,
+    visible: false,
+  },
+  [RouteKey.SIGN_UP]: {
+    title: 'SignUp',
+    label: 'SignUp',
+    path: '/signup',
+    component: SignUpPage,
+    section: DrawerSections.SECTION1,
+    // section: NO SECTION,
+    visible: false,
+  },
+  // SECTION2
+  [RouteKey.PERSONS]: {
+    title: 'Persons',
+    label: 'Persons',
+    path: '/persons',
+    component: PersonQueryPage,
+    section: DrawerSections.SECTION2,
+  },
+  [RouteKey.PARTICIPANTS]: {
+    title: 'Organizations',
+    label: 'Organizations',
+    path: '/organizations',
+    component: ParticipantsQueryPage,
+    section: DrawerSections.SECTION2,
+  },
+  [RouteKey.CAUSES]: {
+    title: 'Causes',
+    label: 'Causes',
+    path: '/causes',
+    component: CausesQueryPage,
+    section: DrawerSections.SECTION2,
+    drawerIcon: <ExploreIcon />,
+  },
+  [RouteKey.ASSETS]: {
+    title: 'Assets',
+    label: 'Assets',
+    path: '/assets',
+    component: AssetsQueryPage,
+    section: DrawerSections.SECTION2,
+  },
+  [RouteKey.TRANSACTIONS]: {
+    title: 'Transactions',
+    label: 'Transactions',
+    path: '/transactions',
+    component: TransactionSubscriptionPage,
+    section: DrawerSections.SECTION2,
   },
   // SECTION3
   [RouteKey.PERSON_UPSERT_FORM]: {
@@ -183,7 +205,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     label: 'Goods Transaction',
     path: '/goods-transaction',
     component: TransactionGoodsForm,
-    section: DrawerSections.SECTION4,
+    section: DrawerSections.SECTION3,
     drawerIcon: <LocalMallIcon />,
   },
 };

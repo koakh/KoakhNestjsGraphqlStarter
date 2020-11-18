@@ -319,7 +319,7 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 					</Button>
 					</div>
 				</form>
-				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
+				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} className={classes.spacer}/>}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 			</Box>

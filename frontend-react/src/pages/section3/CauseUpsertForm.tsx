@@ -169,7 +169,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 					{generateFormDefinition(formDefinition, control, errors, loading)}
 					{generateFormButtonsDiv(classes, loading, handleResetHandler)}
 				</form>
-				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} />}
+				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} className={classes.spacer}/>}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 				<SnackbarMessage message={c.I18N.snackbarCauseUpsertSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />

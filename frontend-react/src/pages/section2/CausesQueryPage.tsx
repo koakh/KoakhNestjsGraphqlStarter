@@ -5,7 +5,7 @@ import { PageTitle } from '../../components/material-ui/typography';
 
 interface Props { }
 
-export const CausesPage: React.FC<Props> = () => {
+export const CausesQueryPage: React.FC<Props> = () => {
   return (
     <Fragment>
       <PageTitle>{routes[RouteKey.CAUSES].title}</PageTitle>

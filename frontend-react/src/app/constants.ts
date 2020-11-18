@@ -37,6 +37,8 @@ const I18N: { [key: string]: string } = {
   required: 'required',
   invalid: 'invalid',
   none: 'none',
+  close: 'Close',
+  cancel: 'Cancel',
   // messages
   loginFailed: 'login failed please try again...',
   signIn: 'Sign In',

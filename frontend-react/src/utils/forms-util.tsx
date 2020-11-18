@@ -22,8 +22,8 @@ import React, { Fragment } from 'react';
 import { Control, Controller, DeepMap, FieldError } from 'react-hook-form';
 import { appConstants as c } from '../app/constants';
 import { AutocompleteAndSelectOptions, FormInputType, FormPropFields } from '../types';
-import { validateBarCode } from './barcode';
 import { recordToArray } from './main-util';
+import { validateBarCode } from './validation';
 
 // used outside in forms
 export const useStyles = makeStyles((theme) => ({

@@ -101,7 +101,7 @@ export const commonFormFieldPasswordConfirmation = (inputRef: MutableRefObject<a
   }
 }
 
-export const commonFormFieldFiscalNumber = (inputRef: MutableRefObject<any>, formFieldName: string): FormPropFields => {
+export const commonFormFieldFiscalNumber = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
   return {
     inputRef,
     type: FormInputType.TEXT,
@@ -109,7 +109,12 @@ export const commonFormFieldFiscalNumber = (inputRef: MutableRefObject<any>, for
     label: c.I18N.fiscalNumberLabel,
     placeholder: c.I18N.fiscalNumberPlaceHolder,
     fullWidth: true,
-    rules: validationRuleRegExHelper(formFieldName, c.REGEXP.fiscalNumber),
+    // rules: validationRuleRegExHelper(formFieldName, c.REGEXP.fiscalNumber),
+    rules: {
+      validate: () => validate()
+        ? true
+        : validationMessage('required', formFieldName)
+    },    
     controlProps: commonControlProps,
   }
 }
@@ -623,7 +628,7 @@ export const commonFormFieldGoodsBag = (
                 ? errors[formFieldName][index].quantity.message
                 : '',
               errorFn: () => errors[formFieldName] && errors[formFieldName][index] && errors[formFieldName][index].quantity !== undefined,
-              onFocusFn: () => goodsBagQuantityInputRef[index].current.focus()
+              onFocusFn: () => goodsBagQuantityInputRef[index].current.focus(),
             }, control, errors, loading)}
           </Grid>
           {/* the trick is using auto in buttons */}
