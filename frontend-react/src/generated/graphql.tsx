@@ -1130,14 +1130,30 @@ export type CausesQuery = (
   { __typename?: 'Query' }
   & { causes: Array<(
     { __typename?: 'Cause' }
-    & Pick<Cause, 'id' | 'name' | 'startDate' | 'endDate' | 'location' | 'tags' | 'metaData' | 'createdDate'>
+    & Pick<Cause, 'id' | 'name' | 'email' | 'ambassadors' | 'startDate' | 'endDate' | 'location' | 'tags' | 'metaData' | 'createdDate' | 'createdByPersonId' | 'metaDataInternal'>
     & { input: (
       { __typename?: 'EntityResult' }
       & { entity: (
         { __typename?: 'Entity' }
-        & Pick<Entity, 'id'>
+        & Pick<Entity, 'id' | 'type' | 'createdDate'>
       ) }
-    ) }
+    ), participant: (
+      { __typename?: 'Participant' }
+      & Pick<Participant, 'id' | 'name' | 'msp'>
+    ), fundsBalance: (
+      { __typename?: 'GenericBalance' }
+      & Pick<GenericBalance, 'debit' | 'credit' | 'balance'>
+    ), volunteeringHoursBalance: (
+      { __typename?: 'GenericBalance' }
+      & Pick<GenericBalance, 'debit' | 'credit' | 'balance'>
+    ), goodsStock?: Maybe<Array<(
+      { __typename?: 'Goods' }
+      & Pick<Goods, 'id' | 'code' | 'barCode' | 'name' | 'description' | 'tags'>
+      & { balance: (
+        { __typename?: 'GenericBalance' }
+        & Pick<GenericBalance, 'debit' | 'credit' | 'balance'>
+      ) }
+    )>> }
   )> }
 );
 
@@ -2710,6 +2726,8 @@ export const CausesDocument = gql`
   causes(skip: $skip, take: $take) {
     id
     name
+    email
+    ambassadors
     startDate
     endDate
     location
@@ -2718,9 +2736,42 @@ export const CausesDocument = gql`
     input {
       entity {
         id
+        type
+        createdDate
+      }
+    }
+    participant {
+      id
+      name
+      msp
+    }
+    fundsBalance {
+      debit
+      credit
+      balance
+    }
+    volunteeringHoursBalance {
+      debit
+      credit
+      balance
+    }
+    goodsStock {
+      id
+      code
+      barCode
+      name
+      description
+      tags
+      balance {
+        debit
+        credit
+        balance
       }
     }
     createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal
   }
 }
     `;

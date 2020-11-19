@@ -7,14 +7,14 @@ import { CustomDialog } from '../../components/material-ui/custom-dialog';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { CustomDataTable, modalPropertyColumns, objectPropsToDataTableRows, queryDataToDataTableRows } from '../../components/material-ui/tables';
 import { PageTitle } from '../../components/material-ui/typography';
-import { useCausesLazyQuery } from '../../generated/graphql';
+import { useTransactionsLazyQuery } from '../../generated/graphql';
 
 interface Props { }
 
-export const CausesQueryPage: React.FC<Props> = () => {
+export const TransactionsQueryPage: React.FC<Props> = () => {
   const [modalRows, setModalRows] = useState([])
   // hooks
-  const [assetQuery, { data, loading, error }] = useCausesLazyQuery({
+  const [transactionQuery, { data, loading, error }] = useTransactionsLazyQuery({
     fetchPolicy: e.apolloFetchPolicy,
     variables: {
       skip: 0,
@@ -26,7 +26,7 @@ export const CausesQueryPage: React.FC<Props> = () => {
 
   // only fire query if has a valid accessToken to prevent after login delay problems
   if (!data && !loading && getAccessToken()) {
-    assetQuery();
+    transactionQuery();
   }
 
   // catch error first
@@ -34,7 +34,7 @@ export const CausesQueryPage: React.FC<Props> = () => {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
   }
 
-  const pageTitle = <PageTitle>{routes[RouteKey.CAUSES].title}</PageTitle>;
+  const pageTitle = <PageTitle>{routes[RouteKey.TRANSACTIONS].title}</PageTitle>;
   if (loading || !data) {
     return (
       <Fragment>
@@ -51,26 +51,25 @@ export const CausesQueryPage: React.FC<Props> = () => {
   }
 
   const columns: ColDef[] = [
-    { field: 'id', headerName: 'Id', hide: true },
-    { field: 'name', headerName: 'Name', width: 220 },
-    { field: 'email', headerName: 'Email', width: 220 },
-    { field: 'tags', headerName: 'Tags', width: 220 },
-    { field: 'startDate', hide: true },
-    { field: 'endDate', hide: true },
-    { field: 'ambassadors', hide: true },
+    { field: 'id', hide: true },
+    { field: 'transactionType', headerName: 'TransactionType', width: 200 },
+    { field: 'resourceType', headerName: 'ResourceType', width: 200 },
+    { field: 'input' },
+    { field: 'output' },
+    { field: 'quantity', hide: true },
+    { field: 'currency', hide: true },
     { field: 'location', hide: true },
-    { field: 'input', hide: true },
-    { field: 'fundsBalance', hide: true },
-    { field: 'volunteeringHoursBalance', hide: true },
-    { field: 'goodsStock', hide: true },
     { field: 'participant', hide: true },
+    { field: 'assetId', hide: true },
+    { field: 'goods', hide: true },
+    { field: 'tags', hide: true },
     { field: 'createdDate', hide: true },
     { field: 'createdByPersonId', hide: true },
     { field: 'metaData', hide: true },
     { field: 'metaDataInternal', hide: true },    
   ];
   // TODO use type
-  const rows = queryDataToDataTableRows<any>(columns, data.causes);
+  const rows = queryDataToDataTableRows<any>(columns, data.transactions);
   const attributes = {
     pageSize: 50,
     onRowClick: (e: { data: any }) => {

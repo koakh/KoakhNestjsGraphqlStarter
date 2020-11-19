@@ -16,6 +16,8 @@ import { generateFormButtonsDiv, generateFormDefinition, getGraphQLApolloError, 
 type FormInputs = {
 	assetType: AssetType,
 	name: string,
+	// TODO: add, first we need to add it to NewAssetInput GraphQL
+	description: string,
 	ambassadors?: string,
 	// input/output entity object
 	owner: string,
@@ -27,6 +29,7 @@ type FormInputs = {
 enum FormFieldNames {
 	ASSET_TYPE = 'assetType',
 	NAME = 'name',
+	DESCRIPTION = 'description',
 	AMBASSADORS = 'ambassadors',
 	OWNER = 'owner',
 	LOCATION = 'location',
@@ -37,6 +40,7 @@ enum FormFieldNames {
 const defaultValues: FormDefaultValues = {
 	assetType: c.VALUES.undefined,
 	name: mokeFormData ? 'Wheel chair' : '',
+	description: mokeFormData ? 'some useful description' : '',
 	ambassadors: mokeFormData ? c.VALUES.mokeAmbassadors : '',
 	// inject by user profile id state
 	owner: '',

@@ -1,6 +1,6 @@
 import { AccountTree as AccountTreeIcon, AddBox as AddBoxIcon, Apartment as ApartmentIcon, Assessment as AssessmentIcon, DynamicFeed as DynamicFeedIcon, Explore as ExploreIcon, Fingerprint as FingerprintIcon, Home as HomeIcon, LocalMall as LocalMallIcon, LocalPlay as LocalPlayIcon, Loyalty as LoyaltyIcon, People as PeopleIcon } from '@material-ui/icons';
 import React from 'react';
-import { AssetsQueryPage, AssetUpsertForm, CausesQueryPage, CauseUpsertForm, DashBoardPage, FeedPage, HomePage, ParticipantsQueryPage, ParticipantUpsertForm, PersonProfilePage, PersonQueryPage, PersonUpsertForm, ResultPage, SignInPage, SignUpPage, StatePage, TimelinePage, TransactionGoodsForm, TransactionSubscriptionPage, TransactionUpsertForm } from '../../pages';
+import { AssetsQueryPage, AssetUpsertForm, CausesQueryPage, CauseUpsertForm, DashBoardPage, FeedPage, HomePage, ParticipantsQueryPage, ParticipantUpsertForm, PersonProfilePage, PersonQueryPage, PersonUpsertForm, ResultPage, SignInPage, SignUpPage, StatePage, TimelinePage, TransactionGoodsForm, TransactionsQueryPage, TransactionUpsertForm } from '../../pages';
 import { CommunityPage } from '../../pages/section1/CommunityPage';
 import { DrawerListItem, DrawerSections, RouteItem } from '../../types';
 import { getEnumKeyFromEnumValue } from '../../utils';
@@ -156,7 +156,8 @@ export const routes: Record<RouteKey, RouteItem> = {
     title: 'Transactions',
     label: 'Transactions',
     path: '/transactions',
-    component: TransactionSubscriptionPage,
+    // TransactionSubscriptionPage
+    component: TransactionsQueryPage,
     section: DrawerSections.SECTION2,
   },
   // SECTION3
