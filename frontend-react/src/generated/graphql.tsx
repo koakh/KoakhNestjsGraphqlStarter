@@ -1487,14 +1487,14 @@ export type AssetAddedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 export type AssetAddedSubscription = (
   { __typename?: 'Subscription' }
-  & { causeAdded: (
-    { __typename?: 'Cause' }
-    & Pick<Cause, 'id' | 'name' | 'location' | 'tags' | 'metaData' | 'createdDate'>
-    & { input: (
+  & { assetAdded: (
+    { __typename?: 'Asset' }
+    & Pick<Asset, 'id' | 'name' | 'description' | 'assetType' | 'ambassadors' | 'location' | 'tags' | 'metaData'>
+    & { owner: (
       { __typename?: 'EntityResult' }
       & { entity: (
         { __typename?: 'Entity' }
-        & Pick<Entity, 'id'>
+        & Pick<Entity, 'id' | 'type'>
       ) }
     ) }
   ) }
@@ -3715,18 +3715,21 @@ export type TransactionsLazyQueryHookResult = ReturnType<typeof useTransactionsL
 export type TransactionsQueryResult = Apollo.QueryResult<TransactionsQuery, TransactionsQueryVariables>;
 export const AssetAddedDocument = gql`
     subscription assetAdded {
-  causeAdded {
+  assetAdded {
     id
     name
+    description
+    assetType
+    ambassadors
+    owner {
+      entity {
+        id
+        type
+      }
+    }
     location
     tags
     metaData
-    input {
-      entity {
-        id
-      }
-    }
-    createdDate
   }
 }
     `;

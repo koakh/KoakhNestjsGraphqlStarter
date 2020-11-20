@@ -1,5 +1,5 @@
 /* eslint-disable no-template-curly-in-string */
-import { Box } from '@material-ui/core';
+import { Box, Typography } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
 import React, { Fragment, useRef, useState } from 'react';
 import { appConstants as c, getAccessToken } from '../../app';
@@ -9,11 +9,12 @@ import { CustomDialog } from '../../components/material-ui/custom-dialog';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { CustomDataTable, modalPropertyColumns, objectPropsToDataTableRows, queryDataToDataTableRows } from '../../components/material-ui/tables';
 import { PageTitle } from '../../components/material-ui/typography';
-import { Person, usePersonsLazyQuery } from '../../generated/graphql';
+import { Person, PersonAddedSubscription, usePersonAddedSubscription, usePersonsLazyQuery } from '../../generated/graphql';
 import { useStyles } from '../../utils';
 import { generateMediaCardQuickButton } from '../../utils/tsx-util';
 
 interface Props { }
+const personAdded = new Array<PersonAddedSubscription>();
 
 export const PersonQueryPage: React.FC<Props> = () => {
   // hooks styles
@@ -28,6 +29,7 @@ export const PersonQueryPage: React.FC<Props> = () => {
       take: 50
     }
   });
+  const { data: dataSub, loading: loadingSub, error: errorSub } = usePersonAddedSubscription();
   // reference to use in module to be exposed to parent in childRef.current
   const childRef = useRef<{ open: () => void }>();
 
@@ -50,6 +52,20 @@ export const PersonQueryPage: React.FC<Props> = () => {
       </Fragment>
     );
   }
+
+  // subscriptions
+  if (!loadingSub && dataSub && dataSub.personAdded) {
+    personAdded.push(dataSub);
+  }
+  if (errorSub) {
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
+  }
+  const persons = personAdded.map((e: PersonAddedSubscription) => (
+    <Box key={e.personAdded.id} component='span' m={1}>
+      <Typography>{e.personAdded.username} : {e.personAdded.id} : {e.personAdded.email}</Typography>
+    </Box>
+  ));
+  const subscriptionsContent = personAdded.length > 0 ? persons : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
 
   // modal handlers
   const handleClickOpen = () => {
@@ -111,7 +127,7 @@ export const PersonQueryPage: React.FC<Props> = () => {
   ];
   const rows = queryDataToDataTableRows<Person>(columns, data.persons);
   const attributes = {
-    pageSize: 6,
+    pageSize: c.VALUES.dataGridPageSize,
     onRowClick: (e: { data: any }) => {
       const rows = objectPropsToDataTableRows(e.data);
       setModalRows(rows);
@@ -136,6 +152,7 @@ export const PersonQueryPage: React.FC<Props> = () => {
       </Button> */}
       {/* subscriptions */}
       <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box>
+      {subscriptionsContent}
       {/* customDialog */}
       <CustomDialog ref={childRef} title='details' closeButtonLabel={c.I18N.close}>
         <CustomDataTable columns={modalPropertyColumns} rows={modalRows} />

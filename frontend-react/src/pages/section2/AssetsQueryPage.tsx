@@ -1,4 +1,4 @@
-import { Box } from '@material-ui/core';
+import { Box, Typography } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
 import React, { Fragment, useRef, useState } from 'react';
 import { appConstants as c, getAccessToken } from '../../app';
@@ -8,10 +8,11 @@ import { CustomDialog } from '../../components/material-ui/custom-dialog';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { CustomDataTable, modalPropertyColumns, objectPropsToDataTableRows, queryDataToDataTableRows } from '../../components/material-ui/tables';
 import { PageTitle } from '../../components/material-ui/typography';
-import { useAssetsLazyQuery } from '../../generated/graphql';
+import { AssetAddedSubscription, useAssetAddedSubscription, useAssetsLazyQuery } from '../../generated/graphql';
 import { useStyles } from '../../utils';
 
 interface Props { }
+const assetAdded = new Array<AssetAddedSubscription>();
 
 export const AssetsQueryPage: React.FC<Props> = () => {
 	// hooks styles
@@ -26,6 +27,7 @@ export const AssetsQueryPage: React.FC<Props> = () => {
       take: 50
     }
   });
+  const { data: dataSub, loading: loadingSub, error: errorSub } = useAssetAddedSubscription();
   // reference to use in module to be exposed to parent in childRef.current
   const childRef = useRef<{ open: () => void }>();
 
@@ -48,6 +50,20 @@ export const AssetsQueryPage: React.FC<Props> = () => {
       </Fragment>
     );
   }
+
+  // subscriptions
+  if (!loadingSub && dataSub && dataSub.assetAdded) {
+    assetAdded.push(dataSub);
+  }
+  if (errorSub) {
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
+  }
+  const assets = assetAdded.map((e: AssetAddedSubscription) => (
+    <Box key={e.assetAdded.id} component='span' m={1}>
+      <Typography>{e.assetAdded.name} : {e.assetAdded.id}</Typography>
+    </Box>
+  ));
+  const subscriptionsContent = assetAdded.length > 0 ? assets : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
 
   // modal handlers
   const handleClickOpen = () => {
@@ -73,7 +89,7 @@ export const AssetsQueryPage: React.FC<Props> = () => {
   // TODO use type
   const rows = queryDataToDataTableRows<any>(columns, data.assets);
   const attributes = {
-    pageSize: 50,
+    pageSize: c.VALUES.dataGridPageSize,
     onRowClick: (e: { data: any }) => {
       const rows = objectPropsToDataTableRows(e.data);
       setModalRows(rows);
@@ -87,6 +103,7 @@ export const AssetsQueryPage: React.FC<Props> = () => {
       <CustomDataTable columns={columns} rows={rows} attributes={attributes} />
       {/* subscriptions */}
       <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box>
+      {subscriptionsContent}
       {/* customDialog */}
       <CustomDialog ref={childRef} title='details' closeButtonLabel={c.I18N.close}>
         <CustomDataTable columns={modalPropertyColumns} rows={modalRows} />

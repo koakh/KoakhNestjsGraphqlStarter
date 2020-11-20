@@ -14,9 +14,10 @@ const VALUES: { [key: string]: any } = {
   mokeLocation: '12.1890144,-28.5171909',
   mokePassword: 'Aa456#45',
   mokeTags: [
-		{ title: 'Nature', value: 'NATURE' },
-		{ title: 'Economy', value: 'ECONOMY' },
-	],
+    { title: 'Nature', value: 'NATURE' },
+    { title: 'Economy', value: 'ECONOMY' },
+  ],
+  dataGridPageSize: 6,
 }
 
 const I18N: { [key: string]: string } = {
@@ -39,8 +40,9 @@ const I18N: { [key: string]: string } = {
   close: 'Close',
   cancel: 'Cancel',
   donate: 'Donate',
-  quickDonateButtons:'Quick Donate Buttons',
+  quickDonateButtons: 'Quick Donate Buttons',
   subscriptions: 'Subscriptions',
+  waitingForSubscriptions: 'waiting for subscriptions...',
   // messages
   loginFailed: 'login failed please try again...',
   signIn: 'Sign In',
@@ -48,10 +50,10 @@ const I18N: { [key: string]: string } = {
   nonAccountSignUp: 'Don\'t have an account? Sign Up',
   rememberMe: 'Remember me',
   forgotPassword: 'Forgot password?',
-  snackbarAssetUpsertSuccess:'asset upsert successful!',
-  snackbarCauseUpsertSuccess:'cause upsert successful!',
-  snackbarParticipantUpsertSuccess:'participant upsert successful!',
-  snackbarPersonUpsertSuccess:'person upsert successful!',
+  snackbarAssetUpsertSuccess: 'asset upsert successful!',
+  snackbarCauseUpsertSuccess: 'cause upsert successful!',
+  snackbarParticipantUpsertSuccess: 'participant upsert successful!',
+  snackbarPersonUpsertSuccess: 'person upsert successful!',
   snackbarTransactionUpsertSuccess: 'transaction upsert successful!',
   // wip: messages
   signInWip: 'wip: required send email activation code, otp code, finish remember me, and other stuff...',

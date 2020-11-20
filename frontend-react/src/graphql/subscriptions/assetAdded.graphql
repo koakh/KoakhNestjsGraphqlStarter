@@ -1,15 +1,18 @@
 subscription assetAdded{
-  causeAdded {
+  assetAdded {
     id
     name    
-    location
-    tags
-    metaData    
-    input {
+    description
+    assetType
+    ambassadors
+    owner {
       entity{
         id
+        type
       }
     }
-    createdDate
+    location
+    tags
+    metaData
   }
 }

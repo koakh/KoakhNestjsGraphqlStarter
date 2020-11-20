@@ -1,5 +1,5 @@
 /* eslint-disable no-template-curly-in-string */
-import { Box } from '@material-ui/core';
+import { Box, Typography } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
 import React, { Fragment, useRef, useState } from 'react';
 import { appConstants as c, getAccessToken } from '../../app';
@@ -9,11 +9,12 @@ import { CustomDialog } from '../../components/material-ui/custom-dialog';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { CustomDataTable, modalPropertyColumns, objectPropsToDataTableRows, queryDataToDataTableRows } from '../../components/material-ui/tables';
 import { PageTitle } from '../../components/material-ui/typography';
-import { useCausesLazyQuery } from '../../generated/graphql';
+import { CauseAddedSubscription, useCauseAddedSubscription, useCausesLazyQuery } from '../../generated/graphql';
 import { useStyles } from '../../utils';
 import { generateMediaCardQuickButton } from '../../utils/tsx-util';
 
 interface Props { }
+const causeAdded = new Array<CauseAddedSubscription>();
 
 export const CausesQueryPage: React.FC<Props> = () => {
   // hooks styles
@@ -28,6 +29,7 @@ export const CausesQueryPage: React.FC<Props> = () => {
       take: 50
     }
   });
+  const { data: dataSub, loading: loadingSub, error: errorSub } = useCauseAddedSubscription();
   // reference to use in module to be exposed to parent in childRef.current
   const childRef = useRef<{ open: () => void }>();
 
@@ -50,6 +52,20 @@ export const CausesQueryPage: React.FC<Props> = () => {
       </Fragment>
     );
   }
+
+  // subscriptions
+  if (!loadingSub && dataSub && dataSub.causeAdded) {
+    causeAdded.push(dataSub);
+  }
+  if (errorSub) {
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
+  }
+  const causes = causeAdded.map((e: CauseAddedSubscription) => (
+    <Box key={e.causeAdded.id} component='span' m={1}>
+      <Typography>{e.causeAdded.name} : {e.causeAdded.id}</Typography>
+    </Box>
+  ));
+  const subscriptionsContent = causeAdded.length > 0 ? causes : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
 
   // modal handlers
   const handleClickOpen = () => {
@@ -79,7 +95,7 @@ export const CausesQueryPage: React.FC<Props> = () => {
   // TODO use type
   const rows = queryDataToDataTableRows<any>(columns, data.causes);
   const attributes = {
-    pageSize: 50,
+    pageSize: c.VALUES.dataGridPageSize,
     onRowClick: (e: { data: any }) => {
       const rows = objectPropsToDataTableRows(e.data);
       setModalRows(rows);
@@ -96,6 +112,7 @@ export const CausesQueryPage: React.FC<Props> = () => {
       {generateMediaCardQuickButton(data.causes, classes, 228, '${name} / ${email}', 'Cras euismod elementum turpis eget pharetra. Class aptent taciti sociosqu ...')}
       {/* subscriptions */}
       <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box>
+      {subscriptionsContent}
       {/* customDialog */}
       <CustomDialog ref={childRef} title='details' closeButtonLabel={c.I18N.close}>
         <CustomDataTable columns={modalPropertyColumns} rows={modalRows} />
