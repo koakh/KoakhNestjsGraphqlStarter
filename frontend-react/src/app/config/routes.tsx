@@ -1,6 +1,6 @@
 import { AccountTree as AccountTreeIcon, AddBox as AddBoxIcon, Apartment as ApartmentIcon, Assessment as AssessmentIcon, DynamicFeed as DynamicFeedIcon, Explore as ExploreIcon, Fingerprint as FingerprintIcon, Home as HomeIcon, LocalMall as LocalMallIcon, LocalPlay as LocalPlayIcon, Loyalty as LoyaltyIcon, People as PeopleIcon } from '@material-ui/icons';
 import React from 'react';
-import { AssetsQueryPage, AssetUpsertForm, CausesQueryPage, CauseUpsertForm, DashBoardPage, FeedPage, HomePage, ParticipantsQueryPage, ParticipantUpsertForm, PersonProfilePage, PersonQueryPage, PersonUpsertForm, ResultPage, SignInPage, SignUpPage, StatePage, TimelinePage, TransactionGoodsForm, TransactionsQueryPage, TransactionUpsertForm } from '../../pages';
+import { AssetsQueryPage, AssetUpsertForm, CausesQueryPage, CauseUpsertForm, DashBoardPage, UseCasesPage, FeedPage, HomePage, ParticipantsQueryPage, ParticipantUpsertForm, PersonProfilePage, PersonQueryPage, PersonUpsertForm, ResultPage, SignInPage, SignUpPage, StatePage, TimelinePage, TransactionGoodsForm, TransactionsQueryPage, TransactionUpsertForm } from '../../pages';
 import { CommunityPage } from '../../pages/section1/CommunityPage';
 import { DrawerListItem, DrawerSections, RouteItem } from '../../types';
 import { getEnumKeyFromEnumValue } from '../../utils';
@@ -18,6 +18,7 @@ export enum RouteKey {
   STATE = 'STATE',
   DASHBOARD = 'DASHBOARD',
   TIMELINE = 'TIMELINE',
+  USE_CASES = 'USE_CASES',
   FEED = 'FEED',
   COMMUNITY = 'COMMUNITY',
   // section2
@@ -62,6 +63,13 @@ export const routes: Record<RouteKey, RouteItem> = {
     label: 'DashBoard',
     path: '/dashBoard',
     component: DashBoardPage,
+    section: DrawerSections.SECTION1,
+  },
+  [RouteKey.USE_CASES]: {
+    title: 'UseCases',
+    label: 'UseCases',
+    path: '/use-cases',
+    component: UseCasesPage,
     section: DrawerSections.SECTION1,
   },
   [RouteKey.FEED]: {

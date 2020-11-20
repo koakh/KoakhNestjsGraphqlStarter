@@ -1,3 +1,5 @@
+/* eslint-disable no-template-curly-in-string */
+import { Box } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
 import React, { Fragment, useRef, useState } from 'react';
 import { appConstants as c, getAccessToken } from '../../app';
@@ -8,10 +10,15 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { CustomDataTable, modalPropertyColumns, objectPropsToDataTableRows, queryDataToDataTableRows } from '../../components/material-ui/tables';
 import { PageTitle } from '../../components/material-ui/typography';
 import { useCausesLazyQuery } from '../../generated/graphql';
+import { useStyles } from '../../utils';
+import { generateMediaCardQuickButton } from '../../utils/tsx-util';
 
 interface Props { }
 
 export const CausesQueryPage: React.FC<Props> = () => {
+  // hooks styles
+  const classes = useStyles();
+  // state
   const [modalRows, setModalRows] = useState([])
   // hooks
   const [assetQuery, { data, loading, error }] = useCausesLazyQuery({
@@ -67,7 +74,7 @@ export const CausesQueryPage: React.FC<Props> = () => {
     { field: 'createdDate', hide: true },
     { field: 'createdByPersonId', hide: true },
     { field: 'metaData', hide: true },
-    { field: 'metaDataInternal', hide: true },    
+    { field: 'metaDataInternal', hide: true },
   ];
   // TODO use type
   const rows = queryDataToDataTableRows<any>(columns, data.causes);
@@ -84,6 +91,12 @@ export const CausesQueryPage: React.FC<Props> = () => {
     <Fragment>
       {pageTitle}
       <CustomDataTable columns={columns} rows={rows} attributes={attributes} />
+      {/* QuickButtons */}
+      <Box className={classes.spacerTop}><PageTitle>{c.I18N.quickDonateButtons}</PageTitle></Box>
+      {generateMediaCardQuickButton(data.causes, classes, 228, '${name} / ${email}', 'Cras euismod elementum turpis eget pharetra. Class aptent taciti sociosqu ...')}
+      {/* subscriptions */}
+      <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box>
+      {/* customDialog */}
       <CustomDialog ref={childRef} title='details' closeButtonLabel={c.I18N.close}>
         <CustomDataTable columns={modalPropertyColumns} rows={modalRows} />
       </CustomDialog>

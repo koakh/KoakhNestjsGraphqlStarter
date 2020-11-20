@@ -1,3 +1,5 @@
+/* eslint-disable no-template-curly-in-string */
+import { Box } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
 import React, { Fragment, useRef, useState } from 'react';
 import { appConstants as c, getAccessToken } from '../../app';
@@ -8,10 +10,15 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { CustomDataTable, modalPropertyColumns, objectPropsToDataTableRows, queryDataToDataTableRows } from '../../components/material-ui/tables';
 import { PageTitle } from '../../components/material-ui/typography';
 import { useParticipantsLazyQuery } from '../../generated/graphql';
+import { useStyles } from '../../utils';
+import { generateMediaCardQuickButton } from '../../utils/tsx-util';
 
 interface Props { }
 
 export const ParticipantsQueryPage: React.FC<Props> = () => {
+  // hooks styles
+  const classes = useStyles();
+  // state
   const [modalRows, setModalRows] = useState([])
   // hooks
   const [participantQuery, { data, loading, error }] = useParticipantsLazyQuery({
@@ -82,6 +89,12 @@ export const ParticipantsQueryPage: React.FC<Props> = () => {
     <Fragment>
       {pageTitle}
       <CustomDataTable columns={columns} rows={rows} attributes={attributes} />
+      {/* quickButtons */}
+      <Box className={classes.spacerTop}><PageTitle>{c.I18N.quickDonateButtons}</PageTitle></Box>
+      {generateMediaCardQuickButton(data.participants, classes, 128, '${name} / ${email}', 'Cras euismod elementum turpis eget pharetra. Class aptent taciti sociosqu ...')}
+      {/* subscriptions */}
+      <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box>
+      {/* customDialog */}
       <CustomDialog ref={childRef} title='details' closeButtonLabel={c.I18N.close}>
         <CustomDataTable columns={modalPropertyColumns} rows={modalRows} />
       </CustomDialog>

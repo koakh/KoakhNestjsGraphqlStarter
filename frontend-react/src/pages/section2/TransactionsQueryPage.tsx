@@ -8,10 +8,15 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { CustomDataTable, modalPropertyColumns, objectPropsToDataTableRows, queryDataToDataTableRows } from '../../components/material-ui/tables';
 import { PageTitle } from '../../components/material-ui/typography';
 import { useTransactionsLazyQuery } from '../../generated/graphql';
+import { useStyles } from '../../utils';
+import { Box } from '@material-ui/core';
 
 interface Props { }
 
 export const TransactionsQueryPage: React.FC<Props> = () => {
+	// hooks styles
+  const classes = useStyles();
+  // state
   const [modalRows, setModalRows] = useState([])
   // hooks
   const [transactionQuery, { data, loading, error }] = useTransactionsLazyQuery({
@@ -83,6 +88,9 @@ export const TransactionsQueryPage: React.FC<Props> = () => {
     <Fragment>
       {pageTitle}
       <CustomDataTable columns={columns} rows={rows} attributes={attributes} />
+      {/* subscriptions */}
+      <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box>
+      {/* customDialog */}
       <CustomDialog ref={childRef} title='details' closeButtonLabel={c.I18N.close}>
         <CustomDataTable columns={modalPropertyColumns} rows={modalRows} />
       </CustomDialog>

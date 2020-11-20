@@ -71,6 +71,8 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 			// alert(JSON.stringify(data, undefined, 2));
 			setShowPassword(false);
 			const newPersonData: NewPersonInput = {
+				firstName: data.firstName,
+				lastName: data.lastName,
 				username: data.username,
 				password: data.password,
 				fiscalNumber: data.fiscalNumber,

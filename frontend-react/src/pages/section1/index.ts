@@ -7,3 +7,4 @@ export * from './DashBoardPage';
 export * from './PersonProfilePage';
 export * from './TimelinePage';
 export * from './FeedPage';
+export * from './UseCasesPage';

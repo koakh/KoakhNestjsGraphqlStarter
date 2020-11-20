@@ -9,6 +9,7 @@ const transactionAdded = new Array<TransactionAddedSubscription>();
 
 // TODO send and filter by causeId, personId or participantId
 export const TransactionSubscriptionPage: React.FC<Props> = ({ causeId }) => {
+  // state
   const { data, loading, error } = useTransactionAddedSubscription();
 
   if (!loading && data && data.transactionAdded) {

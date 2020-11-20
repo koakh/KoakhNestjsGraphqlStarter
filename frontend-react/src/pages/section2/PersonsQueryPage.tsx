@@ -1,3 +1,5 @@
+/* eslint-disable no-template-curly-in-string */
+import { Box } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
 import React, { Fragment, useRef, useState } from 'react';
 import { appConstants as c, getAccessToken } from '../../app';
@@ -8,10 +10,15 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { CustomDataTable, modalPropertyColumns, objectPropsToDataTableRows, queryDataToDataTableRows } from '../../components/material-ui/tables';
 import { PageTitle } from '../../components/material-ui/typography';
 import { Person, usePersonsLazyQuery } from '../../generated/graphql';
+import { useStyles } from '../../utils';
+import { generateMediaCardQuickButton } from '../../utils/tsx-util';
 
 interface Props { }
 
 export const PersonQueryPage: React.FC<Props> = () => {
+  // hooks styles
+  const classes = useStyles();
+  // state
   const [modalRows, setModalRows] = useState([])
   // hooks
   const [personQuery, { data, loading, error }] = usePersonsLazyQuery({
@@ -59,8 +66,8 @@ export const PersonQueryPage: React.FC<Props> = () => {
     { field: 'id', hide: true },
     { field: 'username', headerName: 'Username', width: 140, },
     { field: 'fiscalNumber', headerName: 'FiscalNumber', width: 140 },
-    { field: 'mobilePhone', headerName: 'MobilePhone', width: 140 },
     { field: 'email', headerName: 'Email', width: 240 },
+    { field: 'mobilePhone', headerName: 'MobilePhone', hide: true },
     { field: 'firstName', hide: true },
     { field: 'lastName', hide: true },
     { field: 'gender', hide: true },
@@ -104,7 +111,7 @@ export const PersonQueryPage: React.FC<Props> = () => {
   ];
   const rows = queryDataToDataTableRows<Person>(columns, data.persons);
   const attributes = {
-    pageSize: 50,
+    pageSize: 6,
     onRowClick: (e: { data: any }) => {
       const rows = objectPropsToDataTableRows(e.data);
       setModalRows(rows);
@@ -121,9 +128,15 @@ export const PersonQueryPage: React.FC<Props> = () => {
         )}
       </Box> */}
       <CustomDataTable columns={columns} rows={rows} attributes={attributes} />
+      {/* quickButtons */}
+      <Box className={classes.spacerTop}><PageTitle>{c.I18N.quickDonateButtons}</PageTitle></Box>
+      {generateMediaCardQuickButton(data.persons, classes, 28, '${username} / ${email}', 'Cras euismod elementum turpis eget pharetra. Class aptent taciti sociosqu ...')}
       {/* <Button variant="outlined" color="primary" onClick={handleClickOpen}>
         Open form dialog
       </Button> */}
+      {/* subscriptions */}
+      <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box>
+      {/* customDialog */}
       <CustomDialog ref={childRef} title='details' closeButtonLabel={c.I18N.close}>
         <CustomDataTable columns={modalPropertyColumns} rows={modalRows} />
       </CustomDialog>

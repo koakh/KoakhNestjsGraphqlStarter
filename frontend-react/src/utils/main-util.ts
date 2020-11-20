@@ -125,3 +125,7 @@ export const currentFormatDate = (date: Date, withTime: boolean = true): string 
  * @param obj 
  */
 export const parseTemplate = (stringTemplate: string, obj: any) => stringTemplate.replace(/\${(.*?)}/g, (x, g) => obj[g]);
+
+export const randomInteger = (max: number) => {
+  return Math.floor(Math.random() * max - 1) + 1;
+}

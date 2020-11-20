@@ -1,5 +1,4 @@
 /* eslint-disable no-template-curly-in-string */
-
 import { AssetType, EntityType, GoodsOptions } from "../types";
 
 export const mokeFormData = true;
@@ -39,6 +38,9 @@ const I18N: { [key: string]: string } = {
   none: 'none',
   close: 'Close',
   cancel: 'Cancel',
+  donate: 'Donate',
+  quickDonateButtons:'Quick Donate Buttons',
+  subscriptions: 'Subscriptions',
   // messages
   loginFailed: 'login failed please try again...',
   signIn: 'Sign In',

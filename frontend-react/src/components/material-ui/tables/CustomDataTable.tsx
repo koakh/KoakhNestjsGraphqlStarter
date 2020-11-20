@@ -44,7 +44,7 @@ export const objectPropsToDataTableRows = (data: any): any[] => {
 
 export const CustomDataTable: React.FC<Props> = ({ rows, columns, attributes }) => {
   return (
-    <div style={{ height: 400, width: '100%' }}>
+    <div style={{ width: '100%', height: 423 }}>
       <DataGrid rows={rows} columns={columns} {...attributes} />
     </div>
   );
