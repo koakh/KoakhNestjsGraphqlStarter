@@ -96,7 +96,7 @@ export const PersonUpsertForm: React.FC<RouteComponentProps> = ({ history }) => 
 			}
 		} catch (error) {
 			setShowPassword(false);
-			console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
+			// console.error('graphQLErrors' in errors && error.graphQLErrors[0] ? JSON.stringify(error.graphQLErrors[0].message, undefined, 2) : error);
 		}
 	};
 

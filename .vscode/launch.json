@@ -9,7 +9,10 @@
       "type": "chrome",
       "request": "launch",
       "name": "Launch Chrome against localhost",
-      "url": "https://app.solidarychain.com:3000",
+      // development
+      // "url": "https://app.solidarychain.com:3000",
+      // production
+      "url": "https://app.solidarychain.com",
       "webRoot": "${workspaceFolder}/frontend-react",
       "linux": {
         // rqeuire bellow fix in settings.json to work with manjaro chromium debugger
