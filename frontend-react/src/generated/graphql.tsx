@@ -38,6 +38,7 @@ export type Query = {
   assets: Array<Asset>;
   assetComplexQuery: Array<Asset>;
   assetById: Asset;
+  reactForceData: GraphData;
 };
 
 
@@ -157,6 +158,12 @@ export type QueryAssetComplexQueryArgs = {
 
 export type QueryAssetByIdArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryReactForceDataArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  take?: Maybe<Scalars['Int']>;
 };
 
 export type Cause = {
@@ -340,6 +347,35 @@ export type Asset = {
   participant: Participant;
   createdDate: Scalars['Float'];
   createdByPersonId?: Maybe<Scalars['String']>;
+};
+
+export type GraphData = {
+  __typename?: 'GraphData';
+  nodes?: Maybe<Array<GraphNode>>;
+  links?: Maybe<Array<GraphLink>>;
+};
+
+export type GraphNode = {
+  __typename?: 'GraphNode';
+  id: Scalars['ID'];
+  label: Scalars['String'];
+  desc?: Maybe<Scalars['String']>;
+  nodeVal?: Maybe<Scalars['Float']>;
+  color?: Maybe<Scalars['String']>;
+  autoColorBy?: Maybe<Scalars['String']>;
+  group?: Maybe<Scalars['Float']>;
+};
+
+export type GraphLink = {
+  __typename?: 'GraphLink';
+  source: Scalars['ID'];
+  target: Scalars['ID'];
+  label?: Maybe<Scalars['String']>;
+  desc?: Maybe<Scalars['String']>;
+  color?: Maybe<Scalars['String']>;
+  autoColorBy?: Maybe<Scalars['String']>;
+  linkWidth?: Maybe<Scalars['Float']>;
+  group?: Maybe<Scalars['Float']>;
 };
 
 export type Mutation = {
@@ -1383,6 +1419,23 @@ export type PersonsQuery = (
       ) }
     )>> }
   )> }
+);
+
+export type ReactForceDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ReactForceDataQuery = (
+  { __typename?: 'Query' }
+  & { reactForceData: (
+    { __typename?: 'GraphData' }
+    & { nodes?: Maybe<Array<(
+      { __typename?: 'GraphNode' }
+      & Pick<GraphNode, 'id' | 'label' | 'desc' | 'nodeVal' | 'color' | 'autoColorBy' | 'group'>
+    )>>, links?: Maybe<Array<(
+      { __typename?: 'GraphLink' }
+      & Pick<GraphLink, 'source' | 'target' | 'label' | 'desc' | 'color' | 'autoColorBy' | 'group'>
+    )>> }
+  ) }
 );
 
 export type TransactionsByIdQueryVariables = Exact<{
@@ -3510,6 +3563,55 @@ export function usePersonsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Pe
 export type PersonsQueryHookResult = ReturnType<typeof usePersonsQuery>;
 export type PersonsLazyQueryHookResult = ReturnType<typeof usePersonsLazyQuery>;
 export type PersonsQueryResult = Apollo.QueryResult<PersonsQuery, PersonsQueryVariables>;
+export const ReactForceDataDocument = gql`
+    query reactForceData {
+  reactForceData {
+    nodes {
+      id
+      label
+      desc
+      nodeVal
+      color
+      autoColorBy
+      group
+    }
+    links {
+      source
+      target
+      label
+      desc
+      color
+      autoColorBy
+      group
+    }
+  }
+}
+    `;
+
+/**
+ * __useReactForceDataQuery__
+ *
+ * To run a query within a React component, call `useReactForceDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useReactForceDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useReactForceDataQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useReactForceDataQuery(baseOptions?: Apollo.QueryHookOptions<ReactForceDataQuery, ReactForceDataQueryVariables>) {
+        return Apollo.useQuery<ReactForceDataQuery, ReactForceDataQueryVariables>(ReactForceDataDocument, baseOptions);
+      }
+export function useReactForceDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ReactForceDataQuery, ReactForceDataQueryVariables>) {
+          return Apollo.useLazyQuery<ReactForceDataQuery, ReactForceDataQueryVariables>(ReactForceDataDocument, baseOptions);
+        }
+export type ReactForceDataQueryHookResult = ReturnType<typeof useReactForceDataQuery>;
+export type ReactForceDataLazyQueryHookResult = ReturnType<typeof useReactForceDataLazyQuery>;
+export type ReactForceDataQueryResult = Apollo.QueryResult<ReactForceDataQuery, ReactForceDataQueryVariables>;
 export const TransactionsByIdDocument = gql`
     query transactionsById($id: String!) {
   transactionById(id: $id) {

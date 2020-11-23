@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import { graphData } from '../../../app/config';
 import { useStateValue } from '../../../app/state';
-import SpriteText from 'three-spritetext';
+// import SpriteText from 'three-spritetext';
 
 type Props = {};
 // TODO: move to types
@@ -19,12 +19,14 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   // required to get shell width from state
   const [state, dispatch] = useStateValue();
   const fgRef = useRef();
-  useEffect(() => {
-    setInterval(() => {
-      // Add a new connected node every x second
-      addNode()
-    }, 10000);
-  }, []);
+
+  // random addNode
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     // Add a new connected node every x second
+  //     addNode()
+  //   }, 10000);
+  // }, []);
 
   // old handler when press remove node
   // const handleClick = useCallback(node => {
