@@ -106,7 +106,8 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
   const drawerSections: DrawerListItem[][] = [];
 
   useEffect(() => {
-    const margin: number = 48;
+    // TODO: put in constants in both places
+    const margin = 48;
     if (!isNaN(width)) {
       const shellWidth: number = Math.trunc(mobileOpen ? width - c.DRAWER_WIDTH - margin : width - margin);
       setWidth(shellWidth);
