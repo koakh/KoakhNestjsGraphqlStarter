@@ -7,7 +7,7 @@ import SpriteText from 'three-spritetext';
 type Props = {};
 // TODO: move to types
 export type Node = { id: number, label: string, nodeVal?: number, desc?: string, color?: NodeColor | string, autoColorBy?: string, group?: NodeType | string };
-export type Link = { source: number, target: number, label?: string, desc?: string, color?: string, autoColorBy?: string, width?: number, group?: TransactionType };
+export type Link = { source: number, target: number, label?: string, desc?: string, color?: string, autoColorBy?: string, linkWidth?: number, group?: TransactionType };
 export interface IState { nodes: Node[], links: Link[] };
 export enum NodeType { GENESIS, PARTICIPANT, PERSON, CAUSE, ASSET, TRANSACTION };
 export enum TransactionType { FUNDS, GOODS, VOLUNTARY_HOURS, SERVICE };
@@ -96,7 +96,6 @@ export const DynamicGraph: React.FC<Props> = (props) => {
       graphData={data}
       nodeLabel='label'
       linkLabel='label'
-      linkWidth={1}
       showNavInfo={true}
       nodeAutoColorBy="group"
       linkAutoColorBy="group"
@@ -109,8 +108,9 @@ export const DynamicGraph: React.FC<Props> = (props) => {
       linkDirectionalArrowRelPos={1}
       // linkCurvature={0.25}      
       nodeVal={node => 100 / ((node as any).nodeVal + 1)}
-      linkDirectionalParticles="value"
-      linkDirectionalParticleSpeed={node => (node as any).nodeVal * 0.001}
+      linkWidth={node => (node as any).linkWidth ? (node as any).linkWidth : 1}
+      // linkDirectionalParticleSpeed={node => (node as any).nodeVal * 0.001}
+      // linkDirectionalParticles="value"
       width={state.shellWidth}
       height={state.shellWidth}
       // events
