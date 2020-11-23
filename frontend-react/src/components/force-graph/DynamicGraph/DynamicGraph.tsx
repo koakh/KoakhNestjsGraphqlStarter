@@ -1,33 +1,24 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
+import { graphData } from '../../../app/config';
 import { useStateValue } from '../../../app/state';
+import SpriteText from 'three-spritetext';
 
-type Props = {  };
-interface IState { nodes: Node[], links: Link[] };
-type Node = { id: number, label: string, nodeVal?: number, desc?: string, color?: string, autoColorBy?: string, group?: TransactionType | string };
-type Link = { source: number, target: number, label?: string, desc?: string, color?: string, autoColorBy?: string, width?: number, group?: TransactionType };
-enum TransactionType { FUNDS, GOODS, VOLUNTARY_HOURS, SERVICE };
-// enum Color { RED = '#ff0000', GREEN = '#00ff00', BLUE = '#0000ff' }
+type Props = {};
+// TODO: move to types
+export type Node = { id: number, label: string, nodeVal?: number, desc?: string, color?: NodeColor | string, autoColorBy?: string, group?: NodeType | string };
+export type Link = { source: number, target: number, label?: string, desc?: string, color?: string, autoColorBy?: string, width?: number, group?: TransactionType };
+export interface IState { nodes: Node[], links: Link[] };
+export enum NodeType { GENESIS, PARTICIPANT, PERSON, CAUSE, ASSET, TRANSACTION };
+export enum TransactionType { FUNDS, GOODS, VOLUNTARY_HOURS, SERVICE };
+export enum NodeColor { WHITE = '#ffffff', RED = '#ff0000', ORANGE = '#ffa500', YELLOW = '#ffff00', GREEN = '#008000', BLUE = '#0000ff', PURPLE = '#4b0082', PINK = '#ee82ee' }
 const randomWidth = () => Math.round(30);
 
 export const DynamicGraph: React.FC<Props> = (props) => {
-  const [data, setData] = useState<IState>({ nodes: [{ id: 0, label: 'genesis', nodeVal: randomWidth(), group: 'GENESIS' }], links: [] });
+  const [data, setData] = useState<IState>(graphData);
   // required to get shell width from state
   const [state, dispatch] = useStateValue();
-  // const fgRef = useRef();
-  // const UnrealBloomPass = useImportScript("//unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js");
-
-  // UnrealBloomPass
-  // 4 Ways to Add External JavaScript Files in React: https://medium.com/better-programming/4-ways-of-adding-external-js-files-in-reactjs-823f85de3668  
-  // useEffect(() => {
-  //   const script = document.createElement('script');
-  //   script.src = "//unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js";
-  //   script.async = true;
-  //   document.body.appendChild(script);
-  //   return () => {
-  //     document.body.removeChild(script);
-  //   }
-  // }, []);
+  const fgRef = useRef();
   useEffect(() => {
     setInterval(() => {
       // Add a new connected node every x second
@@ -35,26 +26,32 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     }, 10000);
   }, []);
 
-  // useEffect(() => {
-  //   const bloomPass = new UnrealBloomPass();
-  //   bloomPass.strength = 3;
-  //   bloomPass.radius = 1;
-  //   bloomPass.threshold = 0.1;
-  //   fgRef.current.postProcessingComposer().addPass(bloomPass);
-  // }, []);
+  // old handler when press remove node
+  // const handleClick = useCallback(node => {
+  //   const { nodes, links } = data;
+  //   // Remove node on click
+  //   const newLinks = links.filter((l) => l.source !== node && l.target !== node);
+  //   // Remove links attached to node
+  //   const newNodes = nodes.slice();
+  //   // Remove node
+  //   newNodes.splice(node.id, 1);
+  //   // Reset node ids to array index
+  //   newNodes.forEach((n, idx) => { n.id = idx; });
+  //   setData({ nodes: newNodes, links: newLinks });
+  // }, [data, setData]);
 
+  // click to focus: https://github.com/vasturiano/react-force-graph/blob/master/example/click-to-focus/index.html
   const handleClick = useCallback(node => {
-    const { nodes, links } = data;
-    // Remove node on click
-    const newLinks = links.filter((l) => l.source !== node && l.target !== node);
-    // Remove links attached to node
-    const newNodes = nodes.slice();
-    // Remove node
-    newNodes.splice(node.id, 1);
-    // Reset node ids to array index
-    newNodes.forEach((n, idx) => { n.id = idx; });
-    setData({ nodes: newNodes, links: newLinks });
-  }, [data, setData]);
+    // Aim at node from outside it
+    const distance = 40;
+    const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+
+    (fgRef as any).current.cameraPosition(
+      { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }, // new position
+      node, // lookAt ({ x, y, z })
+      3000  // ms transition duration
+    );
+  }, [fgRef]);
 
   const handleButton1Click = () => addNode();
   const addNode = () => {
@@ -95,17 +92,30 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     {/* <button children={<span>Add</span>} onClick={handleButton1Click} />
     <button children={<span>Fetch</span>} onClick={handleButton2Click} /> */}
     <ForceGraph3D
+      ref={fgRef}
       graphData={data}
       nodeLabel='label'
       linkLabel='label'
-      linkWidth={2}
+      linkWidth={1}
+      showNavInfo={true}
       nodeAutoColorBy="group"
       linkAutoColorBy="group"
+      nodeRelSize={5}
       enableNodeDrag={false}
-      onNodeClick={handleClick}
-      backgroundColor={'#121212'}
+      // #fafafa
+      backgroundColor={'#282828'}
       linkThreeObjectExtend={true}
+      linkDirectionalArrowLength={3.5}
+      linkDirectionalArrowRelPos={1}
+      // linkCurvature={0.25}      
+      nodeVal={node => 100 / ((node as any).nodeVal + 1)}
+      linkDirectionalParticles="value"
+      linkDirectionalParticleSpeed={node => (node as any).nodeVal * 0.001}
       width={state.shellWidth}
+      height={state.shellWidth}
+      // events
+      onNodeClick={handleClick}
+    // https://github.com/vasturiano/react-force-graph/blob/master/example/text-links/index-3d.html
     // linkThreeObject={link => {
     //   // extend link with text sprite
     //   const sprite = new SpriteText(`${link.source} > ${link.target}`);
