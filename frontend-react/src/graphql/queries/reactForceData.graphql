@@ -1,5 +1,5 @@
-query reactForceData {
-  reactForceData{
+query reactForceData($skip: Int, $take: Int) {
+  reactForceData(skip: $skip, take: $take) {
     nodes{
       id
       label

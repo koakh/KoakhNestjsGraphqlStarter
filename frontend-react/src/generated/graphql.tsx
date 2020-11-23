@@ -1421,7 +1421,10 @@ export type PersonsQuery = (
   )> }
 );
 
-export type ReactForceDataQueryVariables = Exact<{ [key: string]: never; }>;
+export type ReactForceDataQueryVariables = Exact<{
+  skip?: Maybe<Scalars['Int']>;
+  take?: Maybe<Scalars['Int']>;
+}>;
 
 
 export type ReactForceDataQuery = (
@@ -3564,8 +3567,8 @@ export type PersonsQueryHookResult = ReturnType<typeof usePersonsQuery>;
 export type PersonsLazyQueryHookResult = ReturnType<typeof usePersonsLazyQuery>;
 export type PersonsQueryResult = Apollo.QueryResult<PersonsQuery, PersonsQueryVariables>;
 export const ReactForceDataDocument = gql`
-    query reactForceData {
-  reactForceData {
+    query reactForceData($skip: Int, $take: Int) {
+  reactForceData(skip: $skip, take: $take) {
     nodes {
       id
       label
@@ -3600,6 +3603,8 @@ export const ReactForceDataDocument = gql`
  * @example
  * const { data, loading, error } = useReactForceDataQuery({
  *   variables: {
+ *      skip: // value for 'skip'
+ *      take: // value for 'take'
  *   },
  * });
  */
