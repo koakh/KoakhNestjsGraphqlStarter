@@ -3,7 +3,7 @@ import ForceGraph3D from 'react-force-graph-3d';
 import { envVariables as e, RouteKey, routes } from '../../../app/config';
 // import { graphData } from '../../../app/config';
 import { useStateValue } from '../../../app/state';
-import { useReactForceDataLazyQuery, useReactForceDataQuery } from '../../../generated/graphql';
+import { useAssetAddedSubscription, useCauseAddedSubscription, useParticipantAddedSubscription, usePersonAddedSubscription, useReactForceDataLazyQuery, useReactForceDataQuery, useTransactionAddedSubscription } from '../../../generated/graphql';
 // import SpriteText from 'three-spritetext';
 import { appConstants as c, getAccessToken } from '../../../app';
 import { AlertMessage, AlertSeverityType } from '../../material-ui/alert-message';
@@ -48,6 +48,48 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     }
   });
   // const { data: dataSub, loading: loadingSub, error: errorSub } = usePersonAddedSubscription();
+
+  // subscriptions
+  const { data: participantDataSub, loading: participantLoadingSub, error: participantErrorSub } = useParticipantAddedSubscription();
+  const { data: personDataSub, loading: personLoadingSub, error: personErrorSub } = usePersonAddedSubscription();
+  const { data: causeDataSub, loading: causeLoadingSub, error: causeErrorSub } = useCauseAddedSubscription();
+  const { data: assetDataSub, loading: assetLoadingSub, error: assetErrorSub } = useAssetAddedSubscription();
+  const { data: transactionDataSub, loading: transactionLoadingSub, error: transactionErrorSub } = useTransactionAddedSubscription();
+  // subscriptions: participant
+  if (!participantLoadingSub && participantDataSub && participantDataSub.participantAdded) {
+    console.log(participantDataSub);
+  }
+  if (participantErrorSub) {
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
+  }
+  // subscriptions: person
+  if (!personLoadingSub && personDataSub && personDataSub.personAdded) {
+    console.log(personDataSub);
+  }
+  if (personErrorSub) {
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
+  }
+  // subscriptions: cause
+  if (!causeLoadingSub && causeDataSub && causeDataSub.causeAdded) {
+    console.log(causeDataSub);
+  }
+  if (causeErrorSub) {
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
+  }
+  // subscriptions: asset
+  if (!assetLoadingSub && assetDataSub && assetDataSub.assetAdded) {
+    console.log(assetDataSub);
+  }
+  if (assetErrorSub) {
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
+  }
+  // subscriptions: transaction
+  if (!transactionLoadingSub && transactionDataSub && transactionDataSub.transactionAdded) {
+    console.log(transactionDataSub);
+  }
+  if (transactionErrorSub) {
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
+  }
 
   // only fire query if has a valid accessToken to prevent after login delay problems
   if (!data && !loading && getAccessToken()) {

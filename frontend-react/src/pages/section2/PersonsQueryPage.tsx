@@ -29,6 +29,7 @@ export const PersonQueryPage: React.FC<Props> = () => {
       take: 50
     }
   });
+  // subscriptions
   const { data: dataSub, loading: loadingSub, error: errorSub } = usePersonAddedSubscription();
   // reference to use in module to be exposed to parent in childRef.current
   const childRef = useRef<{ open: () => void }>();
