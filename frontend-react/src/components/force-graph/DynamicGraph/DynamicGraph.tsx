@@ -173,7 +173,7 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     );
   }
 
-  // map nodes and links
+  // map nodes and links, and ASSIGN its apollo hook's REFERENCES
   const nodes = dataQuery.reactForceData.nodes.map((e) => {
     return {
       id: e.id,
@@ -289,8 +289,8 @@ export const DynamicGraph: React.FC<Props> = (props) => {
       query: ReactForceDataDocument,
       variables: { 'skip': 0 },
       data: {
-        // must match personProfile with personLogin.user return objects
-        personProfile: {
+        // must match reactForceData with personLogin.user return objects
+        reactForceData: {
           // the trick is access reactForceData from data, use the consoles
           nodes: [
             ...data.reactForceData.nodes,
@@ -345,17 +345,7 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     <button children={<span>addToGraph</span>} onClick={handleButton2Click} />
     <ForceGraph3D
       ref={fgRef}
-      graphData={{
-        nodes: dataQuery.reactForceData.nodes.map((e) => {
-          return {
-            id: e.id,
-            group: e.group,
-            nodeVal: e.nodeVal,
-            color: e.color,
-            label: e.label
-          }
-        }), links
-      }}
+      graphData={{nodes, links}}
       nodeLabel='label'
       linkLabel='label'
       showNavInfo={true}
