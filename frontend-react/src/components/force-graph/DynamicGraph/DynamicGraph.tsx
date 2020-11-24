@@ -16,8 +16,8 @@ import { gql } from '@apollo/client';
 
 type Props = {};
 // TODO: move to types
-export type Node = { id: string, label: string, nodeVal?: number, desc?: string, color?: NodeColor | string, autoColorBy?: string, group?: NodeType | string };
-export type Link = { source: string, target: string, label?: string, desc?: string, color?: string, autoColorBy?: string, linkWidth?: number, group?: TransactionType };
+export type Node = { __typename: string, id: string, label: string, nodeVal?: number, desc?: string, color?: NodeColor | string, autoColorBy?: string, group?: NodeType | string };
+export type Link = { __typename: string, source: string, target: string, label?: string, desc?: string, color?: string, autoColorBy?: string, linkWidth?: number, group?: TransactionType };
 export interface IState { nodes: Node[], links: Link[] };
 export enum NodeType { GENESIS, PARTICIPANT, PERSON, CAUSE, ASSET, TRANSACTION };
 export enum TransactionType { FUNDS, GOODS, VOLUNTARY_HOURS, SERVICE };
@@ -121,7 +121,6 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     // https://www.apollographql.com/docs/react/caching/cache-interaction/#combining-reads-and-writes
     // Get the current to-do list
     const data = client.readQuery({
-      // query: PersonProfileDocument,
       query: ReactForceDataDocument,
       // MissingFieldError {message: "Can't find field 'reactForceData' on ROOT_QUERY object"
       // TODO: notes must match query at 100% even the variables
@@ -135,24 +134,30 @@ export const DynamicGraph: React.FC<Props> = (props) => {
       data: {
         // must match reactForceData with personLogin.user return objects
         reactForceData: {
+          // Cache data may be lost when replacing the reactForceData field of a Query object.
+          // To address this problem (which is not a bug in Apollo Client), either ensure all objects of type GraphData have IDs, or define a custom merge function for the Query.reactForceData field, so InMemoryCache can safely merge these objects:
+          __typename: 'GraphData',
           // the trick is access reactForceData from data, use the consoles
           nodes: [
             ...data.reactForceData.nodes,
+            // ...dataQuery.reactForceData.nodes,
             ...nodes,
             // hard coded object that starts to work
             // {
-            //   // __typename: "GraphNode",
+            //   __typename: "GraphNode",
             //   id: "c8ca045c-9d1b-407f-b9ae-31711758f228",
             //   label: "Participant:28",
             //   desc: null,
-            //   nodeVal: 5,
-            //   color: "#0000ff",
+            //   nodeVal: 1,
+            //   color: "#ff0000",
             //   autoColorBy: null,
             //   group: 1
             // }
           ],
           links: [
+            // TODO TRY TO USE THE CACHE IN GRAPH AND NOT THE dataQuery.reactForceData maybe it works
             ...data.reactForceData.links,
+            // ...dataQuery.reactForceData.links,
             ...links,
           ],
         }
@@ -172,6 +177,33 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   const { data: causeDataSub, loading: causeLoadingSub, error: causeErrorSub } = useCauseAddedSubscription();
   const { data: assetDataSub, loading: assetLoadingSub, error: assetErrorSub } = useAssetAddedSubscription();
   const { data: transactionDataSub, loading: transactionLoadingSub, error: transactionErrorSub } = useTransactionAddedSubscription();
+
+  // The solution at last, web 
+  // UsersObserver component
+  // https://medium.com/@cbartling/graphql-subscriptions-with-apollo-client-react-hooks-and-hasura-20f67d98be4c
+  useEffect(() => {
+    if (!causeLoadingSub && causeDataSub) {
+      const message = "Received notification through GraphQL subscription.";
+      console.info(message, causeDataSub);
+      addToGraph(
+        [{
+          __typename: 'GraphNode',
+          id: causeDataSub.causeAdded.id, label: causeDataSub.causeAdded.name, nodeVal: 1, group: 1,
+          // required else MissingFieldError {message: "Can't find field 'color' on object
+          desc: 'desc', color: '#FF0000', autoColorBy: null,
+        }],
+        [{
+          __typename: 'GraphLink',
+          source: causeDataSub.causeAdded.input.entity.id, target: causeDataSub.causeAdded.id, label: 'CREATED_CAUSE', group: 1,
+          // required else MissingFieldError {message: "Can't find field 'color' on object
+          desc: 'desc', color: '#FF0000', autoColorBy: null,
+        }]
+      )
+    }
+  }, [causeLoadingSub, causeDataSub]);
+
+
+
   // subscriptions: participant
   if (!participantLoadingSub && participantDataSub && participantDataSub.participantAdded) {
     console.log(participantDataSub);
@@ -187,23 +219,23 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
   }
   // subscriptions: cause
-  if (!causeLoadingSub && causeDataSub && causeDataSub.causeAdded) {
-    console.log(causeDataSub);
-    // nodes.push({ id: e.id, label: `${cc.CONVECTOR_MODEL_PATH_CAUSE_NAME}:${e.name}`, ...c.CAUSE_NODE_PROPS });
-    // links.push({ source: (e.input.entity as unknown as any).id, target: e.id, label: RelationType.CREATED_CAUSE, ...c.LINK_COMMON_PROPS });
-    addToGraph(
-      [{
-        id: causeDataSub.causeAdded.id, label: causeDataSub.causeAdded.name, nodeVal: 1, group: 1,
-        // required else MissingFieldError {message: "Can't find field 'color' on object
-        desc: 'desc', color: '#FF00FF', autoColorBy: null,
-      }],
-      [{
-        source: causeDataSub.causeAdded.input.entity.id, target: causeDataSub.causeAdded.id, label: 'CREATED_CAUSE', group: 1,
-        // required else MissingFieldError {message: "Can't find field 'color' on object
-        desc: 'desc', color: '#FF00FF', autoColorBy: null,
-      }]
-    )
-  }
+  // if (!causeLoadingSub && causeDataSub && causeDataSub.causeAdded) {
+  //   console.log(causeDataSub);
+  //   addToGraph(
+  //     [{
+  //       __typename: 'GraphNode',
+  //       id: causeDataSub.causeAdded.id, label: causeDataSub.causeAdded.name, nodeVal: 1, group: 1,
+  //       // required else MissingFieldError {message: "Can't find field 'color' on object
+  //       desc: 'desc', color: '#FF0000', autoColorBy: null,
+  //     }],
+  //     [{
+  //       __typename: 'GraphLink',
+  //       source: causeDataSub.causeAdded.input.entity.id, target: causeDataSub.causeAdded.id, label: 'CREATED_CAUSE', group: 1,
+  //       // required else MissingFieldError {message: "Can't find field 'color' on object
+  //       desc: 'desc', color: '#FF0000', autoColorBy: null,
+  //     }]
+  //   )
+  // }
   if (causeErrorSub) {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
   }
@@ -241,32 +273,33 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   }
 
   // map nodes and links, and ASSIGN its apollo hook's REFERENCES
-  const nodes = dataQuery.reactForceData.nodes.map((e) => {
-    return {
-      id: e.id,
-      group: e.group,
-      nodeVal: e.nodeVal,
-      color: e.color,
-      label: e.label
-    }
-  })
-  const links = dataQuery.reactForceData.links.map((e) => {
-    return {
-      source: e.source,
-      target: e.target,
-      label: e.label,
-      group: e.group,
-    }
-  })
+  // const nodes = dataQuery.reactForceData.nodes.map((e) => {
+  //   return {
+  //     id: e.id,
+  //     group: e.group,
+  //     nodeVal: e.nodeVal,
+  //     color: e.color,
+  //     label: e.label
+  //   }
+  // })
+  // const links = dataQuery.reactForceData.links.map((e) => {
+  //   return {
+  //     source: e.source,
+  //     target: e.target,
+  //     label: e.label,
+  //     group: e.group,
+  //   }
+  // })
+
   // apollo cache
-  client.writeQuery({
-    // must use postfix Document type gql``
-    query: ReactForceDataDocument,
-    data: {
-      // must match personProfile with personLogin.user return objects
-      personProfile: dataQuery.reactForceData
-    }
-  });
+  // client.writeQuery({
+  //   // must use postfix Document type gql``
+  //   query: ReactForceDataDocument,
+  //   data: {
+  //     // must match personProfile with personLogin.user return objects
+  //     personProfile: dataQuery.reactForceData
+  //   }
+  // });
 
   // random addNode
   // useEffect(() => {
@@ -336,7 +369,25 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     <button children={<span>addToGraph</span>} onClick={handleButton2Click} />
     <ForceGraph3D
       ref={fgRef}
-      graphData={{ nodes, links }}
+      graphData={{
+        nodes: dataQuery.reactForceData.nodes.map((e) => {
+          return {
+            id: e.id,
+            group: e.group,
+            nodeVal: e.nodeVal,
+            color: e.color,
+            label: e.label
+          }
+        }),
+        links: dataQuery.reactForceData.links.map((e) => {
+          return {
+            source: e.source,
+            target: e.target,
+            label: e.label,
+            group: e.group,
+          }
+        })
+      }}
       nodeLabel='label'
       linkLabel='label'
       showNavInfo={true}

@@ -6,11 +6,14 @@ import { PageTitle } from '../../components/material-ui/typography';
 
 interface Props { }
 
+let renderCount = 0;
+
 export const FeedPage: React.FC<Props> = () => {
+  renderCount++;
   // context state hook
   return (
     <Fragment>
-      <PageTitle>{routes[RouteKey.FEED].title}</PageTitle>
+      <PageTitle>{`${routes[RouteKey.FEED].title} : ${renderCount}`}</PageTitle>
       {/* extra margin, with this progress bar will not be pixel perfect */}
       {/* <Box component='span' m={1}> */}
         <DynamicGraph/>
