@@ -1038,6 +1038,6 @@ import React, { useState, useMemo, useEffect } from 'react';
   });
 
   useMemo(()=>{
-    setList(data.YOUR_DATA_NAME); 
+    setList(data.YOUR_DATA_NAME);
   },[data])
 ```

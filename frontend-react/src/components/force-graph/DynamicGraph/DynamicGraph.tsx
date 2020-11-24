@@ -75,6 +75,13 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     }
   }, [dataQuery])
 
+  // const click = (setData: any, data: any) => {
+  //   useEffect(() => {
+  //     console.log("Click");
+  //     setData(data);
+  //   }, []);
+  // }
+
   // subscriptions
   const { data: participantDataSub, loading: participantLoadingSub, error: participantErrorSub } = useParticipantAddedSubscription();
   const { data: personDataSub, loading: personLoadingSub, error: personErrorSub } = usePersonAddedSubscription();
@@ -98,11 +105,23 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   // subscriptions: cause
   if (!causeLoadingSub && causeDataSub && causeDataSub.causeAdded) {
     console.log(causeDataSub);
+    // useEffect(() => {
+    //   setData({
+    //     nodes: [...data.nodes, { id: '1', label: `id`, nodeVal: 1, group: 1 }],
+    //     links: [...data.links]
+    //   });
+    // }, []);
+    // click(setData, {
+    //   nodes: [...data.nodes, { id: '1', label: `id`, nodeVal: 1, group: 1 }],
+    //   links: [...data.links]
+    // })
     // dataQuery.reactForceData.nodes = [...dataQuery.reactForceData.nodes, { id: '1', label: `id`, nodeVal: 1 }];
-    setData({
-      nodes: [...data.nodes, { id: '1', label: `id`, nodeVal: 1, group: 1 }],
-      links: [...data.links]
-    });
+    // setTimeout(() => {
+    //   setData({
+    //     nodes: [...data.nodes, { id: '1', label: `id`, nodeVal: 1, group: 1 }],
+    //     links: [...data.links]
+    //   });
+    // }, 1000);
     //       nodes: [...nodes, { id, label: `id${id}`, nodeVal: randomWidth(), group }],
     //       links: [...links, { source: id, target, label: `${id}>${target}`, group }]
     // setData(({ nodes, links }) => {
@@ -171,22 +190,22 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   //   setData({ nodes: newNodes, links: newLinks });
   // }, [data, setData]);
 
-  const handleButton1Click = () => { };
+  // const handleButton1Click = () => { };
   // Old handleButton1Click
-  // const handleButton1Click = () => addNode();
-  // const addNode = () => {
-  //   // Add a new connected node every second
-  //   setData(({ nodes, links }) => {
-  //     const id = nodes.length;
-  //     const target = Math.round(Math.random() * (id - 1));
-  //     const group = Math.round(Math.random() * (Object.keys(TransactionType).length - 1));
-  //     // const color = Math.round(Math.random() * (Object.keys(Color).length - 1));
-  //     return {
-  //       nodes: [...nodes, { id, label: `id${id}`, nodeVal: randomWidth(), group }],
-  //       links: [...links, { source: id, target, label: `${id}>${target}`, group }]
-  //     };
-  //   });
-  // }
+  const handleButton1Click = () => addNode();
+  const addNode = () => {
+    // Add a new connected node every second
+    setData(({ nodes, links }) => {
+      const id = nodes.length;
+      const target = Math.round(Math.random() * (id - 1));
+      const group = Math.round(Math.random() * (Object.keys(TransactionType).length - 1));
+      // const color = Math.round(Math.random() * (Object.keys(Color).length - 1));
+      return {
+        nodes: [...nodes, { id: id.toString(), label: `id${id}`, nodeVal: 1, group }],
+        links: [...links, { source: id.toString(), target: target.toString(), label: `${id}>${target}`, group }]
+      };
+    });
+  }
 
   // const handleButton2Click = () => fetch();
   // const fetch = () => {
@@ -209,8 +228,8 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   // }
 
   return (<Fragment>
-    {/* <button children={<span>Add</span>} onClick={handleButton1Click} />
-    <button children={<span>Fetch</span>} onClick={handleButton2Click} /> */}
+    {/* <button children={<span>Fetch</span>} onClick={handleButton2Click} /> */}
+    <button children={<span>Add</span>} onClick={handleButton1Click} />
     <ForceGraph3D
       ref={fgRef}
       graphData={data}
