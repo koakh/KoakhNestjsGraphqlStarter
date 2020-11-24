@@ -3,7 +3,7 @@ import ForceGraph3D from 'react-force-graph-3d';
 import { envVariables as e, RouteKey, routes } from '../../../app/config';
 // import { graphData } from '../../../app/config';
 import { useStateValue } from '../../../app/state';
-import { useAssetAddedSubscription, useCauseAddedSubscription, useParticipantAddedSubscription, usePersonAddedSubscription, useReactForceDataLazyQuery, useReactForceDataQuery, useTransactionAddedSubscription } from '../../../generated/graphql';
+import { ReactForceDataDocument, PersonProfileDocument, useAssetAddedSubscription, useCauseAddedSubscription, useParticipantAddedSubscription, usePersonAddedSubscription, useReactForceDataLazyQuery, useReactForceDataQuery, useTransactionAddedSubscription } from '../../../generated/graphql';
 // import SpriteText from 'three-spritetext';
 import { appConstants as c, getAccessToken } from '../../../app';
 import { AlertMessage, AlertSeverityType } from '../../material-ui/alert-message';
@@ -11,6 +11,8 @@ import { Typography } from '@material-ui/core';
 import { LinearIndeterminate } from '../../material-ui/feedback';
 import { SettingsSystemDaydreamTwoTone } from '@material-ui/icons';
 import { linkSync } from 'fs';
+import { useApolloClient } from '@apollo/client/react/hooks/useApolloClient';
+import { gql } from '@apollo/client';
 
 type Props = {};
 // TODO: move to types
@@ -28,7 +30,8 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   // required to get shell width from state
   const [state, dispatch] = useStateValue();
   const fgRef = useRef();
-  // click to focus: https://github.com/vasturiano/react-force-graph/blob/master/example/click-to-focus/index.html
+  // get apollo client instance `client` is now set to the `ApolloClient` instance being used by the
+  const client = useApolloClient();
   const handleClick = useCallback(node => {
     // Aim at node from outside it
     const distance = 40;
@@ -42,6 +45,7 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   }, [fgRef]);
   // hooks
   const [reactForceDataQuery, { data: dataQuery, loading, error }] = useReactForceDataLazyQuery({
+    // TODO
     fetchPolicy: e.apolloFetchPolicy,
     variables: {
       skip: 0,
@@ -51,29 +55,30 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   });
   // const { data: dataSub, loading: loadingSub, error: errorSub } = usePersonAddedSubscription();
 
-  useMemo(() => {
-    // require io check if dataQuery exists
-    if (dataQuery) {
-      const nodes = dataQuery.reactForceData.nodes.map((e) => {
-        return {
-          id: e.id,
-          group: e.group,
-          nodeVal: e.nodeVal,
-          color: e.color,
-          label: e.label
-        }
-      })
-      const links = dataQuery.reactForceData.links.map((e) => {
-        return {
-          source: e.source,
-          target: e.target,
-          label: e.label,
-          group: e.group,
-        }
-      })
-      setData({ nodes, links });
-    }
-  }, [dataQuery])
+  // old use memo stuff, before try apollo cache
+  //   useMemo(() => {
+  //     // require to check if dataQuery exists
+  //     if (dataQuery) {
+  //       const nodes = dataQuery.reactForceData.nodes.map((e) => {
+  //         return {
+  //           id: e.id,
+  //           group: e.group,
+  //           nodeVal: e.nodeVal,
+  //           color: e.color,
+  //           label: e.label
+  //         }
+  //       })
+  //       const links = dataQuery.reactForceData.links.map((e) => {
+  //         return {
+  //           source: e.source,
+  //           target: e.target,
+  //           label: e.label,
+  //           group: e.group,
+  //         }
+  //       })
+  //       setData({ nodes, links });
+  //     }
+  //   }, [dataQuery])
 
   // const click = (setData: any, data: any) => {
   //   useEffect(() => {
@@ -168,6 +173,34 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     );
   }
 
+  // map nodes and links
+  const nodes = dataQuery.reactForceData.nodes.map((e) => {
+    return {
+      id: e.id,
+      group: e.group,
+      nodeVal: e.nodeVal,
+      color: e.color,
+      label: e.label
+    }
+  })
+  const links = dataQuery.reactForceData.links.map((e) => {
+    return {
+      source: e.source,
+      target: e.target,
+      label: e.label,
+      group: e.group,
+    }
+  })
+  // apollo cache
+  client.writeQuery({
+    // must use postfix Document type gql``
+    query: ReactForceDataDocument,
+    data: {
+      // must match personProfile with personLogin.user return objects
+      personProfile: dataQuery.reactForceData
+    }
+  });
+
   // random addNode
   // useEffect(() => {
   //   setInterval(() => {
@@ -192,20 +225,99 @@ export const DynamicGraph: React.FC<Props> = (props) => {
 
   // const handleButton1Click = () => { };
   // Old handleButton1Click
-  const handleButton1Click = () => addNode();
-  const addNode = () => {
-    // Add a new connected node every second
-    setData(({ nodes, links }) => {
-      const id = nodes.length;
-      const target = Math.round(Math.random() * (id - 1));
-      const group = Math.round(Math.random() * (Object.keys(TransactionType).length - 1));
-      // const color = Math.round(Math.random() * (Object.keys(Color).length - 1));
-      return {
-        nodes: [...nodes, { id: id.toString(), label: `id${id}`, nodeVal: 1, group }],
-        links: [...links, { source: id.toString(), target: target.toString(), label: `${id}>${target}`, group }]
-      };
+  const handleButton1Click = () => changeProfile();
+  const handleButton2Click = () => addToGraph();
+
+  // below works
+  // const addNode = () => {
+  //   // Add a new connected
+  //   setData(({ nodes, links }) => {
+  //     const id = nodes.length;
+  //     const target = Math.round(Math.random() * (id - 1));
+  //     const group = Math.round(Math.random() * (Object.keys(TransactionType).length - 1));
+  //     // const color = Math.round(Math.random() * (Object.keys(Color).length - 1));
+  //     return {
+  //       nodes: [...nodes, { id: id.toString(), label: `id${id}`, nodeVal: 1, group }],
+  //       links: [...links, { source: id.toString(), target: target.toString(), label: `${id}>${target}`, group }]
+  //     };
+  //   });
+  // }
+
+  const changeProfile = () => {
+    // Combining reads and writes
+    // https://www.apollographql.com/docs/react/caching/cache-interaction/#combining-reads-and-writes
+    // Get the current to-do list
+    const data = client.readQuery({
+      query: PersonProfileDocument,
+      // query: ReactForceDataDocument,
     });
-  }
+    console.log(`data: '${JSON.stringify(data, undefined, 2)}'`);
+    // write to cache
+    client.writeQuery({
+      // must use postfix Document type gql``
+      query: PersonProfileDocument,
+      data: {
+        // must match personProfile with personLogin.user return objects
+        personProfile: {
+          // the trick is access personProfile from data, use the consoles
+          ...data.personProfile,
+          username: 'bob',
+          email: 'bob@example.com',
+        }
+      }
+    })
+    const dataChanged = client.readQuery({
+      query: PersonProfileDocument,
+    });
+    console.log(`dataChanged: '${JSON.stringify(dataChanged, undefined, 2)}'`);
+  };
+
+  const addToGraph = () => {
+    // Combining reads and writes
+    // https://www.apollographql.com/docs/react/caching/cache-interaction/#combining-reads-and-writes
+    // Get the current to-do list
+    const data = client.readQuery({
+      // query: PersonProfileDocument,
+      query: ReactForceDataDocument,
+      // MissingFieldError {message: "Can't find field 'reactForceData' on ROOT_QUERY object"
+      // TODO: notes must match query at 100% even the variables
+      variables: { 'skip': 0 }
+    });
+    // write to cache
+    client.writeQuery({
+      // must use postfix Document type gql``
+      query: ReactForceDataDocument,
+      variables: { 'skip': 0 },
+      data: {
+        // must match personProfile with personLogin.user return objects
+        personProfile: {
+          // the trick is access reactForceData from data, use the consoles
+          nodes: [
+            ...data.reactForceData.nodes,
+            {
+              // __typename: "GraphNode",
+              id: "c8ca045c-9d1b-407f-b9ae-31711758f228",
+              label: "Participant:28",
+              desc: null,
+              nodeVal: 5,
+              color: "#0000ff",
+              autoColorBy: null,
+              group: 1
+            }
+          ],
+          links: [
+            ...data.reactForceData.links
+          ],
+        }
+      }
+    })
+    console.log(`data: '${JSON.stringify(data, undefined, 2)}'`);
+    const dataChanged = client.readQuery({
+      query: ReactForceDataDocument,
+      variables: { 'skip': 0 },
+    });
+    console.log(`dataChanged: '${JSON.stringify(dataChanged, undefined, 2)}'`);
+  };
 
   // const handleButton2Click = () => fetch();
   // const fetch = () => {
@@ -229,10 +341,21 @@ export const DynamicGraph: React.FC<Props> = (props) => {
 
   return (<Fragment>
     {/* <button children={<span>Fetch</span>} onClick={handleButton2Click} /> */}
-    <button children={<span>Add</span>} onClick={handleButton1Click} />
+    <button children={<span>changeProfile</span>} onClick={handleButton1Click} />
+    <button children={<span>addToGraph</span>} onClick={handleButton2Click} />
     <ForceGraph3D
       ref={fgRef}
-      graphData={data}
+      graphData={{
+        nodes: dataQuery.reactForceData.nodes.map((e) => {
+          return {
+            id: e.id,
+            group: e.group,
+            nodeVal: e.nodeVal,
+            color: e.color,
+            label: e.label
+          }
+        }), links
+      }}
       nodeLabel='label'
       linkLabel='label'
       showNavInfo={true}

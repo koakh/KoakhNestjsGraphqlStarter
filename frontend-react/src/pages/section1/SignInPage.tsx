@@ -101,6 +101,7 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 					// update apollo cache with new data, this will update usePersonProfileQuery cache
 					// warning: for this to work data return fields from personLoginMutation must match usePersonProfileQuery
 					// check console warnings for messages like `Missing field personProfile in`
+					// console.log('store.writeQuery', JSON.stringify(data.personLogin.user, undefined, 2));
 					store.writeQuery({
 						// must use postfix Document type gql``
 						query: PersonProfileDocument,
