@@ -87,6 +87,85 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   //   }, []);
   // }
 
+  const changeProfile = () => {
+    // Combining reads and writes
+    // https://www.apollographql.com/docs/react/caching/cache-interaction/#combining-reads-and-writes
+    // Get the current to-do list
+    const data = client.readQuery({
+      query: PersonProfileDocument,
+      // query: ReactForceDataDocument,
+    });
+    // console.log(`data: '${JSON.stringify(data, undefined, 2)}'`);
+    // write to cache
+    client.writeQuery({
+      // must use postfix Document type gql``
+      query: PersonProfileDocument,
+      data: {
+        // must match personProfile with personLogin.user return objects
+        personProfile: {
+          // the trick is access personProfile from data, use the consoles
+          ...data.personProfile,
+          username: 'bob',
+          email: 'bob@example.com',
+        }
+      }
+    })
+    const dataChanged = client.readQuery({
+      query: PersonProfileDocument,
+    });
+    // console.log(`dataChanged: '${JSON.stringify(dataChanged, undefined, 2)}'`);
+  };
+
+  const addToGraph = (nodes: Node[] = [], links: Link[] = []) => {
+    // Combining reads and writes
+    // https://www.apollographql.com/docs/react/caching/cache-interaction/#combining-reads-and-writes
+    // Get the current to-do list
+    const data = client.readQuery({
+      // query: PersonProfileDocument,
+      query: ReactForceDataDocument,
+      // MissingFieldError {message: "Can't find field 'reactForceData' on ROOT_QUERY object"
+      // TODO: notes must match query at 100% even the variables
+      variables: { 'skip': 0 }
+    });
+    // write to cache
+    client.writeQuery({
+      // must use postfix Document type gql``
+      query: ReactForceDataDocument,
+      variables: { 'skip': 0 },
+      data: {
+        // must match reactForceData with personLogin.user return objects
+        reactForceData: {
+          // the trick is access reactForceData from data, use the consoles
+          nodes: [
+            ...data.reactForceData.nodes,
+            ...nodes,
+            // hard coded object that starts to work
+            // {
+            //   // __typename: "GraphNode",
+            //   id: "c8ca045c-9d1b-407f-b9ae-31711758f228",
+            //   label: "Participant:28",
+            //   desc: null,
+            //   nodeVal: 5,
+            //   color: "#0000ff",
+            //   autoColorBy: null,
+            //   group: 1
+            // }
+          ],
+          links: [
+            ...data.reactForceData.links,
+            ...links,
+          ],
+        }
+      }
+    })
+    // console.log(`data: '${JSON.stringify(data, undefined, 2)}'`);
+    const dataChanged = client.readQuery({
+      query: ReactForceDataDocument,
+      variables: { 'skip': 0 },
+    });
+    // console.log(`dataChanged: '${JSON.stringify(dataChanged, undefined, 2)}'`);
+  };
+
   // subscriptions
   const { data: participantDataSub, loading: participantLoadingSub, error: participantErrorSub } = useParticipantAddedSubscription();
   const { data: personDataSub, loading: personLoadingSub, error: personErrorSub } = usePersonAddedSubscription();
@@ -110,32 +189,20 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   // subscriptions: cause
   if (!causeLoadingSub && causeDataSub && causeDataSub.causeAdded) {
     console.log(causeDataSub);
-    // useEffect(() => {
-    //   setData({
-    //     nodes: [...data.nodes, { id: '1', label: `id`, nodeVal: 1, group: 1 }],
-    //     links: [...data.links]
-    //   });
-    // }, []);
-    // click(setData, {
-    //   nodes: [...data.nodes, { id: '1', label: `id`, nodeVal: 1, group: 1 }],
-    //   links: [...data.links]
-    // })
-    // dataQuery.reactForceData.nodes = [...dataQuery.reactForceData.nodes, { id: '1', label: `id`, nodeVal: 1 }];
-    // setTimeout(() => {
-    //   setData({
-    //     nodes: [...data.nodes, { id: '1', label: `id`, nodeVal: 1, group: 1 }],
-    //     links: [...data.links]
-    //   });
-    // }, 1000);
-    //       nodes: [...nodes, { id, label: `id${id}`, nodeVal: randomWidth(), group }],
-    //       links: [...links, { source: id, target, label: `${id}>${target}`, group }]
-    // setData(({ nodes, links }) => {
-    //   // const color = Math.round(Math.random() * (Object.keys(Color).length - 1));
-    //   return {
-    //     nodes: [...nodes, { id: '1', label: '1', nodeVal: 1, group: 1 }],
-    //     links: [...links, { source: 'id', target: 'tg', label: 'label', group: 1 }]
-    //   };
-    // });
+    // nodes.push({ id: e.id, label: `${cc.CONVECTOR_MODEL_PATH_CAUSE_NAME}:${e.name}`, ...c.CAUSE_NODE_PROPS });
+    // links.push({ source: (e.input.entity as unknown as any).id, target: e.id, label: RelationType.CREATED_CAUSE, ...c.LINK_COMMON_PROPS });
+    addToGraph(
+      [{
+        id: causeDataSub.causeAdded.id, label: causeDataSub.causeAdded.name, nodeVal: 1, group: 1,
+        // required else MissingFieldError {message: "Can't find field 'color' on object
+        desc: 'desc', color: '#FF00FF', autoColorBy: null,
+      }],
+      [{
+        source: causeDataSub.causeAdded.input.entity.id, target: causeDataSub.causeAdded.id, label: 'CREATED_CAUSE', group: 1,
+        // required else MissingFieldError {message: "Can't find field 'color' on object
+        desc: 'desc', color: '#FF00FF', autoColorBy: null,
+      }]
+    )
   }
   if (causeErrorSub) {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
@@ -243,82 +310,6 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   //   });
   // }
 
-  const changeProfile = () => {
-    // Combining reads and writes
-    // https://www.apollographql.com/docs/react/caching/cache-interaction/#combining-reads-and-writes
-    // Get the current to-do list
-    const data = client.readQuery({
-      query: PersonProfileDocument,
-      // query: ReactForceDataDocument,
-    });
-    console.log(`data: '${JSON.stringify(data, undefined, 2)}'`);
-    // write to cache
-    client.writeQuery({
-      // must use postfix Document type gql``
-      query: PersonProfileDocument,
-      data: {
-        // must match personProfile with personLogin.user return objects
-        personProfile: {
-          // the trick is access personProfile from data, use the consoles
-          ...data.personProfile,
-          username: 'bob',
-          email: 'bob@example.com',
-        }
-      }
-    })
-    const dataChanged = client.readQuery({
-      query: PersonProfileDocument,
-    });
-    console.log(`dataChanged: '${JSON.stringify(dataChanged, undefined, 2)}'`);
-  };
-
-  const addToGraph = () => {
-    // Combining reads and writes
-    // https://www.apollographql.com/docs/react/caching/cache-interaction/#combining-reads-and-writes
-    // Get the current to-do list
-    const data = client.readQuery({
-      // query: PersonProfileDocument,
-      query: ReactForceDataDocument,
-      // MissingFieldError {message: "Can't find field 'reactForceData' on ROOT_QUERY object"
-      // TODO: notes must match query at 100% even the variables
-      variables: { 'skip': 0 }
-    });
-    // write to cache
-    client.writeQuery({
-      // must use postfix Document type gql``
-      query: ReactForceDataDocument,
-      variables: { 'skip': 0 },
-      data: {
-        // must match reactForceData with personLogin.user return objects
-        reactForceData: {
-          // the trick is access reactForceData from data, use the consoles
-          nodes: [
-            ...data.reactForceData.nodes,
-            {
-              // __typename: "GraphNode",
-              id: "c8ca045c-9d1b-407f-b9ae-31711758f228",
-              label: "Participant:28",
-              desc: null,
-              nodeVal: 5,
-              color: "#0000ff",
-              autoColorBy: null,
-              group: 1
-            }
-          ],
-          links: [
-            ...data.reactForceData.links
-          ],
-        }
-      }
-    })
-    console.log(`data: '${JSON.stringify(data, undefined, 2)}'`);
-    const dataChanged = client.readQuery({
-      query: ReactForceDataDocument,
-      variables: { 'skip': 0 },
-    });
-    console.log(`dataChanged: '${JSON.stringify(dataChanged, undefined, 2)}'`);
-  };
-
   // const handleButton2Click = () => fetch();
   // const fetch = () => {
   //   props.client
@@ -345,7 +336,7 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     <button children={<span>addToGraph</span>} onClick={handleButton2Click} />
     <ForceGraph3D
       ref={fgRef}
-      graphData={{nodes, links}}
+      graphData={{ nodes, links }}
       nodeLabel='label'
       linkLabel='label'
       showNavInfo={true}
