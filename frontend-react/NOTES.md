@@ -50,6 +50,7 @@
   - [Other Location Alternatives](#other-location-alternatives)
   - [How can I use multiple refs for an array of elements with hooks?](#how-can-i-use-multiple-refs-for-an-array-of-elements-with-hooks)
   - [3D Force-Directed Graph](#3d-force-directed-graph)
+  - [Calling setState after on useQuery data triggers infinite loop](#calling-setstate-after-on-usequery-data-triggers-infinite-loop)
 
 ## TLDR
 
@@ -1011,3 +1012,32 @@ seems we cannot use refs in arrau
 
 - [Getting Title at 30:33](https://github.com/vasturiano/react-force-graph)
 - [EXAMPLES vasturiano/react-force-graph](https://github.com/vasturiano/react-force-graph/tree/master/example)
+
+## Calling setState after on useQuery data triggers infinite loop
+
+- [Calling setState after on useQuery data triggers infinite loop · Issue #133 · trojanowski/react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks/issues/133)
+
+However whenever I call useState on data from apollo-hooks` I get this error.
+
+`Invariant Violation: Too many re-renders. React limits the number of renders to prevent an infinite loop.`
+
+I encountered the same problem, this is my workaround. use **useMemo**.
+
+In your example:
+
+```javascript
+import React, { useState, useMemo, useEffect } from 'react';
+
+...
+
+   const { data, error, loading } = useQuery(GROUPS_PAGE_QUERY, {
+    variables: {
+      accessToken: accessToken,
+      organizationId: organizationId
+    }
+  });
+
+  useMemo(()=>{
+    setList(data.YOUR_DATA_NAME); 
+  },[data])
+```

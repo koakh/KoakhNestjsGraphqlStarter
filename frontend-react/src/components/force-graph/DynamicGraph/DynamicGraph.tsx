@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useRef } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import { envVariables as e, RouteKey, routes } from '../../../app/config';
 // import { graphData } from '../../../app/config';
@@ -9,11 +9,13 @@ import { appConstants as c, getAccessToken } from '../../../app';
 import { AlertMessage, AlertSeverityType } from '../../material-ui/alert-message';
 import { Typography } from '@material-ui/core';
 import { LinearIndeterminate } from '../../material-ui/feedback';
+import { SettingsSystemDaydreamTwoTone } from '@material-ui/icons';
+import { linkSync } from 'fs';
 
 type Props = {};
 // TODO: move to types
-export type Node = { id: number, label: string, nodeVal?: number, desc?: string, color?: NodeColor | string, autoColorBy?: string, group?: NodeType | string };
-export type Link = { source: number, target: number, label?: string, desc?: string, color?: string, autoColorBy?: string, linkWidth?: number, group?: TransactionType };
+export type Node = { id: string, label: string, nodeVal?: number, desc?: string, color?: NodeColor | string, autoColorBy?: string, group?: NodeType | string };
+export type Link = { source: string, target: string, label?: string, desc?: string, color?: string, autoColorBy?: string, linkWidth?: number, group?: TransactionType };
 export interface IState { nodes: Node[], links: Link[] };
 export enum NodeType { GENESIS, PARTICIPANT, PERSON, CAUSE, ASSET, TRANSACTION };
 export enum TransactionType { FUNDS, GOODS, VOLUNTARY_HOURS, SERVICE };
@@ -22,7 +24,7 @@ export enum NodeColor { WHITE = '#ffffff', RED = '#ff0000', ORANGE = '#ffa500', 
 
 export const DynamicGraph: React.FC<Props> = (props) => {
   // old data from setState
-  // const [data, setData] = useState<IState>(graphData);
+  const [data, setData] = useState<IState>({ nodes: [], links: [] });
   // required to get shell width from state
   const [state, dispatch] = useStateValue();
   const fgRef = useRef();
@@ -39,7 +41,7 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     );
   }, [fgRef]);
   // hooks
-  const [reactForceDataQuery, { data, loading, error }] = useReactForceDataLazyQuery({
+  const [reactForceDataQuery, { data: dataQuery, loading, error }] = useReactForceDataLazyQuery({
     fetchPolicy: e.apolloFetchPolicy,
     variables: {
       skip: 0,
@@ -48,6 +50,30 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     }
   });
   // const { data: dataSub, loading: loadingSub, error: errorSub } = usePersonAddedSubscription();
+
+  useMemo(() => {
+    // require io check if dataQuery exists
+    if (dataQuery) {
+      const nodes = dataQuery.reactForceData.nodes.map((e) => {
+        return {
+          id: e.id,
+          group: e.group,
+          nodeVal: e.nodeVal,
+          color: e.color,
+          label: e.label
+        }
+      })
+      const links = dataQuery.reactForceData.links.map((e) => {
+        return {
+          source: e.source,
+          target: e.target,
+          label: e.label,
+          group: e.group,
+        }
+      })
+      setData({ nodes, links });
+    }
+  }, [dataQuery])
 
   // subscriptions
   const { data: participantDataSub, loading: participantLoadingSub, error: participantErrorSub } = useParticipantAddedSubscription();
@@ -72,6 +98,20 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   // subscriptions: cause
   if (!causeLoadingSub && causeDataSub && causeDataSub.causeAdded) {
     console.log(causeDataSub);
+    // dataQuery.reactForceData.nodes = [...dataQuery.reactForceData.nodes, { id: '1', label: `id`, nodeVal: 1 }];
+    setData({
+      nodes: [...data.nodes, { id: '1', label: `id`, nodeVal: 1, group: 1 }],
+      links: [...data.links]
+    });
+    //       nodes: [...nodes, { id, label: `id${id}`, nodeVal: randomWidth(), group }],
+    //       links: [...links, { source: id, target, label: `${id}>${target}`, group }]
+    // setData(({ nodes, links }) => {
+    //   // const color = Math.round(Math.random() * (Object.keys(Color).length - 1));
+    //   return {
+    //     nodes: [...nodes, { id: '1', label: '1', nodeVal: 1, group: 1 }],
+    //     links: [...links, { source: 'id', target: 'tg', label: 'label', group: 1 }]
+    //   };
+    // });
   }
   if (causeErrorSub) {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
@@ -92,7 +132,7 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   }
 
   // only fire query if has a valid accessToken to prevent after login delay problems
-  if (!data && !loading && getAccessToken()) {
+  if (!dataQuery && !loading && getAccessToken()) {
     reactForceDataQuery();
   }
 
@@ -101,28 +141,13 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
   }
 
-  if (loading || !data) {
+  if (loading || !dataQuery) {
     return (
       <Fragment>
         <LinearIndeterminate />
       </Fragment>
     );
   }
-
-  // // subscriptions
-  // if (!loadingSub && dataSub && dataSub.personAdded) {
-  //   personAdded.push(dataSub);
-  // }
-  // if (errorSub) {
-  //   return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
-  // }
-  // const persons = personAdded.map((e: PersonAddedSubscription) => (
-  //   <Box key={e.personAdded.id} component='span' m={1}>
-  //     <Typography>{e.personAdded.username} : {e.personAdded.id} : {e.personAdded.email}</Typography>
-  //   </Box>
-  // ));
-  // const subscriptionsContent = personAdded.length > 0 ? persons : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
-
 
   // random addNode
   // useEffect(() => {
@@ -183,30 +208,12 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   //     });
   // }
 
-  const nodes = data.reactForceData.nodes.map((e) => {
-    return {
-      id: e.id,
-      group: e.group,
-      nodeVal: e.nodeVal,
-      color: e.color,
-      label: e.label
-    }
-  })
-  const links = data.reactForceData.links.map((e) => {
-    return {
-      source: e.source,
-      target: e.target,
-      label: e.label,
-      group: e.group,
-    }
-  })
-
   return (<Fragment>
     {/* <button children={<span>Add</span>} onClick={handleButton1Click} />
     <button children={<span>Fetch</span>} onClick={handleButton2Click} /> */}
     <ForceGraph3D
       ref={fgRef}
-      graphData={{ nodes, links }}
+      graphData={data}
       nodeLabel='label'
       linkLabel='label'
       showNavInfo={true}

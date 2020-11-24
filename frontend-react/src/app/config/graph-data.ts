@@ -21,29 +21,29 @@ const transactionNodeValue = 25;
 
 export const graphData: IState = {
   nodes: [
-    { id: 0, group: NodeType.GENESIS, nodeVal: genesisNodeValue, color: NodeColor.WHITE, label: 'Genesis Node' },
+    { id: '0', group: NodeType.GENESIS, nodeVal: genesisNodeValue, color: NodeColor.WHITE, label: 'Genesis Node' },
     // connected directly to genesis
-    { id: 1, group: NodeType.PARTICIPANT, nodeVal: participantsNodeValue, color: NodeColor.BLUE, label: 'World Food program' },
-    { id: 2, group: NodeType.PERSON, nodeVal: personNodeValue, color: NodeColor.PINK, label: 'John Doe' },
-    { id: 3, group: NodeType.PERSON, nodeVal: personNodeValue, color: NodeColor.PINK, label: 'jane Dow' },
+    { id: '1', group: NodeType.PARTICIPANT, nodeVal: participantsNodeValue, color: NodeColor.BLUE, label: 'World Food program' },
+    { id: '2', group: NodeType.PERSON, nodeVal: personNodeValue, color: NodeColor.PINK, label: 'John Doe' },
+    { id: '3', group: NodeType.PERSON, nodeVal: personNodeValue, color: NodeColor.PINK, label: 'jane Dow' },
     // connected to entities person and participants
-    { id: 4, group: NodeType.CAUSE, nodeVal: causeNodeValue, label: 'World food program cause' },
-    { id: 5, group: NodeType.ASSET, nodeVal: assetNodeValue, label: 'Wheel chair' },
+    { id: '4', group: NodeType.CAUSE, nodeVal: causeNodeValue, label: 'World food program cause' },
+    { id: '5', group: NodeType.ASSET, nodeVal: assetNodeValue, label: 'Wheel chair' },
     // transaction
-    { id: 6, group: NodeType.TRANSACTION, nodeVal: transactionNodeValue, label: 'Transaction' },
-    { id: 7, group: NodeType.TRANSACTION, nodeVal: transactionNodeValue, label: 'Transaction' },
+    { id: '6', group: NodeType.TRANSACTION, nodeVal: transactionNodeValue, label: 'Transaction' },
+    { id: '7', group: NodeType.TRANSACTION, nodeVal: transactionNodeValue, label: 'Transaction' },
   ],
   links: [
-    { source: 1, target: 0, label: 'HAS_BORN', group: TransactionType.FUNDS },
-    { source: 2, target: 0, label: 'HAS_BORN', group: TransactionType.FUNDS },
-    { source: 3, target: 0, label: 'HAS_BORN', group: TransactionType.FUNDS },
+    { source: '1', target: '0', label: 'HAS_BORN', group: TransactionType.FUNDS },
+    { source: '2', target: '0', label: 'HAS_BORN', group: TransactionType.FUNDS },
+    { source: '3', target: '0', label: 'HAS_BORN', group: TransactionType.FUNDS },
     // cause
-    { source: 1, target: 4, label: 'CREATED_CAUSE' },
+    { source: '1', target: '4', label: 'CREATED_CAUSE' },
     // input person transactions to
-    { source: 2, target: 6, label: 'TRANSACTION_TO', linkWidth: 1 },
-    { source: 3, target: 7, label: 'TRANSACTION_TO', linkWidth: 3 },
+    { source: '2', target: '6', label: 'TRANSACTION_TO', linkWidth: 1 },
+    { source: '3', target: '7', label: 'TRANSACTION_TO', linkWidth: 3 },
     // output transactions to
-    { source: 6, target: 4, label: 'TRANSACTION_FROM', linkWidth: 1 },
-    { source: 7, target: 4, label: 'TRANSACTION_FROM', linkWidth: 3 },
+    { source: '6', target: '4', label: 'TRANSACTION_FROM', linkWidth: 1 },
+    { source: '7', target: '4', label: 'TRANSACTION_FROM', linkWidth: 3 },
   ],
 };
