@@ -1,17 +1,14 @@
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import ForceGraph3D from 'react-force-graph-3d';
-import { envVariables as e, RouteKey, routes } from '../../../app/config';
-// import { graphData } from '../../../app/config';
-import { useStateValue } from '../../../app/state';
-import { ReactForceDataDocument, PersonProfileDocument, useAssetAddedSubscription, useCauseAddedSubscription, useParticipantAddedSubscription, usePersonAddedSubscription, useReactForceDataLazyQuery, useReactForceDataQuery, useTransactionAddedSubscription } from '../../../generated/graphql';
 // import SpriteText from 'three-spritetext';
-import { appConstants as c, getAccessToken } from '../../../app';
-import { AlertMessage, AlertSeverityType } from '../../material-ui/alert-message';
-import { Typography } from '@material-ui/core';
-import { LinearIndeterminate } from '../../material-ui/feedback';
-import { SettingsSystemDaydreamTwoTone } from '@material-ui/icons';
-import { linkSync } from 'fs';
+// import { graphData } from '../../../app/config';
 import { useApolloClient } from '@apollo/client/react/hooks/useApolloClient';
+import React, { Fragment, useCallback, useEffect, useRef } from 'react';
+import ForceGraph3D from 'react-force-graph-3d';
+import { getAccessToken } from '../../../app';
+import { envVariables as e } from '../../../app/config';
+import { useStateValue } from '../../../app/state';
+import { PersonProfileDocument, ReactForceDataDocument, useAssetAddedSubscription, useCauseAddedSubscription, useParticipantAddedSubscription, usePersonAddedSubscription, useReactForceDataLazyQuery, useTransactionAddedSubscription } from '../../../generated/graphql';
+import { AlertMessage, AlertSeverityType } from '../../material-ui/alert-message';
+import { LinearIndeterminate } from '../../material-ui/feedback';
 
 type Props = {};
 // TODO: move to types
@@ -29,9 +26,9 @@ const GENESIS_NODE_ID = '00000000-0000-0000-0000-000000000000';
 
 export const DynamicGraph: React.FC<Props> = (props) => {
   // old data from setState
-  const [data, setData] = useState<IState>({ nodes: [], links: [] });
+  // const [data, setData] = useState<IState>({ nodes: [], links: [] });
   // required to get shell width from state
-  const [state, dispatch] = useStateValue();
+  const [state] = useStateValue();
   const fgRef = useRef();
   // get apollo client instance `client` is now set to the `ApolloClient` instance being used by the
   const client = useApolloClient();
@@ -113,9 +110,9 @@ export const DynamicGraph: React.FC<Props> = (props) => {
         }
       }
     })
-    const dataChanged = client.readQuery({
-      query: PersonProfileDocument,
-    });
+    // const dataChanged = client.readQuery({
+    //   query: PersonProfileDocument,
+    // });
     // console.log(`dataChanged: '${JSON.stringify(dataChanged, undefined, 2)}'`);
   };
 
@@ -142,8 +139,8 @@ export const DynamicGraph: React.FC<Props> = (props) => {
           __typename: 'GraphData',
           // the trick is access reactForceData from data, use the consoles
           nodes: [
-            ...data.reactForceData.nodes,
-            // ...dataQuery.reactForceData.nodes,
+...data.reactForceData.nodes,
+// ...dataQuery.reactForceData.nodes,
             ...nodes,
             // hard coded object that starts to work
             // {
@@ -159,26 +156,31 @@ export const DynamicGraph: React.FC<Props> = (props) => {
           ],
           links: [
             // TODO TRY TO USE THE CACHE IN GRAPH AND NOT THE dataQuery.reactForceData maybe it works
-            ...data.reactForceData.links,
-            // ...dataQuery.reactForceData.links,
+...data.reactForceData.links,
+// ...dataQuery.reactForceData.links,
             ...links,
           ],
         }
       }
     })
     // console.log(`data: '${JSON.stringify(data, undefined, 2)}'`);
-    const dataChanged = client.readQuery({
-      query: ReactForceDataDocument,
-      variables: { 'skip': 0 },
-    });
+    // const dataChanged = client.readQuery({
+    //   query: ReactForceDataDocument,
+    //   variables: { 'skip': 0 },
+    // });
     // console.log(`dataChanged: '${JSON.stringify(dataChanged, undefined, 2)}'`);
   };
 
   // subscriptions
+  // eslint-disable-next-line
   const { data: participantDataSub, loading: participantLoadingSub, error: participantErrorSub } = useParticipantAddedSubscription();
+  // eslint-disable-next-line
   const { data: personDataSub, loading: personLoadingSub, error: personErrorSub } = usePersonAddedSubscription();
+  // eslint-disable-next-line
   const { data: causeDataSub, loading: causeLoadingSub, error: causeErrorSub } = useCauseAddedSubscription();
+  // eslint-disable-next-line
   const { data: assetDataSub, loading: assetLoadingSub, error: assetErrorSub } = useAssetAddedSubscription();
+  // eslint-disable-next-line
   const { data: transactionDataSub, loading: transactionLoadingSub, error: transactionErrorSub } = useTransactionAddedSubscription();
   // The solution for working with subscriptions at last, is using a useEffect to prevent renders
   // UsersObserver component
@@ -420,8 +422,8 @@ export const DynamicGraph: React.FC<Props> = (props) => {
 
   return (<Fragment>
     {/* <button children={<span>Fetch</span>} onClick={handleButton2Click} /> */}
-    <button children={<span>changeProfile</span>} onClick={handleButton1Click} />
-    <button children={<span>addToGraph</span>} onClick={handleButton2Click} />
+    {/* <button children={<span>changeProfile</span>} onClick={handleButton1Click} /> */}
+    {/* <button children={<span>addToGraph</span>} onClick={handleButton2Click} /> */}
     <ForceGraph3D
       ref={fgRef}
       graphData={{

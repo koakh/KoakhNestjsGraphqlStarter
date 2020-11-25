@@ -43,7 +43,7 @@ const defaultValues: FormDefaultValues = {
 	password: mokeFormData ? c.VALUES.mokePassword : '',
 	passwordConfirmation: mokeFormData ? c.VALUES.mokePassword : '',
 	fiscalNumber: mokeFormData ? 'PT282692126' : '',
-	mobilePhone: mokeFormData ? '+351936200003' : '',
+	mobilePhone: mokeFormData ? '+351936200004' : '',
 	email: mokeFormData ? 'janedoe@mail.com' : '',
 	metaData: '',
 	metaDataInternal: '',

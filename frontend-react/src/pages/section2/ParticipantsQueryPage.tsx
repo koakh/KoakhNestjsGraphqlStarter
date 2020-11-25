@@ -1,7 +1,7 @@
 /* eslint-disable no-template-curly-in-string */
 import { Box, Typography } from '@material-ui/core';
 import { ColDef } from '@material-ui/data-grid';
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { appConstants as c, getAccessToken } from '../../app';
 import { envVariables as e, RouteKey, routes } from '../../app/config';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
@@ -39,6 +39,16 @@ export const ParticipantsQueryPage: React.FC<Props> = () => {
     participantQuery();
   }
 
+  // subscriptions
+  useEffect(() => {
+    if (!loadingSub && dataSub && dataSub.participantAdded) {
+      participantAdded.push(dataSub);
+    }
+  }, [loadingSub, dataSub]);
+  // if (errorSub) {
+  //   return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
+  // }
+
   // catch error first
   if (error) {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
@@ -54,19 +64,13 @@ export const ParticipantsQueryPage: React.FC<Props> = () => {
     );
   }
 
-  // subscriptions
-  if (!loadingSub && dataSub && dataSub.participantAdded) {
-    participantAdded.push(dataSub);
-  }
-  if (errorSub) {
-    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
-  }
-  const participants = participantAdded.map((e: ParticipantAddedSubscription) => (
-    <Box key={e.participantAdded.id} component='span' m={1}>
-      <Typography>{e.participantAdded.name} : {e.participantAdded.id}</Typography>
-    </Box>
-  ));
-  const subscriptionsContent = participantAdded.length > 0 ? participants : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
+  // TODO
+  // const participants = participantAdded.map((e: ParticipantAddedSubscription) => (
+  //   <Box key={e.participantAdded.id} component='span' m={1}>
+  //     <Typography>{e.participantAdded.name} : {e.participantAdded.id}</Typography>
+  //   </Box>
+  // ));
+  // const subscriptionsContent = participantAdded.length > 0 ? participants : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
 
   // modal handlers
   const handleClickOpen = () => {
@@ -110,8 +114,8 @@ export const ParticipantsQueryPage: React.FC<Props> = () => {
       <Box className={classes.spacerTop}><PageTitle>{c.I18N.quickDonateButtons}</PageTitle></Box>
       {generateMediaCardQuickButton(data.participants, classes, 128, '${name} / ${email}', 'Cras euismod elementum turpis eget pharetra. Class aptent taciti sociosqu ...')}
       {/* subscriptions */}
-      <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box>
-      {subscriptionsContent}
+      {/* <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box> */}
+      {/* {subscriptionsContent} */}
       {/* customDialog */}
       <CustomDialog ref={childRef} title='details' closeButtonLabel={c.I18N.close}>
         <CustomDataTable columns={modalPropertyColumns} rows={modalRows} />

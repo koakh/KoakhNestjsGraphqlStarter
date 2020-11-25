@@ -62,12 +62,13 @@ export const CausesQueryPage: React.FC<Props> = () => {
   if (errorSub) {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
   }
-  const causes = causeAdded.map((e: CauseAddedSubscription) => (
-    <Box key={e.causeAdded.id} component='span' m={1}>
-      <Typography>{e.causeAdded.name} : {e.causeAdded.id}</Typography>
-    </Box>
-  ));
-  const subscriptionsContent = causeAdded.length > 0 ? causes : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
+
+  // const causes = causeAdded.map((e: CauseAddedSubscription) => (
+  //   <Box key={e.causeAdded.id} component='span' m={1}>
+  //     <Typography>{e.causeAdded.name} : {e.causeAdded.id}</Typography>
+  //   </Box>
+  // ));
+  // const subscriptionsContent = causeAdded.length > 0 ? causes : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
 
   // modal handlers
   const handleClickOpen = () => {
@@ -113,8 +114,8 @@ export const CausesQueryPage: React.FC<Props> = () => {
       <Box className={classes.spacerTop}><PageTitle>{c.I18N.quickDonateButtons}</PageTitle></Box>
       {generateMediaCardQuickButton(data.causes, classes, 228, '${name} / ${email}', 'Cras euismod elementum turpis eget pharetra. Class aptent taciti sociosqu ...')}
       {/* subscriptions */}
-      <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box>
-      {subscriptionsContent}
+      {/* <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box> */}
+      {/* {subscriptionsContent} */}
       {/* customDialog */}
       <CustomDialog ref={childRef} title='details' closeButtonLabel={c.I18N.close}>
         <CustomDataTable columns={modalPropertyColumns} rows={modalRows} />

@@ -19,11 +19,11 @@ export enum RouteKey {
   DASHBOARD = 'DASHBOARD',
   TIMELINE = 'TIMELINE',
   USE_CASES = 'USE_CASES',
-  FEED = 'FEED',
+  GRAPH = 'GRAPH',
   COMMUNITY = 'COMMUNITY',
   // section2
-  PERSONS = 'PERSONS',
   PARTICIPANTS = 'PARTICIPANTS',
+  PERSONS = 'PERSONS',
   CAUSES = 'CAUSES',
   ASSETS = 'ASSETS',
   TRANSACTIONS = 'TRANSACTIONS',
@@ -58,13 +58,6 @@ export const routes: Record<RouteKey, RouteItem> = {
     section: DrawerSections.SECTION1,
     drawerIcon: <FingerprintIcon />,
   },
-  [RouteKey.DASHBOARD]: {
-    title: 'DashBoard',
-    label: 'DashBoard',
-    path: '/dashBoard',
-    component: DashBoardPage,
-    section: DrawerSections.SECTION1,
-  },
   [RouteKey.USE_CASES]: {
     title: 'UseCases',
     label: 'UseCases',
@@ -72,13 +65,20 @@ export const routes: Record<RouteKey, RouteItem> = {
     component: UseCasesPage,
     section: DrawerSections.SECTION1,
   },
-  [RouteKey.FEED]: {
-    title: 'Feed',
-    label: 'Feed',
-    path: '/feed',
+  [RouteKey.GRAPH]: {
+    title: 'Graph Starter',
+    label: 'Graph',
+    path: '/graph',
     component: FeedPage,
     section: DrawerSections.SECTION1,
     drawerIcon: <DynamicFeedIcon />,
+  },
+  [RouteKey.DASHBOARD]: {
+    title: 'DashBoard',
+    label: 'DashBoard',
+    path: '/dashBoard',
+    component: DashBoardPage,
+    section: DrawerSections.SECTION1,
   },
   [RouteKey.TIMELINE]: {
     title: 'TimeLine',
@@ -130,19 +130,19 @@ export const routes: Record<RouteKey, RouteItem> = {
     // section: NO SECTION,
     visible: false,
   },
+  [RouteKey.PARTICIPANTS]: {
+    title: 'Organizations',
+    label: 'Organizations',
+    path: '/organizations',
+    component: ParticipantsQueryPage,
+    section: DrawerSections.SECTION2,
+  },
   // SECTION2
   [RouteKey.PERSONS]: {
     title: 'Persons',
     label: 'Persons',
     path: '/persons',
     component: PersonQueryPage,
-    section: DrawerSections.SECTION2,
-  },
-  [RouteKey.PARTICIPANTS]: {
-    title: 'Organizations',
-    label: 'Organizations',
-    path: '/organizations',
-    component: ParticipantsQueryPage,
     section: DrawerSections.SECTION2,
   },
   [RouteKey.CAUSES]: {
@@ -169,14 +169,6 @@ export const routes: Record<RouteKey, RouteItem> = {
     section: DrawerSections.SECTION2,
   },
   // SECTION3
-  [RouteKey.PERSON_UPSERT_FORM]: {
-    title: 'New Person',
-    label: 'New Person',
-    path: '/new-person',
-    component: PersonUpsertForm,
-    section: DrawerSections.SECTION3,
-    drawerIcon: <PeopleIcon />,
-  },
   [RouteKey.PARTICIPANT_UPSERT_FORM]: {
     title: 'New Organization',
     label: 'New Organization',
@@ -184,6 +176,14 @@ export const routes: Record<RouteKey, RouteItem> = {
     component: ParticipantUpsertForm,
     section: DrawerSections.SECTION3,
     drawerIcon: <ApartmentIcon />,
+  },
+  [RouteKey.PERSON_UPSERT_FORM]: {
+    title: 'New Person',
+    label: 'New Person',
+    path: '/new-person',
+    component: PersonUpsertForm,
+    section: DrawerSections.SECTION3,
+    drawerIcon: <PeopleIcon />,
   },
   [RouteKey.CAUSE_UPSERT_FORM]: {
     title: 'New Cause',

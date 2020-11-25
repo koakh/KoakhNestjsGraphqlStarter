@@ -61,12 +61,13 @@ export const PersonQueryPage: React.FC<Props> = () => {
   if (errorSub) {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
   }
-  const persons = personAdded.map((e: PersonAddedSubscription) => (
-    <Box key={e.personAdded.id} component='span' m={1}>
-      <Typography>{e.personAdded.username} : {e.personAdded.id} : {e.personAdded.email}</Typography>
-    </Box>
-  ));
-  const subscriptionsContent = personAdded.length > 0 ? persons : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
+
+  // const persons = personAdded.map((e: PersonAddedSubscription) => (
+  //   <Box key={e.personAdded.id} component='span' m={1}>
+  //     <Typography>{e.personAdded.username} : {e.personAdded.id} : {e.personAdded.email}</Typography>
+  //   </Box>
+  // ));
+  // const subscriptionsContent = personAdded.length > 0 ? persons : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
 
   // modal handlers
   const handleClickOpen = () => {
@@ -152,8 +153,8 @@ export const PersonQueryPage: React.FC<Props> = () => {
         Open form dialog
       </Button> */}
       {/* subscriptions */}
-      <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box>
-      {subscriptionsContent}
+      {/* <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box> */}
+      {/* {subscriptionsContent} */}
       {/* customDialog */}
       <CustomDialog ref={childRef} title='details' closeButtonLabel={c.I18N.close}>
         <CustomDataTable columns={modalPropertyColumns} rows={modalRows} />
