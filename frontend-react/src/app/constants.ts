@@ -40,7 +40,7 @@ const I18N: { [key: string]: string } = {
   close: 'Close',
   cancel: 'Cancel',
   donate: 'Donate',
-  quickDonateButtons: 'Quick Donate Buttons',
+  quickDonateButtons: 'Quick Donate Buttons (WIP, sorry opted for 3d Graph)',
   subscriptions: 'Subscriptions',
   waitingForSubscriptions: 'waiting for subscriptions...',
   // messages
@@ -65,6 +65,8 @@ const I18N: { [key: string]: string } = {
   // select options
   assetTypeOptionPhysicalAsset: 'Physical asset',
   assetTypeOptionDigitalAsset: 'Digital asset',
+  assetTypeOptionPhysicalVoucher: 'Physical voucher',
+  assetTypeOptionDigitalVoucher: 'Digital voucher',
   entityTypeOptionPerson: 'Person',
   entityTypeOptionParticipant: 'Organization',
   entityTypeOptionCause: 'Cause',
@@ -77,7 +79,10 @@ const I18N: { [key: string]: string } = {
   resourceTypeOptionGenericGoods: 'Generic goods',
   resourceTypeOptionPhysicalAsset: 'Physical asset',
   resourceTypeOptionDigitalAsset: 'Digital asset',
+  resourceTypeOptionPhysicalVoucher: 'Physical voucher',
+  resourceTypeOptionDigitalVoucher: 'Digital voucher',
   // inputs
+  participantLabel: 'Participant name',
   assetTypeLabel: 'Asset type',
   causeLabel: 'Cause name',
   causePlaceHolder: 'Save the world today',
@@ -85,7 +90,7 @@ const I18N: { [key: string]: string } = {
   assetIdLabel: 'Asset Id',
   assetIdPlaceholder: '16834df0-766d-4cc8-8baa-b0c37338ca34',
   assetIdHelperText: 'valid asset id',
-  assetLabel: 'Asset description',
+  assetLabel: 'Description',
   assetPlaceHolder: 'Wheelchair cum bed (Motorized)',
   ambassadorsLabel: 'Ambassadors',
   ambassadorsPlaceHolder: 'PT182692128 +351936208811 a342f19f-9e26-44c1-ae78-6fd8b0955d47',
@@ -158,6 +163,8 @@ const ENTITY_TYPE_OPTIONS = [
 const ASSET_TYPE_OPTIONS = [
   { title: I18N.assetTypeOptionPhysicalAsset, value: AssetType.physicalAsset },
   { title: I18N.assetTypeOptionDigitalAsset, value: AssetType.digitalAsset },
+  { title: I18N.assetTypeOptionPhysicalVoucher, value: AssetType.physicalVoucher },
+  { title: I18N.assetTypeOptionDigitalVoucher, value: AssetType.digitalVoucher },
 ];
 
 const PARTICIPANT_PERSON_ENTITY_TYPE_OPTIONS = [

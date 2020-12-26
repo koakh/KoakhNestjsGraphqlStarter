@@ -15,7 +15,7 @@
       "url": "https://app.solidarychain.com",
       "webRoot": "${workspaceFolder}/frontend-react",
       "linux": {
-        // rqeuire bellow fix in settings.json to work with manjaro chromium debugger
+        // require bellow fix in settings.json to work with manjaro chromium debugger
         // "debug.javascript.usePreview": false
         "runtimeExecutable": "/usr/bin/chromium"
       }

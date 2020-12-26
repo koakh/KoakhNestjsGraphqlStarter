@@ -234,6 +234,8 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				return [
 					{ title: c.I18N.resourceTypeOptionPhysicalAsset, value: ResourceType.physicalAsset },
 					{ title: c.I18N.resourceTypeOptionDigitalAsset, value: ResourceType.digitalAsset },
+					{ title: c.I18N.resourceTypeOptionPhysicalVoucher, value: ResourceType.physicalVoucher },
+					{ title: c.I18N.resourceTypeOptionDigitalVoucher, value: ResourceType.digitalVoucher },
 				]
 			default:
 				return [];
@@ -549,7 +551,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 				<SnackbarMessage message={c.I18N.snackbarTransactionUpsertSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />
-				<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionUpsertFormWip} />
+				{/* <AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionUpsertFormWip} /> */}
 			</Box>
 		</Fragment >
 	);

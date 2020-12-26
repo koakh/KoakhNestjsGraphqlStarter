@@ -15,6 +15,8 @@ export enum EntityType {
 export enum AssetType {
   physicalAsset = 'PHYSICAL_ASSET',
   digitalAsset = 'DIGITAL_ASSET',
+  physicalVoucher = 'PHYSICAL_VOUCHER',
+  digitalVoucher = 'DIGITAL_VOUCHER',
 }
 
 export enum TransactionType {
@@ -30,6 +32,8 @@ export enum ResourceType {
   genericGoods = 'GENERIC_GOODS',
   physicalAsset = 'PHYSICAL_ASSET',
   digitalAsset = 'DIGITAL_ASSET',
+  physicalVoucher = 'PHYSICAL_VOUCHER',
+  digitalVoucher = 'DIGITAL_VOUCHER',
 }
 
 export enum CurrencyCode {

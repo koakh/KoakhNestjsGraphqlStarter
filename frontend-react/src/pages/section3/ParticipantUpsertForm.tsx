@@ -3,7 +3,7 @@ import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldAmbassadors, commonFormFieldAssetName, commonFormFieldCode, commonFormFieldEmail, commonFormFieldFiscalNumber, commonFormFieldMetadata, commonFormFieldMetadataInternal, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldAmbassadors, commonFormFieldCauseName, commonFormFieldCode, commonFormFieldEmail, commonFormFieldFiscalNumber, commonFormFieldMetadata, commonFormFieldMetadataInternal, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { PageTitle } from '../../components/material-ui/typography';
@@ -86,7 +86,9 @@ export const ParticipantUpsertForm: React.FC<RouteComponentProps> = ({ history }
 			...commonFormFieldCode(useRef(), FormFieldNames.CODE)
 		},
 		[FormFieldNames.NAME]: {
-			...commonFormFieldAssetName(useRef(), FormFieldNames.NAME)
+			// TODO: change to generic name, and use it in all field names
+			...commonFormFieldCauseName(useRef(), FormFieldNames.NAME),
+			label: c.I18N.participantLabel,
 		},
 		[FormFieldNames.FISCAL_NUMBER]: {
 			...commonFormFieldFiscalNumber(useRef(), FormFieldNames.FISCAL_NUMBER, () => validateFiscalNumber(getValues(FormFieldNames.FISCAL_NUMBER)))

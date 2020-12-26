@@ -41,8 +41,8 @@ enum FormFieldNames {
 	META_DATA_INTERNAL = 'metaDataInternal',
 };
 const defaultValues: FormDefaultValues = {
-	name: mokeFormData ? 'Save the world now 2020': '',
-	email: mokeFormData ? 'mail@swn.com': '',
+	name: mokeFormData ? 'Together we save the world': '',
+	email: mokeFormData ? 'mail@tws.com': '',
 	ambassadors: mokeFormData ? c.VALUES.mokeAmbassadors: '',
 	// current plus one day/24h
 	startDate: currentFormatDate(new Date(Date.now() + ((3600 * 1000 * 24) * 0)), false),

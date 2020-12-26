@@ -57,6 +57,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     component: PersonProfilePage,
     section: DrawerSections.SECTION1,
     drawerIcon: <FingerprintIcon />,
+    visible: false,
   },
   [RouteKey.USE_CASES]: {
     title: 'UseCases',
@@ -64,6 +65,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     path: '/use-cases',
     component: UseCasesPage,
     section: DrawerSections.SECTION1,
+    visible: false,
   },
   [RouteKey.GRAPH]: {
     title: 'Graph Starter',
@@ -79,6 +81,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     path: '/dashBoard',
     component: DashBoardPage,
     section: DrawerSections.SECTION1,
+    visible: false,
   },
   [RouteKey.TIMELINE]: {
     title: 'TimeLine',
@@ -86,6 +89,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     path: '/timeline',
     component: TimelinePage,
     section: DrawerSections.SECTION1,
+    visible: false,
   },
   [RouteKey.STATE]: {
     title: 'State',
@@ -210,8 +214,8 @@ export const routes: Record<RouteKey, RouteItem> = {
     drawerIcon: <AccountTreeIcon />,
   },
   [RouteKey.TRANSACTION_GOODS_FORM]: {
-    title: 'Goods Transaction',
-    label: 'Goods Transaction',
+    title: 'Reader (Hardware Required)',
+    label: 'Barcode Reader',
     path: '/goods-transaction',
     component: TransactionGoodsForm,
     section: DrawerSections.SECTION3,

@@ -343,7 +343,7 @@ export const TransactionGoodsForm: React.FC<RouteComponentProps> = ({ history })
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 			<SnackbarMessage message={c.I18N.snackbarTransactionUpsertSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />
-			<AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionGoodsFormWip} />
+			{/* <AlertMessage severity={AlertSeverityType.WARNING} message={c.I18N.transactionGoodsFormWip} /> */}
 			<BarcodeReader
 				timeBeforeScanTest={250}
 				onScan={handleBarcodeReaderScan}
