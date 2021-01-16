@@ -97,6 +97,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	// hooks state
 	// eslint-disable-next-line	
 	const [state, dispatch] = useStateValue();
+	const [lastTransactionType, setLastTransactionType] = useState<TransactionType>(TransactionType.transferFunds);
 	// snackBar state
 	const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
 	// hooks react form
@@ -204,16 +205,22 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 	const inputType = watch(FormFieldNames.INPUT_TYPE);
 	const outputType = watch(FormFieldNames.OUTPUT_TYPE);
 
-	if (transactionType === TransactionType.transferFunds && resourceType !== ResourceType.funds) {
-		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.funds); }, 100);
-	} else if (transactionType === TransactionType.transferVolunteeringHours && resourceType !== ResourceType.volunteeringHours) {
-		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.volunteeringHours); }, 100);
-	} else if (transactionType === TransactionType.transferGoods && resourceType !== ResourceType.genericGoods) {
-		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.genericGoods); }, 100);
-	} else if (transactionType === TransactionType.transferAsset && resourceType !== ResourceType.physicalAsset) {
-		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.physicalAsset); }, 100);
-	} else if (transactionType === c.VALUES.undefined && resourceType !== c.VALUES.undefined) {
-		setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, c.VALUES.undefined); }, 100);
+	// if transactionType Changed, reset resourceType to first option
+	if (lastTransactionType !== transactionType) {
+		//setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, c.VALUES.undefined); }, 100);
+		if (transactionType === TransactionType.transferFunds && resourceType !== ResourceType.funds) {
+			setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.funds); }, 100);
+		} else if (transactionType === TransactionType.transferVolunteeringHours && resourceType !== ResourceType.volunteeringHours) {
+			setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.volunteeringHours); }, 100);
+		} else if (transactionType === TransactionType.transferGoods && resourceType !== ResourceType.genericGoods) {
+			setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.genericGoods); }, 100);
+		} else if (transactionType === TransactionType.transferAsset && resourceType !== ResourceType.physicalAsset) {
+			setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, ResourceType.physicalAsset); }, 100);
+		} else if (transactionType === c.VALUES.undefined) {
+			setTimeout(() => { setValue(FormFieldNames.RESOURCE_TYPE, c.VALUES.undefined); }, 100);
+		}
+		// update lastTransactionType
+		setLastTransactionType(transactionType);
 	}
 
 	const resourceTypeOptions = () => {
@@ -547,7 +554,7 @@ export const TransactionUpsertForm: React.FC<RouteComponentProps> = ({ history }
 					{generateFormDefinition(formDefinition, control, errors, loading)}
 					{generateFormButtonsDiv(classes, loading || !causeOptionsLoaded, handleResetHandler)}
 				</form>
-				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} className={classes.spacer}/>}
+				{apolloError && <AlertMessage severity={AlertSeverityType.ERROR} message={errorMessage} className={classes.spacer} />}
 				{/* {apolloError && <pre>{JSON.stringify(apolloError.graphQLErrors[0].message, undefined, 2)}</pre>} */}
 				{loading && <LinearIndeterminate />}
 				<SnackbarMessage message={c.I18N.snackbarTransactionUpsertSuccess} severity={SnackbarSeverityType.SUCCESS} open={snackbarOpen} setOpen={setSnackbarOpen} />

@@ -33,7 +33,7 @@ enum FormFieldNames {
 const defaultValues: FormDefaultValues = {
 	code: mokeFormData ? 'wfp' : '',
 	name: mokeFormData ? 'World Food Program' : '',
-	email: mokeFormData ? 'mail@efp.com' : '',
+	email: mokeFormData ? 'mail@wfp.com' : '',
 	fiscalNumber: mokeFormData ? 'PT500128006' : '',
 	ambassadors: mokeFormData ? c.VALUES.mokeAmbassadors : '',
 	metaData: '',

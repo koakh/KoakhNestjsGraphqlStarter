@@ -57,7 +57,7 @@ export const routes: Record<RouteKey, RouteItem> = {
     component: PersonProfilePage,
     section: DrawerSections.SECTION1,
     drawerIcon: <FingerprintIcon />,
-    visible: false,
+    visible: true,
   },
   [RouteKey.USE_CASES]: {
     title: 'UseCases',

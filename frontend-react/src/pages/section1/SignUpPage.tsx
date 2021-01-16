@@ -39,14 +39,14 @@ enum FormFieldNames {
 	EMAIL = 'email',
 };
 const defaultValues: FormDefaultValues = {
-	firstName: mokeFormData ? 'John' : '',
+	firstName: mokeFormData ? 'Jake' : '',
 	lastName: mokeFormData ? 'Doe' : '',
-	username: mokeFormData ? 'johndoe' : '',
+	username: mokeFormData ? 'jakedoe' : '',
 	password: mokeFormData ? c.VALUES.mokePassword : '',
 	passwordConfirmation: mokeFormData ? c.VALUES.mokePassword : '',
-	fiscalNumber: mokeFormData ? 'PT123123123' : '',
-	mobilePhone: mokeFormData ? '+351936101188' : '',
-	email: mokeFormData ? 'johndoe@mail.com' : '',
+	fiscalNumber: mokeFormData ? 'PT123123127' : '',
+	mobilePhone: mokeFormData ? '+351936101187' : '',
+	email: mokeFormData ? 'jakedoe@mail.com' : '',
 };
 
 // use RouteComponentProps to get history props from Route

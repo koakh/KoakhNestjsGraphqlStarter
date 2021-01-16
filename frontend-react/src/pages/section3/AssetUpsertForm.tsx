@@ -122,8 +122,11 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 		},
 		[FormFieldNames.AMBASSADORS]: {
 			...commonFormFieldAmbassadors(useRef(), FormFieldNames.AMBASSADORS, () => {
-				const failValues = validateRegExpArrayWithValuesArray((getValues(FormFieldNames.AMBASSADORS) as string).split(' '), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]);
-				return (failValues.length > 0) ? `invalid id(s) ${failValues.join(' ')}` : true;
+				// optional, only uses validation if has values, assets can be created without ambassadors
+				if (getValues(FormFieldNames.AMBASSADORS)) {
+					const failValues = validateRegExpArrayWithValuesArray((getValues(FormFieldNames.AMBASSADORS) as string).split(' '), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone]);
+					return (failValues.length > 0) ? `invalid id(s) ${failValues.join(' ')}` : true;
+				}
 			})
 		},
 		[FormFieldNames.LOCATION]: {

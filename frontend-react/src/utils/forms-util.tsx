@@ -277,7 +277,9 @@ export const generateTextField = (e: FormPropFields, control: Control<Record<str
         helperText={helperTextHandler(errors, e)}
         // added for custom type
         // onFocus={() => { e.inputRef.current.focus(); }}
-        onFocus={() => { (typeof e.onFocusFn === 'function') ? e.onFocusFn() : e.inputRef.current.focus(); }}
+        // TODO: Unhandled Rejection (TypeError): Cannot read property 'focus' of null
+        // onFocus={() => { (typeof e.onFocusFn === 'function') ? e.onFocusFn() : e.inputRef.current.focus(); }}
+        onFocus={() => { (typeof e.onFocusFn === 'function') && e.onFocusFn(); }}
         // added for custom type
         defaultValue={e.defaultValue}
       />

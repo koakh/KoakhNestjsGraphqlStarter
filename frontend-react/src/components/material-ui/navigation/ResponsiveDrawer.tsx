@@ -247,7 +247,7 @@ export const ResponsiveDrawer = (props: ResponsiveDrawerProps) => {
     // loop section categories
     section.forEach(category => {
       const icon: JSX.Element = (category.icon) ? category.icon : defaultDrawerListItemIcon;
-      if (category.visible !== false && !category.visible) {
+      if (category.visible !== false) {
         listItems.push(
           <ListItem button key={category.path} component={Link} to={category.path} selected={location.pathname === category.path} onClick={handleClickListItem}>
             <ListItemIcon>{icon}</ListItemIcon>
