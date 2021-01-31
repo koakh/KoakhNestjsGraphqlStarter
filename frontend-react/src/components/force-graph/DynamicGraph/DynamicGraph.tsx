@@ -17,12 +17,16 @@ export type Node = { __typename?: string, id: string, label: string, nodeVal?: n
 export type Link = { __typename?: string, source: string, target: string, label?: string, desc?: string, color?: string, autoColorBy?: string, linkWidth?: number, group?: TransactionType };
 export enum NodeType { GENESIS, PARTICIPANT, PERSON, CAUSE, ASSET, TRANSACTION };
 export enum TransactionType { FUNDS, GOODS, VOLUNTARY_HOURS, SERVICE };
-export enum NodeColor { WHITE = '#ffffff', RED = '#ff0000', ORANGE = '#ffa500', YELLOW = '#ffff00', GREEN = '#008000', BLUE = '#0000ff', PURPLE = '#4b0082', PINK = '#ee82ee' }
 export enum RelationType { HAS_BORN = 'HAS_BORN', CREATED_CAUSE = 'CREATED_CAUSE', CREATED_ASSET = 'CREATED_ASSET', CREATED_TRANSACTION = 'CREATED_TRANSACTION', TRANSACTION_TO_ENTITY = 'TRANSACTION_TO_ENTITY', }
 export enum LinkColor { DARK_GREY = '#282828', }
 const GENESIS_NODE_ID = '00000000-0000-0000-0000-000000000000';
+// must match graphQl node sizes
+export enum NodeValue { GENESIS = 1, PARTICIPANTS = 15, PERSON = 20, CAUSE = 25, ASSET = 30, TRANSACTION = 35, DEBUG = 1 };
+export enum NodeColor { WHITE = '#ffffff', RED = '#ff0000', ORANGE = '#ffa500', YELLOW = '#ffff00', GREEN = '#008000', BLUE = '#0000ff', PURPLE = '#4b0082', PINK = '#ee82ee', DEBUG = '#FF4444' }
 
 // const randomWidth = () => Math.round(30);
+
+let lastAssetIdAdded: string;
 
 export const DynamicGraph: React.FC<Props> = (props) => {
   // old data from setState
@@ -45,8 +49,8 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   }, [fgRef]);
   // hooks
   const [reactForceDataQuery, { data: dataQuery, loading, error }] = useReactForceDataLazyQuery({
-    // TODO
-    fetchPolicy: e.apolloFetchPolicy,
+    // TODO always override default env fetchPolicy. first working version of graph data without double render
+    fetchPolicy: 'cache-first', // e.apolloFetchPolicy,
     variables: {
       skip: 0,
       // UNLIMITED
@@ -139,8 +143,8 @@ export const DynamicGraph: React.FC<Props> = (props) => {
           __typename: 'GraphData',
           // the trick is access reactForceData from data, use the consoles
           nodes: [
-...data.reactForceData.nodes,
-// ...dataQuery.reactForceData.nodes,
+            ...data.reactForceData.nodes,
+            // ...dataQuery.reactForceData.nodes,
             ...nodes,
             // hard coded object that starts to work
             // {
@@ -156,8 +160,8 @@ export const DynamicGraph: React.FC<Props> = (props) => {
           ],
           links: [
             // TODO TRY TO USE THE CACHE IN GRAPH AND NOT THE dataQuery.reactForceData maybe it works
-...data.reactForceData.links,
-// ...dataQuery.reactForceData.links,
+            ...data.reactForceData.links,
+            // ...dataQuery.reactForceData.links,
             ...links,
           ],
         }
@@ -171,109 +175,128 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     // console.log(`dataChanged: '${JSON.stringify(dataChanged, undefined, 2)}'`);
   };
 
-  // subscriptions
-  // eslint-disable-next-line
-  const { data: participantDataSub, loading: participantLoadingSub, error: participantErrorSub } = useParticipantAddedSubscription();
-  // eslint-disable-next-line
-  const { data: personDataSub, loading: personLoadingSub, error: personErrorSub } = usePersonAddedSubscription();
-  // eslint-disable-next-line
-  const { data: causeDataSub, loading: causeLoadingSub, error: causeErrorSub } = useCauseAddedSubscription();
-  // eslint-disable-next-line
-  const { data: assetDataSub, loading: assetLoadingSub, error: assetErrorSub } = useAssetAddedSubscription();
-  // eslint-disable-next-line
-  const { data: transactionDataSub, loading: transactionLoadingSub, error: transactionErrorSub } = useTransactionAddedSubscription();
-  // The solution for working with subscriptions at last, is using a useEffect to prevent renders
-  // UsersObserver component
-  // https://medium.com/@cbartling/graphql-subscriptions-with-apollo-client-react-hooks-and-hasura-20f67d98be4c
+  // // subscriptions
+  // // eslint-disable-next-line
+  // const { data: participantDataSub, loading: participantLoadingSub, error: participantErrorSub } = useParticipantAddedSubscription();
+  // // eslint-disable-next-line
+  // const { data: personDataSub, loading: personLoadingSub, error: personErrorSub } = usePersonAddedSubscription();
+  // // eslint-disable-next-line
+  // const { data: causeDataSub, loading: causeLoadingSub, error: causeErrorSub } = useCauseAddedSubscription();
+  // // eslint-disable-next-line
+  // TODO remove fetchPolicy
+  const { data: assetDataSub, loading: assetLoadingSub, error: assetErrorSub } = useAssetAddedSubscription({ /*fetchPolicy: 'cache-only'*/ });
+  // // eslint-disable-next-line
+  // const { data: transactionDataSub, loading: transactionLoadingSub, error: transactionErrorSub } = useTransactionAddedSubscription();
+  // // The solution for working with subscriptions at last, is using a useEffect to prevent renders
+  // // UsersObserver component
+  // // https://medium.com/@cbartling/graphql-subscriptions-with-apollo-client-react-hooks-and-hasura-20f67d98be4c
 
-  // participantSubscription useEffect
-  useEffect(() => {
-    if (!participantLoadingSub && participantDataSub) {
-      console.info('Received participant GraphQL subscription', participantDataSub);
-      addToGraph([{
-        __typename: 'GraphNode',
-        id: participantDataSub.participantAdded.id, label: `Participant:${participantDataSub.participantAdded.name}`, nodeVal: 1, group: 1,
-        // required else MissingFieldError {message: "Can't find field 'color' on object
-        desc: 'desc', color: NodeColor.BLUE, autoColorBy: null,
-      }], [{
-        __typename: 'GraphLink',
-        source: participantDataSub.participantAdded.id, target: GENESIS_NODE_ID, label: RelationType.HAS_BORN, group: 1,
-        // required else MissingFieldError {message: "Can't find field 'color' on object
-        desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
-      }])
-    }
-  }, [participantLoadingSub, participantDataSub]);
+  // TODO: commented to work in asset only, debug
+  // // participantSubscription useEffect
+  // useEffect(() => {
+  //   if (!participantLoadingSub && participantDataSub) {
+  //     console.info('Received participant GraphQL subscription', participantDataSub);
+  //     addToGraph([{
+  //       __typename: 'GraphNode',
+  //       id: participantDataSub.participantAdded.id, label: `Participant:${participantDataSub.participantAdded.name}`, nodeVal: 1, group: 1,
+  //       // required else MissingFieldError {message: "Can't find field 'color' on object
+  //       desc: 'desc', color: NodeColor.BLUE, autoColorBy: null,
+  //     }], [{
+  //       __typename: 'GraphLink',
+  //       source: participantDataSub.participantAdded.id, target: GENESIS_NODE_ID, label: RelationType.HAS_BORN, group: 1,
+  //       // required else MissingFieldError {message: "Can't find field 'color' on object
+  //       desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
+  //     }])
+  //   }
+  // }, [participantLoadingSub, participantDataSub]);
 
-  // personSubscription useEffect
-  useEffect(() => {
-    if (!personLoadingSub && personDataSub) {
-      console.info('Received person GraphQL subscription', personDataSub);
-      addToGraph([{
-        __typename: 'GraphNode',
-        id: personDataSub.personAdded.id, label: `Person:${personDataSub.personAdded.username}`, nodeVal: 1, group: 1, 
-        desc: 'desc', color: NodeColor.PINK, autoColorBy: null,
-      }], [{
-        __typename: 'GraphLink',
-        source: personDataSub.personAdded.id, target: GENESIS_NODE_ID, label: RelationType.HAS_BORN, group: 1, 
-        desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
-      }])
-    }
-  }, [personLoadingSub, personDataSub]);
+  // TODO: commented to work in asset only, debug
+  // // personSubscription useEffect
+  // useEffect(() => {
+  //   if (!personLoadingSub && personDataSub) {
+  //     console.info('Received person GraphQL subscription', personDataSub);
+  //     addToGraph([{
+  //       __typename: 'GraphNode',
+  //       id: personDataSub.personAdded.id, label: `Person:${personDataSub.personAdded.username}`, nodeVal: 1, group: 1, 
+  //       desc: 'desc', color: NodeColor.PINK, autoColorBy: null,
+  //     }], [{
+  //       __typename: 'GraphLink',
+  //       source: personDataSub.personAdded.id, target: GENESIS_NODE_ID, label: RelationType.HAS_BORN, group: 1, 
+  //       desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
+  //     }])
+  //   }
+  // }, [personLoadingSub, personDataSub]);
 
-  // causeSubscription useEffect
-  useEffect(() => {
-    if (!causeLoadingSub && causeDataSub) {
-      console.info('Received cause GraphQL subscription', causeDataSub);
-      addToGraph([{
-        __typename: 'GraphNode',
-        id: causeDataSub.causeAdded.id, label: `Cause:${causeDataSub.causeAdded.name}`, nodeVal: 1, group: 1,
-        desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
-      }], [{
-        __typename: 'GraphLink',
-        source: causeDataSub.causeAdded.input.entity.id, target: causeDataSub.causeAdded.id, label: RelationType.CREATED_CAUSE, group: 1,
-        desc: 'desc', color: NodeColor.ORANGE, autoColorBy: null,
-      }])
-    }
-  }, [causeLoadingSub, causeDataSub]);
+  // TODO: commented to work in asset only, debug
+  // // causeSubscription useEffect
+  // useEffect(() => {
+  //   if (!causeLoadingSub && causeDataSub) {
+  //     console.info('Received cause GraphQL subscription', causeDataSub);
+  //     addToGraph([{
+  //       __typename: 'GraphNode',
+  //       id: causeDataSub.causeAdded.id, label: `Cause:${causeDataSub.causeAdded.name}`, nodeVal: 1, group: 1,
+  //       desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
+  //     }], [{
+  //       __typename: 'GraphLink',
+  //       source: causeDataSub.causeAdded.input.entity.id, target: causeDataSub.causeAdded.id, label: RelationType.CREATED_CAUSE, group: 1,
+  //       desc: 'desc', color: NodeColor.ORANGE, autoColorBy: null,
+  //     }])
+  //   }
+  // }, [causeLoadingSub, causeDataSub]);
 
+  // TODO: commented to work in asset only, debug
   // assetSubscription useEffect
-  useEffect(() => {
-    if (!assetLoadingSub && assetDataSub) {
-      console.info('Received asset GraphQL subscription', assetDataSub);
-      addToGraph([{
-        __typename: 'GraphNode',
-        id: assetDataSub.assetAdded.id, label: `Asset:${assetDataSub.assetAdded.name}`, nodeVal: 1, group: 1,
-        desc: 'desc', color: NodeColor.YELLOW, autoColorBy: null,
-      }], [{
-        __typename: 'GraphLink',
-        source: assetDataSub.assetAdded.owner.entity.id, target: assetDataSub.assetAdded.id, label: RelationType.CREATED_ASSET, group: 1,
-        desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
-      }])
-    }
-  }, [assetLoadingSub, assetDataSub]);
+  // useEffect(() => {
+  //   if (!assetLoadingSub && assetDataSub) {
+  //     console.info('Received asset GraphQL subscription', assetDataSub);
+  //     addToGraph([{
+  //       __typename: 'GraphNode',
+  //       id: assetDataSub.assetAdded.id, label: `Asset:${assetDataSub.assetAdded.name}`, nodeVal: 1, group: 1,
+  //       desc: 'desc', color: NodeColor.YELLOW, autoColorBy: null,
+  //     }], [{
+  //       __typename: 'GraphLink',
+  //       source: assetDataSub.assetAdded.owner.entity.id, target: assetDataSub.assetAdded.id, label: RelationType.CREATED_ASSET, group: 1,
+  //       desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
+  //     }])
+  //   }
+  // }, [assetLoadingSub, assetDataSub]);
+  if (!assetLoadingSub && assetDataSub && assetDataSub.assetAdded.id !== lastAssetIdAdded) {
+    console.info('Received asset GraphQL subscription', assetDataSub);
+    lastAssetIdAdded = assetDataSub.assetAdded.id;
+    addToGraph([{
+      __typename: 'GraphNode',
+      id: assetDataSub.assetAdded.id, label: `Asset:${assetDataSub.assetAdded.name}`, nodeVal: /*NodeValue.ASSET*/NodeValue.DEBUG, group: 1,
+      desc: 'desc', color: /*NodeColor.YELLOW*/NodeColor.DEBUG, autoColorBy: null,
+    }], [{
+      __typename: 'GraphLink',
+      source: assetDataSub.assetAdded.owner.entity.id, target: assetDataSub.assetAdded.id, label: RelationType.CREATED_ASSET, group: 1,
+      desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
+    }])
+  };
 
-  // transactionSubscription useEffect
-  useEffect(() => {
-    if (!transactionLoadingSub && transactionDataSub) {
-      console.info('Received transaction GraphQL subscription', transactionDataSub);
-      addToGraph([{
-        __typename: 'GraphNode',
-        id: transactionDataSub.transactionAdded.id, label: `Transaction:${transactionDataSub.transactionAdded.transactionType}`, nodeVal: 1, group: 1,
-        // required else MissingFieldError {message: "Can't find field 'color' on object
-        desc: 'desc', color: NodeColor.GREEN, autoColorBy: null,
-      }], [{
-        __typename: 'GraphLink',
-        source: transactionDataSub.transactionAdded.input.entity.id, target: transactionDataSub.transactionAdded.id, label: RelationType.CREATED_TRANSACTION, group: 1,
-        // required else MissingFieldError {message: "Can't find field 'color' on object
-        desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
-      }, {
-        __typename: 'GraphLink',
-        source: transactionDataSub.transactionAdded.id, target: transactionDataSub.transactionAdded.output.entity.id, label: RelationType.CREATED_TRANSACTION, group: 1,
-        // required else MissingFieldError {message: "Can't find field 'color' on object
-        desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
-      }])
-    }
-  }, [transactionLoadingSub, transactionDataSub]);
+  // TODO: commented to work in asset only, debug
+  // // transactionSubscription useEffect
+  // useEffect(() => {
+  //   if (!transactionLoadingSub && transactionDataSub) {
+  //     console.info('Received transaction GraphQL subscription', transactionDataSub);
+  //     addToGraph([{
+  //       __typename: 'GraphNode',
+  //       id: transactionDataSub.transactionAdded.id, label: `Transaction:${transactionDataSub.transactionAdded.transactionType}`, nodeVal: 1, group: 1,
+  //       // required else MissingFieldError {message: "Can't find field 'color' on object
+  //       desc: 'desc', color: NodeColor.GREEN, autoColorBy: null,
+  //     }], [{
+  //       __typename: 'GraphLink',
+  //       source: transactionDataSub.transactionAdded.input.entity.id, target: transactionDataSub.transactionAdded.id, label: RelationType.CREATED_TRANSACTION, group: 1,
+  //       // required else MissingFieldError {message: "Can't find field 'color' on object
+  //       desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
+  //     }, {
+  //       __typename: 'GraphLink',
+  //       source: transactionDataSub.transactionAdded.id, target: transactionDataSub.transactionAdded.output.entity.id, label: RelationType.CREATED_TRANSACTION, group: 1,
+  //       // required else MissingFieldError {message: "Can't find field 'color' on object
+  //       desc: 'desc', color: LinkColor.DARK_GREY, autoColorBy: null,
+  //     }])
+  //   }
+  // }, [transactionLoadingSub, transactionDataSub]);
 
   // // subscriptions: participant
   // if (!participantLoadingSub && participantDataSub && participantDataSub.participantAdded) {
@@ -312,9 +335,12 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   // }
 
   // only fire query if has a valid accessToken to prevent after login delay problems
-  if (!dataQuery && !loading && getAccessToken()) {
-    reactForceDataQuery();
-  }
+  useEffect(() => {
+    if (!dataQuery && !loading && getAccessToken()) {
+      reactForceDataQuery();
+    }
+    return () => { }
+  }, []);
 
   // catch error first
   if (error) {
@@ -420,6 +446,8 @@ export const DynamicGraph: React.FC<Props> = (props) => {
   //     });
   // }
 
+  console.log(`dataQuery.reactForceData.nodes: [${JSON.stringify(dataQuery.reactForceData.nodes, undefined, 2)}]`);
+
   return (<Fragment>
     {/* <button children={<span>Fetch</span>} onClick={handleButton2Click} /> */}
     {/* <button children={<span>changeProfile</span>} onClick={handleButton1Click} /> */}
@@ -427,7 +455,7 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     <ForceGraph3D
       ref={fgRef}
       graphData={{
-        nodes: dataQuery.reactForceData.nodes.map((e) => {
+        nodes: dataQuery ? dataQuery.reactForceData.nodes.map((e) => {
           return {
             id: e.id,
             group: e.group,
@@ -435,15 +463,15 @@ export const DynamicGraph: React.FC<Props> = (props) => {
             color: e.color,
             label: e.label
           }
-        }),
-        links: dataQuery.reactForceData.links.map((e) => {
+        }) : [],
+        links: dataQuery ? dataQuery.reactForceData.links.map((e) => {
           return {
             source: e.source,
             target: e.target,
             label: e.label,
             group: e.group,
           }
-        })
+        }) : [],
       }}
       nodeLabel='label'
       linkLabel='label'
