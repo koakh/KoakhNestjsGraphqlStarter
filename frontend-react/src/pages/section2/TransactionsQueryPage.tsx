@@ -37,6 +37,20 @@ export const TransactionsQueryPage: React.FC<Props> = () => {
     transactionQuery();
   }
 
+  // subscriptions: seem that we don't need useEffect, creates some issues when we scroll with double renders and
+  // only work if we scroll, the best way is to check if dataSub.modelAdded.id is different than the last in item in modelAdded array
+  // this way we don't have render's and works with all subscriptions 
+  if (!loadingSub && dataSub && dataSub.transactionAdded && (
+    (transactionAdded.length === 0) ||
+    (transactionAdded.length > 0 && transactionAdded[transactionAdded.length - 1].transactionAdded.id !== dataSub.transactionAdded.id)
+  )
+  ) {
+    transactionAdded.push(dataSub);
+  }
+  if (errorSub) {
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={errorSub.message} />;
+  }
+
   // catch error first
   if (error) {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
@@ -52,20 +66,13 @@ export const TransactionsQueryPage: React.FC<Props> = () => {
     );
   }
 
-  // subscriptions
-  if (!loadingSub && dataSub && dataSub.transactionAdded) {
-    transactionAdded.push(dataSub);
-  }
-  if (errorSub) {
-    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
-  }
-
-  // const transactions = transactionAdded.map((e: TransactionAddedSubscription) => (
-  //   <Box key={e.transactionAdded.id} component='span' m={1}>
-  //     <Typography>{e.transactionAdded.createdDate} : {e.transactionAdded.id} : {e.transactionAdded.transactionType} : {e.transactionAdded.resourceType}</Typography>
-  //   </Box>
-  // ));
-  // const subscriptionsContent = transactionAdded.length > 0 ? transactions : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
+  // render subscriptionsContent
+  const transactions = transactionAdded.map((e: TransactionAddedSubscription) => (
+    <Box key={e.transactionAdded.id} component='span' m={1}>
+      <Typography>{e.transactionAdded.transactionType} : {e.transactionAdded.id}</Typography>
+    </Box>
+  ));
+  const subscriptionsContent = transactionAdded.length > 0 ? transactions : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
 
   // modal handlers
   const handleClickOpen = () => {
@@ -91,7 +98,7 @@ export const TransactionsQueryPage: React.FC<Props> = () => {
     { field: 'metaData', hide: true },
     { field: 'metaDataInternal', hide: true },    
   ];
-  // TODO use type
+  // type is to complex to pass in generic
   const rows = queryDataToDataTableRows<any>(columns, data.transactions);
   const attributes = {
     pageSize: c.VALUES.dataGridPageSize,
@@ -107,8 +114,8 @@ export const TransactionsQueryPage: React.FC<Props> = () => {
       {pageTitle}
       <CustomDataTable columns={columns} rows={rows} attributes={attributes} />
       {/* subscriptions */}
-      {/* <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box> */}
-      {/* {subscriptionsContent} */}
+      <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box>
+      {subscriptionsContent}
       {/* customDialog */}
       <CustomDialog ref={childRef} title='details' closeButtonLabel={c.I18N.close}>
         <CustomDataTable columns={modalPropertyColumns} rows={modalRows} />

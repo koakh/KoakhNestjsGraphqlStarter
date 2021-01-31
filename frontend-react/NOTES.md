@@ -51,6 +51,8 @@
   - [How can I use multiple refs for an array of elements with hooks?](#how-can-i-use-multiple-refs-for-an-array-of-elements-with-hooks)
   - [3D Force-Directed Graph](#3d-force-directed-graph)
   - [Calling setState after on useQuery data triggers infinite loop](#calling-setstate-after-on-usequery-data-triggers-infinite-loop)
+  - [Subscriptions : failed: Error during WebSocket handshake: Unexpected response code: 404](#subscriptions--failed-error-during-websocket-handshake-unexpected-response-code-404)
+  - [Subscriptions don't update virtual dom problem](#subscriptions-dont-update-virtual-dom-problem)
 
 ## TLDR
 
@@ -1041,3 +1043,38 @@ import React, { useState, useMemo, useEffect } from 'react';
     setList(data.YOUR_DATA_NAME);
   },[data])
 ```
+
+## Subscriptions : failed: Error during WebSocket handshake: Unexpected response code: 404
+
+- [Node + Express + Socket.io problem and Solution for Docker Infraestructure](/home/mario/Dropbox/Aplicativos/Notable/notes/Node + Express + Socket.io problem and Solution for Docker Infraestructure.md)
+
+```shell
+webpackHotDevClient.js:60 WebSocket connection to 'wss://app.solidarychain.com/sockjs-node' failed: Error during WebSocket handshake: Unexpected response code: 404
+
+...
+
+client.ts:557 WebSocket connection to 'wss://api.solidarychain.com/graphql' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED
+SubscriptionClient.connect @ client.ts:557
+(anonymous) @ client.ts:522
+```
+
+seems related with pre login, when we don't have auth token yet, it fails, but after we login everything works, related with bellow code
+
+```typescript
+const wsLink = new WebSocketLink({
+  uri: e.graphqlServerWsUri,
+  options: {
+    reconnect: true,
+    // here we can send arbitrary data to be passed to server
+    // ex server catch with `const authToken: string = ('authorization' in connectionParamsLowerKeys)`
+    connectionParams: () => ({
+      authorization: `Bearer ${getAccessToken()}`,
+    }),
+    lazy: true,
+  },
+});
+```
+
+## Subscriptions don't update virtual dom problem
+
+seems that sometimes virtual dom is not update after we received a subscription, we must scroll to show it on screen

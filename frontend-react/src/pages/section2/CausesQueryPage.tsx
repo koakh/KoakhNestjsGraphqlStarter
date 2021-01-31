@@ -40,6 +40,20 @@ export const CausesQueryPage: React.FC<Props> = () => {
     assetQuery();
   }
 
+  // subscriptions: seem that we don't need useEffect, creates some issues when we scroll with double renders and
+  // only work if we scroll, the best way is to check if dataSub.modelAdded.id is different than the last in item in modelAdded array
+  // this way we don't have render's and works with all subscriptions 
+  if (!loadingSub && dataSub && dataSub.causeAdded && (
+    (causeAdded.length === 0) ||
+    (causeAdded.length > 0 && causeAdded[causeAdded.length - 1].causeAdded.id !== dataSub.causeAdded.id)
+  )
+  ) {
+    causeAdded.push(dataSub);
+  }
+  if (errorSub) {
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={errorSub.message} />;
+  }
+
   // catch error first
   if (error) {
     return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
@@ -55,20 +69,13 @@ export const CausesQueryPage: React.FC<Props> = () => {
     );
   }
 
-  // subscriptions
-  if (!loadingSub && dataSub && dataSub.causeAdded) {
-    causeAdded.push(dataSub);
-  }
-  if (errorSub) {
-    return <AlertMessage severity={AlertSeverityType.ERROR} message={error.message} />;
-  }
-
-  // const causes = causeAdded.map((e: CauseAddedSubscription) => (
-  //   <Box key={e.causeAdded.id} component='span' m={1}>
-  //     <Typography>{e.causeAdded.name} : {e.causeAdded.id}</Typography>
-  //   </Box>
-  // ));
-  // const subscriptionsContent = causeAdded.length > 0 ? causes : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
+  // render subscriptionsContent
+  const causes = causeAdded.map((e: CauseAddedSubscription) => (
+    <Box key={e.causeAdded.id} component='span' m={1}>
+      <Typography>{e.causeAdded.name} : {e.causeAdded.id}</Typography>
+    </Box>
+  ));
+  const subscriptionsContent = causeAdded.length > 0 ? causes : <Typography>{c.I18N.waitingForSubscriptions}</Typography>
 
   // modal handlers
   const handleClickOpen = () => {
@@ -95,7 +102,7 @@ export const CausesQueryPage: React.FC<Props> = () => {
     { field: 'metaData', hide: true },
     { field: 'metaDataInternal', hide: true },
   ];
-  // TODO use type
+  // type is to complex to pass in generic
   const rows = queryDataToDataTableRows<any>(columns, data.causes);
   const attributes = {
     pageSize: c.VALUES.dataGridPageSize,
@@ -114,8 +121,8 @@ export const CausesQueryPage: React.FC<Props> = () => {
       <Box className={classes.spacerTop}><PageTitle>{c.I18N.quickDonateButtons}</PageTitle></Box>
       {generateMediaCardQuickButton(data.causes, classes, 228, '${name} / ${email}', 'Cras euismod elementum turpis eget pharetra. Class aptent taciti sociosqu ...')}
       {/* subscriptions */}
-      {/* <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box> */}
-      {/* {subscriptionsContent} */}
+      <Box className={classes.spacerTop}><PageTitle>{c.I18N.subscriptions}</PageTitle></Box>
+      {subscriptionsContent}
       {/* customDialog */}
       <CustomDialog ref={childRef} title='details' closeButtonLabel={c.I18N.close}>
         <CustomDataTable columns={modalPropertyColumns} rows={modalRows} />

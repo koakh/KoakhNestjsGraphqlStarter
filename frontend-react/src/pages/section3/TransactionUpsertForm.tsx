@@ -34,6 +34,7 @@ type FormInputs = {
 	metaData?: any,
 	metaDataInternal?: any,
 };
+
 enum FormFieldNames {
 	TRANSACTION_TYPE = 'transactionType',
 	RESOURCE_TYPE = 'resourceType',

@@ -54,6 +54,7 @@ const refreshLink = new TokenRefreshLink({
   // },
   handleError: err => {
     // full control over handling token fetch Error
+    debugger;
     console.warn('Your refresh token is invalid. Try to re-login');
     console.error(err);
     // your custom action here
@@ -106,7 +107,7 @@ const wsLink = new WebSocketLink({
   uri: e.graphqlServerWsUri,
   options: {
     reconnect: true,
-    // here we can send aribitrary data to be passed to server
+    // here we can send arbitrary data to be passed to server
     // ex server catch with `const authToken: string = ('authorization' in connectionParamsLowerKeys)`
     connectionParams: () => ({
       authorization: `Bearer ${getAccessToken()}`,

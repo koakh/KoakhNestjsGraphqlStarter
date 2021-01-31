@@ -10,7 +10,7 @@ const VALUES: { [key: string]: any } = {
   // used in signIn to clear message
   resultMessageTimeOut: 5000,
   // admin, johndoe
-  mokeAmbassadors: '4ea88521-031b-4279-9165-9c10e1839000 PT282692124',
+  mokeAmbassadors: '4ea88521-031b-4279-9165-9c10e1839000 PT182692124',
   mokeLocation: '12.1890144,-28.5171909',
   mokePassword: 'Aa456#45',
   mokeTags: [
@@ -40,7 +40,7 @@ const I18N: { [key: string]: string } = {
   close: 'Close',
   cancel: 'Cancel',
   donate: 'Donate',
-  quickDonateButtons: 'Quick Donate Buttons (WIP, sorry opted for 3d Graph)',
+  quickDonateButtons: 'Quick Donate Buttons (WIP)',
   subscriptions: 'Subscriptions',
   waitingForSubscriptions: 'waiting for subscriptions...',
   // messages
