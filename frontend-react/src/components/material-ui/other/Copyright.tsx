@@ -15,7 +15,6 @@ export const Copyright: React.FC<Props> = (props) => {
         {props.copyrightName}
       </Link>{' '}
       {new Date().getFullYear()}
-      {'.'}
     </Typography>
   );
 };

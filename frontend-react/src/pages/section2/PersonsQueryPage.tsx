@@ -10,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { CustomDataTable, modalPropertyColumns, objectPropsToDataTableRows, queryDataToDataTableRows } from '../../components/material-ui/tables';
 import { PageTitle } from '../../components/material-ui/typography';
 import { Person, PersonAddedSubscription, usePersonAddedSubscription, usePersonsLazyQuery } from '../../generated/graphql';
-import { useStyles } from '../../utils';
+import { getGraphQLApolloError, useStyles } from '../../utils';
 import { generateMediaCardQuickButton } from '../../utils/tsx-util';
 
 interface Props { }
@@ -50,7 +50,7 @@ export const PersonQueryPage: React.FC<Props> = () => {
     personAdded.push(dataSub);
   }
   if (errorSub) {
-    return <AlertMessage severity={AlertSeverityType.ERROR} message={errorSub.message} />;
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={getGraphQLApolloError(errorSub)} />;
   }
   
   // catch error first

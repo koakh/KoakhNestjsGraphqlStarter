@@ -5,10 +5,10 @@ import { PageTitle } from '../../components/material-ui/typography';
 
 interface Props { }
 
-let renderCount = 0;
+// let renderCount = 0;
 
 export const FeedPage: React.FC<Props> = () => {
-  renderCount++;
+  // renderCount++;
   // context state hook
   return (
     <Fragment>

@@ -1,5 +1,5 @@
 {
-  "name": "@solidary-chain/frontend-react",
+  "name": "@solidarychain/frontend-react-playground",
   "version": "0.1.0",
   "scripts": {
     "start": "HOST= react-scripts start",
@@ -7,7 +7,11 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "gen:graphql": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen",
-    "gen:graphql:watch": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --watch"
+    "gen:graphql:watch": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --watch",
+    "docker:build:dev": "docker-compose up --build",
+    "docker:build:prod": "docker-compose -f docker-compose.prod.yml up --build",
+    "docker:run:prod": "docker-compose up",
+    "docker:push:prod": "docker-compose up --build"
   },
   "dependencies": {
     "@apollo/client": "^3.1.3",

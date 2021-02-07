@@ -53,6 +53,10 @@
   - [Calling setState after on useQuery data triggers infinite loop](#calling-setstate-after-on-usequery-data-triggers-infinite-loop)
   - [Subscriptions : failed: Error during WebSocket handshake: Unexpected response code: 404](#subscriptions--failed-error-during-websocket-handshake-unexpected-response-code-404)
   - [Subscriptions don't update virtual dom problem](#subscriptions-dont-update-virtual-dom-problem)
+  - [use SVG Icons](#use-svg-icons)
+  - [Dockerizing a React App](#dockerizing-a-react-app)
+    - [Development Image](#development-image)
+    - [Test Hot Reload](#test-hot-reload)
 
 ## TLDR
 
@@ -1078,3 +1082,40 @@ const wsLink = new WebSocketLink({
 ## Subscriptions don't update virtual dom problem
 
 seems that sometimes virtual dom is not update after we received a subscription, we must scroll to show it on screen
+
+## use SVG Icons
+
+- [How to use SVGs in React - LogRocket Blog](https://blog.logrocket.com/how-to-use-svgs-in-react/)
+
+1. copy icon to `src/icons/LogoIcon.svg`
+2. importit with `import { ReactComponent as LogoIcon } from '../../icons/LogoIcon.svg';`, note for `{ ReactComponent as LogoIcon }`
+3. use it with `<LogoIcon width='10vw'/>`
+
+## Dockerizing a React App
+
+- [Main Note File](/home/mario/Dropbox/Aplicativos/Notable/notes/Docker꞉ Dockerizing a React App.md)
+- [koakh/DockerizingReactAppWithNGINX](https://github.com/koakh/DockerizingReactAppWithNGINX/blob/main/NOTES.md)
+
+### Development Image
+
+```shell
+# tag name
+$ IMAGE_TAG="solidarychain-server-graphql"
+# build and tag the docker image
+$ docker build -t ${IMAGE_TAG} .
+# enter container, usefull for debug like npm i, npm run start
+$ docker run -it ${IMAGE_TAG} sh
+# spin up the container
+$ docker run -it --rm -p 3000:3000 ${IMAGE_TAG}
+# build and tag the docker image, and lauch with daeomn mode
+$ docker-compose up -d --build
+# view logs
+$ docker-compose logs -f
+```
+
+### Test Hot Reload
+
+1. navigate to <http://localhost:3000>
+2. Edit `<code>src/App.js</code>`, change for ex `save to reload` and watch hot reload on browser
+
+> for production use npm scripts or check main notes file

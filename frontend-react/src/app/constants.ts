@@ -1,7 +1,7 @@
 /* eslint-disable no-template-curly-in-string */
 import { AssetType, EntityType, GoodsOptions } from "../types";
 
-export const mokeFormData = true;
+export const mokeFormData = false;
 
 const VALUES: { [key: string]: any } = {
   // used in selection box's, unselected value
@@ -256,7 +256,7 @@ const REGEXP: { [key: string]: RegExp; } = {
   username: /^([a-zA-Z0-9-_]{4,16})$/i,
   // Minimum 8 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character:
   // https://medium.com/@ikhsanudinhakim/most-used-regex-pattern-for-password-validation-314645912cec
-  password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{6,}$/i,
+  password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/i,
   // multi lingual, you'd probably be better off validating against characters you don't want to allow
   // match names with Capitalization after the first character
   // firstAndLastName: /^([A-Z][a-zA-Z]*)$/,

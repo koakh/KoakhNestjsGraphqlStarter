@@ -54,6 +54,7 @@ const refreshLink = new TokenRefreshLink({
   // },
   handleError: err => {
     // full control over handling token fetch Error
+    // TODO refresh jwt token here
     debugger;
     console.warn('Your refresh token is invalid. Try to re-login');
     console.error(err);

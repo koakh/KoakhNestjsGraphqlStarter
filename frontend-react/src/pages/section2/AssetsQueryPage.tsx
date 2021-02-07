@@ -9,7 +9,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { CustomDataTable, modalPropertyColumns, objectPropsToDataTableRows, queryDataToDataTableRows } from '../../components/material-ui/tables';
 import { PageTitle } from '../../components/material-ui/typography';
 import { AssetAddedSubscription, useAssetAddedSubscription, useAssetsLazyQuery } from '../../generated/graphql';
-import { useStyles } from '../../utils';
+import { getGraphQLApolloError, useStyles } from '../../utils';
 
 interface Props { }
 const assetAdded = new Array<AssetAddedSubscription>();
@@ -48,7 +48,7 @@ export const AssetsQueryPage: React.FC<Props> = () => {
     assetAdded.push(dataSub);
   }
   if (errorSub) {
-    return <AlertMessage severity={AlertSeverityType.ERROR} message={errorSub.message} />;
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={getGraphQLApolloError(errorSub)} />;
   }
 
   // catch error first

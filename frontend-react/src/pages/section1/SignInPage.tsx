@@ -1,5 +1,4 @@
 import { Grid, Link } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -7,17 +6,17 @@ import Container from '@material-ui/core/Container';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
-import { appConstants as c, setAccessToken } from '../../app';
+import { appConstants as c, mokeFormData, setAccessToken } from '../../app';
 import { commonFormFieldPassword, commonFormFieldUsername, envVariables as e, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { ActionType, useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message/AlertMessage';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright, Props as CopyrightProps } from '../../components/material-ui/other/Copyright';
 import { LoginPersonInput, PersonProfileDocument, usePersonLoginMutation } from '../../generated/graphql';
+import { ReactComponent as LogoIcon } from '../../icons/LogoIcon.svg';
 import { FormDefaultValues, FormPropFields } from '../../types';
 import { generateFormDefinition } from '../../utils';
 
@@ -51,8 +50,8 @@ enum FormFieldNames {
 	PASSWORD = 'password',
 };
 const defaultValues: FormDefaultValues = {
-	username: c.DEFAULT_LOGIN_CREDENTIALS.username,
-	password: c.DEFAULT_LOGIN_CREDENTIALS.password,
+	username: mokeFormData ? c.DEFAULT_LOGIN_CREDENTIALS.username : '',
+	password: mokeFormData ? c.DEFAULT_LOGIN_CREDENTIALS.password : '',
 };
 
 export const copyrightProps: CopyrightProps = {
@@ -157,9 +156,10 @@ export const SignInPage: React.FC<RouteComponentProps> = ({ history, location })
 	return (
 		<Container component='main' maxWidth='xs'>
 			<div className={classes.paper}>
-				<Avatar className={classes.avatar}>
+				{/* <Avatar className={classes.avatar}>
 					<LockOutlinedIcon />
-				</Avatar>
+				</Avatar> */}
+				<LogoIcon width='10vw'/>
 				<Typography component='h1' variant='h5'>
 					{c.I18N.signIn}
 				</Typography>

@@ -15,7 +15,7 @@ export const App: React.FC<Props> = () => {
   const [state, dispatch] = useStateValue();
   // state hook
   const [loading, setLoading] = useState(true)
-  // person hook
+  // person hook: try get profile in main useEffect and dispatch SIGNED_IN_USER with profile and logged=true, this will autoLogin
   const [profileQuery, { called: profileCalled, data: profileData, loading: profileLoading }] = usePersonProfileLazyQuery();
   const [profileLoaded, setProfileLoaded] = useState(false);
 
@@ -34,12 +34,14 @@ export const App: React.FC<Props> = () => {
         setLoading(false);
         // set inMemory AccessToken
         setAccessToken(data.accessToken);
-        // fire profile hook
-        if (!profileCalled) profileQuery();
+        // fire profile hook if received a valid accessToken, else ignore
+        if (data.valid && !profileCalled) profileQuery();
       })
       .catch((error) => {
-        console.error(error);
-      });
+        // omit error from console
+        // POST https://api.solidarychain.com/refresh-token 401 (Unauthorized)
+        console.error(error.message);
+      })
     return () => {
       // cleanup stuff
     };
@@ -62,6 +64,7 @@ export const App: React.FC<Props> = () => {
           roles: profileData.personProfile.roles
         }
       };
+      // send dispatch to autoLogin user
       dispatch({ type: ActionType.SIGNED_IN_USER, payload });
       // set state to profile loaded to prevent loops
       setProfileLoaded(true);

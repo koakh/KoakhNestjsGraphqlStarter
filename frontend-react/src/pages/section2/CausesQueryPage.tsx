@@ -10,7 +10,7 @@ import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { CustomDataTable, modalPropertyColumns, objectPropsToDataTableRows, queryDataToDataTableRows } from '../../components/material-ui/tables';
 import { PageTitle } from '../../components/material-ui/typography';
 import { CauseAddedSubscription, useCauseAddedSubscription, useCausesLazyQuery } from '../../generated/graphql';
-import { useStyles } from '../../utils';
+import { getGraphQLApolloError, useStyles } from '../../utils';
 import { generateMediaCardQuickButton } from '../../utils/tsx-util';
 
 interface Props { }
@@ -51,7 +51,7 @@ export const CausesQueryPage: React.FC<Props> = () => {
     causeAdded.push(dataSub);
   }
   if (errorSub) {
-    return <AlertMessage severity={AlertSeverityType.ERROR} message={errorSub.message} />;
+    return <AlertMessage severity={AlertSeverityType.ERROR} message={getGraphQLApolloError(errorSub)} />;
   }
 
   // catch error first

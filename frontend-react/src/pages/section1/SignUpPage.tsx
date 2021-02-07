@@ -1,9 +1,7 @@
 import { Box, Grid, Link } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button/Button';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
@@ -14,8 +12,9 @@ import { AlertMessage, AlertSeverityType } from '../../components/material-ui/al
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
 import { Copyright } from '../../components/material-ui/other/Copyright';
 import { NewPersonInput, usePersonRegisterMutation } from '../../generated/graphql';
+import { ReactComponent as LogoIcon } from '../../icons/LogoIcon.svg';
 import { FormDefaultValues, FormPropFields } from '../../types';
-import { validateFiscalNumber, generateFormDefinition, getGraphQLApolloError, parseTemplate } from '../../utils';
+import { generateFormDefinition, getGraphQLApolloError, parseTemplate, validateFiscalNumber } from '../../utils';
 import { copyrightProps, useStyles } from './SignInPage';
 
 type FormInputs = {
@@ -127,9 +126,10 @@ export const SignUpPage: React.FC<RouteComponentProps> = ({ history }) => {
 	return (
 		<Container component='main' maxWidth='xs'>
 			<div className={classes.paper}>
-				<Avatar className={classes.avatar}>
+				{/* <Avatar className={classes.avatar}>
 					<LockOutlinedIcon />
-				</Avatar>
+				</Avatar> */}
+				<LogoIcon width='10vw'/>
 				<Typography component='h1' variant='h5'>
 					{c.I18N.signUp}
 				</Typography>
