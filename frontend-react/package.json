@@ -34,7 +34,7 @@
     "react-barcode-reader": "0.0.2",
     "react-dom": "^16.13.1",
     "react-force-graph-3d": "^1.18.8",
-    "react-hook-form": "^6.8.3",
+    "react-hook-form": "^6.13.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
     "react-use-dimensions": "^1.2.1",
