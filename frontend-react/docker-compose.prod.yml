@@ -3,9 +3,9 @@ version: '3.3'
 services:
 
   solidarychain-frontend-react-playground:
-    container_name: solidarychain-frontend-react-playground
-    # used as tag
     image: solidarychain/solidarychain-frontend-react-playground
+    # used as tag
+    container_name: solidarychain-frontend-react-playground
     build:
       context: .
       dockerfile: Dockerfile.prod

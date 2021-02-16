@@ -3,7 +3,7 @@ import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldAmbassadors, commonFormFieldAssetName, commonFormFieldAssetOwner, commonFormFieldAssetType, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldTags, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldAmbassadors, commonFormFieldAssetName, commonFormFieldAssetOwner, commonFormFieldAssetType, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldPersonNdParticipantInputTypeEntity, commonFormFieldTags, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
@@ -20,6 +20,7 @@ type FormInputs = {
 	description: string,
 	ambassadors?: string,
 	// input/output entity object
+	inputType: EntityType;
 	owner: string,
 	location?: string
 	tags: Tag[],
@@ -31,6 +32,7 @@ enum FormFieldNames {
 	NAME = 'name',
 	DESCRIPTION = 'description',
 	AMBASSADORS = 'ambassadors',
+	INPUT_TYPE = 'inputType',
 	OWNER = 'owner',
 	LOCATION = 'location',
 	TAGS = 'tags',
@@ -42,6 +44,7 @@ const defaultValues: FormDefaultValues = {
 	name: mokeFormData ? 'Wheel chair' : '',
 	description: mokeFormData ? 'some useful description' : '',
 	ambassadors: mokeFormData ? c.VALUES.mokeAmbassadors : '',
+	inputType: EntityType.person,
 	// inject by user profile id state
 	owner: '',
 	location: mokeFormData ? c.VALUES.mokeLocation : '',
@@ -84,7 +87,7 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 				assetType: data.assetType,
 				ambassadors: data.ambassadors.split(' '),
 				owner: {
-					type: EntityType.person,
+					type: data.inputType,
 					id: data.owner,
 				},
 				location: data.location,
@@ -116,6 +119,9 @@ export const AssetUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 		},
 		[FormFieldNames.NAME]: {
 			...commonFormFieldAssetName(useRef(), FormFieldNames.NAME),
+		},
+		[FormFieldNames.INPUT_TYPE]: {
+			...commonFormFieldPersonNdParticipantInputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))),
 		},
 		[FormFieldNames.OWNER]: {
 			...commonFormFieldAssetOwner(useRef(), FormFieldNames.OWNER, () => validateRegExpArray(getValues(FormFieldNames.OWNER), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])),

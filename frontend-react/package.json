@@ -9,9 +9,9 @@
     "gen:graphql": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen",
     "gen:graphql:watch": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --watch",
     "docker:build:dev": "docker-compose up --build",
-    "docker:build:prod": "docker-compose -f docker-compose.prod.yml up --build",
+    "docker:build:prod": "docker-compose -f docker-compose.prod.yml build",
     "docker:run:prod": "docker-compose up",
-    "docker:push:prod": "docker-compose up --build"
+    "docker:push:prod": "./dockerpush.sh"
   },
   "dependencies": {
     "@apollo/client": "^3.1.3",

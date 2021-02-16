@@ -3,7 +3,7 @@ import React, { Fragment, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router';
 import { appConstants as c, mokeFormData } from '../../app';
-import { commonFormFieldAmbassadors, commonFormFieldCauseInputEntity, commonFormFieldCauseInputTypeEntity, commonFormFieldCauseName, commonFormFieldEmail, commonFormFieldEndDate, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldStartDate, commonFormFieldTags, formCommonOptions, RouteKey, routes } from '../../app/config';
+import { commonFormFieldAmbassadors, commonFormFieldCauseInputEntity, commonFormFieldCauseName, commonFormFieldEmail, commonFormFieldEndDate, commonFormFieldLocation, commonFormFieldMetadata, commonFormFieldMetadataInternal, commonFormFieldPersonNdParticipantInputTypeEntity, commonFormFieldStartDate, commonFormFieldTags, formCommonOptions, RouteKey, routes } from '../../app/config';
 import { useStateValue } from '../../app/state';
 import { AlertMessage, AlertSeverityType } from '../../components/material-ui/alert-message';
 import { LinearIndeterminate } from '../../components/material-ui/feedback';
@@ -134,7 +134,7 @@ export const CauseUpsertForm: React.FC<RouteComponentProps> = ({ history }) => {
 			...commonFormFieldEmail(useRef(), FormFieldNames.EMAIL)
 		},
 		[FormFieldNames.INPUT_TYPE]: {
-			...commonFormFieldCauseInputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))),
+			...commonFormFieldPersonNdParticipantInputTypeEntity(useRef(), FormFieldNames.INPUT_TYPE, () => isValidEnum(EntityType, getValues(FormFieldNames.INPUT_TYPE))),
 		},
 		[FormFieldNames.INPUT]: {
 			...commonFormFieldCauseInputEntity(useRef(), FormFieldNames.INPUT, () => validateRegExpArray(getValues(FormFieldNames.INPUT), [c.REGEXP.uuid, c.REGEXP.fiscalNumber, c.REGEXP.mobilePhone])),

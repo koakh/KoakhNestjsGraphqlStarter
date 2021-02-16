@@ -203,9 +203,9 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     lastParticipantIdAdded = participantDataSub.participantAdded.id;
     addToGraph([{
       __typename: 'GraphNode',
-      id: participantDataSub.participantAdded.id, label: `Participant:${participantDataSub.participantAdded.name}`, nodeVal: /*NodeValue.PARTICIPANT*/NodeValue.PARTICIPANT, group: 1,
+      id: participantDataSub.participantAdded.id, label: `Participant:${participantDataSub.participantAdded.name}`, nodeVal: NodeValue.PARTICIPANT/*NodeValue.DEBUG*/, group: 1,
       // required else MissingFieldError {message: "Can't find field 'color' on object
-      desc: 'desc', color: /*NodeColor.BLUE*/NodeColor.DEBUG, autoColorBy: null,
+      desc: 'desc', color: NodeColor.BLUE/*NodeColor.DEBUG*/, autoColorBy: null,
     }], [{
       __typename: 'GraphLink',
       source: participantDataSub.participantAdded.id, target: GENESIS_NODE_ID, label: RelationType.HAS_BORN, group: 1,
@@ -221,7 +221,7 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     addToGraph([{
       __typename: 'GraphNode',
       id: personDataSub.personAdded.id, label: `Person:${personDataSub.personAdded.username}`, nodeVal: /*NodeValue.PERSON*/NodeValue.PERSON, group: 1,
-      desc: 'desc', color: /*NodeColor.PINK*/NodeColor.DEBUG, autoColorBy: null,
+      desc: 'desc', color: NodeColor.PINK/*NodeColor.DEBUG*/, autoColorBy: null,
     }], [{
       __typename: 'GraphLink',
       source: personDataSub.personAdded.id, target: GENESIS_NODE_ID, label: RelationType.HAS_BORN, group: 1,
@@ -235,8 +235,8 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     lastCauseIdAdded = causeDataSub.causeAdded.id;
     addToGraph([{
       __typename: 'GraphNode',
-      id: causeDataSub.causeAdded.id, label: `Cause:${causeDataSub.causeAdded.name}`, nodeVal: /*NodeValue.CAUSE*/NodeValue.DEBUG, group: 1,
-      desc: 'desc', color: /*NodeColor.ORANGE*/NodeColor.DEBUG, autoColorBy: null,
+      id: causeDataSub.causeAdded.id, label: `Cause:${causeDataSub.causeAdded.name}`, nodeVal: NodeValue.CAUSE/*NodeValue.DEBUG*/, group: 1,
+      desc: 'desc', color: NodeColor.ORANGE/*NodeColor.DEBUG*/, autoColorBy: null,
     }], [{
       __typename: 'GraphLink',
       source: causeDataSub.causeAdded.input.entity.id, target: causeDataSub.causeAdded.id, label: RelationType.CREATED_CAUSE, group: 1,
@@ -250,8 +250,8 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     lastAssetIdAdded = assetDataSub.assetAdded.id;
     addToGraph([{
       __typename: 'GraphNode',
-      id: assetDataSub.assetAdded.id, label: `Asset:${assetDataSub.assetAdded.name}`, nodeVal: /*NodeValue.ASSET*/NodeValue.DEBUG, group: 1,
-      desc: 'desc', color: /*NodeColor.YELLOW*/NodeColor.DEBUG, autoColorBy: null,
+      id: assetDataSub.assetAdded.id, label: `Asset:${assetDataSub.assetAdded.name}`, nodeVal: NodeValue.ASSET/*NodeValue.DEBUG*/, group: 1,
+      desc: 'desc', color: NodeColor.YELLOW/*NodeColor.DEBUG*/, autoColorBy: null,
     }], [{
       __typename: 'GraphLink',
       source: assetDataSub.assetAdded.owner.entity.id, target: assetDataSub.assetAdded.id, label: RelationType.CREATED_ASSET, group: 1,
@@ -265,9 +265,9 @@ export const DynamicGraph: React.FC<Props> = (props) => {
     lastTransactionIdAdded = transactionDataSub.transactionAdded.id;
     addToGraph([{
       __typename: 'GraphNode',
-      id: transactionDataSub.transactionAdded.id, label: `Transaction:${transactionDataSub.transactionAdded.transactionType}`, nodeVal: /*NodeValue.TRANSACTION*/NodeValue.DEBUG, group: 1,
+      id: transactionDataSub.transactionAdded.id, label: `Transaction:${transactionDataSub.transactionAdded.transactionType}`, nodeVal: NodeValue.TRANSACTION/*NodeValue.DEBUG*/, group: 1,
       // required else MissingFieldError {message: "Can't find field 'color' on object
-      desc: 'desc', color: /*NodeColor.GREEN*/NodeColor.DEBUG, autoColorBy: null,
+      desc: 'desc', color: NodeColor.GREEN/*NodeColor.DEBUG*/, autoColorBy: null,
     }], [{
       __typename: 'GraphLink',
       source: transactionDataSub.transactionAdded.input.entity.id, target: transactionDataSub.transactionAdded.id, label: RelationType.CREATED_TRANSACTION, group: 1,

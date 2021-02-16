@@ -212,7 +212,7 @@ export const commonFormFieldAssetOwner = (inputRef: MutableRefObject<any>, formF
 }
 
 // simplified version to work in cause
-export const commonFormFieldCauseInputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
+export const commonFormFieldPersonNdParticipantInputTypeEntity = (inputRef: MutableRefObject<any>, formFieldName: string, validate: () => boolean): FormPropFields => {
   return {
     inputRef,
     type: FormInputType.SELECT,
