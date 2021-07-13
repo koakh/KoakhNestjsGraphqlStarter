@@ -5,7 +5,7 @@ import { User } from './models';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { PaginationArgs } from '../common/dto';
 
-@Resolver()
+@Resolver(of => User)
 @UseGuards(GqlAuthGuard)
 export class UsersResolver {
   constructor(
@@ -18,7 +18,6 @@ export class UsersResolver {
     return await this.userService.findAll(paginationArgs);
   }
 
-  @UseGuards(GqlAuthGuard)
   @Query(returns => User)
   async userById(
     @Args('id') id: string,

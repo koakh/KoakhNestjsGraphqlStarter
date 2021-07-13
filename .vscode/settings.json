@@ -2,8 +2,11 @@
   "cSpell.words": [
     "Monteiro",
     "Upsert",
+    "browserslist",
     "clickaway",
+    "codegen",
     "datetime",
+    "dockerpush",
     "jakedoe",
     "janedoe",
     "johndoe",
@@ -11,8 +14,10 @@
     "middlewares",
     "nestjs",
     "prestart",
+    "qrcode",
     "signin",
-    "signup"
+    "signup",
+    "spritetext"
   ],
   "peacock.remoteColor": "#00b3e6",
   "workbench.colorCustomizations": {

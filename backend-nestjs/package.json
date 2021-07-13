@@ -18,11 +18,13 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "docker:run:prod": "docker-compose -f docker-compose-production.yml up -d",
+    "docker:build:dev": "docker-compose build",
+    "docker:build:prod": "docker-compose -f docker-compose-production.yml build",
     "docker:run:dev": "docker-compose up -d",
-    "docker:build": "docker-compose -f docker-compose-production.yml build"
+    "docker:run:prod": "docker-compose -f docker-compose-production.yml up -d"
   },
   "dependencies": {
+    "@koakh/nestjs-package-jwt-authentication": "^1.0.3",
     "@nest-middlewares/cookie-parser": "^6.0.0",
     "@nestjs/common": "^7.4.4",
     "@nestjs/config": "^0.5.0",

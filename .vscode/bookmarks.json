@@ -1,27 +1,29 @@
-[
-	{
-		"path": "$ROOTPATH$/frontend-react/src/pages/section4/TransactionGoodsForm.tsx",
-		"bookmarks": [
-			{
-				"line": 182,
-				"column": 16,
-				"label": ""
-			},
-			{
-				"line": 196,
-				"column": 7,
-				"label": ""
-			}
-		]
-	},
-	{
-		"path": "$ROOTPATH$/frontend-react/src/utils/forms-util.tsx",
-		"bookmarks": [
-			{
-				"line": 280,
-				"column": 93,
-				"label": ""
-			}
-		]
-	}
-]
+{
+	"files": [
+		{
+			"path": "frontend-react/src/pages/section4/TransactionGoodsForm.tsx",
+			"bookmarks": [
+				{
+					"line": 182,
+					"column": 16,
+					"label": ""
+				},
+				{
+					"line": 196,
+					"column": 7,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "frontend-react/src/utils/forms-util.tsx",
+			"bookmarks": [
+				{
+					"line": 280,
+					"column": 93,
+					"label": ""
+				}
+			]
+		}
+	]
+}

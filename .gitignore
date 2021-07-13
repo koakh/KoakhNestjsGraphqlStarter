@@ -1,2 +1,4 @@
-.bak/2021-02-06-16-34.tgz
-.bak/exclude.tag
+.bak/
+frontend-react/node_modules
+backend-nestjs/node_modules
+

@@ -8,6 +8,7 @@ export class GqlLocalAuthGuard implements CanActivate {
   constructor(private readonly authService: AuthService) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    debugger;
     const ctx = GqlExecutionContext.create(context);
     // get loginUserData from context args
     const loginUserData: LoginUserInput = ctx.getArgs().loginUserData;
@@ -22,6 +23,7 @@ export class GqlLocalAuthGuard implements CanActivate {
    */
   // TODO: this is required?
   async validate(username: string, password: string): Promise<any> {
+    debugger;
     const user = await this.authService.validateUser(username, password);
     if (!user) {
       throw new UnauthorizedException();

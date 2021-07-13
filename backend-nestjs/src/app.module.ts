@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AuthenticationError } from 'apollo-server-core';
 import { ConnectionParams } from 'subscriptions-transport-ws';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { getEnvVariables as e } from './common/env';
+import { mapKeysToLowerCase } from './common/utils';
 import { GqlContext, GqlContextPayload } from './types';
 import { UsersModule } from './user/user.module';
-import { mapKeysToLowerCase } from './common/utils';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [

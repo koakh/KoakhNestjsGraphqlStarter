@@ -1,10 +1,10 @@
 import { Controller, HttpStatus, Post, Request, Response } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import SignJwtTokenPayload from 'src/common/types/sign-jwt-token-payload';
-import { envVariables as e } from '../env';
-import { Person } from '../person/models';
+import { getEnvVariables as e } from '../common/env';
+import { User } from '../user/models';
 import { GqlContextPayload } from '../types';
-import { UsersService } from '../users/users.service';
+import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { AccessToken } from './models';
 
@@ -13,7 +13,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
-    private readonly usersService: UsersService,
+    private readonly userService: UserService,
   ) { }
   // for security purposes, refreshToken cookie only works in this specific route,
   // to request a new accessToken, this prevent /graphql to works with cookie
@@ -36,28 +36,28 @@ export class AuthController {
     let payload: GqlContextPayload;
     try {
       // tslint:disable-next-line: max-line-length
-      // warn this seems to use old way of send secret, in new versions we must send with `this.jwtService.verify(token, {secret: e.refreshTokenJwtSecret})`
-      payload = this.jwtService.verify(token, e.refreshTokenJwtSecret);
+      // warn this seems to use old way of send secret, in new versions we must send with `this.jwtService().verify(token, {secret: e().refreshTokenJwtSecret})`
+      payload = this.jwtService.verify(token, {secret: e().refreshTokenJwtSecret});
     } catch (error) {
       // Logger.log(error);
       return invalidPayload();
     }
 
     // token is valid, send back accessToken
-    const person: Person = await this.usersService.findOneByUsername(payload.username);
+    const user: User = await this.userService.findOneByUsername(payload.username);
     // check jid token
-    if (!person) {
+    if (!user) {
       return invalidPayload();
     }
 
     // check inMemory tokenVersion
-    const tokenVersion: number = this.usersService.usersStore.getTokenVersion(person.username);
+    const tokenVersion: number = this.userService.usersStore.getTokenVersion(user.username);
     if (tokenVersion !== payload.tokenVersion) {
       return invalidPayload();
     }
 
     // refresh the refreshToken on accessToken, this way we extended/reset refreshToken validity to default value
-    const signJwtTokenDto: SignJwtTokenPayload = { username: person.username, userId: person.id, roles: person.roles };
+    const signJwtTokenDto: SignJwtTokenPayload = { username: user.username, userId: user.id, roles: user.roles };
     // we don't increment tokenVersion here, only when we login, this way refreshToken is always valid until we login again
     const refreshToken: AccessToken = await this.authService.signRefreshToken(signJwtTokenDto, tokenVersion);
     // send refreshToken in response/setCookie

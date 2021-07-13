@@ -1,4 +1,4 @@
-@host = 192.168.1.31
+@host = 127.0.0.1
 @port = 7443
 @uriBase = https://{{host}}:{{port}}
 @uri = {{uriBase}}/graphql
@@ -69,11 +69,11 @@ mutation userRegister($newUserData: NewUserInput!){
 
 {
   "newUserData": {
-    "username": "petedoe",
+    "username": "peter",
     "password": "{{userResgisterPassword}}",
     "firstName": "Jake",
     "lastName": "Doe",
-    "email": "petedoe@example.com",
+    "email": "peter@example.com",
     "metaData": {
       "key": "value"
     }
