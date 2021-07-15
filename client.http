@@ -4,7 +4,7 @@
 // @port = 443
 
 @baseUri = https://{{host}}:{{port}}
-@uri = {{baseUri}}/graphql
+@gqlUri = {{baseUri}}/graphql
 @contentType = application/json
 @requestType = GraphQL
 
@@ -16,7 +16,7 @@
 
 ### mutation: userLogin
 // @name userLogin
-POST {{uri}} HTTP/1.1
+POST {{gqlUri}} HTTP/1.1
 Content-Type: {{contentType}}
 X-REQUEST-TYPE: {{requestType}}
 
@@ -41,7 +41,7 @@ mutation userLogin($loginUserData: LoginUserInput!) {
 
 ### mutation: userLogout
 // @name userLogout
-POST {{uri}} HTTP/1.1
+POST {{gqlUri}} HTTP/1.1
 Content-Type: {{contentType}}
 X-REQUEST-TYPE: {{requestType}}
 Authorization: Bearer {{authToken}}
@@ -57,7 +57,7 @@ mutation userLogout {
 // it will fail after we increase version with authRevokeRefreshToken, logout etc, 
 // the version of inMemory doesn't match the version of refresh token
 
-POST {{uri}}/auth/refresh-token HTTP/1.1
+POST {{gqlUri}}/auth/refresh-token HTTP/1.1
 Content-Type: {{contentType}}
 Authorization: Bearer {{authToken}}
 
@@ -66,7 +66,7 @@ Authorization: Bearer {{authToken}}
 
 ### mutation: userProfile
 // @name userProfile
-POST {{uri}} HTTP/1.1
+POST {{gqlUri}} HTTP/1.1
 Content-Type: {{contentType}}
 X-REQUEST-TYPE: {{requestType}}
 Authorization: Bearer {{authToken}}
@@ -102,7 +102,7 @@ mutation revokeUserRefreshTokens($username: String!){
 // @name userUpdate
 // neo4j: MATCH (n:User {id:"4ea88521-031b-4279-9165-9c10e1839002"}) RETURN n.roles, n.metaDataInternal
 
-POST {{uri}} HTTP/1.1
+POST {{gqlUri}} HTTP/1.1
 Content-Type: {{contentType}}
 Authorization: Bearer {{authToken}}
 X-REQUEST-TYPE: {{requestType}}
@@ -134,7 +134,7 @@ mutation userUpdate($updateUserData: UpdateUserInput!) {
 // @name userUpdatePassword
 // neo4j:
 
-POST {{uri}} HTTP/1.1
+POST {{gqlUri}} HTTP/1.1
 Content-Type: {{contentType}}
 Authorization: Bearer {{authToken}}
 X-REQUEST-TYPE: {{requestType}}
@@ -158,7 +158,7 @@ mutation userUpdatePassword($updateUserPasswordData: UpdateUserPasswordInput!) {
 // @name userUpdateProfile
 // neo4j:  MATCH (n:User {id:"b2756e4d-0b69-49cd-a446-64c884e01f9e"}) RETURN n.id,n.email,n.mobilePhone,n.postal,n.city,n.region,n.geoLocation,n.timezone,n.useralInfo,n.metaData
 
-POST {{uri}} HTTP/1.1
+POST {{gqlUri}} HTTP/1.1
 Content-Type: {{contentType}}
 Authorization: Bearer {{authToken}}
 X-REQUEST-TYPE: {{requestType}}
