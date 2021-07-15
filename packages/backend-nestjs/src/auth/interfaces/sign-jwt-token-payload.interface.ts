@@ -1,4 +1,4 @@
-export default interface CurrentUserPayload {
+export interface SignJwtTokenPayload {
   userId: string;
   username: string;
   roles: string[];

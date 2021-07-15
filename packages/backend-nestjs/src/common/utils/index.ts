@@ -1,1 +1,1 @@
-export * from './main-util';
+export * from './main.util';

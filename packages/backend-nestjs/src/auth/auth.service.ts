@@ -4,10 +4,9 @@ import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { SignOptions } from 'jsonwebtoken';
 import { appConstants as c } from '../common/app/constants';
-import SignJwtTokenPayload from '../common/types/sign-jwt-token-payload';
-import { envVariables as e } from '../env';
-import { GqlContextPayload } from '../types';
+import { envVariables as e } from '../common/config/env.config';
 import { UserService } from '../user/user.service';
+import { GqlContextPayload, SignJwtTokenPayload } from './interfaces';
 import { AccessToken } from './object-types/access-token.object-type';
 
 @Injectable()

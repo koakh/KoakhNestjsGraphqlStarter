@@ -1,7 +1,7 @@
 import { CookieParserMiddleware } from '@nest-middlewares/cookie-parser';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { envVariables as e } from '../env';
+import { envVariables as e } from '../common/config/env.config';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthResolver } from './auth.resolver';

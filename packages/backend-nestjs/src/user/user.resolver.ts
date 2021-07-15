@@ -1,15 +1,15 @@
 import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'apollo-server-express';
+import { CurrentUserPayload } from '../auth/interfaces/current-user-payload.interface';
 import { CurrentUser, Roles } from '../auth/decorators';
 import { UserRoles } from '../auth/enums';
 import { GqlRolesGuard } from '../auth/guards';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { appConstants as c } from '../common/app/constants';
-import { GetByComplexQueryInput, PaginationArgs } from '../common/dto';
 import { SubscriptionEvent } from '../common/enums';
-import CurrentUserPayload from '../common/types/current-user-payload';
-import { NewUserInput, UpdateUserInput, UpdateUserPasswordInput, UpdateUserProfileInput } from './input-type';
+import { PaginationArgs } from '../common/input-types';
+import { NewUserInput } from './input-type';
 import { User } from './object-types';
 import { UserService } from './user.service';
 

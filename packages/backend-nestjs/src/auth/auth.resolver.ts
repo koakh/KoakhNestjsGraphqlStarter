@@ -3,16 +3,14 @@ import { Args, Context, Mutation, Resolver, Subscription } from '@nestjs/graphql
 import { PubSub } from 'apollo-server-express';
 import { appConstants as c } from '../common/app/constants';
 import { SubscriptionEvent } from '../common/enums';
-import CurrentUserPayload from '../common/types/current-user-payload';
-import SignJwtTokenPayload from '../common/types/sign-jwt-token-payload';
-import { GqlContext } from '../types';
-import { LoginUserInput } from '../user/input-type';
 import { User } from '../user/object-types';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { CurrentUser, Roles } from './decorators';
 import { UserRoles } from './enums';
 import { GqlLocalAuthGuard, GqlRolesGuard } from './guards';
+import { LoginUserInput } from './input-types';
+import { CurrentUserPayload, GqlContext, SignJwtTokenPayload } from './interfaces';
 import { AccessToken, UserLoginResponse } from './object-types';
 
 const pubSub = new PubSub();

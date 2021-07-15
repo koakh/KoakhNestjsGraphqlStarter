@@ -1,5 +1,5 @@
-import { httpsOptions } from './config/express.config';
-import { envVariables as e } from './env';
+import { httpsOptions } from './common/config/express.config';
+import { envVariables as e } from './common/config/env.config';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ApplicationModule } from './app.module';

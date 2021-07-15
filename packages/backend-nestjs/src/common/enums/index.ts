@@ -1,1 +1,1 @@
-export * from './subscription-event';
+export * from './subscription-event.enum';

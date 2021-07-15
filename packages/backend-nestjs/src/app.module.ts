@@ -4,10 +4,10 @@ import { AuthenticationError } from 'apollo-server-core';
 import { ConnectionParams } from 'subscriptions-transport-ws';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
-import { envVariables as e } from './env';
-import { GqlContext, GqlContextPayload } from './types';
-import { UserModule } from './user/user.module';
+import { GqlContext, GqlContextPayload } from './auth/interfaces';
+import { envVariables as e } from './common/config/env.config';
 import { mapKeysToLowerCase } from './common/utils';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [

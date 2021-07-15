@@ -1,12 +1,16 @@
 Backend:
   Important:
-    ☐ use nestConfig EveryWhere
+    ☐ finish graphql authentication implemnattion
+    ☐ create all operations on client.http
+    ☐ extract library from implementiation
+    ☐ @critical test refreshToken changed code from github commits
+    ☐ @critical test refreshToken livecycle
+    ☐ use nestConfig EveryWhere serach for {e.
+    ☐ nestjs workSpaces/monoRepo
     ☐ update all packages to latest
     ✔ UsersModule and friends to singular @done(21-07-15 00:54)
     ☐ use `user: CurrentUserPayload` to filter data by user, tenancy, add moke owner or createdBy
     ☐ convert to new graphql auth package in the end
-    ☐ @critical test refreshToken changed code from github commits
-    ☐ @critical test refreshToken livecycle
   Other:
     ☐ use authPackage `GraphQLError [Object]: Query root type must be provided.`
       - https://stackoverflow.com/questions/64105940/graphqlerror-query-root-type-must-be-provided

@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { CurrentUserPayload } from '../auth/interfaces';
 import { UserRoles } from '../auth/enums';
-import { PaginationArgs } from '../common/dto';
-import CurrentUserPayload from '../common/types/current-user-payload';
-import { newUuid } from '../common/utils/main-util';
+import { PaginationArgs } from '../common/input-types';
+import { newUuid } from '../common/utils/main.util';
 import { NewUserInput } from './input-type';
 import { UserData } from './interfaces';
 import { User } from './object-types';

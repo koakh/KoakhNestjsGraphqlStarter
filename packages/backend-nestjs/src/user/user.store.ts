@@ -1,4 +1,4 @@
-import { envVariables as e } from '../env';
+import { envVariables as e } from '../common/config/env.config';
 
 interface User {
   username: string;

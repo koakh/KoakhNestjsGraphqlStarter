@@ -1,4 +1,3 @@
-export * from './login-user.input';
 export * from './new-user.input';
 export * from './update-user.input';
 export * from './update-user-password.input';
