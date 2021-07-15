@@ -1,0 +1,16 @@
+query participants($skip: Int, $take: Int) {
+  participants(skip: $skip, take: $take) {
+    id
+    name
+    email
+    fiscalNumber
+    ambassadors
+    msp
+    participant {
+      id
+      name
+      msp
+    }
+    createdDate    
+  }
+}

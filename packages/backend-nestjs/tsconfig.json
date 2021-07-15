@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "noLib": false,
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es6",
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": "./",
+    // Could not load source '/src/dashboard/dashboard.service.ts': Unable to retrieve source content.
+    "rootDir": "./src",
+    "skipLibCheck": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

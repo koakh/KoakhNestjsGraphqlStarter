@@ -1,0 +1,32 @@
+query assetById($id: String!) {
+  assetById(id: $id) {
+    id
+    name
+    description
+    assetType
+    owner{
+      entity{
+        id
+        type
+      }
+    }
+    ambassadors
+    location
+    tags
+    assetType
+    owner{
+      entity{
+        id
+        type
+      }
+    }
+    participant{
+      id
+      name
+    }
+    createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal    
+  }
+}

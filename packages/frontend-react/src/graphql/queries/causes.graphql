@@ -1,0 +1,52 @@
+query causes($skip: Int, $take: Int) {
+	causes(skip: $skip, take: $take) {
+		id
+		name
+		email
+		ambassadors
+		startDate
+		endDate
+		location
+		tags
+		metaData
+		input {
+			entity {
+				id
+				type
+				createdDate
+			}
+		}
+		participant {
+			id
+			name
+			msp
+		}
+		fundsBalance {
+			debit
+			credit
+			balance
+		}
+		volunteeringHoursBalance {
+			debit
+			credit
+			balance
+		}
+		goodsStock {
+			id
+			code
+			barCode
+			name
+			description
+			tags
+			balance {
+				debit
+				credit
+				balance
+			}
+		}
+		createdDate
+		createdByPersonId
+		metaData
+		metaDataInternal
+	}
+}

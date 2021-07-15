@@ -1,0 +1,56 @@
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { UserRoles } from '../auth/enums';
+import { appConstants as c } from '../common/app/constants';
+import { PaginationArgs } from '../common/dto';
+import { newUuid } from '../common/utils';
+import { NewUserInput } from './input-type';
+import { UserData } from './interfaces';
+import { User } from './object-types';
+import { userData } from './user.data';
+import { UserStore } from './user.store';
+import { hashPassword } from './utils';
+
+@Injectable()
+export class UserService {
+  // init usersStore
+  usersStore: UserStore = new UserStore();
+
+  async findAll(paginationArgs: PaginationArgs): Promise<User[]> {
+    // clone array before slice it
+    const data = userData.slice();
+    return (paginationArgs)
+      ? data.splice(paginationArgs.skip, paginationArgs.take)
+      : data;
+  }
+
+  async findOneByField(field: string, value: string): Promise<User> {
+    return userData.find((e: UserData) => e[field] === value);
+  }
+
+  async create(data: NewUserInput): Promise<User> {
+    const password = hashPassword(data.password);
+    const user = {
+      ...data,
+      id: data.id || newUuid(),
+      password,
+      roles: [UserRoles.ROLE_USER],
+      // add date in epoch unix time
+      createdDate: new Date().getTime(),
+    };
+    userData.push(user);
+    return user;
+  }
+
+  async findOneByUsername(username: string): Promise<User> {
+    try {
+      return userData.find((e: UserData) => e.username === username);
+    } catch (error) {
+      Logger.error(JSON.stringify(error));
+      const errorMessage: string = (error.responses[0]) ? error.responses[0].error.message : c.API_RESPONSE_INTERNAL_SERVER_ERROR;
+      // throw new HttpException({ status: HttpStatus.CONFLICT, error: errorMessage }, HttpStatus.NOT_FOUND);
+      // don't show original error message, override it with a forbidden message equal to the one when fails password, more secure,
+      // this way we hide if username exists or not form hacking
+      throw new HttpException({ status: HttpStatus.FORBIDDEN, error: 'Forbidden', message: `Forbidden resource` }, HttpStatus.FORBIDDEN);
+    }
+  }
+}

@@ -1,0 +1,10 @@
+mutation assetUpdate($updateAssetData: UpdateAssetInput!) {
+  assetUpdate(updateAssetData: $updateAssetData) {
+    id
+    name    
+    ambassadors
+    tags
+    metaData
+    metaDataInternal    
+  }
+}

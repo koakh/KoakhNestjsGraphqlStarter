@@ -1,0 +1,28 @@
+query causeComplexQuery($getByComplexQueryInput: GetByComplexQueryInput!, $skip: Int, $take: Int) {
+  causeComplexQuery(getByComplexQueryInput: $getByComplexQueryInput, skip: $skip, take: $take) {
+    id
+    name
+    ambassadors
+    startDate
+    endDate
+    location
+    tags
+    metaData
+    input {
+      entity {
+        id
+        type
+        createdDate
+      }
+    }
+    participant {
+      id
+      name
+      msp
+    }    
+    createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal
+  }
+}

@@ -1,0 +1,29 @@
+mutation personUpsertCitizenCard($upsertCitizenCardData: UpsertCitizenCardInput!) {
+  personUpsertCitizenCard(upsertCitizenCardData: $upsertCitizenCardData) {
+    id
+    documentNumber
+    identityNumber
+    fiscalNumber
+    socialSecurityNumber
+    beneficiaryNumber
+    pan
+    firstName
+    lastName
+    gender
+    height
+    fatherFirstName
+    fatherLastName
+    motherFirstName
+    motherLastName
+    birthDate
+    nationality
+    country
+    documentType
+    cardVersion
+    emissionDate
+    expirationDate
+    emittingEntity
+    requestLocation
+    otherInformation
+  }
+}

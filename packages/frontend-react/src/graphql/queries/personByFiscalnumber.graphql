@@ -1,0 +1,20 @@
+query personByFiscalNumber($fiscalNumber: String!){
+  personByFiscalNumber(fiscalNumber: $fiscalNumber) {
+    id
+    firstName
+    lastName
+    username
+    fiscalNumber
+    email
+    documentNumber
+    attributes {
+      id
+      content
+      issuedDate
+      expiresDate
+      expired
+      certifierID
+    }
+    roles
+  }
+}

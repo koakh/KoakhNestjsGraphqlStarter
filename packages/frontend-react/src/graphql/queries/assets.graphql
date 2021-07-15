@@ -1,0 +1,31 @@
+query assets($skip: Int, $take: Int) {
+  assets(skip: $skip, take: $take) {
+    id
+    name
+    assetType
+    owner{
+      entity{
+        id
+        type
+      }
+    }
+    ambassadors
+    location
+    tags
+    assetType
+    owner{
+      entity{
+        id
+        type
+      }
+    }
+    participant{
+      id
+      name
+    }
+    createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal    
+  }  
+}

@@ -1,0 +1,7 @@
+export enum DrawerSections {
+  SECTION0 = 'SECTION0',
+  SECTION1 = 'SECTION1',
+  SECTION2 = 'SECTION2',
+  SECTION3 = 'SECTION3',
+  // SECTION4 = 'SECTION4',
+}

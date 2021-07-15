@@ -1,0 +1,40 @@
+[
+  {
+    "title": "option1: 10x001 + 20x002",
+    "value": [
+      {
+        "code": "001",
+        "barCode": "ean001",
+        "name": "name001",
+        "description": "description001",
+        "quantity": 10
+      },
+      {
+        "code": "002",
+        "barCode": "ean002",
+        "name": "name002",
+        "description": "description002",
+        "quantity": 20
+      }      
+    ]
+  },
+  {
+    "title": "option2: 30x003 + 40x004",
+    "value": [
+      {
+        "code": "004",
+        "barCode": "ean004",
+        "name": "name004",
+        "description": "description004",
+        "quantity": 40
+      },
+      {
+        "code": "005",
+        "barCode": "ean005",
+        "name": "name005",
+        "description": "description005",
+        "quantity": 50
+      }      
+    ]
+  }  
+]

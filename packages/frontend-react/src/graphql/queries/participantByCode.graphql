@@ -1,0 +1,18 @@
+query participantByCode($code: String!) {
+  participantByCode(code: $code) {
+    id
+    code
+    name
+    ambassadors
+    msp
+    participant {
+      id
+      name
+      msp
+    }
+    createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal    
+  }
+}

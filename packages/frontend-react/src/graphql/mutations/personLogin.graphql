@@ -1,0 +1,61 @@
+# inSync with insomnia
+mutation personLogin($loginPersonData: LoginPersonInput!) {
+	personLogin(loginPersonData: $loginPersonData) {
+		accessToken
+		user {
+			# non citizenCard data
+			id
+			username
+			email
+			attributes {
+				id
+				content
+				issuedDate
+				expiresDate
+				expired
+				certifierID
+			}
+			roles
+			participant {
+				id
+				name
+				msp
+			}
+			# extended non citizenCard data
+			mobilePhone
+			postal
+			city
+			region
+			geoLocation
+			timezone
+			personalInfo
+			profile
+			# citizenCard data
+			firstName
+			lastName
+			gender
+			height
+			fatherFirstName
+			fatherLastName
+			motherFirstName
+			motherLastName
+			birthDate
+			nationality
+			country
+			documentNumber
+			documentType
+			cardVersion
+			emissionDate
+			expirationDate
+			emittingEntity
+			identityNumber
+			fiscalNumber
+			socialSecurityNumber
+			beneficiaryNumber
+			pan
+			requestLocation
+			otherInformation
+			registrationDate
+		}
+	}
+}

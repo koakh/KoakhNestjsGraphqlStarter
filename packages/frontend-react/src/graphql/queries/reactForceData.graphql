@@ -1,0 +1,22 @@
+query reactForceData($skip: Int, $take: Int) {
+  reactForceData(skip: $skip, take: $take) {
+    nodes{
+      id
+      label
+      desc
+      nodeVal
+      color
+      autoColorBy
+      group
+    }
+    links{
+      source
+      target
+      label
+      desc
+      color
+      autoColorBy
+      group
+    }
+  }
+}

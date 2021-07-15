@@ -1,0 +1,11 @@
+mutation causeUpdate($updateCauseData: UpdateCauseInput!) {
+  causeUpdate(updateCauseData: $updateCauseData) {
+    id
+    name    
+    email
+    ambassadors
+    tags
+    metaData
+    metaDataInternal    
+  }
+}

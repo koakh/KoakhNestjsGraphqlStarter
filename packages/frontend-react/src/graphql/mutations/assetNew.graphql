@@ -1,0 +1,26 @@
+mutation assetNew($newAssetData: NewAssetInput!) {
+  assetNew(newAssetData: $newAssetData) {
+    id
+    name
+    assetType
+    owner{
+      entity{
+        id
+        type
+      }
+    }
+    ambassadors
+    location
+    tags    
+    metaData
+    metaDataInternal
+    participant{
+      id
+      name
+    }
+    createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal
+  }
+}

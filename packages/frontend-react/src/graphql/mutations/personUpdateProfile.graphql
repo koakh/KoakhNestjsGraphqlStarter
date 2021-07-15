@@ -1,0 +1,14 @@
+mutation personUpdateProfile($updatePersonProfileData: UpdatePersonProfileInput!) {
+  personUpdateProfile(updatePersonProfileData: $updatePersonProfileData) {
+    id
+    email
+    mobilePhone
+    postal
+    city
+    region
+    geoLocation
+    timezone
+    personalInfo
+    metaData
+  }
+}

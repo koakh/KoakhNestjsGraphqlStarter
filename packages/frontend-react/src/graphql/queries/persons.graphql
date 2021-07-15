@@ -1,0 +1,104 @@
+# inSync with insomnia
+query persons($skip: Int, $take: Int) {
+	persons(skip: $skip, take: $take) {
+		# non citizenCard data
+		id
+		username
+		email
+		attributes {
+			id
+			content
+			issuedDate
+			expiresDate
+			expired
+			certifierID
+		}
+		roles
+		participant {
+			id
+			# BOF ADDED to fix error Type MUST MATCH Participant Model Object ?
+			code
+			name
+			email
+			fiscalNumber
+			ambassadors
+			fundsBalance {
+				debit
+				credit
+				balance
+			}
+			volunteeringHoursBalance {
+				debit
+				credit
+				balance
+			}
+			# EOF ADDED to fix error Type MUST MATCH Participant Model Object ?
+			name
+			msp
+			createdDate
+		}
+		# extended non citizenCard data
+		mobilePhone
+		postal
+		city
+		region
+		geoLocation
+		timezone
+		personalInfo
+		profile
+    fundsBalance {
+      debit
+      credit
+      balance
+    }
+    volunteeringHoursBalance {
+      debit
+      credit
+      balance
+    }
+    goodsStock {
+      id
+      code
+      barCode
+      name
+      description
+      tags
+      balance {
+        debit
+        credit
+        balance
+      }
+      metaData
+      metaDataInternal
+      createdDate
+      createdByPersonId
+    }		
+		# citizenCard data
+		firstName
+		lastName
+		gender
+		height
+		fatherFirstName
+		fatherLastName
+		motherFirstName
+		motherLastName
+		birthDate
+		nationality
+		country
+		documentNumber
+		documentType
+		cardVersion
+		emissionDate
+		expirationDate
+		emittingEntity
+		identityNumber
+		fiscalNumber
+		socialSecurityNumber
+		beneficiaryNumber
+		pan
+		requestLocation
+		otherInformation
+		registrationDate
+		createdDate
+	}
+}

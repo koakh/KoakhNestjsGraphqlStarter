@@ -1,0 +1,33 @@
+subscription transactionAdded{
+  transactionAdded {
+    id
+    transactionType
+    resourceType
+    input {
+      entity {
+        id
+        type
+        createdDate
+      }
+    }
+    output {
+      entity {
+        id
+        type
+        createdDate
+      }
+    }
+    quantity
+    currency
+    location
+    tags
+    metaData
+    metaDataInternal
+    participant {
+      id
+      name
+      msp
+    }
+    createdDate
+  }
+}

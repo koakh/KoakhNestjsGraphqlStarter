@@ -1,0 +1,27 @@
+Backend:
+  Important:
+    ☐ use nestConfig EveryWhere
+    ☐ update all packages to latest
+    ✔ UsersModule and friends to singular @done(21-07-15 00:54)
+    ☐ use `user: CurrentUserPayload` to filter data by user, tenancy, add moke owner or createdBy
+    ☐ convert to new graphql auth package in the end
+    ☐ @critical test refreshToken changed code from github commits
+    ☐ @critical test refreshToken livecycle
+  Other:
+    ☐ use authPackage `GraphQLError [Object]: Query root type must be provided.`
+      - https://stackoverflow.com/questions/64105940/graphqlerror-query-root-type-must-be-provided
+      > All servers running with GraphQL must have at least one @Query() to be considered a valid GraphQL server. Without it, the apollo-server package will throw an exception and the server will fail to start. This can be as simple as
+    ☐ Complete instructions to add to a new GraphQL Project    
+      require
+        use packages/backend-nestjs/src/user for GraphQL Root Query
+      require, try add it to @koakh/nestjs-package-jwt-authentication
+      with CurrentUser files to
+        ├── guards
+        │   ├── gql-auth.guard.ts
+        │   ├── gql-local-auth.guard.ts
+        │   └── index.ts
+        └── utils.ts
+    ☐ Improved notes to bootrap GQL and Reast project from @koakh/nestjs-package-jwt-authentication
+    ☐ Fix Error : "TypeError: response.status is not a function",
+      /@koakh/nestjs-package-jwt-authentication/src/common/filters/http-exception.filter.ts:12:14)",
+    ☐ Remove getEnvVariables

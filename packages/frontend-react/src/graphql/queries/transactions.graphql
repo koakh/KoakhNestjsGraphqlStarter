@@ -1,0 +1,33 @@
+query transactions($skip: Int, $take: Int) {
+  transactions(skip: $skip, take: $take) {
+    id
+    transactionType
+    resourceType
+    assetId
+    input {
+      entity {
+        id
+        type
+      }
+    }
+    output {
+      entity {
+        id
+        type
+      }
+    }
+    quantity
+    currency
+    location
+    tags
+    participant {
+      id
+      name
+      msp
+    }
+    createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal
+  }
+}

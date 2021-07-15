@@ -1,0 +1,50 @@
+query transactionsById($id: String!) {
+  transactionById(id: $id) {
+    id
+    transactionType
+    resourceType
+    assetId
+    input {
+      entity {
+        id
+        type
+      }
+    }
+    output {
+      entity {
+        id
+        type
+      }
+    }
+    quantity
+    currency
+    goods {
+      id
+      code
+      barCode
+      name
+      description
+      tags
+      balance {
+        debit
+        credit
+        balance
+      }
+      metaData
+      metaDataInternal
+      createdDate
+      createdByPersonId
+    }
+    location
+    tags
+    participant {
+      id
+      name
+      msp
+    }    
+    createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal
+  }
+}

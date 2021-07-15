@@ -1,0 +1,34 @@
+mutation transactionNew($newTransactionData: NewTransactionInput!) {
+  transactionNew(newTransactionData: $newTransactionData) {
+    id
+    transactionType
+    resourceType
+    assetId
+    input {
+      entity {
+        id
+        type
+      }
+    }
+    output {
+      entity {
+        id
+        type
+      }
+    }
+    quantity
+    currency
+    location
+    tags
+    participant {
+      id
+      name
+      msp
+    }
+    createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal
+  }
+}
+

@@ -1,0 +1,27 @@
+mutation causeNew($newCauseData: NewCauseInput!) {
+  causeNew(newCauseData: $newCauseData) {
+    id
+    name   
+    email
+    ambassadors
+    startDate
+    endDate
+    input {
+      entity{
+        id
+        type
+      }
+    }
+    location
+    tags
+    participant {
+      id
+      code
+      name
+    }
+    createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal
+  }
+}

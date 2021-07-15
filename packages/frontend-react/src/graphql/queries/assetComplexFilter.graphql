@@ -1,0 +1,31 @@
+query assetComplexQuery($getByComplexQueryInput: GetByComplexQueryInput!, $skip: Int, $take: Int) {
+  assetComplexQuery(getByComplexQueryInput: $getByComplexQueryInput, skip: $skip, take: $take) {
+    id
+    name
+    assetType
+    owner{
+      entity{
+        id
+        type
+      }
+    }
+    ambassadors
+    location
+    tags
+    assetType
+    owner{
+      entity{
+        id
+        type
+      }
+    }
+    participant{
+      id
+      name
+    }
+    createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal    
+  }
+}

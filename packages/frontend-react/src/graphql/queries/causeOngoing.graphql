@@ -1,0 +1,28 @@
+query causeOngoing($date: Float!) {
+  causeOngoing(date: $date) {
+    id
+    name
+    ambassadors
+    startDate
+    endDate
+    location
+    tags
+    metaData
+    input {
+      entity {
+        id
+        type
+        createdDate
+      }
+    }
+    participant {
+      id
+      name
+      msp
+    }    
+    createdDate
+    createdByPersonId
+    metaData
+    metaDataInternal
+  }
+}

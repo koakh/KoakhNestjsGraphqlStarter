@@ -1,0 +1,18 @@
+subscription assetAdded{
+  assetAdded {
+    id
+    name    
+    description
+    assetType
+    ambassadors
+    owner {
+      entity{
+        id
+        type
+      }
+    }
+    location
+    tags
+    metaData
+  }
+}
