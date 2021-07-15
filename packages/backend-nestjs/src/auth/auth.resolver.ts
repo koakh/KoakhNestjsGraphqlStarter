@@ -8,7 +8,7 @@ import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { CurrentUser, Roles } from './decorators';
 import { UserRoles } from './enums';
-import { GqlLocalAuthGuard, GqlRolesGuard } from './guards';
+import { GqlAuthGuard, GqlLocalAuthGuard, GqlRolesGuard } from './guards';
 import { LoginUserInput } from './input-types';
 import { CurrentUserPayload, GqlContext, SignJwtTokenPayload } from './interfaces';
 import { AccessToken, UserLoginResponse } from './object-types';
@@ -47,10 +47,16 @@ export class AuthResolver {
     return { user: user, accessToken };
   }
 
+  @Roles(UserRoles.ROLE_USER)
+  @UseGuards(GqlRolesGuard)
+  @UseGuards(GqlAuthGuard)
   @Mutation(returns => Boolean)
   async userLogout(
+    @CurrentUser() user: CurrentUserPayload,
     @Context() { res, payload }: GqlContext,
   ): Promise<boolean> {
+    // always incrementVersion this way user can't use refreshToken anymore
+    this.userService.usersStore.incrementTokenVersion(user.username);
     // send empty refreshToken, with same name jid, etc, better than res.clearCookie
     // this will invalidate the browser cookie refreshToken, only work with browser, not with insomnia etc
     this.authService.sendRefreshToken(res, { accessToken: '' });
@@ -58,6 +64,7 @@ export class AuthResolver {
   }
 
   // Don't expose this resolver, only used in development environments
+  @Roles(UserRoles.ROLE_ADMIN)
   @Mutation(returns => Boolean)
   async revokeUserRefreshTokens(
     @Args('username') username: string,

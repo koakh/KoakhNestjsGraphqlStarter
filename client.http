@@ -3,7 +3,8 @@
 @port = 3443
 // @port = 443
 
-@uri = https://{{host}}:{{port}}/graphql
+@baseUri = https://{{host}}:{{port}}
+@uri = {{baseUri}}/graphql
 @contentType = application/json
 @requestType = GraphQL
 
@@ -11,10 +12,9 @@
 @userLoginPassword = 12345678
 @userIdAdmin = efeed3eb-c0a2-4b3e-816f-2a42ca8451b3
 @userJohnDoe = 520c2eb5-e83b-4ef5-a343-85756bcce149
-@authToken = {{userLogin.response.body.$.data.userLogin}}
+@authToken = {{userLogin.response.body.$.data.userLogin.accessToken}}
 
 ### mutation: userLogin
-
 // @name userLogin
 POST {{uri}} HTTP/1.1
 Content-Type: {{contentType}}
@@ -38,6 +38,64 @@ mutation userLogin($loginUserData: LoginUserInput!) {
 		"password": "{{userLoginPassword}}"
 	}
 }
+
+### mutation: userLogout
+// @name userLogout
+POST {{uri}} HTTP/1.1
+Content-Type: {{contentType}}
+X-REQUEST-TYPE: {{requestType}}
+Authorization: Bearer {{authToken}}
+
+mutation userLogout {
+	userLogout
+}
+
+### authRefreshToken
+// @name authRefreshToken
+// when refresh token always sent new authTokens
+// authToken and refreshToken (cookie)
+// it will fail after we increase version with authRevokeRefreshToken, logout etc, 
+// the version of inMemory doesn't match the version of refresh token
+
+POST {{uri}}/auth/refresh-token HTTP/1.1
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+}
+
+### mutation: userProfile
+// @name userProfile
+POST {{uri}} HTTP/1.1
+Content-Type: {{contentType}}
+X-REQUEST-TYPE: {{requestType}}
+Authorization: Bearer {{authToken}}
+
+query userProfile{
+  userProfile {
+		id
+		username
+		email
+		roles
+	}
+}
+
+
+
+
+mutation revokeUserRefreshTokens($username: String!){
+  revokeUserRefreshTokens(username: $username)
+}
+
+{
+	"username": "johndoe"
+}
+
+
+
+
+
+
 
 ### mutations update: userUpdate
 

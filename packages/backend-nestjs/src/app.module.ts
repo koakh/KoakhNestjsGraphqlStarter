@@ -42,6 +42,7 @@ import { UserModule } from './user/user.module';
             // get authToken from authorization header
             const authToken: string = ('authorization' in connectionParamsLowerKeys)
               && connectionParamsLowerKeys.authorization.split(' ')[1];
+            debugger;  
             if (authToken) {
               // verify authToken/getJwtPayLoad
               const jwtPayload: GqlContextPayload = authService.getJwtPayLoad(authToken);

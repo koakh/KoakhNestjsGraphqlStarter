@@ -3,6 +3,7 @@ Backend:
     ☐ finish graphql authentication implemnattion
     ☐ create all operations on client.http
     ☐ extract library from implementiation
+    ☐ remove solidarychain.com references, certificates etc
     ☐ @critical test refreshToken changed code from github commits
     ☐ @critical test refreshToken livecycle
     ☐ use nestConfig EveryWhere serach for {e.
