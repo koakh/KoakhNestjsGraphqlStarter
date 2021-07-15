@@ -1,8 +1,8 @@
 {
 	"folders": [
 		{
-			"path": "."
-		}
+			"path": "./"
+		},
 	],
 	"settings": {
 		"cSpell.words": [
@@ -10,6 +10,19 @@
 			"datetime",
 			"johndoe"
 		],
-		"peacock.color": "#00b3e6"
+		"peacock.color": "#00b3e6",
+		"workbench.colorCustomizations": {
+			"activityBar.activeBackground": "#7f40bf",
+			"activityBar.activeBorder": "#c78f58",
+			"activityBar.background": "#7f40bf",
+			"activityBar.foreground": "#e7e7e7",
+			"activityBar.inactiveForeground": "#e7e7e799",
+			"activityBarBadge.background": "#c78f58",
+			"activityBarBadge.foreground": "#15202b",
+			"editorGroup.border": "#7f40bf",
+			"panel.border": "#7f40bf",
+			"sideBar.border": "#7f40bf"
+		},
+		"peacock.remoteColor": "#639"
 	}
 }

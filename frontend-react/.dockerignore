@@ -1,8 +1,0 @@
-node_modules
-build
-Dockerfile
-Dockerfile.prod
-.dockerignore
-.vscode
-*.md
-*.yaml

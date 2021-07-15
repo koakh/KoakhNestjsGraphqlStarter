@@ -1,7 +1,0 @@
-mutation personUpdate($updatePersonData: UpdatePersonInput!) {
-  personUpdate(updatePersonData: $updatePersonData) {
-    id
-    roles
-    metaDataInternal
-  }
-}

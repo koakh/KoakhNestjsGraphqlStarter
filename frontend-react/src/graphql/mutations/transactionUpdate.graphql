@@ -1,6 +1,0 @@
-mutation transactionUpdate($updateTransactionData: UpdateTransactionInput!) {
-  transactionUpdate(updateTransactionData: $updateTransactionData) {
-    id
-    metaDataInternal
-  }
-}

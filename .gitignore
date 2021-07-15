@@ -1,4 +1,4 @@
 .bak/
-frontend-react/node_modules
-backend-nestjs/node_modules
-
+node_modules/
+packages/**/node_modules/
+.removed
