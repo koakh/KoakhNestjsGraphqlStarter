@@ -25,9 +25,9 @@ type UserLoginResponse {
 
 type Query {
   users(skip: Int = 0, take: Int = 25): [User!]!
+  userProfile: User!
   userById(id: String!): User!
   userByUsername(username: String!): User!
-  userProfile: User!
 }
 
 type Mutation {
@@ -35,6 +35,7 @@ type Mutation {
   userLogout: Boolean!
   revokeUserRefreshTokens(username: String!): Boolean!
   userRegister(newUserData: NewUserInput!): User!
+  userUpdate(updateUserData: UpdateUserInput!): User!
 }
 
 input LoginUserInput {
@@ -50,6 +51,15 @@ input NewUserInput {
   lastName: String
   email: String
   metaData: JSONObject
+}
+
+input UpdateUserInput {
+  id: String!
+  firstName: String
+  lastName: String
+  email: String
+  metaData: JSONObject
+  roles: [String!] = "ROLE_USER"
 }
 
 type Subscription {

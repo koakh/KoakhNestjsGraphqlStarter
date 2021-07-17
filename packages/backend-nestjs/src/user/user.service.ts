@@ -3,12 +3,14 @@ import { CurrentUserPayload } from '../auth/interfaces';
 import { UserRoles } from '../auth/enums';
 import { PaginationArgs } from '../common/input-types';
 import { newUuid } from '../common/utils/main.util';
-import { NewUserInput } from './input-type';
+import { NewUserInput, UpdateUserInput } from './input-type';
 import { UserData } from './interfaces';
 import { User } from './object-types';
 import { userData } from './user.data';
 import { UserStore } from './user.store';
 import { hashPassword } from './utils';
+import { UnauthorizedException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
@@ -45,22 +47,24 @@ export class UserService {
   }
 
   async findOneByField(key: string, value: string, user: CurrentUserPayload): Promise<User> {
-    return userData.find((e: UserData) => e[key] === value);
+    const findUser = userData.find((e: UserData) => e[key] === value);
+    if (!findUser) {
+      // throw new HttpException({ status: HttpStatus.NO_CONTENT, error: 'no content' }, HttpStatus.NO_CONTENT);
+      throw new NotFoundException();
+    }
+    return findUser;
   }
 
   // TODO
-  // async update(data: UpdateUserInput, user: CurrentUserPayload): Promise<User> {
-  //   try {
-  //     // compose ConvectorModel from UpdateInput
-  //     const personToUpdate: UserConvectorModel = new UserConvectorModel({
-  //       ...data
-  //     });
-  //     await UserControllerBackEnd.update(personToUpdate, user);
-  //     return this.findOneById(data.id, user);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
+  async update(data: UpdateUserInput, user: CurrentUserPayload): Promise<User> {
+    try {
+      let userToUpdate = await this.findOneByField('id', data.id, user);
+      userToUpdate = { ...userToUpdate, ...data };
+      return userToUpdate;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   // async updatePassword(data: UpdateUserPasswordInput, user: CurrentUserPayload): Promise<User> {
   //   try {

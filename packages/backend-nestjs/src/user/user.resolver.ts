@@ -1,6 +1,5 @@
 import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
-import { PubSub } from 'apollo-server-express';
 import { CurrentUserPayload } from '../auth/interfaces/current-user-payload.interface';
 import { CurrentUser, Roles } from '../auth/decorators';
 import { UserRoles } from '../auth/enums';
@@ -9,9 +8,10 @@ import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { appConstants as c } from '../common/app/constants';
 import { SubscriptionEvent } from '../common/enums';
 import { PaginationArgs } from '../common/input-types';
-import { NewUserInput } from './input-type';
+import { NewUserInput, UpdateUserInput } from './input-type';
 import { User } from './object-types';
 import { UserService } from './user.service';
+import { PubSub } from 'graphql-subscriptions';
 
 const pubSub = new PubSub();
 
@@ -30,6 +30,20 @@ export class UserResolver {
     @CurrentUser() currentUser: CurrentUserPayload,
   ): Promise<User | User[]> {
     return this.userService.findAll(paginationArgs, currentUser);
+  }
+
+  @Roles(UserRoles.ROLE_USER)
+  @UseGuards(GqlRolesGuard)
+  @UseGuards(GqlAuthGuard)
+  @Query(returns => User)
+  async userProfile(
+    @CurrentUser() currentUser: CurrentUserPayload,
+  ): Promise<User> {
+    const user = await this.userService.findOneByField('username', currentUser.username, currentUser);
+    if (!user.id) {
+      throw new NotFoundException(currentUser.username);
+    }
+    return user;
   }
 
   @Roles(UserRoles.ROLE_USER)
@@ -62,20 +76,6 @@ export class UserResolver {
     return user;
   }
 
-  @Roles(UserRoles.ROLE_USER)
-  @UseGuards(GqlRolesGuard)
-  @UseGuards(GqlAuthGuard)
-  @Query(returns => User)
-  async userProfile(
-    @CurrentUser() currentUser: CurrentUserPayload,
-  ): Promise<User> {
-    const user = await this.userService.findOneByField('username', currentUser.username, currentUser);
-    if (!user.id) {
-      throw new NotFoundException(currentUser.username);
-    }
-    return user;
-  }
-
   // unprotected method, user register don't use createdByUserId, we must pass ADMIN_ROLE
   @Mutation(returns => User)
   async userRegister(
@@ -86,18 +86,18 @@ export class UserResolver {
     return user;
   }
 
-  // @Roles(UserRoles.ROLE_ADMIN)
-  // @UseGuards(GqlRolesGuard)
-  // @UseGuards(GqlAuthGuard)
-  // @Mutation(returns => User)
-  // async userUpdate(
-  //   @Args('updateUserData') updateUserData: UpdateUserInput,
-  //   @CurrentUser() currentUser: CurrentUserPayload,
-  // ): Promise<User> {
-  //   const user = await this.userService.update(updateUserData, currentUser);
-  //   pubSub.publish(SubscriptionEvent.userUpdated, { [SubscriptionEvent.userUpdated]: user });
-  //   return user;
-  // }
+  @Roles(UserRoles.ROLE_ADMIN)
+  @UseGuards(GqlRolesGuard)
+  @UseGuards(GqlAuthGuard)
+  @Mutation(returns => User)
+  async userUpdate(
+    @Args('updateUserData') updateUserData: UpdateUserInput,
+    @CurrentUser() currentUser: CurrentUserPayload,
+  ): Promise<User> {
+    const user = await this.userService.update(updateUserData, currentUser);
+    pubSub.publish(SubscriptionEvent.userUpdated, { [SubscriptionEvent.userUpdated]: user });
+    return user;
+  }
 
   // @Roles(UserRoles.ROLE_USER)
   // @UseGuards(GqlRolesGuard)

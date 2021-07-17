@@ -1,17 +1,25 @@
 Backend:
   Important:
-    ☐ finish graphql authentication implemnattion
+    ☐ fix subscriptions GqlGuard
     ☐ create all operations on client.http
-    ☐ extract library from implementiation
+    ☐ finish graphql authentication implemention
     ☐ remove solidarychain.com references, certificates etc
+    ☐ create nest workspaces and 2 libraries on for users and other for auth that consumes one users module
+    ☐ extract library from implementiation
     ☐ @critical test refreshToken changed code from github commits
     ☐ @critical test refreshToken livecycle
+    ☐ @critical subscriptions "message": "Cannot read property 'userId' of undefined",
     ☐ use nestConfig EveryWhere serach for {e.
     ☐ nestjs workSpaces/monoRepo
-    ☐ update all packages to latest
+    ✔ update all packages to latest @done(21-07-16 01:24)
+      - https://stackoverflow.com/questions/68354656/unhandledpromiserejectionwarning-error-you-must-await-server-start-before
+      - change from "apollo-server-express": "^3.0.0" to "apollo-server-express": "^3.0.0"
+    ✔ @critical  fix refreshToken : POST body missing. Did you forget use body-parser middleware? @done(21-07-16 01:24)
+      This error also caused by incorrect json in the body or some other problems in the body, such as unnecessary wrong invisible chars. So check generated json for errors and what is actually presents in the request body.
+      stupide error is related to using /graphql
+    ☐ finish auth livecycle notes in client.http and bring it here
     ✔ UsersModule and friends to singular @done(21-07-15 00:54)
     ☐ use `user: CurrentUserPayload` to filter data by user, tenancy, add moke owner or createdBy
-    ☐ convert to new graphql auth package in the end
   Other:
     ☐ use authPackage `GraphQLError [Object]: Query root type must be provided.`
       - https://stackoverflow.com/questions/64105940/graphqlerror-query-root-type-must-be-provided

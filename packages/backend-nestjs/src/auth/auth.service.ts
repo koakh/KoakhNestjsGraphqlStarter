@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { SignOptions } from 'jsonwebtoken';
@@ -31,7 +31,7 @@ export class AuthService {
     return null;
   }
 
-  async signJwtToken(signPayload: SignJwtTokenPayload, options?: SignOptions): Promise<AccessToken> {
+  async signJwtToken(signPayload: SignJwtTokenPayload, options?: JwtSignOptions): Promise<AccessToken> {
     // note: we choose a property name of sub to hold our userId value to be consistent with JWT standards
     const payload = { username: signPayload.username, sub: signPayload.userId, roles: signPayload.roles };
     return {
@@ -40,7 +40,7 @@ export class AuthService {
     };
   }
 
-  async signRefreshToken(signPayload: SignJwtTokenPayload, tokenVersion: number, options?: SignOptions): Promise<AccessToken> {
+  async signRefreshToken(signPayload: SignJwtTokenPayload, tokenVersion: number, options?: JwtSignOptions): Promise<AccessToken> {
     const payload = { username: signPayload.username, sub: signPayload.userId, roles: signPayload.roles, tokenVersion };
     return {
       // generate JWT from a subset of the user object properties

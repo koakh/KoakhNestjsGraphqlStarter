@@ -2,12 +2,15 @@
   "name": "root",
   "private": true,
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "^3.22.1",
+    "lerna-update-wizard": "^0.17.8"
   },
   "scripts": {
     "lerna:install": "lerna bootstrap",
     "lerna:build": "lerna run build",
     "lerna:test": "lerna exec npm run test",
+    "pkg:graphql:lernaupdate": "lernaupdate --packages packages/backend-nestjs",
+    "pkg:graphql:upgrade": "npx lerna run upgrade -- --packages packages/backend-nestjs",
     "pkg:graphql:debug": "npx lerna run start:debug --scope @koakh/koakh-nestjs-graphql-starter --stream",
     "pkg:react:start": "npx lerna run start --scope @koakh/koakh-nestjs-react-starter --stream",
     "--WIP--pkg:graphql:build": "npx lerna run build --scope @solidary-chain/server-graphql --stream",
@@ -15,6 +18,7 @@
   },
   "dependencies": {
     "@koakh/nestjs-package-jwt-authentication": "^1.0.6",
-    "@nestjs/config": "^1.0.0"
+    "@nestjs/config": "^1.0.0",
+    "npm-check-updates": "^11.8.3"
   }
 }

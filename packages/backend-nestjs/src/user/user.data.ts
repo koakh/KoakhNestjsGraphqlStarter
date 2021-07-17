@@ -13,7 +13,9 @@ export const userData: UserData[] = [{
   email: 'pheine0@illinois.edu',
   roles: ['ROLE_USER', 'ROLE_ADMIN'],
   createdDate: 1597444307,
-  metaData: null
+  metaData: {
+    key: 'value'
+  }
 }, {
   id: '520c2eb5-e83b-4ef5-a343-85756bcce149',
   username: 'johndoe',
@@ -23,7 +25,9 @@ export const userData: UserData[] = [{
   email: 'ktrett1@livejournal.com',
   roles: ['ROLE_USER'],
   createdDate: 1597444307,
-  metaData: null
+  metaData: {
+    key: 'value'
+  }  
 }, {
   id: 'fa525f32-b6b7-40b5-8d09-b638d00ded3b',
   username: 'sstert2',

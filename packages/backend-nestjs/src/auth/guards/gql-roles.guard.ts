@@ -17,13 +17,19 @@ export class GqlRolesGuard implements CanActivate {
     const req = (ctx.getContext().req)
       ? ctx.getContext().req
       : ctx.getContext().connection.context;
-
-    const { user: { userId, username, roles: userRoles } } = req;
+    // init variables placeHolders
+    let userId, username, userRoles;
+    if (req.jwtPayload) {
+      // is used when work with subscriptions, else "Cannot read property 'userId' of undefined"
+      ({ sub: userId, username, roles: userRoles } = req.jwtPayload);
+    } else {
+      // used in non subscriptions mode
+      ({ user: { userId, username, roles: userRoles } } = req);
+    }
     // Logger.log(`roles: [${roles}], userRoles: [${userRoles}]`, GqlRolesGuard.name);
-
-    const hasRole = () =>
-      userRoles.some(role => !!roles.find(item => item === role));
-
+    const hasRole = () => {
+      return userRoles.some(role => !!roles.find(item => item === role));
+    };
     return userId && userRoles && hasRole();
   }
 }

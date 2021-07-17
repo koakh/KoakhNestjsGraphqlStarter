@@ -1,12 +1,12 @@
 import { appConstants as c } from '../common/app/constants';
 import { Controller, HttpStatus, Post, Request, Response } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { envVariables as e } from '../common/config/env.config';
 import { User } from '../user/object-types';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { AccessToken } from './object-types/access-token.object-type';
 import { GqlContextPayload, SignJwtTokenPayload } from './interfaces';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller()
 export class AuthController {

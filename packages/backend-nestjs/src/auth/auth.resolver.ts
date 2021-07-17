@@ -1,6 +1,6 @@
-import { UseGuards } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver, Subscription } from '@nestjs/graphql';
-import { PubSub } from 'apollo-server-express';
+import { PubSub } from 'graphql-subscriptions';
 import { appConstants as c } from '../common/app/constants';
 import { SubscriptionEvent } from '../common/enums';
 import { User } from '../user/object-types';
@@ -52,11 +52,11 @@ export class AuthResolver {
   @UseGuards(GqlAuthGuard)
   @Mutation(returns => Boolean)
   async userLogout(
-    @CurrentUser() user: CurrentUserPayload,
+    @CurrentUser() currentUser: CurrentUserPayload,
     @Context() { res, payload }: GqlContext,
   ): Promise<boolean> {
     // always incrementVersion this way user can't use refreshToken anymore
-    this.userService.usersStore.incrementTokenVersion(user.username);
+    this.userService.usersStore.incrementTokenVersion(currentUser.username);
     // send empty refreshToken, with same name jid, etc, better than res.clearCookie
     // this will invalidate the browser cookie refreshToken, only work with browser, not with insomnia etc
     this.authService.sendRefreshToken(res, { accessToken: '' });

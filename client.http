@@ -11,8 +11,12 @@
 @userLoginUsername = admin
 @userLoginPassword = 12345678
 @userIdAdmin = efeed3eb-c0a2-4b3e-816f-2a42ca8451b3
-@userJohnDoe = 520c2eb5-e83b-4ef5-a343-85756bcce149
+// @userIdJohnDoe = 520c2eb5-e83b-4ef5-a343-85756bcce149
+@userIdJohnDoe = 520c2eb5-e83b-4ef5-a343-85756bcce111
+@userLoginJohnDoe = johndoe
 @authToken = {{userLogin.response.body.$.data.userLogin.accessToken}}
+
+
 
 ### mutation: userLogin
 // @name userLogin
@@ -57,11 +61,23 @@ mutation userLogout {
 // it will fail after we increase version with authRevokeRefreshToken, logout etc, 
 // the version of inMemory doesn't match the version of refresh token
 
-POST {{gqlUri}}/auth/refresh-token HTTP/1.1
+POST {{baseUri}}/refresh-token HTTP/1.1
 Content-Type: {{contentType}}
 Authorization: Bearer {{authToken}}
 
+### mutation: revokeUserRefreshTokens
+// @name revokeUserRefreshTokens
+POST {{gqlUri}} HTTP/1.1
+Content-Type: {{contentType}}
+X-REQUEST-TYPE: {{requestType}}
+Authorization: Bearer {{authToken}}
+
+mutation revokeUserRefreshTokens($username: String!) {
+	revokeUserRefreshTokens(username: $username)
+}
+
 {
+	"username": "{{userLoginUsername}}"
 }
 
 ### mutation: userProfile
@@ -80,22 +96,110 @@ query userProfile{
 	}
 }
 
+### query: users
+// @name users
 
+POST {{gqlUri}} HTTP/1.1
+Content-Type: {{contentType}}
+X-REQUEST-TYPE: {{requestType}}
+Authorization: Bearer {{authToken}}
 
+query users{
+  users{
+    id
+    username
+    firstName
+    lastName
+    email
+    roles
+    createdDate
+    metaData
+  }
+}
 
-mutation revokeUserRefreshTokens($username: String!){
-  revokeUserRefreshTokens(username: $username)
+### query: userById
+// @name userById
+
+POST {{gqlUri}} HTTP/1.1
+Content-Type: {{contentType}}
+X-REQUEST-TYPE: {{requestType}}
+Authorization: Bearer {{authToken}}
+
+query userById($id: String!) {
+  userById(id: $id) {
+    id
+    username
+    firstName
+    lastName
+    email
+    roles
+    createdDate
+    metaData
+  }
 }
 
 {
-	"username": "johndoe"
+	"id": "{{userIdAdmin}}"
 }
 
+### query: userByUsername
+// @name userByUsername
 
+POST {{gqlUri}} HTTP/1.1
+Content-Type: {{contentType}}
+X-REQUEST-TYPE: {{requestType}}
+Authorization: Bearer {{authToken}}
 
+query userByUsername($username: String!) {
+  userByUsername(username: $username) {
+    id
+    username
+    firstName
+    lastName
+    email
+    roles
+    createdDate
+    metaData
+  }
+}
 
+{
+	"username": "{{userLoginJohnDoe}}"
+}
 
+### query: userByUsername
+// @name userByUsername
 
+POST {{gqlUri}} HTTP/1.1
+Content-Type: {{contentType}}
+X-REQUEST-TYPE: {{requestType}}
+Authorization: Bearer {{authToken}}
+
+mutation userRegister($newUserData: NewUserInput!){
+  userRegister(newUserData: $newUserData) {
+    id
+    username
+    firstName
+    lastName
+    email
+    roles
+    createdDate
+    metaData    
+  }
+}
+
+{
+	"newUserData": {
+		"username": "koakh",
+		"password": "12345678",
+		"firstName": "Mário",
+		"lastName": "Monteiro",
+		"email": "mail@koakh.com",
+		"metaData": { 
+			"key": "valueUpdatedAgain"
+		}
+	}
+}	
 
 ### mutations update: userUpdate
 
@@ -111,19 +215,19 @@ mutation userUpdate($updateUserData: UpdateUserInput!) {
   userUpdate(updateUserData: $updateUserData) {
     id
     roles
-    metaDataInternal
+    metaData
   }
 }
 
 {
 	"updateUserData": {
-		"id": "{{userIdJohn}}",
+		"id": "{{userIdJohnDoe}}",
 		"roles": [
 			"USER",
 			"MANAGER",
 			"ADMIN"
 		],
-		"metaDataInternal": {
+		"metaData": {
 			"key": "valueUpdated"
 		}
 	}

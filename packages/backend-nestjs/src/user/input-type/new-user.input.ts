@@ -12,14 +12,12 @@ export class NewUserInput {
   @IsUUID()
   id: string;
 
-  // generated automatically, but can optionally be used
   @Field({ nullable: true })
-  // @IsDefined()
+  @IsDefined()
   username: string;
 
-  // generated automatically, but can optionally be used
   @Field({ nullable: true })
-  // @IsDefined()
+  @IsDefined()
   password: string;
 
   @Field({ nullable: true })

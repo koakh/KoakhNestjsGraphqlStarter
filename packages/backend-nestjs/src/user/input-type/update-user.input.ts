@@ -1,4 +1,4 @@
-import { IsOptional, IsUUID } from 'class-validator';
+import { IsDefined, IsEmail, IsOptional, IsUUID } from 'class-validator';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { UserRoles } from '../../auth/enums';
 import { Field, InputType } from '@nestjs/graphql';
@@ -9,10 +9,24 @@ export class UpdateUserInput {
   @IsUUID()
   id: string;
 
-  @Field(type => [String], { defaultValue: UserRoles.ROLE_USER })
-  roles: string[];
+  @Field({ nullable: true })
+  @IsOptional()
+  firstName: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  lastName: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsEmail()
+  email: string;
 
   @Field(type => GraphQLJSONObject, { nullable: true })
   @IsOptional()
-  metaDataInternal: any;
+  metaData: any;
+
+  @Field(type => [String], { defaultValue: UserRoles.ROLE_USER })
+  @IsOptional()
+  roles: string[];
 }

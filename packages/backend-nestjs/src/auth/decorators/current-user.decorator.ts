@@ -1,19 +1,16 @@
-// [CurrentUser = Custom Decorator](https://docs.nestjs.com/techniques/authentication#graphql)
-// tslint:disable-next-line: max-line-length
-// [NestJS Get current user in GraphQL resolver authenticated with JWT](https://stackoverflow.com/questions/55269777/nestjs-get-current-user-in-graphql-resolver-authenticated-with-jwt)
-// not used yet
-// use with @CurrentUser() decorator query/mutation
-
-import { createParamDecorator } from '@nestjs/common';
-
-// used without subscriptions, here we ger user from request, in subscription we must use req or context
-// export const CurrentUser = createParamDecorator(
-//   (data, [root, args, ctx, info]) => ctx.req.user,
-// );
+// changed in nestjs 8.0.3
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 export const CurrentUser = createParamDecorator(
-  (data, [root, args, ctx, info]) => {
-    const req = (ctx.req) ? ctx.req : ctx.connection.context;
-    return req.user
+  (data: unknown, context: ExecutionContext) => {
+    const ctx = GqlExecutionContext.create(context);
+    if (ctx.getContext().req) {
+      // normal mode
+      return ctx.getContext().req.user;
+    } else {
+      // if subscriptions/webSockets, we must use connection.context.jwtPayload
+      return ctx.getContext().connection.context.jwtPayload.username;
+    }
   },
 );

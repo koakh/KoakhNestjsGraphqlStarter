@@ -23,6 +23,8 @@ import { UserModule } from './user/user.module';
         playground: true,
         installSubscriptionHandlers: true,
         autoSchemaFile: 'schema.gql',
+        // uploads: true,
+        // bodyParserConfig: true,
         // pass the original req and res object into the graphql context,
         // get context with decorator `@Context() { req, res, payload, connection }: GqlContext`
         // req, res used in http/query&mutations, connection used in webSockets/subscriptions
