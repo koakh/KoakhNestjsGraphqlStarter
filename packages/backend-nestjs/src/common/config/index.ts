@@ -1,2 +1,2 @@
 export * from './express.config';
-export * from './env.config';
+export * from './configuration';

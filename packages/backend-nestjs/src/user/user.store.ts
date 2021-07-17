@@ -1,5 +1,4 @@
-import { envVariables as e } from '../common/config/env.config';
-
+import { configuration } from '../common/config';
 interface User {
   username: string;
   tokenVersion: number;
@@ -35,7 +34,7 @@ export class UserStore {
 
   incrementTokenVersion(username: string): number {
     const user: User = this.getUser(username);
-    if (Boolean(e.refreshTokenSkipIncrementVersion === 'true' ? true : false)) {
+    if (configuration().jwt.refreshTokenSkipIncrementVersion) {
       // devMode: don't increment tokenVersion
       return user.tokenVersion;
     } else {

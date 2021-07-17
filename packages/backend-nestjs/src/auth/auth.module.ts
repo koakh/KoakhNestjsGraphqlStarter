@@ -1,7 +1,7 @@
 import { CookieParserMiddleware } from '@nest-middlewares/cookie-parser';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { envVariables as e } from '../common/config/env.config';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthResolver } from './auth.resolver';
@@ -10,16 +10,22 @@ import { JwtStrategy, LocalStrategy } from './strategy';
 
 @Module({
   imports: [
-    UserModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     // not used because we use a class based strategy GqlAuthGuard
     // configure the JwtModule using register(), passing configuration object, and register a default strategy
-    // PassportModule.register({
-    //   defaultStrategy: 'jwt',
-    // }),
-    JwtModule.register({
-      secret: e.accessTokenJwtSecret,
-      signOptions: { expiresIn: e.accessTokenExpiresIn },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('jwt.accessTokenJwtSecret'),
+        signOptions: {
+          expiresIn: configService.get('jwt.accessTokenExpiresIn'),
+        },
+      }),
+      inject: [ConfigService],
     }),
+    UserModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy],

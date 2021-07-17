@@ -1,29 +1,30 @@
 Backend:
   Important:
     ☐ UserInMemory must have all interface implementations used in user service
-      ☐ use currentUser with moke data, ex johnDoe filter something, admin filter all
-    ☐ fix subscriptions GqlGuard
-    ☐ create all operations on client.http
-    ☐ finish graphql authentication implemention
-    ☐ remove solidarychain.com references, certificates etc
-    ☐ create nest workspaces and 2 libraries on for users and other for auth that consumes one users module
-    ☐ extract library from implementiation
-    ☐ @critical test refreshToken changed code from github commits
-    ☐ @critical test refreshToken livecycle
-    ☐ @critical subscriptions "message": "Cannot read property 'userId' of undefined",
-    ☐ use nestConfig EveryWhere serach for {e.
-    ☐ nestjs workSpaces/monoRepo
-    ☐ clear all TODO's
+      ✔ use currentUser with moke data, ex johnDoe filter something, admin filter all @done(21-07-18 00:06)
+    ✔ fix subscriptions GqlGuard @done(21-07-17 23:57)
+    ✔ create all operations on client.http @done(21-07-17 23:57)
+    ✔ finish graphql authentication implemention @done(21-07-17 23:57)
+    ✔ remove solidarychain.com references, certificates etc @done(21-07-18 00:05)
+    ✔ test refreshToken changed code from github commits @done(21-07-18 00:05)
+    ✔ test refreshToken livecycle @done(21-07-18 00:05)
+    ✔ subscriptions "message": "Cannot read property 'userId' of undefined", @done(21-07-18 00:05)
+    ✔ use nestConfig EveryWhere serach for {e. @done(21-07-18 00:06)
     ✔ update all packages to latest @done(21-07-16 01:24)
       - https://stackoverflow.com/questions/68354656/unhandledpromiserejectionwarning-error-you-must-await-server-start-before
       - change from "apollo-server-express": "^3.0.0" to "apollo-server-express": "^3.0.0"
-    ✔ @critical  fix refreshToken : POST body missing. Did you forget use body-parser middleware? @done(21-07-16 01:24)
+    ✔ fix refreshToken : POST body missing. Did you forget use body-parser middleware? @done(21-07-16 01:24)
       This error also caused by incorrect json in the body or some other problems in the body, such as unnecessary wrong invisible chars. So check generated json for errors and what is actually presents in the request body.
       stupide error is related to using /graphql
-    ☐ finish auth livecycle notes in client.http and bring it here
+    ✔ finish auth livecycle notes in client.http and bring it here @done(21-07-18 00:06)
     ✔ UsersModule and friends to singular @done(21-07-15 00:54)
-    ☐ use `user: CurrentUserPayload` to filter data by user, tenancy, add moke owner or createdBy
-    ☐ add disable CORS and other stuff from c3-backend
+    ✔ use `user: CurrentUserPayload` to filter data by user, tenancy, add moke owner or createdBy @done(21-07-18 00:06)
+    ✔ add disable CORS and other stuff from c3-backend @done(21-07-18 00:06)
+    ☐ create nest workspaces and 2 libraries on for users and other for auth that consumes one users module
+    ☐ nestjs workSpaces/monoRepo
+    ☐ extract library from implementation
+    ☐ dockerImage
+    ☐ clear all TODO's
   Other:
     ☐ use authPackage `GraphQLError [Object]: Query root type must be provided.`
       - https://stackoverflow.com/questions/64105940/graphqlerror-query-root-type-must-be-provided

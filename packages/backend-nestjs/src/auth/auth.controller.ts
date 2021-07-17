@@ -1,17 +1,17 @@
-import { appConstants as c } from '../common/app/constants';
 import { Controller, HttpStatus, Post, Request, Response } from '@nestjs/common';
-import { envVariables as e } from '../common/config/env.config';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { User } from '../user/object-types';
+import { constants as uc } from '../user/user.constants';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
-import { AccessToken } from './object-types/access-token.object-type';
 import { GqlContextPayload, SignJwtTokenPayload } from './interfaces';
-import { JwtService } from '@nestjs/jwt';
-import { constants as uc } from '../user/user.constants';
+import { AccessToken } from './object-types/access-token.object-type';
 
 @Controller()
 export class AuthController {
   constructor(
+    private readonly configService: ConfigService,
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
@@ -37,7 +37,7 @@ export class AuthController {
     let payload: GqlContextPayload;
     try {
       // warn this seems to use old way of send secret, in new versions we must send with `this.jwtService.verify(token, {secret: e.refreshTokenJwtSecret})`
-      payload = this.jwtService.verify(token, e.refreshTokenJwtSecret);
+      payload = this.jwtService.verify(token, this.configService.get('jwt.refreshTokenJwtSecret'));
     } catch (error) {
       // Logger.log(error);
       return invalidPayload();

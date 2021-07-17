@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
-import { SignOptions } from 'jsonwebtoken';
-import { appConstants as c } from '../common/app/constants';
-import { envVariables as e } from '../common/config/env.config';
+import { constants as uc } from '../user/user.constants';
 import { UserService } from '../user/user.service';
 import { GqlContextPayload, SignJwtTokenPayload } from './interfaces';
 import { AccessToken } from './object-types/access-token.object-type';
-import { constants as uc } from '../user/user.constants';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly configService: ConfigService,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) { }
@@ -45,7 +44,7 @@ export class AuthService {
     const payload = { username: signPayload.username, sub: signPayload.userId, roles: signPayload.roles, tokenVersion };
     return {
       // generate JWT from a subset of the user object properties
-      accessToken: this.jwtService.sign(payload, { ...options, expiresIn: e.refreshTokenExpiresIn }),
+      accessToken: this.jwtService.sign(payload, { ...options, expiresIn: this.configService.get('jwt.refreshTokenExpiresIn') }),
     };
   }
 

@@ -1,41 +1,42 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config/dist';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AuthenticationError } from 'apollo-server-core';
 import { ConnectionParams } from 'subscriptions-transport-ws';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { GqlContext, GqlContextPayload } from './auth/interfaces';
-import { envVariables as e } from './common/config/env.config';
+import { configuration } from './common/config';
 import { mapKeysToLowerCase } from './common/utils';
 import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
-    AuthModule,
-    UserModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+    }),
     // apolloServer config: use forRootAsync to import AuthModule and inject AuthService
     GraphQLModule.forRootAsync({
       // import AuthModule
-      imports: [AuthModule],
+      imports: [ConfigService, AuthModule],
       // inject authService
-      useFactory: async (authService: AuthService) => ({
+      useFactory: async (configService: ConfigService, authService: AuthService) => ({
         debug: true,
         playground: true,
         installSubscriptionHandlers: true,
         autoSchemaFile: 'schema.gql',
-        // uploads: true,
-        // bodyParserConfig: true,
         // pass the original req and res object into the graphql context,
         // get context with decorator `@Context() { req, res, payload, connection }: GqlContext`
         // req, res used in http/query&mutations, connection used in webSockets/subscriptions
         context: ({ req, res, payload, connection }: GqlContext) => ({ req, res, payload, connection }),
         // configure graphql cors here, rest cors is configured in packages/server-graphql/src/main.ts
         cors: {
-          origin: e.corsOriginReactFrontend,
+          origin: configService.get<string>('server.corsOriginReactFrontend'),
           credentials: true,
         },
         // subscriptions/webSockets authentication
-        // NOTES.md: How to use AuthGuard/Authentication with Apollo Subscriptions
+        // read NOTES.md: How to use AuthGuard/Authentication with Apollo Subscriptions
         subscriptions: {
           // get headers
           onConnect: (connectionParams: ConnectionParams) => {
@@ -55,8 +56,11 @@ import { UserModule } from './user/user.module';
         },
       }),
       // inject: AuthService
-      inject: [AuthService],
+      inject: [ConfigService, AuthService],
     }),
+    // project/package modules
+    AuthModule,
+    UserModule,
   ],
 })
 
