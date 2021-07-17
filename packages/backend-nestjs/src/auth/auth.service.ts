@@ -8,6 +8,7 @@ import { envVariables as e } from '../common/config/env.config';
 import { UserService } from '../user/user.service';
 import { GqlContextPayload, SignJwtTokenPayload } from './interfaces';
 import { AccessToken } from './object-types/access-token.object-type';
+import { constants as uc } from '../user/user.constants';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,7 @@ export class AuthService {
   ) { }
   // called by GqlLocalAuthGuard
   async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.userService.findOneByField('username', username, c.CURRENT_USER_ADMIN_ROLE);
+    const user = await this.userService.findOneByField('username', username, uc.adminCurrentUser);
     if (user && user.password) {
       const authorized = this.bcryptValidate(pass, user.password);
       if (authorized) {

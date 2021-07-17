@@ -7,5 +7,6 @@ export interface UserData {
   email: string;
   roles: string[];
   createdDate: number;
+  createdBy: string;
   metaData: any;
 }

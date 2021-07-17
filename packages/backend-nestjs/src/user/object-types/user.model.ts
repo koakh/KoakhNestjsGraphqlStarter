@@ -1,4 +1,4 @@
-import { IsDefined, Validate } from 'class-validator';
+import { IsDefined, IsOptional, Validate } from 'class-validator';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import * as yup from 'yup';
@@ -35,7 +35,12 @@ export class User {
   @IsDefined()
   @Validate(yup.number)
   createdDate: number;
+  
+  @Field()
+  @IsDefined()
+  createdBy?: string;
 
   @Field(type => GraphQLJSONObject, { nullable: true })
+  @IsOptional()
   metaData: any;
 }

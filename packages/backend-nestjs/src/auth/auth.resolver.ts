@@ -1,9 +1,9 @@
-import { Logger, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
-import { appConstants as c } from '../common/app/constants';
 import { SubscriptionEvent } from '../common/enums';
 import { User } from '../user/object-types';
+import { constants as uc } from '../user/user.constants';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { CurrentUser, Roles } from './decorators';
@@ -31,7 +31,7 @@ export class AuthResolver {
     // publish userLogged subscription
     pubSub.publish(SubscriptionEvent.userLogged, { [SubscriptionEvent.userLogged]: loginUserData.username });
     // get user
-    const user: User = await this.userService.findOneByField('username', loginUserData.username, c.CURRENT_USER_ADMIN_ROLE);
+    const user: User = await this.userService.findOneByField('username', loginUserData.username, uc.adminCurrentUser);
     // accessToken: add some user data to it, like id and roles
     const signJwtTokenDto: SignJwtTokenPayload = { ...loginUserData, userId: user.id, roles: user.roles };
     const { accessToken } = await this.authService.signJwtToken(signJwtTokenDto);

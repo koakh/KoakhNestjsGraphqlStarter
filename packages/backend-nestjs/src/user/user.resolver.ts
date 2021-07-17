@@ -5,13 +5,13 @@ import { CurrentUser, Roles } from '../auth/decorators';
 import { UserRoles } from '../auth/enums';
 import { GqlRolesGuard } from '../auth/guards';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
-import { appConstants as c } from '../common/app/constants';
 import { SubscriptionEvent } from '../common/enums';
 import { PaginationArgs } from '../common/input-types';
-import { NewUserInput, UpdateUserInput, UpdateUserPasswordInput, UpdateUserProfileInput } from './input-type';
+import { DeleteUserInput, NewUserInput, UpdateUserInput, UpdateUserPasswordInput, UpdateUserProfileInput } from './input-type';
 import { User } from './object-types';
 import { UserService } from './user.service';
 import { PubSub } from 'graphql-subscriptions';
+import { constants as c } from './user.constants';
 
 const pubSub = new PubSub();
 
@@ -28,8 +28,8 @@ export class UserResolver {
   async users(
     @Args() paginationArgs: PaginationArgs,
     @CurrentUser() currentUser: CurrentUserPayload,
-  ): Promise<User | User[]> {
-    return this.userService.findAll(paginationArgs, currentUser);
+  ): Promise<User[]> {
+    return await this.userService.findAll(paginationArgs, currentUser);
   }
 
   @Roles(UserRoles.ROLE_USER)
@@ -81,8 +81,8 @@ export class UserResolver {
   async userRegister(
     @Args('newUserData') newUserData: NewUserInput,
   ): Promise<User> {
-    const user = await this.userService.create(newUserData, c.CURRENT_USER_ADMIN_ROLE);
-    pubSub.publish(SubscriptionEvent.userAdded, { [SubscriptionEvent.userAdded]: user });
+    const user = await this.userService.create(newUserData, c.adminCurrentUser);
+    pubSub.publish(SubscriptionEvent.userRegistered, { [SubscriptionEvent.userRegistered]: user });
     return user;
   }
 
@@ -97,6 +97,19 @@ export class UserResolver {
     const user = await this.userService.update(updateUserData, currentUser);
     pubSub.publish(SubscriptionEvent.userUpdated, { [SubscriptionEvent.userUpdated]: user });
     return user;
+  }
+
+  @Roles(UserRoles.ROLE_ADMIN)
+  @UseGuards(GqlRolesGuard)
+  @UseGuards(GqlAuthGuard)
+  @Mutation(returns => User)
+  async userDelete(
+    @Args('deleteUserData') deleteUserData: DeleteUserInput,
+    @CurrentUser() currentUser: CurrentUserPayload,
+  ): Promise<{ id: string }> {
+    const user = await this.userService.delete(deleteUserData, currentUser);
+    pubSub.publish(SubscriptionEvent.userDeleted, { [SubscriptionEvent.userDeleted]: user });
+    return { id: user.id };
   }
 
   @Roles(UserRoles.ROLE_USER)
@@ -132,7 +145,7 @@ export class UserResolver {
   userAdded(
     @CurrentUser() currentUser: CurrentUserPayload,
   ) {
-    return pubSub.asyncIterator(SubscriptionEvent.userAdded);
+    return pubSub.asyncIterator(SubscriptionEvent.userRegistered);
   }
 
   @Roles(UserRoles.ROLE_USER)

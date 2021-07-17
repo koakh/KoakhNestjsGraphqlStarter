@@ -1,7 +1,8 @@
 export enum SubscriptionEvent {
   userLogged = 'userLogged',
-  userAdded = 'userAdded',
+  userRegistered = 'userRegistered',
   userUpdated = 'userUpdated',
+  userDeleted = 'userDeleted',
   userPasswordUpdated = 'userPasswordUpdated',
   userProfileUpdated = 'userProfileUpdated',
   userCitizenCardUpserted = 'userCitizenCardUpserted',

@@ -3,13 +3,13 @@ import { UserRoles } from '../auth/enums';
 import { CurrentUserPayload } from '../auth/interfaces';
 import { PaginationArgs } from '../common/input-types';
 import { newUuid } from '../common/utils/main.util';
-import { NewUserInput, UpdateUserInput, UpdateUserPasswordInput, UpdateUserProfileInput } from './input-type';
+import { DeleteUserInput, NewUserInput, UpdateUserInput, UpdateUserPasswordInput, UpdateUserProfileInput } from './input-type';
 import { UserData } from './interfaces';
 import { User } from './object-types';
 import { UserInMemory } from './user.data';
 import { UserStore } from './user.store';
 import { hashPassword } from './utils';
-// import { UserInMemory } from './user.data';
+import { constants as c } from "./user.constants";
 
 @Injectable()
 export class UserService {
@@ -18,22 +18,21 @@ export class UserService {
   // init usersStore
   usersData: UserInMemory = new UserInMemory();
 
-  validateFreeUserEmail = (email: string, username: string) => {
-    const findUser = this.usersData.data.find((e: UserData) => e.username === username || e.email === email);
+  validateFreeUserEmail = (username: string, email: string) => {
+    const findUser = this.usersData.find((e: UserData) => e.username === username || e.email === email, c.adminCurrentUser);
     if (findUser) {
       throw new HttpException({ status: HttpStatus.CONFLICT, error: 'user with that username and/or email already exists!' }, HttpStatus.CONFLICT);
     }
   }
 
   validateEmail = (userId: string, email: string) => {
-    // currentUser: CurrentUserPayload    
-    const findUser = this.usersData.data.find((e: UserData) => e.email === email);
+    const findUser = this.usersData.find((e: UserData) => e.email === email, c.adminCurrentUser);
     if (findUser && findUser.id != userId) {
       throw new HttpException({ status: HttpStatus.CONFLICT, error: 'user with that email already exists!' }, HttpStatus.CONFLICT);
     }
   }
 
-  async create(data: NewUserInput, currentUser?: CurrentUserPayload): Promise<User> {
+  async create(data: NewUserInput, currentUser: CurrentUserPayload): Promise<User> {
     this.validateFreeUserEmail(data.username, data.email);
     const password = hashPassword(data.password);
     const user = {
@@ -43,21 +42,17 @@ export class UserService {
       roles: [UserRoles.ROLE_USER],
       // add date in epoch unix time
       createdDate: new Date().getTime(),
+      createdBy: currentUser.userId,
     };
-    this.usersData.data.push(user);
-    return user;
+    return this.usersData.create(user, currentUser);
   }
 
-  async findAll(paginationArgs: PaginationArgs, currentUser?: CurrentUserPayload): Promise<User | User[]> {
-    // clone array before slice it
-    const data = this.usersData.data.slice();
-    return (paginationArgs)
-      ? data.splice(paginationArgs.skip, paginationArgs.take)
-      : data;
+  async findAll(paginationArgs: PaginationArgs, currentUser: CurrentUserPayload): Promise<User[]> {
+    return this.usersData.findAll(paginationArgs.skip, paginationArgs.take, currentUser);
   }
 
-  async findOneByField(key: string, value: string, currentUser?: CurrentUserPayload): Promise<User> {
-    const findUser = this.usersData.data.find((e: UserData) => e[key] === value);
+  async findOneByField(key: string, value: string, currentUser: CurrentUserPayload): Promise<User> {
+    const findUser = this.usersData.find((e: UserData) => e[key] === value, currentUser);
     if (!findUser) {
       // throw new HttpException({ status: HttpStatus.NO_CONTENT, error: 'no content' }, HttpStatus.NO_CONTENT);
       throw new NotFoundException();
@@ -65,17 +60,23 @@ export class UserService {
     return findUser;
   }
 
-  async update(data: UpdateUserInput, currentUser?: CurrentUserPayload): Promise<User> {
+  async update(data: UpdateUserInput, currentUser: CurrentUserPayload): Promise<User> {
     this.validateEmail(currentUser.userId, data.email);
     // double check if user Exists, or fail
-    let userToUpdate = await this.findOneByField('id', data.id, currentUser);
-    this.usersData.update(data.id, data as User);
+    await this.findOneByField('id', data.id, currentUser);
+    this.usersData.update(data.id, data as User, currentUser);
     // return mutated data
-    return this.usersData.data.find((e: UserData) => e.id === data.id);
+    return this.usersData.find((e: UserData) => e.id === data.id, currentUser);
   }
 
-  async updatePassword(data: UpdateUserPasswordInput, user: CurrentUserPayload): Promise<User> {
-    let userToUpdate = await this.findOneByField('id', data.id, user);
+  async delete(data: DeleteUserInput, currentUser: CurrentUserPayload): Promise<{ id: string }> {
+    // double check if user Exists, or fail
+    await this.findOneByField('id', data.id, currentUser);
+    return this.usersData.delete(data.id, currentUser);
+  }
+
+  async updatePassword(data: UpdateUserPasswordInput, currentUser: CurrentUserPayload): Promise<User> {
+    let userToUpdate = await this.findOneByField('id', data.id, currentUser);
     userToUpdate.password = hashPassword(data.password);
     return userToUpdate;
   }
@@ -83,9 +84,9 @@ export class UserService {
   async updateProfile(data: UpdateUserProfileInput, currentUser: CurrentUserPayload): Promise<User> {
     this.validateEmail(currentUser.userId, data.email);
     // double check if user Exists, or fail
-    let userToUpdate = await this.findOneByField('id', currentUser.userId);
-    this.usersData.update(currentUser.userId, data as User);
+    await this.findOneByField('id', currentUser.userId, currentUser);
+    this.usersData.update(currentUser.userId, data as User, currentUser);
     // return mutated data
-    return this.usersData.data.find((e: UserData) => e.id === currentUser.userId);
+    return this.usersData.find((e: UserData) => e.id === currentUser.userId, currentUser);
   }
 }

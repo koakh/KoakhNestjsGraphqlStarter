@@ -10,6 +10,7 @@ type User {
   email: String!
   roles: [String!]!
   createdDate: Float!
+  createdBy: String!
   metaData: JSONObject
 }
 
@@ -36,6 +37,7 @@ type Mutation {
   revokeUserRefreshTokens(username: String!): Boolean!
   userRegister(newUserData: NewUserInput!): User!
   userUpdate(updateUserData: UpdateUserInput!): User!
+  userDelete(deleteUserData: DeleteUserInput!): User!
   userUpdatePassword(updateUserPasswordData: UpdateUserPasswordInput!): User!
   userUpdateProfile(updateUserProfileData: UpdateUserProfileInput!): User!
 }
@@ -61,6 +63,10 @@ input UpdateUserInput {
   lastName: String
   email: String
   metaData: JSONObject
+}
+
+input DeleteUserInput {
+  id: String!
 }
 
 input UpdateUserPasswordInput {

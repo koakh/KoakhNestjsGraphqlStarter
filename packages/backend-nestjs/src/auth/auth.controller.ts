@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { AccessToken } from './object-types/access-token.object-type';
 import { GqlContextPayload, SignJwtTokenPayload } from './interfaces';
 import { JwtService } from '@nestjs/jwt';
+import { constants as uc } from '../user/user.constants';
 
 @Controller()
 export class AuthController {
@@ -43,7 +44,7 @@ export class AuthController {
     }
 
     // token is valid, send back accessToken
-    const user: User = await this.userService.findOneByField('username', payload.username, c.CURRENT_USER_ADMIN_ROLE);
+    const user: User = await this.userService.findOneByField('username', payload.username, uc.adminCurrentUser);
     // check jid token
     if (!user) {
       return invalidPayload();

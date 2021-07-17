@@ -13,6 +13,7 @@ Backend:
     ☐ @critical subscriptions "message": "Cannot read property 'userId' of undefined",
     ☐ use nestConfig EveryWhere serach for {e.
     ☐ nestjs workSpaces/monoRepo
+    ☐ clear all TODO's
     ✔ update all packages to latest @done(21-07-16 01:24)
       - https://stackoverflow.com/questions/68354656/unhandledpromiserejectionwarning-error-you-must-await-server-start-before
       - change from "apollo-server-express": "^3.0.0" to "apollo-server-express": "^3.0.0"
