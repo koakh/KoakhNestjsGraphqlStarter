@@ -1,10 +1,33 @@
 import { UserData } from "./interfaces";
+import { User } from "./object-types";
+
+export class UserInMemory {
+  // TODO protect
+  public data: User[];
+  constructor() {
+    this.data = new Array<User>();
+    userData.forEach((e:User) => {
+      this.data.push(e);
+    })
+  }
+
+  update(id: string, updateData: User) {
+    this.data.forEach((user: User) => {
+      if (user.id === id) {
+        const keys = Object.keys(updateData);
+        keys.forEach(key => {
+          if (key != 'id') {
+            user[key] = updateData[key];
+          }
+        });
+      };
+    });
+  }
+}
 
 // https://www.mockaroo.com/
 // https://bcrypt-generator.com/
-
-
-export const userData: UserData[] = [{
+const userData: UserData[] = [{
   id: 'efeed3eb-c0a2-4b3e-816f-2a42ca8451b3',
   username: 'admin',
   password: '$2b$10$U9AVUdkRnFsrMjPg/XyTeOWmF.gu73gd1hJGR1s1OnKTshjJYdGpW',

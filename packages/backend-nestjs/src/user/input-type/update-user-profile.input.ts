@@ -4,11 +4,16 @@ import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateUserProfileInput {
-  @Field()
-  @IsUUID()
-  id: string;
+  @Field({ nullable: true })
+  @IsOptional()
+  firstName: string;
 
-  @Field()
+  @Field({ nullable: true })
+  @IsOptional()
+  lastName: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
   @IsEmail()
   email: string;
 

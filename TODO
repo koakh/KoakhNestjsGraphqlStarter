@@ -1,5 +1,7 @@
 Backend:
   Important:
+    ☐ UserInMemory must have all interface implementations used in user service
+      ☐ use currentUser with moke data, ex johnDoe filter something, admin filter all
     ☐ fix subscriptions GqlGuard
     ☐ create all operations on client.http
     ☐ finish graphql authentication implemention
@@ -20,6 +22,7 @@ Backend:
     ☐ finish auth livecycle notes in client.http and bring it here
     ✔ UsersModule and friends to singular @done(21-07-15 00:54)
     ☐ use `user: CurrentUserPayload` to filter data by user, tenancy, add moke owner or createdBy
+    ☐ add disable CORS and other stuff from c3-backend
   Other:
     ☐ use authPackage `GraphQLError [Object]: Query root type must be provided.`
       - https://stackoverflow.com/questions/64105940/graphqlerror-query-root-type-must-be-provided

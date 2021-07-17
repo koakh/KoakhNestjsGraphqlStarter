@@ -11,8 +11,7 @@
 @userLoginUsername = admin
 @userLoginPassword = 12345678
 @userIdAdmin = efeed3eb-c0a2-4b3e-816f-2a42ca8451b3
-// @userIdJohnDoe = 520c2eb5-e83b-4ef5-a343-85756bcce149
-@userIdJohnDoe = 520c2eb5-e83b-4ef5-a343-85756bcce111
+@userIdJohnDoe = 520c2eb5-e83b-4ef5-a343-85756bcce149
 @userLoginJohnDoe = johndoe
 @authToken = {{userLogin.response.body.$.data.userLogin.accessToken}}
 
@@ -89,10 +88,14 @@ Authorization: Bearer {{authToken}}
 
 query userProfile{
   userProfile {
-		id
-		username
-		email
-		roles
+    id
+    username
+    firstName
+    lastName
+    email
+    roles
+    createdDate
+    metaData
 	}
 }
 
@@ -167,8 +170,8 @@ query userByUsername($username: String!) {
 	"username": "{{userLoginJohnDoe}}"
 }
 
-### query: userByUsername
-// @name userByUsername
+### query: userRegister
+// @name userRegister
 
 POST {{gqlUri}} HTTP/1.1
 Content-Type: {{contentType}}
@@ -184,7 +187,7 @@ mutation userRegister($newUserData: NewUserInput!){
     email
     roles
     createdDate
-    metaData    
+    metaData
   }
 }
 
@@ -196,7 +199,7 @@ mutation userRegister($newUserData: NewUserInput!){
 		"lastName": "Monteiro",
 		"email": "mail@koakh.com",
 		"metaData": { 
-			"key": "valueUpdatedAgain"
+			"key": "new user registered"
 		}
 	}
 }	
@@ -214,7 +217,12 @@ X-REQUEST-TYPE: {{requestType}}
 mutation userUpdate($updateUserData: UpdateUserInput!) {
   userUpdate(updateUserData: $updateUserData) {
     id
+    username
+    firstName
+    lastName
+    email
     roles
+    createdDate
     metaData
   }
 }
@@ -222,13 +230,14 @@ mutation userUpdate($updateUserData: UpdateUserInput!) {
 {
 	"updateUserData": {
 		"id": "{{userIdJohnDoe}}",
+		"email": "another@koakh.com",
 		"roles": [
 			"USER",
 			"MANAGER",
 			"ADMIN"
 		],
 		"metaData": {
-			"key": "valueUpdated"
+			"key": "valueUpdatedAgain"
 		}
 	}
 }
@@ -247,12 +256,18 @@ mutation userUpdatePassword($updateUserPasswordData: UpdateUserPasswordInput!) {
   userUpdatePassword(updateUserPasswordData: $updateUserPasswordData) {
     id
     username
+    firstName
+    lastName
+    email
+    roles
+    createdDate
+    metaData
   }
 }
 
 {
 	"updateUserPasswordData": {
-		"id": "{{userId}}",
+		"id": "{{userIdAdmin}}",
 		"password": "87654321"
 	}
 }
@@ -271,31 +286,20 @@ mutation userUpdateProfile($updateUserProfileData: UpdateUserProfileInput!) {
   userUpdateProfile(updateUserProfileData: $updateUserProfileData) {
     id
     username
+    firstName
+    lastName
     email
-    mobilePhone
-    postal
-    city
-    region
-    geoLocation
-    timezone
-    useralInfo
+    roles
+    createdDate
     metaData
   }
 }
 
 {
 	"updateUserProfileData": {
-		"id": "{{userId}}",
-		"email": "emailUpdated2@example.com",
-		"mobilePhone": "mobilePhoneUpdated2",
-		"postal": "postalUpdated",
-		"city": "cityUpdated",
-		"region": "regionUpdated",
-		"geoLocation": "geoLocationUpdated",
-		"timezone": "timezoneUpdated",
-		"useralInfo": "useralInfoUpdated",
+		"email": "profileupdated@example.com",
 		"metaData": {
-			"key": "metaDataUpdated"
+			"key": "metaDataUpdated on profile"
 		}
 	}
 }

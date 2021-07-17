@@ -8,7 +8,7 @@ import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { appConstants as c } from '../common/app/constants';
 import { SubscriptionEvent } from '../common/enums';
 import { PaginationArgs } from '../common/input-types';
-import { NewUserInput, UpdateUserInput } from './input-type';
+import { NewUserInput, UpdateUserInput, UpdateUserPasswordInput, UpdateUserProfileInput } from './input-type';
 import { User } from './object-types';
 import { UserService } from './user.service';
 import { PubSub } from 'graphql-subscriptions';
@@ -99,31 +99,31 @@ export class UserResolver {
     return user;
   }
 
-  // @Roles(UserRoles.ROLE_USER)
-  // @UseGuards(GqlRolesGuard)
-  // @UseGuards(GqlAuthGuard)
-  // @Mutation(returns => User)
-  // async userUpdatePassword(
-  //   @Args('updateUserPasswordData') updateUserPasswordData: UpdateUserPasswordInput,
-  //   @CurrentUser() currentUser: CurrentUserPayload,
-  // ): Promise<User> {
-  //   const user = await this.userService.updatePassword(updateUserPasswordData, currentUser);
-  //   pubSub.publish(SubscriptionEvent.userPasswordUpdated, { [SubscriptionEvent.userPasswordUpdated]: user });
-  //   return user;
-  // }
+  @Roles(UserRoles.ROLE_USER)
+  @UseGuards(GqlRolesGuard)
+  @UseGuards(GqlAuthGuard)
+  @Mutation(returns => User)
+  async userUpdatePassword(
+    @Args('updateUserPasswordData') updateUserPasswordData: UpdateUserPasswordInput,
+    @CurrentUser() currentUser: CurrentUserPayload,
+  ): Promise<User> {
+    const user = await this.userService.updatePassword(updateUserPasswordData, currentUser);
+    pubSub.publish(SubscriptionEvent.userPasswordUpdated, { [SubscriptionEvent.userPasswordUpdated]: user });
+    return user;
+  }
 
-  // @Roles(UserRoles.ROLE_USER)
-  // @UseGuards(GqlRolesGuard)
-  // @UseGuards(GqlAuthGuard)
-  // @Mutation(returns => User)
-  // async userUpdateProfile(
-  //   @Args('updateUserProfileData') updateUserProfileData: UpdateUserProfileInput,
-  //   @CurrentUser() currentUser: CurrentUserPayload,
-  // ): Promise<User> {
-  //   const user = await this.userService.updateProfile(updateUserProfileData, currentUser);
-  //   pubSub.publish(SubscriptionEvent.userProfileUpdated, { [SubscriptionEvent.userProfileUpdated]: user });
-  //   return user;
-  // }
+  @Roles(UserRoles.ROLE_USER)
+  @UseGuards(GqlRolesGuard)
+  @UseGuards(GqlAuthGuard)
+  @Mutation(returns => User)
+  async userUpdateProfile(
+    @Args('updateUserProfileData') updateUserProfileData: UpdateUserProfileInput,
+    @CurrentUser() currentUser: CurrentUserPayload,
+  ): Promise<User> {
+    const user = await this.userService.updateProfile(updateUserProfileData, currentUser);
+    pubSub.publish(SubscriptionEvent.userProfileUpdated, { [SubscriptionEvent.userProfileUpdated]: user });
+    return user;
+  }
 
   @Roles(UserRoles.ROLE_USER)
   @UseGuards(GqlRolesGuard)

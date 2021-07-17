@@ -36,6 +36,8 @@ type Mutation {
   revokeUserRefreshTokens(username: String!): Boolean!
   userRegister(newUserData: NewUserInput!): User!
   userUpdate(updateUserData: UpdateUserInput!): User!
+  userUpdatePassword(updateUserPasswordData: UpdateUserPasswordInput!): User!
+  userUpdateProfile(updateUserProfileData: UpdateUserProfileInput!): User!
 }
 
 input LoginUserInput {
@@ -59,7 +61,18 @@ input UpdateUserInput {
   lastName: String
   email: String
   metaData: JSONObject
-  roles: [String!] = "ROLE_USER"
+}
+
+input UpdateUserPasswordInput {
+  id: String!
+  password: String
+}
+
+input UpdateUserProfileInput {
+  firstName: String
+  lastName: String
+  email: String
+  metaData: JSONObject
 }
 
 type Subscription {

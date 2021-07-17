@@ -5,11 +5,12 @@ import { NestFactory } from '@nestjs/core';
 import { ApplicationModule } from './app.module';
 
 async function bootstrap() {
+  const context = 'Main';
   // Logger.log(`process.env.APOLLO_FETCH_POLICY:${process.env.APOLLO_FETCH_POLICY}`);
   const app = await NestFactory.create(
     ApplicationModule, {
     httpsOptions,
-    logger: ['error', 'warn'],
+    logger: ['error', 'warn', 'log'],
   });
   // rest server cors, before any middleware,
   // warn cors for graphql is configured in ApplicationModule
@@ -22,8 +23,8 @@ async function bootstrap() {
 
   await app.listen(e.httpsPort)
     .then(() => {
-      Logger.log(`graphql server started, endpoint exposed at https://localhost:${e.httpsPort}/graphql`);
-      Logger.log(`corsOrigin authorized domains '${e.corsOriginReactFrontend.join(', ')}'`);
+      Logger.log(`graphql server started, endpoint exposed at https://localhost:${e.httpsPort}/graphql`, context);
+      Logger.log(`corsOrigin authorized domains '${e.corsOriginReactFrontend.join(', ')}'`, context);
     });
 }
 

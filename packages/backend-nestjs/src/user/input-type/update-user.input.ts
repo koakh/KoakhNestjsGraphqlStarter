@@ -25,8 +25,4 @@ export class UpdateUserInput {
   @Field(type => GraphQLJSONObject, { nullable: true })
   @IsOptional()
   metaData: any;
-
-  @Field(type => [String], { defaultValue: UserRoles.ROLE_USER })
-  @IsOptional()
-  roles: string[];
 }

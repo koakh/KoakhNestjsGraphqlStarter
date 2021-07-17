@@ -79,7 +79,7 @@ export class AuthResolver {
   @UseGuards(GqlRolesGuard)
   @Subscription(returns => String)
   userLogged(
-    @CurrentUser() user: CurrentUserPayload,
+    @CurrentUser() currentUser: CurrentUserPayload,
   ) {
     return pubSub.asyncIterator(SubscriptionEvent.userLogged);
   }
