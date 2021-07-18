@@ -3,12 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config/dist';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AuthenticationError } from 'apollo-server-core';
 import { ConnectionParams } from 'subscriptions-transport-ws';
-import { AuthModule } from './auth/auth.module';
-import { AuthService } from './auth/auth.service';
-import { GqlContext, GqlContextPayload } from './auth/interfaces';
+import { UserModule, AuthService, AuthModule, GqlContext, GqlContextPayload,  } from '@koakh/nestjs-package-jwt-authentication-graphql';
 import { configuration } from './common/config';
 import { mapKeysToLowerCase } from './common/utils';
-import { UserModule } from './user/user.module';
 
 @Module({
   imports: [

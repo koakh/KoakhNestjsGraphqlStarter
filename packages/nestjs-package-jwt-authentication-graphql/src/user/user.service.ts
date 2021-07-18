@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { UserRoles } from '../auth/enums';
 import { CurrentUserPayload } from '../auth/interfaces';
-import { PaginationArgs } from '../common/input-types';
+import { PaginationArgs } from '../common/arg-types';
 import { newUuid } from '../common/utils/main.util';
 import { DeleteUserInput, NewUserInput, UpdateUserInput, UpdateUserPasswordInput, UpdateUserProfileInput } from './input-type';
 import { UserData } from './interfaces';

@@ -2,11 +2,11 @@ import { CookieParserMiddleware } from '@nest-middlewares/cookie-parser';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 import { JwtStrategy, LocalStrategy } from './strategy';
+import {UserService} from '../user/user.service';
 
 @Module({
   imports: [
@@ -25,10 +25,10 @@ import { JwtStrategy, LocalStrategy } from './strategy';
       }),
       inject: [ConfigService],
     }),
-    UserModule,
+    UserService,
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy],
+  providers: [AuthService, AuthResolver, UserService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })
 

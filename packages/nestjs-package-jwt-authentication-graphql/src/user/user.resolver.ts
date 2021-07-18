@@ -6,7 +6,7 @@ import { UserRoles } from '../auth/enums';
 import { GqlRolesGuard } from '../auth/guards';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { SubscriptionEvent } from '../common/enums';
-import { PaginationArgs } from '../common/input-types';
+import { PaginationArgs } from '../common/arg-types';
 import { DeleteUserInput, NewUserInput, UpdateUserInput, UpdateUserPasswordInput, UpdateUserProfileInput } from './input-type';
 import { User } from './object-types';
 import { UserService } from './user.service';

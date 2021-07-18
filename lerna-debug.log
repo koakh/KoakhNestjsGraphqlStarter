@@ -2,25 +2,12 @@
 0 silly argv   _: [ 'add' ],
 0 silly argv   scope: '@koakh/koakh-nestjs-graphql-starter',
 0 silly argv   globs: [],
-0 silly argv   lernaVersion: '3.22.1',
-0 silly argv   '$0': 'lerna',
-0 silly argv   pkg: './packages/nestjs-package-jwt-authentication-graphql'
+0 silly argv   lernaVersion: '4.0.0',
+0 silly argv   '$0': 'node_modules/.bin/lerna',
+0 silly argv   pkg: 'packages/nestjs-package-jwt-authentication-graphql'
 0 silly argv }
-1 notice cli v3.22.1
+1 notice cli v4.0.0
 2 verbose rootPath /media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter
-3 notice filter including "@koakh/koakh-nestjs-graphql-starter"
-4 info filter [ '@koakh/koakh-nestjs-graphql-starter' ]
-5 error TypeError: Invalid comparator: /media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/packages/nestjs-package-jwt-authentication-graphql
-5 error     at Comparator.parse (/media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/node_modules/semver/semver.js:794:11)
-5 error     at new Comparator (/media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/node_modules/semver/semver.js:777:8)
-5 error     at Range.<anonymous> (/media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/node_modules/semver/semver.js:975:12)
-5 error     at Array.map (<anonymous>)
-5 error     at Range.parseRange (/media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/node_modules/semver/semver.js:974:13)
-5 error     at Range.<anonymous> (/media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/node_modules/semver/semver.js:917:17)
-5 error     at Array.map (<anonymous>)
-5 error     at new Range (/media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/node_modules/semver/semver.js:916:40)
-5 error     at Function.intersects (/media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/node_modules/semver/semver.js:1542:8)
-5 error     at getRangeToReference (/media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/node_modules/@lerna/add/lib/get-range-to-reference.js:18:35)
-5 error     at /media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/node_modules/@lerna/add/index.js:152:14
-5 error     at Array.filter (<anonymous>)
-5 error     at AddCommand.collectPackagesToChange (/media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/node_modules/@lerna/add/index.js:144:21)
+3 error Error: An unknown git error occurred
+3 error     at makeError (/media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/node_modules/@npmcli/git/lib/make-error.js:28:13)
+3 error     at /media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/node_modules/@npmcli/git/lib/spawn.js:36:26

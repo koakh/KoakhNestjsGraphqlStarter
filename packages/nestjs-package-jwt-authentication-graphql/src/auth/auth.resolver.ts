@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { SubscriptionEvent } from '../common/enums';
-import { User } from '../user/object-types';
+import { User, UserLoginResponse } from '../user/object-types';
 import { constants as uc } from '../user/user.constants';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
@@ -11,7 +11,7 @@ import { UserRoles } from './enums';
 import { GqlAuthGuard, GqlLocalAuthGuard, GqlRolesGuard } from './guards';
 import { LoginUserInput } from './input-types';
 import { CurrentUserPayload, GqlContext, SignJwtTokenPayload } from './interfaces';
-import { AccessToken, UserLoginResponse } from './object-types';
+import { AccessToken } from './object-types';
 
 const pubSub = new PubSub();
 

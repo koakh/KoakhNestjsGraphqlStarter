@@ -25,6 +25,7 @@ Backend:
     ☐ extract library from implementation
     ☐ dockerImage
     ☐ clear all TODO's
+    ☐ clean old NOTES.md
   Other:
     ☐ use authPackage `GraphQLError [Object]: Query root type must be provided.`
       - https://stackoverflow.com/questions/64105940/graphqlerror-query-root-type-must-be-provided
