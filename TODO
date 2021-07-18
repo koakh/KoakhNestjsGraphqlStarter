@@ -20,9 +20,9 @@ Backend:
     ✔ UsersModule and friends to singular @done(21-07-15 00:54)
     ✔ use `user: CurrentUserPayload` to filter data by user, tenancy, add moke owner or createdBy @done(21-07-18 00:06)
     ✔ add disable CORS and other stuff from c3-backend @done(21-07-18 00:06)
-    ☐ create nest workspaces and 2 libraries on for users and other for auth that consumes one users module
-    ☐ nestjs workSpaces/monoRepo
-    ☐ extract library from implementation
+    ✔ create nest workspaces and 2 libraries on for users and other for auth that consumes one users module @done(21-07-18 23:42)
+    ✔ extract library from implementation @done(21-07-18 23:42)
+    ☐ graphql uploads
     ☐ dockerImage
     ☐ clear all TODO's
     ☐ clean old NOTES.md

@@ -37,8 +37,8 @@ mutation userLogin($loginUserData: LoginUserInput!) {
 
 {
 	"loginUserData": {
-		// "username": "{{userLoginAdmin}}",
-		"username": "{{userLoginJohnDoe}}",
+		"username": "{{userLoginAdmin}}",
+		// "username": "{{userLoginJohnDoe}}",
 		"password": "{{userLoginPassword}}" 
 	}
 }
@@ -67,6 +67,7 @@ Authorization: Bearer {{authToken}}
 
 ### mutation: revokeUserRefreshTokens
 // @name revokeUserRefreshTokens
+// warn for revoke token works we must use the right user
 POST {{gqlUri}} HTTP/1.1
 Content-Type: {{contentType}}
 X-REQUEST-TYPE: {{requestType}}

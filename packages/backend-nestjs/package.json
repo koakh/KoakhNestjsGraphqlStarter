@@ -5,6 +5,7 @@
   "author": "",
   "scripts": {
     "upgrade": "ncu --upgrade",
+    "npm-check": "npm-check",
     "build": "tsc -p tsconfig.build.json",
     "start": "npx env-cmd -f .env ts-node src/main",
     "prestart:prod": "npm run build",
@@ -34,6 +35,7 @@
     "graphql": "^15.5.1",
     "graphql-subscriptions": "1.2.1",
     "graphql-type-json": "^0.3.2",
+    "npm-check": "^5.9.2",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
