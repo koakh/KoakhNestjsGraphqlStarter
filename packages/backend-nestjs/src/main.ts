@@ -1,22 +1,22 @@
-import { httpsOptions } from './common/config/express.config';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ApplicationModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { httpsConfig, loggerConfig } from './common/config';
 
 async function bootstrap() {
   const context = 'NestApplication';
   const app = await NestFactory.create(
     ApplicationModule, {
-    httpsOptions,
-    logger: ['error', 'warn', 'log'],
+    httpsOptions: httpsConfig,
+    logger: loggerConfig,
   });
   const configService = app.get<ConfigService>(ConfigService);
-  const httpsServerPort = configService.get<string>('server.httpsServerPort');
-  const httpsKeyFile = configService.get<string>('server.httpsKeyFile');
-  const httpsCertFile = configService.get<string>('server.httpsCertFile');
-  const corsOriginEnabled = configService.get<boolean>('server.corsOriginEnabled');
-  const corsOriginReactFrontend = configService.get<string>('server.corsOriginReactFrontend');
+  const httpsServerPort = configService.get<string>('httpsServerPort');
+  const httpsKeyFile = configService.get<string>('httpsKeyFile');
+  const httpsCertFile = configService.get<string>('httpsCertFile');
+  const corsOriginEnabled = configService.get<boolean>('corsOriginEnabled');
+  const corsOriginReactFrontend = configService.get<string>('corsOriginReactFrontend');
   let corsOptions: { origin?: string[], credentials: boolean } = { credentials: true };
   let corsMessage = 'disabled';
   // inject origin if corsOriginEnabled

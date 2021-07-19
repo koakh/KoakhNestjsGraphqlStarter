@@ -5,13 +5,13 @@ import { User } from '../user/object-types';
 import { constants as uc } from '../user/user.constants';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
-import { GqlContextPayload, SignJwtTokenPayload } from './interfaces';
+import { EnvironmentVariables, GqlContextPayload, SignJwtTokenPayload } from './interfaces';
 import { AccessToken } from './object-types/access-token.object-type';
 
 @Controller()
 export class AuthController {
   constructor(
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService<EnvironmentVariables>,
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
@@ -37,7 +37,7 @@ export class AuthController {
     let payload: GqlContextPayload;
     try {
       // warn this seems to use old way of send secret, in new versions we must send with `this.jwtService.verify(token, {secret: e.refreshTokenJwtSecret})`
-      payload = this.jwtService.verify(token, this.configService.get('jwt.refreshTokenJwtSecret'));
+      payload = this.jwtService.verify(token, this.configService.get('refreshTokenJwtSecret'));
     } catch (error) {
       // Logger.log(error);
       return invalidPayload();

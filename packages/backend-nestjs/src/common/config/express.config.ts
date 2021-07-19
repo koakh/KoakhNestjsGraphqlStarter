@@ -1,9 +1,9 @@
 import * as fs from 'fs';
-import { configuration } from '../../common/config';
+import { configuration } from './configuration';
 
-export const httpsOptions = {
+export const httpsConfig = {
   // private-key.pem
-  key: fs.readFileSync(`./${configuration().server.httpsKeyFile}`),
+  key: fs.readFileSync(`./${configuration().httpsKeyFile}`),
   // public-certificate.pem
-  cert: fs.readFileSync(`./${configuration().server.httpsCertFile}`),
+  cert: fs.readFileSync(`./${configuration().httpsCertFile}`),
 };

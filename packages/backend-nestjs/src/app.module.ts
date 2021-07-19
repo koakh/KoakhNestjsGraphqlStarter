@@ -1,17 +1,21 @@
+import { AuthModule, AuthService, GqlContext, GqlContextPayload, UserModule } from '@koakh/nestjs-package-jwt-authentication-graphql';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AuthenticationError } from 'apollo-server-core';
 import { ConnectionParams } from 'subscriptions-transport-ws';
-import { UserModule, AuthService, AuthModule, GqlContext, GqlContextPayload,  } from '@koakh/nestjs-package-jwt-authentication-graphql';
 import { configuration } from './common/config';
 import { mapKeysToLowerCase } from './common/utils';
+import { validate } from './common/validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      ignoreEnvVars: true,
       load: [configuration],
+      // TODO
+      // validate,
     }),
     // apolloServer config: use forRootAsync to import AuthModule and inject AuthService
     GraphQLModule.forRootAsync({

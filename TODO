@@ -1,5 +1,6 @@
 Backend:
   Important:
+    ☐ remove env-cmd there is not required to work with nestConfig
     ☐ UserInMemory must have all interface implementations used in user service
       ✔ use currentUser with moke data, ex johnDoe filter something, admin filter all @done(21-07-18 00:06)
     ✔ fix subscriptions GqlGuard @done(21-07-17 23:57)
@@ -23,7 +24,7 @@ Backend:
     ✔ create nest workspaces and 2 libraries on for users and other for auth that consumes one users module @done(21-07-18 23:42)
     ✔ extract library from implementation @done(21-07-18 23:42)
     ☐ graphql uploads
-    ☐ dockerImage, don't have tag yet
+    ☐ dockerImage, don't have tag yenpm i t
     ☐ clear all TODO's
     ☐ clean old NOTES.md
   Other:

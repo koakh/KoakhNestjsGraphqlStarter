@@ -1,7 +1,6 @@
 # Notes
 
-npx lerna add @koakh/nestjs-package-jwt-authentication-graphql/ --scope @koakh/koakh-nestjs-graphql-starter
-npx lerna remove @koakh/nestjs-package-jwt-authentication-graphql/ --scope @koakh/koakh-nestjs-graphql-starter
+npx lerna add @koakh/nestjs-package-jwt-authentication-graphql --scope @koakh/koakh-nestjs-graphql-starter
 
 npx lerna add npm-check --scope @koakh/koakh-nestjs-graphql-starter
 npx lerna add npm-check-updates --scope @koakh/koakh-nestjs-graphql-starter
@@ -24,3 +23,7 @@ Run lerna bootstrap
     "@koakh/nestjs-package-jwt-authentication-graphql": "^1.0.0",
 
 
+
+
+/media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/@koakh/nestjs-package-jwt-authentication-graphql/package.json
+/home/mario/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/packages/nestjs-package-jwt-authentication-graphql/package.json
