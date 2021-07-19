@@ -1,6 +1,6 @@
 Backend:
   Important:
-    ☐ remove env-cmd there is not required to work with nestConfig
+    ✔ remove env-cmd there is not required to work with nestConfig @done(21-07-19 22:13)
     ☐ UserInMemory must have all interface implementations used in user service
       ✔ use currentUser with moke data, ex johnDoe filter something, admin filter all @done(21-07-18 00:06)
     ✔ fix subscriptions GqlGuard @done(21-07-17 23:57)

@@ -20,9 +20,9 @@ import { configuration } from '../common/config';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('jwt.accessTokenJwtSecret'),
+        secret: configService.get('accessTokenJwtSecret'),
         signOptions: {
-          expiresIn: configService.get('jwt.accessTokenExpiresIn'),
+          expiresIn: configService.get('accessTokenExpiresIn'),
         },
       }),
       inject: [ConfigService],

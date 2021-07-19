@@ -35,7 +35,7 @@ export class UserStore {
 
   incrementTokenVersion(username: string): number {
     const user: User = this.getUser(username);
-    if (configuration().jwt.refreshTokenSkipIncrementVersion) {
+    if (configuration().refreshTokenSkipIncrementVersion) {
       // devMode: don't increment tokenVersion
       return user.tokenVersion;
     } else {
