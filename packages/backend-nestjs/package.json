@@ -14,7 +14,8 @@
     "start:dev:network": "npx env-cmd -f network.env tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
     "start:debug:network": "npx env-cmd -f network.env tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect=9230 dist/main.js\"",
     "start:prod": "npx env-cmd -f .env node dist/main.js",
-    "start:container": "npx node dist/main.js"
+    "start:container": "npx node dist/main.js",
+    "docker:build": "docker-compose build"
   },
   "dependencies": {
     "@koakh/nestjs-package-jwt-authentication-graphql": "^1.0.0",
@@ -33,19 +34,18 @@
     "class-validator": "^0.13.1",
     "generate-password": "^1.6.0",
     "graphql": "^15.5.1",
-    "graphql-subscriptions": "1.2.1",
+    "graphql-subscriptions": "^1.2.1",
     "graphql-type-json": "^0.3.2",
     "npm-check": "^5.9.2",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
-    "undefined": "/media/mario/storage/Home/Documents/Development/Node/@SimpleProjectsAndStarters/TypeScript/TypeScriptNodeNestJsGraphQLStarter/packages/nestjs-package-jwt-authentication-graphql",
     "uuid": "^8.3.2",
     "yup": "^0.32.9"
   },
   "devDependencies": {
-    "@types/node": "^16.3.2",
+    "@types/node": "^16.3.3",
     "@types/passport-jwt": "^3.0.6",
     "@types/passport-local": "^1.0.34",
     "env-cmd": "^10.1.0",

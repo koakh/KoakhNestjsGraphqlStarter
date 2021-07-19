@@ -23,7 +23,7 @@ Backend:
     ✔ create nest workspaces and 2 libraries on for users and other for auth that consumes one users module @done(21-07-18 23:42)
     ✔ extract library from implementation @done(21-07-18 23:42)
     ☐ graphql uploads
-    ☐ dockerImage
+    ☐ dockerImage, don't have tag yet
     ☐ clear all TODO's
     ☐ clean old NOTES.md
   Other:

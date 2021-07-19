@@ -14,24 +14,22 @@ RUN apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python
 RUN npm install --quiet node-gyp -g
 
 # install Lerna globally
-RUN npm i lerna -g --loglevel notice
+# RUN npm i lerna -g --loglevel notice
+
+COPY . .
 
 # copy the root package.json and install, then copy the relevant packages.
-COPY package.json .
+# COPY package.json .
 # COPY package.json package-lock*.json /usr/src/app/
 RUN npm install --loglevel notice
 
 # copy relevant packages
-COPY \
-  packages/server-graphql/ ./packages/server-graphql/ \
-  packages/common-cc/ ./packages/common-cc/ \
-  packages/asset-cc/ ./packages/asset-cc/ \
-  packages/cause-cc/ ./packages/cause-cc/ \
-  packages/participant-cc/ ./packages/participant-cc \
-  packages/person-cc/ ./packages/person-cc/ \
-  packages/transaction-cc/ ./packages/transaction-cc/
+# COPY \
+#   packages/backend-nestjs/ ./packages/backend-nestjs/ \
+#   packages/nestjs-package-jwt-authentication-graphql/ ./packages/nestjs-package-jwt-authentication-graphql/
 
-COPY lerna.json .
-RUN lerna bootstrap
+# COPY lerna.json .
+# RUN lerna bootstrap
 
-CMD [ "npm", "run", "--prefix", "packages/server-graphql", "start:container" ]
+# CMD [ "npm", "run", "--prefix", "packages/backend-nestjs", "start:container" ]
+CMD [ "npm", "run", "start:container" ]

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config/dist';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AuthenticationError } from 'apollo-server-core';
 import { ConnectionParams } from 'subscriptions-transport-ws';

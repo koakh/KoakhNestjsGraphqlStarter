@@ -7,11 +7,13 @@ import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 import { JwtStrategy, LocalStrategy } from './strategy';
 import {UserService} from '../user/user.service';
+import { configuration } from '../common/config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [configuration],
     }),
     // not used because we use a class based strategy GqlAuthGuard
     // configure the JwtModule using register(), passing configuration object, and register a default strategy

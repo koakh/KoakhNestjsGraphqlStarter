@@ -2,9 +2,9 @@ version: '3.7'
 
 services:
 
-  solidarychain-frontend-playground-dev:
-    container_name: solidarychain-frontend-playground-dev
-    image: solidarychain-frontend-playground-dev
+  koakh-nestjs-graphql-starter:
+    container_name: koakh-nestjs-graphql-starter
+    image: koakh-nestjs-graphql-starter
     build:
       context: .
       dockerfile: Dockerfile

@@ -27,7 +27,7 @@
     "@types/react-dom": "^16.9.1",
     "apollo-link-token-refresh": "^0.3.2",
     "change-case": "^4.1.1",
-    "graphql": "^15.3.0",
+    "graphql": "^15.5.1",
     "jwt-decode": "^2.2.0",
     "qrcode.react": "^1.0.0",
     "react": "^16.13.1",
@@ -54,7 +54,7 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/reflect-metadata": "^0.1.0",
     "@types/uuid": "^8.3.0",
-    "typescript": "^4.0.2"
+    "typescript": "^4.3.5"
   },
   "eslintConfig": {
     "extends": "react-app"
