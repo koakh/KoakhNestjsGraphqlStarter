@@ -16,7 +16,8 @@ RUN npm install --quiet node-gyp -g
 # install Lerna globally
 # RUN npm i lerna -g --loglevel notice
 
-COPY . .
+COPY . . \
+  node_modules/ node_modules/
 
 # copy the root package.json and install, then copy the relevant packages.
 # COPY package.json .

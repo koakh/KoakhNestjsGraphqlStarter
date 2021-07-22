@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+
+  koakh-nestjs-graphql-starter:
+    # this works if docker-compose up is launched in api folder
+    # build: .
+    # outside, using context
+    # build:
+    #   dockerfile: Dockerfile
+    #   context: ./packages/server-graphql
+    # using image to force images to have implicit name, else compose prefix it with folder name ex ls-api_
+    image: koakh/koakh-nestjs-graphql-starter
+    hostname: solidarychain-server-graphql
+    domainname: koakh/koakh-nestjs-graphql-starter
+    container_name: koakh-nestjs-graphql-starter
+    # depends_on:
+    #   - koakh-simplified-api-mongodb
+    # links:
+    #   - koakh-simplified-api-mongodb:mongodb
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 443:3443
+      # enable debug inside container
+      # - 9229:9229
+    # env:
+    #   - "HTTPS_SERVER_PORT=443"
+    # env_file:
+    #   - packages/server-graphql/docker.env
+    # wip: use production version: required config
+    # command: "npm run --prefix packages/server-graphql start"

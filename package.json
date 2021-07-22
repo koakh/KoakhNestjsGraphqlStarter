@@ -17,6 +17,7 @@
     "pkg:graphql:build": "npx lerna run build --scope @koakh/koakh-nestjs-graphql-starter --stream",
     "pkg:graphql:debug": "npx lerna run start:debug --scope @koakh/koakh-nestjs-graphql-starter --stream",
     "pkg:graphql:docker:build": "npx lerna run docker:build --scope @koakh/koakh-nestjs-graphql-starter --stream",
+    "pkg:graphql:docker:push": "npx lerna run docker:push --scope @koakh/koakh-nestjs-graphql-starter --stream",
     "pkg:react:start": "npx lerna run start --scope @koakh/koakh-nestjs-react-starter --stream"
   },
   "dependencies": {

@@ -20,7 +20,8 @@
     "upgrade": "ncu --upgrade",
     "npm-check": "npm-check",
     "start:container": "npx node dist/main.js",
-    "docker:build": "docker-compose build"
+    "docker:build": "docker build .",
+    "docker:push": "./dockerpush.sh"
   },
   "dependencies": {
     "@koakh/nestjs-package-jwt-authentication-graphql": "^1.0.0",
