@@ -1,7 +1,6 @@
-import { IsDefined, IsEmail, IsOptional, IsUUID } from 'class-validator';
-import { GraphQLJSONObject } from 'graphql-type-json';
-import { UserRoles } from '../../auth/enums';
 import { Field, InputType } from '@nestjs/graphql';
+import { IsEmail, IsOptional, IsUUID } from 'class-validator';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 @InputType()
 export class UpdateUserInput {

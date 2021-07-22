@@ -1,13 +1,14 @@
 import { CookieParserMiddleware } from '@nest-middlewares/cookie-parser';
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { DynamicModule, MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 import { JwtStrategy, LocalStrategy } from './strategy';
-import {UserService} from '../user/user.service';
 import { configuration } from '../common/config';
+import { AUTH_MODULE_OPTIONS } from './auth.constants';
+import { AuthModuleOptions } from './interfaces';
 
 @Module({
   imports: [
@@ -27,15 +28,35 @@ import { configuration } from '../common/config';
       }),
       inject: [ConfigService],
     }),
-    UserService,
+    // TODO
+    // UserService,
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthResolver, UserService, LocalStrategy, JwtStrategy],
+  // TODO
+  providers: [AuthService, AuthResolver, /*UserService*/, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })
 
 export class AuthModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(CookieParserMiddleware).forRoutes('/refresh-token');
+  }
+
+  // dynamic module
+  static register(options: AuthModuleOptions): DynamicModule {
+    return {
+      module: AuthModule,
+      providers: [
+        AuthService,
+        // add useValue provide required to be injected service like in AuthService with
+        // @Inject(AUTH_MODULE_OPTIONS) options: AuthModuleOptions
+        {
+          provide: AUTH_MODULE_OPTIONS,
+          useValue: options,
+        },
+      ],
+      controllers: [AuthController],
+      exports: [AuthService],
+    };
   }
 }

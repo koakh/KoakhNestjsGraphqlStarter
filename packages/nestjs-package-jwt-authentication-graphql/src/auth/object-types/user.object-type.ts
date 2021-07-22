@@ -2,7 +2,7 @@ import { IsDefined, IsOptional, Validate } from 'class-validator';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import * as yup from 'yup';
-import { UserRoles } from '../../auth/enums';
+import { UserRoles } from '../enums';
 //
 @ObjectType()
 export class User {

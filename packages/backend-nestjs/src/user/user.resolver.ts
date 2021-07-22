@@ -1,17 +1,12 @@
+import { User, CurrentUser, CurrentUserPayload, GqlAuthGuard, GqlRolesGuard, Roles, UserRoles } from "@koakh/nestjs-package-jwt-authentication-graphql";
 import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
-import { CurrentUserPayload } from '../auth/interfaces/current-user-payload.interface';
-import { CurrentUser, Roles } from '../auth/decorators';
-import { UserRoles } from '../auth/enums';
-import { GqlRolesGuard } from '../auth/guards';
-import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
-import { SubscriptionEvent } from '../common/enums';
-import { PaginationArgs } from '../common/arg-types';
-import { DeleteUserInput, NewUserInput, UpdateUserInput, UpdateUserPasswordInput, UpdateUserProfileInput } from './input-type';
-import { User } from './object-types';
-import { UserService } from './user.service';
 import { PubSub } from 'graphql-subscriptions';
+import { PaginationArgs } from '../common/arg-types';
+import { SubscriptionEvent } from '../common/enums';
+import { DeleteUserInput, NewUserInput, UpdateUserInput, UpdateUserPasswordInput, UpdateUserProfileInput } from './input-type';
 import { constants as c } from './user.constants';
+import { UserService } from './user.service';
 
 const pubSub = new PubSub();
 

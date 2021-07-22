@@ -1,23 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
-import { constants as uc } from '../user/user.constants';
-import { UserService } from '../user/user.service';
+import { UserServiceAbstract } from './abstracts';
+import { FIND_ONE_BY_FIELD, AUTH_MODULE_OPTIONS } from './auth.constants';
 import { EnvironmentVariables, GqlContextPayload, SignJwtTokenPayload } from './interfaces';
+import { AuthModuleOptions } from './interfaces';
 import { AccessToken } from './object-types/access-token.object-type';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly configService: ConfigService<EnvironmentVariables>,
-    private readonly userService: UserService,
     private readonly jwtService: JwtService,
-  ) { }
+    // provided from AuthModule
+    @Inject(AUTH_MODULE_OPTIONS)
+    private readonly options: AuthModuleOptions,
+    private userService: UserServiceAbstract,
+  ) { 
+    this.userService = this.options.userService;
+  }
   // called by GqlLocalAuthGuard
   async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.userService.findOneByField('username', username, uc.adminCurrentUser);
+    const user = await this.userService.findOneByField(FIND_ONE_BY_FIELD, username);
     if (user && user.password) {
       const authorized = this.bcryptValidate(pass, user.password);
       if (authorized) {

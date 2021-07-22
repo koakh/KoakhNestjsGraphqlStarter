@@ -1,15 +1,13 @@
+import { CurrentUserPayload, User, UserRoles } from "@koakh/nestjs-package-jwt-authentication-graphql";
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { UserRoles } from '../auth/enums';
-import { CurrentUserPayload } from '../auth/interfaces';
 import { PaginationArgs } from '../common/arg-types';
 import { newUuid } from '../common/utils/main.util';
 import { DeleteUserInput, NewUserInput, UpdateUserInput, UpdateUserPasswordInput, UpdateUserProfileInput } from './input-type';
 import { UserData } from './interfaces';
-import { User } from './object-types';
+import { constants as c } from "./user.constants";
 import { UserInMemory } from './user.data';
 import { UserStore } from './user.store';
 import { hashPassword } from './utils';
-import { constants as c } from "./user.constants";
 
 @Injectable()
 export class UserService {

@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { UserRoles } from '../../auth/enums';
+import { UserRoles } from '@koakh/nestjs-package-jwt-authentication-graphql';
 
 const bcryptSaltRounds: number = 10;
 
