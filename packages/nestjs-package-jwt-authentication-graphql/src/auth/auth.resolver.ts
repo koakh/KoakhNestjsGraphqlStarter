@@ -4,7 +4,7 @@ import { PubSub } from 'graphql-subscriptions';
 import { SubscriptionEvent } from '../common/enums';
 import { User, UserLoginResponse } from '../user/object-types';
 import { constants as uc } from '../user/user.constants';
-import { UserService } from '../user/user.service';
+// import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { CurrentUser, Roles } from './decorators';
 import { UserRoles } from './enums';

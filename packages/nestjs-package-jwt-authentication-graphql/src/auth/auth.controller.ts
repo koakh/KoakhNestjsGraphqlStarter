@@ -2,8 +2,8 @@ import { Controller, HttpStatus, Post, Request, Response } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../user/object-types';
-import { constants as uc } from '../user/user.constants';
-import { UserService } from '../user/user.service';
+// import { constants as uc } from '../user/user.constants';
+// import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { EnvironmentVariables, GqlContextPayload, SignJwtTokenPayload } from './interfaces';
 import { AccessToken } from './object-types/access-token.object-type';
