@@ -1,12 +1,14 @@
-import { Controller, HttpStatus, Post, Request, Response } from '@nestjs/common';
+import { Controller, HttpStatus, Inject, Post, Request, Response } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../user/object-types';
-// import { constants as uc } from '../user/user.constants';
-// import { UserService } from '../user/user.service';
+// import { User } from '../user/object-types';
+import { AuthStore } from './auth.store';
+import { UserServiceAbstract } from './abstracts';
+import { AUTH_MODULE_OPTIONS, FIND_ONE_BY_FIELD } from './auth.constants';
 import { AuthService } from './auth.service';
-import { EnvironmentVariables, GqlContextPayload, SignJwtTokenPayload } from './interfaces';
+import { AuthModuleOptions, EnvironmentVariables, GqlContextPayload, SignJwtTokenPayload } from './interfaces';
 import { AccessToken } from './object-types/access-token.object-type';
+import { AuthUser } from './types';
 
 @Controller()
 export class AuthController {
@@ -14,8 +16,17 @@ export class AuthController {
     private readonly configService: ConfigService<EnvironmentVariables>,
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
-  ) { }
+    // provided from AuthModule
+    @Inject(AUTH_MODULE_OPTIONS)
+    private readonly options: AuthModuleOptions,
+    // private members
+    private userService: UserServiceAbstract,
+    private authStore: AuthStore,
+  ) {
+    this.userService = this.options.userService;
+    // init authStore inMemory refreshToken versions
+    this.authStore = new AuthStore();
+  }
   // for security purposes, refreshToken cookie only works in this specific route,
   // to request a new accessToken, this prevent /graphql to works with cookie
 
@@ -44,14 +55,14 @@ export class AuthController {
     }
 
     // token is valid, send back accessToken
-    const user: User = await this.userService.findOneByField('username', payload.username, uc.adminCurrentUser);
+    const user: AuthUser = await this.userService.findOneByField(FIND_ONE_BY_FIELD, payload.username);
     // check jid token
     if (!user) {
       return invalidPayload();
     }
 
     // check inMemory tokenVersion
-    const tokenVersion: number = this.userService.usersStore.getTokenVersion(user.username);
+    const tokenVersion: number = this.authStore.getTokenVersion(user.username);
     if (tokenVersion !== payload.tokenVersion) {
       return invalidPayload();
     }
