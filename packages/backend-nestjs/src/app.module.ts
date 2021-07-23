@@ -7,6 +7,7 @@ import { ConnectionParams } from 'subscriptions-transport-ws';
 import { configuration } from './common/config';
 import { mapKeysToLowerCase } from './common/utils';
 import { UserModule } from './user/user.module';
+import { UserService } from './user/user.service';
 
 @Module({
   imports: [
@@ -60,8 +61,16 @@ import { UserModule } from './user/user.module';
       inject: [ConfigService, AuthService],
     }),
     // project/package modules
-    AuthModule,
     UserModule,
+    // with registerRoot
+    AuthModule.register({
+      // naife way to pass userService
+      userService: new UserService(),
+      // config
+      config: {
+        folder: '../consumerapp/config'
+      }
+    })
   ],
 })
 

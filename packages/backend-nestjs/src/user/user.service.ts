@@ -1,4 +1,5 @@
 import { CurrentUserPayload, User, UserRoles } from "@koakh/nestjs-package-jwt-authentication-graphql";
+import { UserServiceAbstract } from "@koakh/nestjs-package-jwt-authentication-graphql/dist/auth/abstracts";
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PaginationArgs } from '../common/arg-types';
 import { newUuid } from '../common/utils/main.util';
@@ -10,7 +11,7 @@ import { UserStore } from './user.store';
 import { hashPassword } from './utils';
 
 @Injectable()
-export class UserService {
+export class UserService implements UserServiceAbstract {
   // init usersStore inMemory refreshToken versions
   usersStore: UserStore = new UserStore();
   // init usersStore
@@ -49,7 +50,7 @@ export class UserService {
     return this.usersData.findAll(paginationArgs.skip, paginationArgs.take, currentUser);
   }
 
-  async findOneByField(key: string, value: string, currentUser: CurrentUserPayload): Promise<User> {
+  async findOneByField(key: string, value: string, currentUser?: CurrentUserPayload): Promise<User> {
     const findUser = this.usersData.find((e: UserData) => e[key] === value, currentUser);
     if (!findUser) {
       // throw new HttpException({ status: HttpStatus.NO_CONTENT, error: 'no content' }, HttpStatus.NO_CONTENT);
