@@ -12,6 +12,10 @@ import { AuthUser } from './types';
 
 @Controller()
 export class AuthController {
+  // private membeers
+  private userService: UserServiceAbstract;
+  private authStore: AuthStore;
+
   constructor(
     private readonly configService: ConfigService<EnvironmentVariables>,
     private readonly authService: AuthService,
@@ -19,14 +23,12 @@ export class AuthController {
     // provided from AuthModule
     @Inject(AUTH_MODULE_OPTIONS)
     private readonly options: AuthModuleOptions,
-    // private members
-    private userService: UserServiceAbstract,
-    private authStore: AuthStore,
   ) {
     this.userService = this.options.userService;
     // init authStore inMemory refreshToken versions
     this.authStore = new AuthStore();
   }
+
   // for security purposes, refreshToken cookie only works in this specific route,
   // to request a new accessToken, this prevent /graphql to works with cookie
 

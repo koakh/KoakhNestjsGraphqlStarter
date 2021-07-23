@@ -18,14 +18,15 @@ const pubSub = new PubSub();
 
 @Resolver()
 export class AuthResolver {
+  // private membeers
+  private userService: UserServiceAbstract;
+  private authStore: AuthStore;
+
   constructor(
     private readonly authService: AuthService,
     // provided from AuthModule
     @Inject(AUTH_MODULE_OPTIONS)
     private readonly options: AuthModuleOptions,
-    // private membeers
-    private userService: UserServiceAbstract,
-    private authStore: AuthStore,
   ) {
     this.userService = this.options.userService;
     // init authStore inMemory refreshToken versions

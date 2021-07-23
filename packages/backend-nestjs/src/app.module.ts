@@ -18,10 +18,21 @@ import { UserService } from './user/user.service';
       // TODO
       // validate,
     }),
+    // with registerRoot
+    AuthModule.register({
+      // naife way to pass userService
+      userService: new UserService(),
+      // config
+      config: {
+        folder: '../consumerapp/config'
+      }
+    }),
+    // project/package modules
+    UserModule,
     // apolloServer config: use forRootAsync to import AuthModule and inject AuthService
     GraphQLModule.forRootAsync({
       // import AuthModule
-      imports: [ConfigService, AuthModule],
+      imports: [ConfigModule, AuthModule],
       // inject authService
       useFactory: async (configService: ConfigService, authService: AuthService) => ({
         debug: true,
@@ -60,17 +71,6 @@ import { UserService } from './user/user.service';
       // inject: AuthService
       inject: [ConfigService, AuthService],
     }),
-    // project/package modules
-    UserModule,
-    // with registerRoot
-    AuthModule.register({
-      // naife way to pass userService
-      userService: new UserService(),
-      // config
-      config: {
-        folder: '../consumerapp/config'
-      }
-    })
   ],
 })
 

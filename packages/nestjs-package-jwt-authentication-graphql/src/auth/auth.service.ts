@@ -11,16 +11,19 @@ import { AccessToken } from './object-types/access-token.object-type';
 
 @Injectable()
 export class AuthService {
+  // private membeers
+  private userService: UserServiceAbstract;
+
   constructor(
     private readonly configService: ConfigService<EnvironmentVariables>,
     private readonly jwtService: JwtService,
     // provided from AuthModule
     @Inject(AUTH_MODULE_OPTIONS)
     private readonly options: AuthModuleOptions,
-    private userService: UserServiceAbstract,
   ) { 
     this.userService = this.options.userService;
   }
+
   // called by GqlLocalAuthGuard
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.userService.findOneByField(FIND_ONE_BY_FIELD, username);

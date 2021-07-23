@@ -28,12 +28,9 @@ import { AuthModuleOptions } from './interfaces';
       }),
       inject: [ConfigService],
     }),
-    // TODO
-    // UserService,
   ],
   controllers: [AuthController],
-  // TODO
-  providers: [AuthService, AuthResolver, /*UserService*/, LocalStrategy, JwtStrategy],
+  providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })
 
