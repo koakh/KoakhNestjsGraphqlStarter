@@ -1,4 +1,9 @@
 Backend:
+  Library:
+    ☐ @critical  try add magic trick of providers to old package that crash to figure out if it starts to work too
+    ☐ app and app-lib add abstract class to....
+      @Inject('APP_SERVICE')
+      private readonly appService: any,
   Important:
     ✔ remove env-cmd there is not required to work with nestConfig @done(21-07-19 22:13)
     ☐ UserInMemory must have all interface implementations used in user service

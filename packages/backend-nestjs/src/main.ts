@@ -9,7 +9,8 @@ async function bootstrap() {
   const app = await NestFactory.create(
     ApplicationModule, {
     httpsOptions: httpsConfig,
-    logger: loggerConfig,
+    // TODO: this hide logger
+    // logger: loggerConfig,
   });
   const configService = app.get<ConfigService>(ConfigService);
   const httpsServerPort = configService.get<string>('httpsServerPort');
