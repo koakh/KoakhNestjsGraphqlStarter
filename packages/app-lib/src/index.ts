@@ -1,3 +1,4 @@
+export * from './auth/auth.abstracts';
 export * from './auth/auth.constants';
 export * from './auth/auth.interfaces';
 export * from './auth/auth.module';

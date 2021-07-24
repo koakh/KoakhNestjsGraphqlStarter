@@ -1,7 +1,7 @@
 Backend:
   Library:
-    ☐ @critical  try add magic trick of providers to old package that crash to figure out if it starts to work too
-    ☐ app and app-lib add abstract class to....
+    ☐ @critical try add magic trick of providers to old package that crash to figure out if it starts to work too
+    ✔ app and app-lib add abstract class to.... @done(21-07-24 22:04)
       @Inject('APP_SERVICE')
       private readonly appService: any,
   Important:
