@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@apollo/gateway": "^0.33.0",
+    "@golevelup/nestjs-modules": "^0.4.2",
     "@nest-middlewares/cookie-parser": "^6.0.0",
     "@nestjs/config": "^1.0.0",
     "@nestjs/graphql": "^8.0.2",

@@ -1,6 +1,8 @@
 Backend:
-  Library:
-    ☐ @critical try add magic trick of providers to old package that crash to figure out if it starts to work too
+  Library nestjs-package-jwt-authentication-graphql:
+    ☐ config properties injected from consumer
+  Library app-lib:
+    ☐ @high create simple sarter project and repository, llok to play with dynamic modules, like second project of it
     ✔ app and app-lib add abstract class to.... @done(21-07-24 22:04)
       @Inject('APP_SERVICE')
       private readonly appService: any,
