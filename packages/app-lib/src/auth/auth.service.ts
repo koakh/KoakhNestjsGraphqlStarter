@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { AuthStore } from "./auth.store";
-import { AUTH_MODULE_OPTIONS } from './auth.constants';
+import { APP_SERVICE, AUTH_MODULE_OPTIONS } from './auth.constants';
 import { AuthModuleOptions } from './auth.interfaces';
 import { AppServiceAbstract } from "./auth.abstracts";
 
@@ -13,7 +13,7 @@ export class AuthService {
   constructor(
     @Inject(AUTH_MODULE_OPTIONS)
     private readonly authModuleOptions: AuthModuleOptions,
-    @Inject('APP_SERVICE')
+    @Inject(APP_SERVICE)
     private readonly appService: AppServiceAbstract,
   ) {
     this.authStore = new AuthStore();

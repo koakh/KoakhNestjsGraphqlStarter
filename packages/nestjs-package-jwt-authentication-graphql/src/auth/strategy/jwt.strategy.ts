@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { EnvironmentVariables } from '../interfaces';
+import { PassportStrategy } from '@nestjs/passport';
+import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { AuthModuleOptions, EnvironmentVariables } from '../interfaces';
 import { JwtValidatePayload } from '../interfaces/jwt-validate-payload.interface';
+import { AUTH_MODULE_OPTIONS } from '../auth.constants';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly configService: ConfigService<EnvironmentVariables>,
+    // TODO
+    // @Inject(AUTH_MODULE_OPTIONS)
+    // private readonly authModuleOptions: AuthModuleOptions,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -16,6 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       // tip: to use and prevent `'super' must be called before accessing 'this' in the constructor of a derived class.ts(17009)`
       // remove this in super constructor
       secretOrKey: configService.get('accessTokenJwtSecret'),
+      // secretOrKey: authModuleOptions.secret,
     });
   }
 

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthModule } from 'app-lib';
+import { AuthModule, APP_SERVICE } from 'app-lib';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { configuration } from './config';
@@ -16,6 +16,8 @@ import { configuration } from './config';
         secret: configService.get('accessTokenJwtSecret'),
         expiresIn: configService.get('accessTokenExpiresIn'),
       }),
+      // this is required to else we have error
+      // Nest can't resolve dependencies of the AuthService (AUTH_MODULE_OPTIONS, ?). Please make sure that the argument APP_SERVICE at index [1] is available in the AuthModule context.
       imports: [AppModule],
       inject: [ConfigService]
       // works but opted to useFactory is the one way to inject services like config service
@@ -35,9 +37,11 @@ import { configuration } from './config';
   ],
   controllers: [AppController],
   providers: [
+    // another trick is that this AppService is required to else we have the mitica error
+    // Nest can't resolve dependencies of the AppController (?, AuthService). Please make sure that the argument AppService at index [0] is available in the AppModule context.
     AppService,
     {
-      provide: 'APP_SERVICE',
+      provide: APP_SERVICE,
       useClass: AppService,
       // useValue: 'VALUE_FROM_APP_SERVICE'
     }
@@ -48,7 +52,7 @@ import { configuration } from './config';
   // this wat we use it inside it with `@Inject('APP_SERVICE')`
   exports: [
     {
-      provide: 'APP_SERVICE',
+      provide: APP_SERVICE,
       useClass: AppService,
       // always test with a value first
       // useValue: 'VALUE_FROM_APP_SERVICE'

@@ -4,24 +4,28 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { UserServiceAbstract } from './abstracts';
-import { FIND_ONE_BY_FIELD, AUTH_MODULE_OPTIONS } from './auth.constants';
-import { EnvironmentVariables, GqlContextPayload, SignJwtTokenPayload } from './interfaces';
-import { AuthModuleOptions } from './interfaces';
+import { AUTH_MODULE_OPTIONS, FIND_ONE_BY_FIELD, USER_SERVICE } from './auth.constants';
+import { AuthStore } from './auth.store';
+import { AuthModuleOptions, EnvironmentVariables, GqlContextPayload, SignJwtTokenPayload } from './interfaces';
 import { AccessToken } from './object-types/access-token.object-type';
 
 @Injectable()
 export class AuthService {
-  // private membeers
-  private userService: UserServiceAbstract;
+  // public membeers
+  authStore: AuthStore;
 
   constructor(
+    // AuthModule providers
     private readonly configService: ConfigService<EnvironmentVariables>,
     private readonly jwtService: JwtService,
-    // provided from AuthModule
+    // Consumer app providers
     @Inject(AUTH_MODULE_OPTIONS)
     private readonly options: AuthModuleOptions,
+    @Inject(USER_SERVICE)
+    private readonly userService: UserServiceAbstract,
   ) { 
-    this.userService = this.options.userService;
+    // init authStore inMemory refreshToken versions
+    this.authStore = new AuthStore();
   }
 
   // called by GqlLocalAuthGuard

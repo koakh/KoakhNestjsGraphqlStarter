@@ -1,34 +1,27 @@
 import { Controller, HttpStatus, Inject, Post, Request, Response } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-// import { User } from '../user/object-types';
-import { AuthStore } from './auth.store';
 import { UserServiceAbstract } from './abstracts';
-import { AUTH_MODULE_OPTIONS, FIND_ONE_BY_FIELD } from './auth.constants';
+import { AUTH_MODULE_OPTIONS, USER_SERVICE } from './auth.constants';
 import { AuthService } from './auth.service';
 import { AuthModuleOptions, EnvironmentVariables, GqlContextPayload, SignJwtTokenPayload } from './interfaces';
 import { AccessToken } from './object-types/access-token.object-type';
-import { AuthUser } from './types';
+import { AuthUser as User } from './types';
 
 @Controller()
 export class AuthController {
-  // private membeers
-  private userService: UserServiceAbstract;
-  private authStore: AuthStore;
-
   constructor(
+    // AuthModule providers
     private readonly configService: ConfigService<EnvironmentVariables>,
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
-    // provided from AuthModule
+    // Consumer app providers
     @Inject(AUTH_MODULE_OPTIONS)
     private readonly options: AuthModuleOptions,
+    @Inject(USER_SERVICE)
+    private readonly userService: UserServiceAbstract,
   ) {
-    this.userService = this.options.userService;
-    // init authStore inMemory refreshToken versions
-    this.authStore = new AuthStore();
   }
-
   // for security purposes, refreshToken cookie only works in this specific route,
   // to request a new accessToken, this prevent /graphql to works with cookie
 
@@ -57,14 +50,14 @@ export class AuthController {
     }
 
     // token is valid, send back accessToken
-    const user: AuthUser = await this.userService.findOneByField(FIND_ONE_BY_FIELD, payload.username);
+    const user: User = await this.userService.findOneByField('username', payload.username);
     // check jid token
     if (!user) {
       return invalidPayload();
     }
 
     // check inMemory tokenVersion
-    const tokenVersion: number = this.authStore.getTokenVersion(user.username);
+    const tokenVersion: number = this.authService.authStore.getTokenVersion(user.username);
     if (tokenVersion !== payload.tokenVersion) {
       return invalidPayload();
     }

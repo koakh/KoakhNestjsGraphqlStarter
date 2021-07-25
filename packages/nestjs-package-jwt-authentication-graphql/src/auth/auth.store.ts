@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { configuration } from '../common/config';
 
 interface User {

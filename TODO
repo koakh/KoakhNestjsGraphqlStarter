@@ -1,6 +1,34 @@
+Notes:
+  ☐ JwtStrategy requires a secret or key
+    https://github.com/mikenicholson/passport-jwt/issues/206
+    packages/nestjs-package-jwt-authentication-graphql/src/auth/strategy/jwt.strategy.ts
+    import { ExtractJwt } from 'passport-jwt';
+    import { Strategy } from 'passport-local';
+    // Check "local.strategy.ts" if you have one and replace
+    // import { Strategy } from 'passport-jwt'; with import { Strategy } from 'passport-local';
+    https://stackoverflow.com/questions/60884932/nestjs-jwt-strategy-requires-a-secret-or-key
+  ☐ NestJs Passport jwt unknown strategy
+    https://stackoverflow.com/questions/60405308/nestjs-passport-jwt-unknown-strategy
+      The issue was that autoimport imported Strategy from the wrong package
+      import {Strategy} from "@nest/passport-local";
+      instead of
+      import { Strategy } from "passport-jwt";
+      FUCK I replace the whole 
+      packages/nestjs-package-jwt-authentication-graphql/src/auth/strategy/jwt.strategy.ts
+      with the defaults from nest docs and it works
+      https://docs.nestjs.com/security/authentication#implementing-passport-jwt
+      the problem is this imports that are bad
+      // KO import { ExtractJwt } from 'passport-jwt';
+      // KO import { Strategy } from 'passport-local';
+      OK import { ExtractJwt, Strategy } from 'passport-jwt';
+      OK import { PassportStrategy } from '@nestjs/passport';
+      NOTE: Strategy must be imported from 'passport-local'
+      
 Backend:
   Library nestjs-package-jwt-authentication-graphql:
     ☐ config properties injected from consumer
+    ☐ relplace with options service
+      secretOrKey: configService.get('accessTokenJwtSecret'),
   Library app-lib:
     ☐ @high create simple sarter project and repository, llok to play with dynamic modules, like second project of it
     ✔ app and app-lib add abstract class to.... @done(21-07-24 22:04)

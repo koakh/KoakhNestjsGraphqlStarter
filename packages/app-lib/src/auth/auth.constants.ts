@@ -1,1 +1,2 @@
 export const AUTH_MODULE_OPTIONS = 'AUTH_MODULE_OPTIONS';
+export const APP_SERVICE = 'APP_SERVICE';

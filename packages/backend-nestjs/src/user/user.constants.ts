@@ -13,6 +13,7 @@ export const constants = {
     id: adminId,
     username: 'admin',
     roles: ['ROLE_USER', 'ROLE_ADMIN'],
+    // 12345678
     password: '$2b$10$U9AVUdkRnFsrMjPg/XyTeOWmF.gu73gd1hJGR1s1OnKTshjJYdGpW',
     firstName: 'Pietra',
     lastName: 'Heine',

@@ -1,5 +1,5 @@
-import { GqlContext, GqlContextPayload } from '@koakh/nestjs-package-jwt-authentication-graphql';
-import { AuthModule, AuthService } from 'app-lib';
+import { GqlContext, GqlContextPayload, USER_SERVICE } from '@koakh/nestjs-package-jwt-authentication-graphql';
+import { AuthModule, AuthService } from '@koakh/nestjs-package-jwt-authentication-graphql';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -20,24 +20,34 @@ import { UserService } from './user/user.service';
       // TODO
       // validate,
     }),
-    // TODO NEW app-lib
+    // // TODO NEW app-lib
+    // AuthModule.forRootAsync(AuthModule, {
+    //   useExisting: {
+    //     value: {
+    //       createModuleConfig: () => {
+    //         return {
+    //           secret: '90dcfcd8-d3bd-4af0-a8a3-f3e03181a83f',
+    //           expiresIn: '120s',
+    //         }
+    //       }
+    //     },
+    //   },
+    //   imports: [ApplicationModule],
+    //   // inject: [AppService]
+    //   // no need for this module already export's it
+    //   // exports: [AuthService],
+    // }),
     AuthModule.forRootAsync(AuthModule, {
-      useExisting: {
-        value: {
-          createModuleConfig: () => {
-            return {
-              secret: '90dcfcd8-d3bd-4af0-a8a3-f3e03181a83f',
-              expiresIn: '120s',
-            }
-          }
-        },
-      },
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('accessTokenJwtSecret'),
+        expiresIn: configService.get<string>('accessTokenExpiresIn'),
+      }),
+      // this is required to else we have error
+      // ERROR [ExceptionHandler] Nest can't resolve dependencies of the AuthService (ConfigService, JwtService, AUTH_MODULE_OPTIONS, ?). Please make sure that the argument USER_SERVICE at index [3] is available in the AuthModule context.
       imports: [ApplicationModule],
-      // inject: [AppService]
-      // no need for this module already export's it
-      // exports: [AuthService],
+      inject: [ConfigService]
     }),
-    // with registerRoot
+      // with registerRoot
     // AuthModule.register({
     //   // naife way to pass userService
     //   userService: new UserService(),
@@ -56,6 +66,7 @@ inject: [ConfigService],
 // imports: [ConfigModule, AuthModule],
 imports: [ConfigModule],
       // inject authService
+// TODO
 // useFactory: async (configService: ConfigService, authService: AuthService) => ({
 useFactory: async (configService: ConfigService) => ({
     debug: true,
@@ -82,6 +93,7 @@ useFactory: async (configService: ConfigService) => ({
             const authToken: string = ('authorization' in connectionParamsLowerKeys)
               && connectionParamsLowerKeys.authorization.split(' ')[1];
             if (authToken) {
+// TODO
 // // verify authToken/getJwtPayLoad
 // const jwtPayload: GqlContextPayload = authService.getJwtPayLoad(authToken);
 // // the user/jwtPayload object found will be available as context.currentUser/jwtPayload in your GraphQL resolvers
@@ -94,24 +106,27 @@ useFactory: async (configService: ConfigService) => ({
     }),
   ],
   providers: [
-    AppResolver,
+    // TODO remove stub AppResolver
+    // AppResolver,
+    // another trick is that this AppService is required to else we have the mitica error
+    // Nest can't resolve dependencies of the AppController (?, AuthService). Please make sure that the argument AppService at index [0] is available in the AppModule context.
     UserService,
     {
-      provide: 'APP_SERVICE',
+      provide: USER_SERVICE,
       useClass: UserService,
-      // useValue: 'VALUE_FROM_APP_SERVICE'
+      // useValue: 'VALUE_FROM_USER_SERVICE'
     }
   ],
   // at last so kind of clue, this is waht will solve the problem of 
-  // ERROR [ExceptionHandler] Nest can't resolve dependencies of the AuthService (AUTH_MODULE_OPTIONS, ?). Please make sure that the argument APP_SERVICE at index [1] is available in the AuthModule context.
+  // ERROR [ExceptionHandler] Nest can't resolve dependencies of the AuthService (AUTH_MODULE_OPTIONS, ?). Please make sure that the argument USER_SERVICE at index [1] is available in the AuthModule context.
   // now we can import it with `imports: [AppModule]` into AuthModule, and expose it's providers
-  // this wat we use it inside it with `@Inject('APP_SERVICE')`
+  // this wat we use it inside it with `@Inject('USER_SERVICE')`
   exports: [
     {
-      provide: 'APP_SERVICE',
+      provide: USER_SERVICE,
       useClass: UserService,
       // always test with a value first
-      // useValue: 'VALUE_FROM_APP_SERVICE'
+      // useValue: 'VALUE_FROM_USER_SERVICE'
     }
   ]
 })

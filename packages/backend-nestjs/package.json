@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@koakh/nestjs-package-jwt-authentication-graphql": "^1.0.0",
-    "app-lib": "^1.0.0",
     "@nest-middlewares/cookie-parser": "^6.0.0",
     "@nestjs/common": "^8.0.4",
     "@nestjs/core": "^8.0.4",
