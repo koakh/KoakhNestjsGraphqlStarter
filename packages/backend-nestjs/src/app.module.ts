@@ -38,16 +38,16 @@ import { UserService } from './user/user.service';
     //   // exports: [AuthService],
     // }),
     AuthModule.forRootAsync(AuthModule, {
+      // this is required to else we have error
+      // ERROR [ExceptionHandler] Nest can't resolve dependencies of the AuthService (ConfigService, JwtService, AUTH_MODULE_OPTIONS, ?). Please make sure that the argument USER_SERVICE at index [3] is available in the AuthModule context.
+      imports: [ApplicationModule],
+      inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('accessTokenJwtSecret'),
         expiresIn: configService.get<string>('accessTokenExpiresIn'),
       }),
-      // this is required to else we have error
-      // ERROR [ExceptionHandler] Nest can't resolve dependencies of the AuthService (ConfigService, JwtService, AUTH_MODULE_OPTIONS, ?). Please make sure that the argument USER_SERVICE at index [3] is available in the AuthModule context.
-      imports: [ApplicationModule],
-      inject: [ConfigService]
     }),
-      // with registerRoot
+    // with registerRoot
     // AuthModule.register({
     //   // naife way to pass userService
     //   userService: new UserService(),
@@ -57,19 +57,19 @@ import { UserService } from './user/user.service';
     //   }
     // }),
     // project/package modules
-UserModule,
+    UserModule,
     // apolloServer config: use forRootAsync to import AuthModule and inject AuthService
     GraphQLModule.forRootAsync({
-// inject: [ConfigService, AuthService],
-inject: [ConfigService],
+      // inject: [ConfigService, AuthService],
+      inject: [ConfigService],
       // import AuthModule
-// imports: [ConfigModule, AuthModule],
-imports: [ConfigModule],
+      // imports: [ConfigModule, AuthModule],
+      imports: [ConfigModule],
       // inject authService
-// TODO
-// useFactory: async (configService: ConfigService, authService: AuthService) => ({
-useFactory: async (configService: ConfigService) => ({
-    debug: true,
+      // TODO
+      // useFactory: async (configService: ConfigService, authService: AuthService) => ({
+      useFactory: async (configService: ConfigService) => ({
+        debug: true,
         playground: true,
         installSubscriptionHandlers: true,
         autoSchemaFile: 'schema.gql',
@@ -123,6 +123,8 @@ useFactory: async (configService: ConfigService) => ({
   // this wat we use it inside it with `@Inject('USER_SERVICE')`
   exports: [
     {
+      // TODO
+      // global: true, 
       provide: USER_SERVICE,
       useClass: UserService,
       // always test with a value first

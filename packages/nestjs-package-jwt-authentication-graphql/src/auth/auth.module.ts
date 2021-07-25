@@ -1,9 +1,10 @@
 import { createConfigurableDynamicRootModule } from '@golevelup/nestjs-modules';
 import { CookieParserMiddleware } from '@nest-middlewares/cookie-parser';
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Inject, Injectable, MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 // import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { UserServiceAbstract } from './abstracts';
 // import { PassportModule, PassportStrategy } from '@nestjs/passport';
 // import { UserServiceAbstract } from './abstracts';
 import { AUTH_MODULE_OPTIONS, USER_SERVICE } from './auth.constants';
@@ -14,6 +15,7 @@ import { AuthModuleOptions } from './interfaces';
 import { JwtStrategy, LocalStrategy } from './strategy';
 // import { ConfigModule, ConfigService } from '@nestjs/config';
 // import { configuration } from '../common/config';
+
 
 @Module({
   imports: [
@@ -39,14 +41,22 @@ import { JwtStrategy, LocalStrategy } from './strategy';
     AuthService, AuthResolver, LocalStrategy, JwtStrategy,
     // trick we need to declare consumer app providers to be used by import modules like JwtModule
     {
+      // TODO
       provide: USER_SERVICE,
       // always test with a value first
-      useValue: 'VALUE_FROM_USER_SERVICE'
+      useValue: USER_SERVICE
+      // useExisting: USER_SERVICE
+      // useFactory: async (userService: UserServiceAbstract) => {
+      //   return userService;
+      // },
+      // // this is the trick to use dynamic provider and have
+      // inject: [USER_SERVICE],
+      // imports: [USER_SERVICE]
     },
     {
       provide: AUTH_MODULE_OPTIONS,
       // always test with a value first
-      useValue: 'VALUE_FROM_AUTH_MODULE_OPTIONS'
+      useValue: AUTH_MODULE_OPTIONS
     }
   ],
   exports: [
@@ -56,13 +66,20 @@ import { JwtStrategy, LocalStrategy } from './strategy';
       // TODO
       provide: USER_SERVICE,
       // always test with a value first
-      useValue: 'VALUE_FROM_USER_SERVICE'
+      useValue: USER_SERVICE
+      // useExisting: USER_SERVICE
+      // useFactory: async (userService: UserServiceAbstract) => {
+      //   return userService;
+      // },
+      // // this is the trick to use dynamic provider and have
+      // inject: [USER_SERVICE],
+      // imports: [AuthModule]
     },
     {
       // TODO
       provide: AUTH_MODULE_OPTIONS,
       // always test with a value first
-      useValue: 'VALUE_FROM_AUTH_MODULE_OPTIONS'
+      useValue: AUTH_MODULE_OPTIONS
     }
   ],
 })

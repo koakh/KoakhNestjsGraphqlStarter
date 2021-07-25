@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -20,7 +20,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     // Consumer app providers
     @Inject(AUTH_MODULE_OPTIONS)
-    private readonly options: AuthModuleOptions,
+    private readonly authModuleOptions: AuthModuleOptions,
     @Inject(USER_SERVICE)
     private readonly userService: UserServiceAbstract,
   ) { 
@@ -30,6 +30,8 @@ export class AuthService {
 
   // called by GqlLocalAuthGuard
   async validateUser(username: string, pass: string): Promise<any> {
+    debugger;
+    Logger.log(this.userService);
     const user = await this.userService.findOneByField(FIND_ONE_BY_FIELD, username);
     if (user && user.password) {
       const authorized = this.bcryptValidate(pass, user.password);

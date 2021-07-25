@@ -94,6 +94,7 @@ const userData: UserData[] = [{
 }, {
   id: '520c2eb5-e83b-4ef5-a343-85756bcce149',
   username: 'johndoe',
+  // 12345678
   password: '$2b$10$U9AVUdkRnFsrMjPg/XyTeOWmF.gu73gd1hJGR1s1OnKTshjJYdGpW',
   firstName: 'Katinka',
   lastName: 'Trett',
