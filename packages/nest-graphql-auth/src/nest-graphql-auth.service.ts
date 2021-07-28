@@ -3,38 +3,38 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { UserServiceAbstract } from './abstracts';
-import { FIND_ONE_BY_FIELD, NEST_GRAPHQL_AUTH_OPTIONS } from './constants';
+import { FIND_ONE_BY_FIELD, NEST_GRAPHQL_AUTH_OPTIONS, NEST_GRAPHQL_USER_SERVICE } from './constants';
 import { GqlContextPayload, NestGraphqlAuthOptions, SignJwtTokenPayload } from './interfaces';
 import { AuthStore } from './nest-graphql-auth.store';
 import { AccessToken } from './object-types';
 
 interface INestGraphqlAuthService {
-  test(): Promise<any>;
+  validateUser(username: string, pass: string):  Promise<any>;
+  signJwtToken(signPayload: SignJwtTokenPayload, options?: JwtSignOptions): Promise<AccessToken>;
+  signRefreshToken(signPayload: SignJwtTokenPayload, tokenVersion: number, options?: JwtSignOptions): Promise<AccessToken>;
+  sendRefreshToken(res: Response, { accessToken }: AccessToken): void;
+  getJwtPayLoad(token: string): GqlContextPayload;
+  bcryptValidate(password: string, hashPassword: string): boolean;
 }
 
 @Injectable()
 export class NestGraphqlAuthService implements INestGraphqlAuthService {
   private readonly logger: Logger;
-  private readonly userService: UserServiceAbstract;
   // public membeers
   authStore: AuthStore;
 
   constructor(
+    private readonly jwtService: JwtService,
     @Inject(NEST_GRAPHQL_AUTH_OPTIONS)
     private authModuleOptions: NestGraphqlAuthOptions,
-    private readonly jwtService: JwtService,
+    @Inject(NEST_GRAPHQL_USER_SERVICE)
+    private readonly userService: UserServiceAbstract,
   ) {
-    this.userService = authModuleOptions.userService;
     // init authStore inMemory refreshToken versions
     this.authStore = new AuthStore();
     // log
     this.logger = new Logger('NestGraphqlAuthService');
     this.logger.log(`Options: ${JSON.stringify(this.authModuleOptions)}`);
-  }
-
-  // TODO remove
-  async test(): Promise<any> {
-    return 'Hello from NestGraphqlAuthModule!';
   }
 
   // called by GqlLocalAuthGuard
@@ -84,7 +84,7 @@ export class NestGraphqlAuthService implements INestGraphqlAuthService {
     return this.jwtService.verify(token);
   }
 
-  bcryptValidate = (password: string, hashPassword: string): boolean => {
+  bcryptValidate(password: string, hashPassword: string): boolean {
     return bcrypt.compareSync(password, hashPassword);
   }
 }

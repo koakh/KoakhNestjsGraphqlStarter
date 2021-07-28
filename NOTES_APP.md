@@ -1,5 +1,7 @@
 # NOTES
 
+notes for app and app-lib
+
 ```shell
 $ curl localhost:3000 | jq
 {
