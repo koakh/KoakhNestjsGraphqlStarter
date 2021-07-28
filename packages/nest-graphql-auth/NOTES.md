@@ -8,4 +8,4 @@ $ npm i bcrypt @nestjs/jwt @nestjs/graphql @nestjs/passport graphql graphql-subs
 
 TypeError: Cannot read property 'provide' of undefined at Module.isCustomProvider _tickCallback (internal/process/next_tick.js:68:7) at Function.Module. The work-around is to import Nest JS Modules directly, and not via Index files. I don't fully understand what the root cause is, but I would like to.
 
-https://stackoverflow.com/questions/46552215/angular-cli-error
+seems that is related with userService, in the end I don't figure out what is

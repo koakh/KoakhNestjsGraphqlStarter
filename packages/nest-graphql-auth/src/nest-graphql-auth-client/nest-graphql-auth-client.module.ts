@@ -21,7 +21,8 @@ import { UserService } from './nest-graphql-auth-user.service';
      NestGraphqlAuthModule.registerAsync({
        useFactory: () => {
          return {
-           secret: '90dcfcd8-d3bd-4af0-a8a3-f3e03181a83f',
+           // TODO use configService here
+           secret: '90dcfcd8-d3bd-4af0-a8a3-f3e03181a828',
            expiresIn: '120s',
            adminUserPayload: constants.adminCurrentUser,
            userService: new UserService(),

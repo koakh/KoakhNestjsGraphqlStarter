@@ -15,7 +15,7 @@ export class User {
   username: string;
 
   // not exposed
-  password: string;
+  password?: string;
 
   @Field()
   @IsDefined()
@@ -32,15 +32,15 @@ export class User {
   roles: string[];
 
   @Field()
-  @IsDefined()
+  @IsOptional()
   @Validate(yup.number)
-  createdDate: number;
+  createdDate?: number;
   
   @Field()
-  @IsDefined()
+  @IsOptional()
   createdBy?: string;
 
   @Field(type => GraphQLJSONObject, { nullable: true })
   @IsOptional()
-  metaData: any;
+  metaData?: any;
 }

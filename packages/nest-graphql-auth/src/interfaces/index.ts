@@ -1,5 +1,4 @@
 export * from './access-token.interface';
-export * from './auth-module-options.interface';
 export * from './current-user-payload.interface';
 export * from './environment-variables.interface';
 export * from './gql-context-payload.interface';

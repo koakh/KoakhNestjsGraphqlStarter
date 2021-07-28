@@ -3,6 +3,7 @@ import { CurrentUserPayload } from '../interfaces';
 import { AuthUser } from '../types';
 export declare const adminCurrentUser: {
     userId: string;
+    password: string;
     username: string;
     roles: string[];
 };

@@ -4,5 +4,5 @@ export interface AuthModuleOptions {
     secret: string;
     expiresIn: string;
     adminUserPayload: CurrentUserPayload;
-    userService: UserServiceAbstract;
+    userService?: UserServiceAbstract;
 }

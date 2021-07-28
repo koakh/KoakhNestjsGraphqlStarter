@@ -17,10 +17,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var NestGraphqlAuthModule_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NestGraphqlAuthModule = void 0;
-// import { JwtModule } from '@nestjs/jwt';
 const common_1 = require("@nestjs/common");
+const jwt_1 = require("@nestjs/jwt");
 const constants_1 = require("./constants");
 const nest_graphql_auth_providers_1 = require("./nest-graphql-auth.providers");
+const nest_graphql_auth_resolver_1 = require("./nest-graphql-auth.resolver");
 const nest_graphql_auth_service_1 = require("./nest-graphql-auth.service");
 let NestGraphqlAuthModule = NestGraphqlAuthModule_1 = class NestGraphqlAuthModule {
     /**
@@ -75,20 +76,28 @@ let NestGraphqlAuthModule = NestGraphqlAuthModule_1 = class NestGraphqlAuthModul
 NestGraphqlAuthModule = NestGraphqlAuthModule_1 = __decorate([
     common_1.Global(),
     common_1.Module({
-        providers: [nest_graphql_auth_service_1.NestGraphqlAuthService, /*connectionFactory*/],
-        exports: [nest_graphql_auth_service_1.NestGraphqlAuthService, /*connectionFactory*/ ,],
-        // imports: [
-        //   // PassportModule,
-        //   JwtModule.registerAsync({
-        //     useFactory: async (authModuleOptions: NestGraphqlAuthOptions) => ({
-        //       secret: 'authModuleOptions.secret',
-        //       signOptions: {
-        //         expiresIn: 'authModuleOptions.expiresIn',
-        //       }
-        //     }),
-        //     // inject: [NEST_GRAPHQL_AUTH_OPTIONS],
-        //   }),
-        // ],
+        providers: [
+            nest_graphql_auth_service_1.NestGraphqlAuthService,
+            nest_graphql_auth_resolver_1.NestGraphqlAuthResolver,
+            ...nest_graphql_auth_providers_1.createNestGraphqlAuthModuleProviders
+        ],
+        exports: [
+            nest_graphql_auth_service_1.NestGraphqlAuthService,
+            ...nest_graphql_auth_providers_1.createNestGraphqlAuthModuleProviders
+        ],
+        imports: [
+            jwt_1.JwtModule.registerAsync({
+                useFactory: (authModuleOptions) => __awaiter(void 0, void 0, void 0, function* () {
+                    return ({
+                        secret: authModuleOptions.secret,
+                        signOptions: {
+                            expiresIn: authModuleOptions.expiresIn,
+                        }
+                    });
+                }),
+                inject: [constants_1.NEST_GRAPHQL_AUTH_OPTIONS],
+            }),
+        ],
     })
 ], NestGraphqlAuthModule);
 exports.NestGraphqlAuthModule = NestGraphqlAuthModule;

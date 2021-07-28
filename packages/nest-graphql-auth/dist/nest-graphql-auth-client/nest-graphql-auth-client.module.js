@@ -32,7 +32,8 @@ NestGraphqlAuthClientModule = __decorate([
             nest_graphql_auth_module_1.NestGraphqlAuthModule.registerAsync({
                 useFactory: () => {
                     return {
-                        secret: '90dcfcd8-d3bd-4af0-a8a3-f3e03181a83f',
+                        // TODO use configService here
+                        secret: '90dcfcd8-d3bd-4af0-a8a3-f3e03181a828',
                         expiresIn: '120s',
                         adminUserPayload: constants_1.constants.adminCurrentUser,
                         userService: new nest_graphql_auth_user_service_1.UserService(),

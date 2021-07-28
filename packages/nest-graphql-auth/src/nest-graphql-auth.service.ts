@@ -5,6 +5,7 @@ import { Response } from 'express';
 import { UserServiceAbstract } from './abstracts';
 import { FIND_ONE_BY_FIELD, NEST_GRAPHQL_AUTH_OPTIONS } from './constants';
 import { GqlContextPayload, NestGraphqlAuthOptions, SignJwtTokenPayload } from './interfaces';
+import { AuthStore } from './nest-graphql-auth.store';
 import { AccessToken } from './object-types';
 
 interface INestGraphqlAuthService {
@@ -15,6 +16,8 @@ interface INestGraphqlAuthService {
 export class NestGraphqlAuthService implements INestGraphqlAuthService {
   private readonly logger: Logger;
   private readonly userService: UserServiceAbstract;
+  // public membeers
+  authStore: AuthStore;
 
   constructor(
     @Inject(NEST_GRAPHQL_AUTH_OPTIONS)
@@ -22,6 +25,9 @@ export class NestGraphqlAuthService implements INestGraphqlAuthService {
     private readonly jwtService: JwtService,
   ) {
     this.userService = authModuleOptions.userService;
+    // init authStore inMemory refreshToken versions
+    this.authStore = new AuthStore();
+    // log
     this.logger = new Logger('NestGraphqlAuthService');
     this.logger.log(`Options: ${JSON.stringify(this.authModuleOptions)}`);
   }
@@ -33,14 +39,14 @@ export class NestGraphqlAuthService implements INestGraphqlAuthService {
 
   // called by GqlLocalAuthGuard
   async validateUser(username: string, pass: string): Promise<any> {
-    debugger;
-    Logger.log(this.userService);
     const user = await this.userService.findOneByField(FIND_ONE_BY_FIELD, username);
+    Logger.log(user);
     if (user && user.password) {
       const authorized = this.bcryptValidate(pass, user.password);
+      Logger.log(`authorized:${authorized}`);
       if (authorized) {
         // this will remove password from result leaving all the other properties
-        const { password,...result } = user;
+        const { password, ...result } = user;
         // we could do a database lookup in our validate() method to extract more information about the user,
         // resulting in a more enriched user object being available in our Request
         return result;

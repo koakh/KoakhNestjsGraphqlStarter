@@ -1,7 +1,7 @@
 export declare type AuthUser = {
     id: string;
     username: string;
-    password?: string;
+    password: string;
     firstName?: string;
     lastName?: string;
     email?: string;

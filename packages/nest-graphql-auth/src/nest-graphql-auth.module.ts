@@ -1,26 +1,33 @@
-// import { JwtModule } from '@nestjs/jwt';
 import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { NEST_GRAPHQL_AUTH_OPTIONS } from './constants';
 import { NestGraphqlAuthAsyncOptions, NestGraphqlAuthOptions, NestGraphqlAuthOptionsFactory } from './interfaces';
-import { createNestGraphqlAuthProviders } from './nest-graphql-auth.providers';
+import { createNestGraphqlAuthModuleProviders, createNestGraphqlAuthProviders } from './nest-graphql-auth.providers';
+import { NestGraphqlAuthResolver } from './nest-graphql-auth.resolver';
 import { NestGraphqlAuthService } from './nest-graphql-auth.service';
 
 @Global()
 @Module({
-  providers: [NestGraphqlAuthService, /*connectionFactory*/],
-  exports: [NestGraphqlAuthService, /*connectionFactory*/, ],
-  // imports: [
-  //   // PassportModule,
-  //   JwtModule.registerAsync({
-  //     useFactory: async (authModuleOptions: NestGraphqlAuthOptions) => ({
-  //       secret: 'authModuleOptions.secret',
-  //       signOptions: {
-  //         expiresIn: 'authModuleOptions.expiresIn',
-  //       }
-  //     }),
-  //     // inject: [NEST_GRAPHQL_AUTH_OPTIONS],
-  //   }),
-  // ],
+  providers: [
+    NestGraphqlAuthService,
+    NestGraphqlAuthResolver,
+    ...createNestGraphqlAuthModuleProviders
+  ],
+  exports: [
+    NestGraphqlAuthService,
+    ...createNestGraphqlAuthModuleProviders
+  ],
+  imports: [
+    JwtModule.registerAsync({
+      useFactory: async (authModuleOptions: NestGraphqlAuthOptions) => ({
+        secret: authModuleOptions.secret,
+        signOptions: {
+          expiresIn: authModuleOptions.expiresIn,
+        }
+      }),
+      inject: [NEST_GRAPHQL_AUTH_OPTIONS],
+    }),
+  ],
 })
 export class NestGraphqlAuthModule {
   /**

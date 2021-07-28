@@ -37,6 +37,7 @@ const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const bcrypt = require("bcrypt");
 const constants_1 = require("./constants");
+const nest_graphql_auth_store_1 = require("./nest-graphql-auth.store");
 let NestGraphqlAuthService = class NestGraphqlAuthService {
     constructor(authModuleOptions, jwtService) {
         this.authModuleOptions = authModuleOptions;
@@ -45,6 +46,9 @@ let NestGraphqlAuthService = class NestGraphqlAuthService {
             return bcrypt.compareSync(password, hashPassword);
         };
         this.userService = authModuleOptions.userService;
+        // init authStore inMemory refreshToken versions
+        this.authStore = new nest_graphql_auth_store_1.AuthStore();
+        // log
         this.logger = new common_1.Logger('NestGraphqlAuthService');
         this.logger.log(`Options: ${JSON.stringify(this.authModuleOptions)}`);
     }
@@ -57,11 +61,11 @@ let NestGraphqlAuthService = class NestGraphqlAuthService {
     // called by GqlLocalAuthGuard
     validateUser(username, pass) {
         return __awaiter(this, void 0, void 0, function* () {
-            debugger;
-            common_1.Logger.log(this.userService);
             const user = yield this.userService.findOneByField(constants_1.FIND_ONE_BY_FIELD, username);
+            common_1.Logger.log(user);
             if (user && user.password) {
                 const authorized = this.bcryptValidate(pass, user.password);
+                common_1.Logger.log(`authorized:${authorized}`);
                 if (authorized) {
                     // this will remove password from result leaving all the other properties
                     const { password } = user, result = __rest(user, ["password"]);

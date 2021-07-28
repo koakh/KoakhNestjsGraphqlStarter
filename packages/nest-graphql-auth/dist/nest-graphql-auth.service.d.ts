@@ -1,6 +1,7 @@
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { Response } from 'express';
 import { GqlContextPayload, NestGraphqlAuthOptions, SignJwtTokenPayload } from './interfaces';
+import { AuthStore } from './nest-graphql-auth.store';
 import { AccessToken } from './object-types';
 interface INestGraphqlAuthService {
     test(): Promise<any>;
@@ -10,6 +11,7 @@ export declare class NestGraphqlAuthService implements INestGraphqlAuthService {
     private readonly jwtService;
     private readonly logger;
     private readonly userService;
+    authStore: AuthStore;
     constructor(authModuleOptions: NestGraphqlAuthOptions, jwtService: JwtService);
     test(): Promise<any>;
     validateUser(username: string, pass: string): Promise<any>;

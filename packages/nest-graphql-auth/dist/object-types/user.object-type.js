@@ -48,13 +48,13 @@ __decorate([
 ], User.prototype, "roles", void 0);
 __decorate([
     graphql_1.Field(),
-    class_validator_1.IsDefined(),
+    class_validator_1.IsOptional(),
     class_validator_1.Validate(yup.number),
     __metadata("design:type", Number)
 ], User.prototype, "createdDate", void 0);
 __decorate([
     graphql_1.Field(),
-    class_validator_1.IsDefined(),
+    class_validator_1.IsOptional(),
     __metadata("design:type", String)
 ], User.prototype, "createdBy", void 0);
 __decorate([

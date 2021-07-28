@@ -1,12 +1,12 @@
 export declare class User {
     id: string;
     username: string;
-    password: string;
+    password?: string;
     firstName?: string;
     lastName?: string;
     email?: string;
     roles: string[];
-    createdDate: number;
+    createdDate?: number;
     createdBy?: string;
-    metaData: any;
+    metaData?: any;
 }

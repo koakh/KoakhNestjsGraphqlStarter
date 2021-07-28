@@ -11,7 +11,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./access-token.interface"), exports);
-__exportStar(require("./auth-module-options.interface"), exports);
 __exportStar(require("./current-user-payload.interface"), exports);
 __exportStar(require("./environment-variables.interface"), exports);
 __exportStar(require("./gql-context-payload.interface"), exports);
