@@ -4,3 +4,6 @@ export * from './auth/auth.interfaces';
 export * from './auth/auth.module';
 export * from './auth/auth.service';
 export * from './auth/auth.store';
+export * from './auth/types';
+export * from './auth/interfaces';
+export * from './auth/enums';

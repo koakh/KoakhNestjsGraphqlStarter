@@ -24,7 +24,12 @@ $ curl localhost:3000/config | jq
   "expiresIn": "120s"
 }
 
-$ curl localhost:3000/appmodule | jq
+$ curl localhost:3000/appservice | jq
+{
+  "message": "Hello World from AppModule::AppService!"
+}
+
+$ curl localhost:3000/userservice | jq
 {
   "message": "Hello World from AppModule::AppService!"
 }

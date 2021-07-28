@@ -16,15 +16,19 @@ const pubSub = new PubSub();
 
 @Resolver()
 export class AuthResolver {
+  // private userService: UserServiceAbstract;
+
   constructor(
     // AuthModule providers
     private readonly authService: AuthService,
     // Consumer app providers
     @Inject(AUTH_MODULE_OPTIONS)
-    private readonly options: AuthModuleOptions,
+    private readonly authModuleOptions: AuthModuleOptions,
+    // TODO
     @Inject(USER_SERVICE)
     private readonly userService: UserServiceAbstract,
   ) {
+    this.userService = authModuleOptions.userService;
   }
 
   @UseGuards(GqlLocalAuthGuard)
@@ -36,6 +40,7 @@ export class AuthResolver {
     // publish userLogged subscription
     pubSub.publish(SubscriptionEvent.userLogged, { [SubscriptionEvent.userLogged]: loginUserData.username });
     // get user
+    debugger;
     const user: User = await this.userService.findOneByField(FIND_ONE_BY_FIELD, loginUserData.username);
     // accessToken: add some user data to it, like id and roles
     const signJwtTokenDto: SignJwtTokenPayload = { ...loginUserData, userId: user.id, roles: user.roles };

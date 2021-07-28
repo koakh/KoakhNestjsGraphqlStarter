@@ -22,6 +22,7 @@ export class GqlLocalAuthGuard implements CanActivate {
    */
   async validate(username: string, password: string): Promise<any> {
     const user = await this.authService.validateUser(username, password);
+    debugger;
     if (!user) {
       throw new UnauthorizedException();
     }

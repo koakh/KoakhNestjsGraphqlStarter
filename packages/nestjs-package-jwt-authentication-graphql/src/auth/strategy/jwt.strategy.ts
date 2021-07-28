@@ -9,8 +9,8 @@ import { AUTH_MODULE_OPTIONS } from '../auth.constants';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly configService: ConfigService<EnvironmentVariables>,
     // TODO
+    private readonly configService: ConfigService<EnvironmentVariables>,
     // @Inject(AUTH_MODULE_OPTIONS)
     // private readonly authModuleOptions: AuthModuleOptions,
   ) {
@@ -19,6 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
       // tip: to use and prevent `'super' must be called before accessing 'this' in the constructor of a derived class.ts(17009)`
       // remove this in super constructor
+      // TODO
       secretOrKey: configService.get('accessTokenJwtSecret'),
       // secretOrKey: authModuleOptions.secret,
     });

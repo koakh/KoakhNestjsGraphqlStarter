@@ -1,6 +1,6 @@
 import { createConfigurableDynamicRootModule } from '@golevelup/nestjs-modules';
 import { CookieParserMiddleware } from '@nest-middlewares/cookie-parser';
-import { Inject, Injectable, MiddlewareConsumer, Module } from '@nestjs/common';
+import { Global, Inject, Injectable, MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 // import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -8,7 +8,6 @@ import { UserServiceAbstract } from './abstracts';
 // import { PassportModule, PassportStrategy } from '@nestjs/passport';
 // import { UserServiceAbstract } from './abstracts';
 import { AUTH_MODULE_OPTIONS, USER_SERVICE } from './auth.constants';
-import { AuthController } from './auth.controller';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 import { AuthModuleOptions } from './interfaces';
@@ -16,70 +15,69 @@ import { JwtStrategy, LocalStrategy } from './strategy';
 // import { ConfigModule, ConfigService } from '@nestjs/config';
 // import { configuration } from '../common/config';
 
-
+@Global()
 @Module({
   imports: [
     // PassportModule,
     JwtModule.registerAsync({
       // imports: [ConfigModule],
       imports: [AuthModule],
-      // useFactory: async (configService: ConfigService) => ({
-      useFactory: async (authModuleOptions: AuthModuleOptions) => {
-        return {
-          secret: authModuleOptions.secret,
-          signOptions: {
-            expiresIn: authModuleOptions.secret,
-          },
+      // useFactory: async (authModuleOptions: AuthModuleOptions) => {
+      //   debugger;
+      //   return {
+      //     secret: authModuleOptions.secret,
+      //     signOptions: {
+      //       expiresIn: authModuleOptions.expiresIn,
+      //     },
+      //   }
+      // },
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('accessTokenJwtSecret'),
+        signOptions: {
+          expiresIn: configService.get<string>('accessTokenExpiresIn'),
         }
-      },
-      inject: [AUTH_MODULE_OPTIONS, USER_SERVICE],
+      }),
+      inject: [ConfigService],
     }),
   ],
-  controllers: [
-    AuthController],
+  controllers: [],
   providers: [
     AuthService, AuthResolver, LocalStrategy, JwtStrategy,
-    // trick we need to declare consumer app providers to be used by import modules like JwtModule
+    // // trick we need to declare consumer app providers to be used by import modules like JwtModule
+    // TODO You need to have a USER_SERVICE provider as a part of your AuthModule.
+    // TODO It can be a factory that injects the AUTH_MODULE_OPTIONS and pulls out the service
     {
-      // TODO
       provide: USER_SERVICE,
-      // always test with a value first
-      useValue: USER_SERVICE
-      // useExisting: USER_SERVICE
-      // useFactory: async (userService: UserServiceAbstract) => {
-      //   return userService;
-      // },
-      // // this is the trick to use dynamic provider and have
-      // inject: [USER_SERVICE],
-      // imports: [USER_SERVICE]
+      useFactory: async (authModuleOptions: AuthModuleOptions) => {
+        return authModuleOptions.userService;
+      },
+      inject: [AUTH_MODULE_OPTIONS],
     },
     {
       provide: AUTH_MODULE_OPTIONS,
-      // always test with a value first
-      useValue: AUTH_MODULE_OPTIONS
+      // useValue: AUTH_MODULE_OPTIONS,
+      inject: [AUTH_MODULE_OPTIONS],
+      useFactory: async (authModuleOptions: AuthModuleOptions) => {
+        return authModuleOptions;
+      },
     }
   ],
   exports: [
     AuthService,
     // trick we need to declare consumer app exports to be used by import modules like JwtModule
     {
-      // TODO
       provide: USER_SERVICE,
-      // always test with a value first
-      useValue: USER_SERVICE
-      // useExisting: USER_SERVICE
-      // useFactory: async (userService: UserServiceAbstract) => {
-      //   return userService;
-      // },
-      // // this is the trick to use dynamic provider and have
-      // inject: [USER_SERVICE],
-      // imports: [AuthModule]
+      useFactory: async (authModuleOptions: AuthModuleOptions) => {
+        return authModuleOptions.userService;
+      },
+      inject: [AUTH_MODULE_OPTIONS],
     },
     {
-      // TODO
       provide: AUTH_MODULE_OPTIONS,
-      // always test with a value first
-      useValue: AUTH_MODULE_OPTIONS
+      useFactory: async (authModuleOptions: AuthModuleOptions) => {
+        return authModuleOptions;
+      },
+      inject: [AUTH_MODULE_OPTIONS],
     }
   ],
 })

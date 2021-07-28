@@ -1,7 +1,7 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthService } from 'app-lib';
-import { AuthModuleOptions } from 'app-lib';
+import { AuthModuleOptions, AuthUser as User } from 'app-lib';
 import { Body } from '@nestjs/common';
 import { AddUserDto, IncrementUserDto } from './dto';
 import { Post } from '@nestjs/common';
@@ -38,9 +38,15 @@ export class AppController {
   }
 
   // use app-lib > calling appService
-  @Get('appmodule')
+  @Get('appservice')
   getHelloAppModule(): { message: string } {
     // Logger.log(JSON.stringify(this.authService));
     return this.authService.getHelloAppModule();
+  }
+
+  // use app-lib > calling userService
+  @Get('userservice')
+  async userFindOneByField(): Promise<User> {
+    return await this.authService.userFindOneByField();
   }
 }

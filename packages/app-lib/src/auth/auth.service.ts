@@ -1,9 +1,10 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { AuthStore } from "./auth.store";
-import { APP_SERVICE, AUTH_MODULE_OPTIONS } from './auth.constants';
+import { APP_SERVICE, AUTH_MODULE_OPTIONS, USER_SERVICE } from './auth.constants';
 import { AuthModuleOptions } from './auth.interfaces';
-import { AppServiceAbstract } from "./auth.abstracts";
-
+import { AppServiceAbstract, UserServiceAbstract } from "./auth.abstracts";
+import { AuthUser as User } from './types';
+import { adminCurrentUser } from './auth.constants';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,8 @@ export class AuthService {
     private readonly authModuleOptions: AuthModuleOptions,
     @Inject(APP_SERVICE)
     private readonly appService: AppServiceAbstract,
+    @Inject(USER_SERVICE)
+    private readonly userService: UserServiceAbstract,
   ) {
     this.authStore = new AuthStore();
   }
@@ -36,4 +39,11 @@ export class AuthService {
   getHelloAppModule(): { message: string } {
     return { message: this.appService.getHello() };
   }
+
+  // this is from consumer app AppModule/UserService
+  userFindOneByField(): Promise<User> {
+    return this.userService.findOneByField('username', 'admin', adminCurrentUser);
+  }
 }
+
+

@@ -31,8 +31,7 @@ export class AuthService {
   // called by GqlLocalAuthGuard
   async validateUser(username: string, pass: string): Promise<any> {
     debugger;
-    Logger.log(this.userService);
-    const user = await this.userService.findOneByField(FIND_ONE_BY_FIELD, username);
+    const user = await this.userService.findOneByField(FIND_ONE_BY_FIELD, username, this.authModuleOptions.adminUserPayload);
     if (user && user.password) {
       const authorized = this.bcryptValidate(pass, user.password);
       if (authorized) {

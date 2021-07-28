@@ -4,12 +4,14 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AuthenticationError } from 'apollo-server-core';
+import { format } from 'path/posix';
 import { ConnectionParams } from 'subscriptions-transport-ws';
 import { AppResolver } from './app.resolver';
 import { configuration } from './common/config';
 import { mapKeysToLowerCase } from './common/utils';
 import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
+import { constants as userConstants } from './user/user.constants'
 
 @Module({
   imports: [
@@ -40,11 +42,14 @@ import { UserService } from './user/user.service';
     AuthModule.forRootAsync(AuthModule, {
       // this is required to else we have error
       // ERROR [ExceptionHandler] Nest can't resolve dependencies of the AuthService (ConfigService, JwtService, AUTH_MODULE_OPTIONS, ?). Please make sure that the argument USER_SERVICE at index [3] is available in the AuthModule context.
-      imports: [ApplicationModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
+      imports: [ApplicationModule, UserModule],
+      inject: [ConfigService, UserService],
+      useFactory: async (configService: ConfigService, userService: UserService) => ({
         secret: configService.get<string>('accessTokenJwtSecret'),
         expiresIn: configService.get<string>('accessTokenExpiresIn'),
+        // the trick to pass userService without di complexity, just use options to pass around, don't forget to import UserModule to inject UserService
+        userService,
+        adminUserPayload: userConstants.adminCurrentUser,
       }),
     }),
     // with registerRoot
@@ -93,11 +98,11 @@ import { UserService } from './user/user.service';
             const authToken: string = ('authorization' in connectionParamsLowerKeys)
               && connectionParamsLowerKeys.authorization.split(' ')[1];
             if (authToken) {
-// TODO
-// // verify authToken/getJwtPayLoad
-// const jwtPayload: GqlContextPayload = authService.getJwtPayLoad(authToken);
-// // the user/jwtPayload object found will be available as context.currentUser/jwtPayload in your GraphQL resolvers
-// return { currentUser: jwtPayload.username, jwtPayload, headers: connectionParamsLowerKeys };
+              // TODO
+              // // verify authToken/getJwtPayLoad
+              // const jwtPayload: GqlContextPayload = authService.getJwtPayLoad(authToken);
+              // // the user/jwtPayload object found will be available as context.currentUser/jwtPayload in your GraphQL resolvers
+              // return { currentUser: jwtPayload.username, jwtPayload, headers: connectionParamsLowerKeys };
             }
             throw new AuthenticationError('authToken must be provided');
           },

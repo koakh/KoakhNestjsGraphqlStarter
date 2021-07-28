@@ -1,5 +1,4 @@
 export * from './auth/auth.constants';
-export * from './auth/auth.controller';
 export * from './auth/auth.module';
 export * from './auth/auth.resolver';
 export * from './auth/auth.service';

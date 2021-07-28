@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthModule, APP_SERVICE } from 'app-lib';
+import { AuthModule, APP_SERVICE, USER_SERVICE } from 'app-lib';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { configuration } from './config';
+import { UserModule } from './user/user.module';
+import { UserService } from './user/user.service';
 
 @Module({
   imports: [
@@ -18,7 +20,7 @@ import { configuration } from './config';
       }),
       // this is required to else we have error
       // Nest can't resolve dependencies of the AuthService (AUTH_MODULE_OPTIONS, ?). Please make sure that the argument APP_SERVICE at index [1] is available in the AuthModule context.
-      imports: [AppModule],
+      imports: [AppModule, UserModule],
       inject: [ConfigService]
       // works but opted to useFactory is the one way to inject services like config service
       // useExisting: {
@@ -44,6 +46,12 @@ import { configuration } from './config';
       provide: APP_SERVICE,
       useClass: AppService,
       // useValue: 'VALUE_FROM_APP_SERVICE'
+    },
+    UserService,
+    {
+      provide: USER_SERVICE,
+      useClass: UserService,
+      // useValue: 'VALUE_FROM_USER_SERVICE'
     }
   ],
   // at last so kind of clue, this is waht will solve the problem of 
@@ -56,6 +64,12 @@ import { configuration } from './config';
       useClass: AppService,
       // always test with a value first
       // useValue: 'VALUE_FROM_APP_SERVICE'
+    },
+    UserService,
+    {
+      provide: USER_SERVICE,
+      useClass: UserService,
+      // useValue: 'VALUE_FROM_USER_SERVICE'
     }
   ]
 })
