@@ -1,4 +1,4 @@
-import { AuthModule, AuthService, GqlContext, GqlContextPayload, NEST_GRAPHQL_AUTH_USER_SERVICE } from '@koakh/nestjs-package-jwt-authentication-graphql';
+import { AuthResolver, AuthModule, AuthService, GqlContext, GqlContextPayload, NEST_GRAPHQL_AUTH_USER_SERVICE } from '@koakh/nestjs-package-jwt-authentication-graphql';
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -101,6 +101,7 @@ import { constants as userConstants } from './user/user.constants'
     // another trick is that this AppService is required to else we have the mitica error
     // Nest can't resolve dependencies of the AppController (?, AuthService). Please make sure that the argument AppService at index [0] is available in the AppModule context.
     UserService,
+    AuthResolver,
     // {
     //   provide: NEST_GRAPHQL_AUTH_USER_SERVICE,
     //   useClass: UserService,

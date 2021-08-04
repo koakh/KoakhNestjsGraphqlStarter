@@ -50,6 +50,9 @@ export class UserService implements UserServiceAbstract {
   }
 
   async findOneByField(key: string, value: string, currentUser?: CurrentUserPayload): Promise<AuthUser> {
+    if (!currentUser) {
+      currentUser = c.adminCurrentUser;
+    };
     const findUser = this.usersData.find((e: UserData) => e[key] === value, currentUser);
     if (!findUser) {
       // throw new HttpException({ status: HttpStatus.NO_CONTENT, error: 'no content' }, HttpStatus.NO_CONTENT);
