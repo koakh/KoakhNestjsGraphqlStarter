@@ -1,0 +1,5 @@
+backend-nestjs					backend and consumer app for nestjs-package-jwt-authentication-graphql
+frontend-react					equal to solidary chain
+nestjs-package-jwt-authentication-graphql	new package with injectd users
+nestjs-package-jwt-authentication-graphql_old	old code before move nest-graphql-auth to nestjs-package-jwt-authentication-graphql, moved to .oldcode/packages/nestjs-package-jwt-authentication-graphql_old
+

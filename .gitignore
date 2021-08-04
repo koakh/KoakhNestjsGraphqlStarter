@@ -3,3 +3,4 @@ node_modules/
 packages/**/node_modules/
 .removed
 packages/nest-graphql-auth/dist/
+.oldcode/**/node_modules/

@@ -10,7 +10,9 @@
     "lerna:install": "lerna bootstrap",
     "lerna:build": "lerna run build",
     "lerna:test": "lerna exec npm run test",
-    "pkg:auth:dev": "npx lerna run dev --scope @koakh/nestjs-package-jwt-authentication-graphql --stream",
+    "// nestjs-package-jwt-authentication-graphql": "",
+    "pkg:auth:dev": "npx lerna run start:dev --scope @koakh/nestjs-package-jwt-authentication-graphql --stream",
+    "// koakh-nestjs-graphql-starter": "",
     "pkg:graphql:lernaupdate": "lernaupdate --packages packages/backend-nestjs",
     "pkg:graphql:upgrade": "npx lerna run upgrade -- --packages packages/backend-nestjs",
     "pkg:graphql:npm-check": "npx lerna run npm-check --scope @koakh/koakh-nestjs-graphql-starter --stream",
@@ -19,7 +21,8 @@
     "pkg:graphql:dev": "npx lerna run start:dev --scope @koakh/koakh-nestjs-graphql-starter --stream",
     "pkg:graphql:debug": "npx lerna run start:debug --scope @koakh/koakh-nestjs-graphql-starter --stream",
     "pkg:graphql:docker:build": "npx lerna run docker:build --scope @koakh/koakh-nestjs-graphql-starter --stream",
-    "pkg:graphql:docker:push": "npx lerna run docker:push --scope @koakh/koakh-nestjs-graphql-starter --stream",
+    "pkg:graphql:docker:push": "npx lerna run docker:push --scope @koakh/koakh-nestjs-graphql-starter --stream",    
+    "// koakh-nestjs-react-starter": "",
     "pkg:react:start": "npx lerna run start --scope @koakh/koakh-nestjs-react-starter --stream"
   },
   "dependencies": {

@@ -1,4 +1,4 @@
-Notes:
+Add to Notes:
   ☐ JwtStrategy requires a secret or key
     https://github.com/mikenicholson/passport-jwt/issues/206
     packages/nestjs-package-jwt-authentication-graphql/src/auth/strategy/jwt.strategy.ts
@@ -25,6 +25,13 @@ Notes:
       NOTE: Strategy must be imported from 'passport-local'
       
 Backend:
+  AppLib and App project:
+    ☐ finish project and move to links-laptop
+    ☐ dynamic modules projects
+      ☐ move all to links-laptop, 
+      ☐ add project's path to Notable notes
+      ☐ create github repositories to all
+    
   Library nestjs-package-jwt-authentication-graphql:
     ☐ config properties injected from consumer
     ☐ relplace with options service

@@ -2,18 +2,16 @@
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
-    "removeComments": false,
+    "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es6",
-    "sourceMap": false,
+    "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./",
-    "noLib": false,
-    "noImplicitAny": false,
-    "skipLibCheck": true
+    "noLib": false
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/auth/decorators/current-user.decorator.ts_DELETE", "src/auth/auth.service.ts_"],
   "exclude": ["node_modules"]
 }
