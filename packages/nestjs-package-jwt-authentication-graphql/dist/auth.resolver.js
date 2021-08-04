@@ -21,7 +21,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NestGraphqlAuthResolver = void 0;
+exports.AuthResolver = void 0;
 const common_1 = require("@nestjs/common");
 const graphql_1 = require("@nestjs/graphql");
 const graphql_subscriptions_1 = require("graphql-subscriptions");
@@ -34,7 +34,7 @@ const guards_1 = require("./guards");
 const input_types_1 = require("./input-types");
 const object_types_1 = require("./object-types");
 const pubSub = new graphql_subscriptions_1.PubSub();
-let NestGraphqlAuthResolver = class NestGraphqlAuthResolver {
+let AuthResolver = class AuthResolver {
     constructor(
     // AuthModule providers
     authService, userService) {
@@ -93,7 +93,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [input_types_1.LoginUserInput, Object]),
     __metadata("design:returntype", Promise)
-], NestGraphqlAuthResolver.prototype, "userLogin", null);
+], AuthResolver.prototype, "userLogin", null);
 __decorate([
     decorators_1.Roles(enums_1.UserRoles.ROLE_USER),
     common_1.UseGuards(guards_1.GqlRolesGuard),
@@ -104,7 +104,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], NestGraphqlAuthResolver.prototype, "userLogout", null);
+], AuthResolver.prototype, "userLogout", null);
 __decorate([
     decorators_1.Roles(enums_1.UserRoles.ROLE_ADMIN),
     graphql_1.Mutation(returns => Boolean),
@@ -112,7 +112,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], NestGraphqlAuthResolver.prototype, "revokeUserRefreshTokens", null);
+], AuthResolver.prototype, "revokeUserRefreshTokens", null);
 __decorate([
     decorators_1.Roles(enums_1.UserRoles.ROLE_USER),
     common_1.UseGuards(guards_1.GqlRolesGuard),
@@ -121,11 +121,11 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
-], NestGraphqlAuthResolver.prototype, "userLogged", null);
-NestGraphqlAuthResolver = __decorate([
+], AuthResolver.prototype, "userLogged", null);
+AuthResolver = __decorate([
     graphql_1.Resolver(),
-    __param(1, common_1.Inject(auth_constants_1.NEST_GRAPHQL_USER_SERVICE)),
-    __metadata("design:paramtypes", [auth_service_1.NestGraphqlAuthService,
+    __param(1, common_1.Inject(auth_constants_1.NEST_GRAPHQL_AUTH_USER_SERVICE)),
+    __metadata("design:paramtypes", [auth_service_1.AuthService,
         abstracts_1.UserServiceAbstract])
-], NestGraphqlAuthResolver);
-exports.NestGraphqlAuthResolver = NestGraphqlAuthResolver;
+], AuthResolver);
+exports.AuthResolver = AuthResolver;

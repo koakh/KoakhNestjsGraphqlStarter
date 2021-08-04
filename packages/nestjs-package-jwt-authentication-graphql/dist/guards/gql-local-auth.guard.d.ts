@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common';
-import { NestGraphqlAuthService } from '../auth.service';
+import { AuthService } from '../auth.service';
 export declare class GqlLocalAuthGuard implements CanActivate {
     private readonly authService;
-    constructor(authService: NestGraphqlAuthService);
+    constructor(authService: AuthService);
     canActivate(context: ExecutionContext): Promise<boolean>;
     /**
      * Passport expects a validate() method with the following signature: validate(username: string, password:string): any

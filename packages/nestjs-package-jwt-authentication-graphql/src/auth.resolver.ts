@@ -2,8 +2,8 @@ import { Inject, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { UserServiceAbstract } from './abstracts';
-import { FIND_ONE_BY_FIELD, NEST_GRAPHQL_USER_SERVICE } from './auth.constants';
-import { NestGraphqlAuthService } from './auth.service';
+import { FIND_ONE_BY_FIELD, NEST_GRAPHQL_AUTH_USER_SERVICE } from './auth.constants';
+import { AuthService } from './auth.service';
 import { CurrentUser, Roles } from './decorators';
 import { SubscriptionEvent, UserRoles } from './enums';
 import { GqlAuthGuard, GqlLocalAuthGuard, GqlRolesGuard } from './guards';
@@ -14,11 +14,11 @@ import { AccessToken, User, UserLoginResponse } from './object-types';
 const pubSub = new PubSub();
 
 @Resolver()
-export class NestGraphqlAuthResolver {
+export class AuthResolver {
   constructor(
     // AuthModule providers
-    private readonly authService: NestGraphqlAuthService,
-    @Inject(NEST_GRAPHQL_USER_SERVICE)
+    private readonly authService: AuthService,
+    @Inject(NEST_GRAPHQL_AUTH_USER_SERVICE)
     private readonly userService: UserServiceAbstract,
     ) {
   }

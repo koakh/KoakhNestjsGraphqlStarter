@@ -4,10 +4,10 @@
  *  you can run the quick verification test (see nest-graphql-auth-client/nest-graphql-auth-client.module.ts)
  */
 import { NestFactory } from '@nestjs/core';
-import { NestGraphqlAuthClientModule } from './nest-graphql-auth-client/nest-graphql-auth-client.module';
+import { AuthClientModule } from './nest-graphql-auth-client/auth-client.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(NestGraphqlAuthClientModule);
+  const app = await NestFactory.create(AuthClientModule);
   await app.listen(3000);
 }
 bootstrap();

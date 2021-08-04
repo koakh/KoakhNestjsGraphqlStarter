@@ -1,13 +1,13 @@
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { ApplicationModule } from './app.module';
+import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { httpsConfig, loggerConfig } from './common/config';
 
 async function bootstrap() {
   const context = 'NestApplication';
   const app = await NestFactory.create(
-    ApplicationModule, {
+    AppModule, {
     httpsOptions: httpsConfig,
     // TODO: this hide logger
     // logger: loggerConfig,

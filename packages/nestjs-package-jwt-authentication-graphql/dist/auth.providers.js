@@ -32,7 +32,7 @@ exports.createNestGraphqlAuthModuleProviders = [
         inject: [auth_constants_1.NEST_GRAPHQL_AUTH_OPTIONS],
     },
     {
-        provide: auth_constants_1.NEST_GRAPHQL_USER_SERVICE,
+        provide: auth_constants_1.NEST_GRAPHQL_AUTH_USER_SERVICE,
         useFactory: (authModuleOptions) => __awaiter(void 0, void 0, void 0, function* () {
             return authModuleOptions.userService;
         }),

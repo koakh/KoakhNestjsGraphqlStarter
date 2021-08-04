@@ -12,12 +12,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NestGraphqlAuthClientController = void 0;
+exports.AuthClientController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("../auth.service");
 const dto_1 = require("./dto");
-const nest_graphql_auth_user_service_1 = require("./nest-graphql-auth-user.service");
-let NestGraphqlAuthClientController = class NestGraphqlAuthClientController {
+const auth_user_service_1 = require("./auth-user.service");
+let AuthClientController = class AuthClientController {
     constructor(nestGraphqlAuthService) {
         this.nestGraphqlAuthService = nestGraphqlAuthService;
     }
@@ -27,7 +27,7 @@ let NestGraphqlAuthClientController = class NestGraphqlAuthClientController {
     }
     // curl -X POST localhost:3000/sign-refresh-token -H 'Content-Type: application/json' | jq
     signRefreshToken() {
-        return this.nestGraphqlAuthService.signRefreshToken(nest_graphql_auth_user_service_1.adminCurrentUser, 0);
+        return this.nestGraphqlAuthService.signRefreshToken(auth_user_service_1.adminCurrentUser, 0);
     }
 };
 __decorate([
@@ -36,15 +36,15 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [dto_1.ValidateUserDto]),
     __metadata("design:returntype", void 0)
-], NestGraphqlAuthClientController.prototype, "validateUser", null);
+], AuthClientController.prototype, "validateUser", null);
 __decorate([
     common_1.Post('sign-refresh-token'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
-], NestGraphqlAuthClientController.prototype, "signRefreshToken", null);
-NestGraphqlAuthClientController = __decorate([
+], AuthClientController.prototype, "signRefreshToken", null);
+AuthClientController = __decorate([
     common_1.Controller(),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
-], NestGraphqlAuthClientController);
-exports.NestGraphqlAuthClientController = NestGraphqlAuthClientController;
+], AuthClientController);
+exports.AuthClientController = AuthClientController;

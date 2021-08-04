@@ -15,10 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *  you can run the quick verification test (see nest-graphql-auth-client/nest-graphql-auth-client.module.ts)
  */
 const core_1 = require("@nestjs/core");
-const nest_graphql_auth_client_module_1 = require("./nest-graphql-auth-client/nest-graphql-auth-client.module");
+const auth_client_module_1 = require("./nest-graphql-auth-client/auth-client.module");
 function bootstrap() {
     return __awaiter(this, void 0, void 0, function* () {
-        const app = yield core_1.NestFactory.create(nest_graphql_auth_client_module_1.NestGraphqlAuthClientModule);
+        const app = yield core_1.NestFactory.create(auth_client_module_1.AuthClientModule);
         yield app.listen(3000);
     });
 }

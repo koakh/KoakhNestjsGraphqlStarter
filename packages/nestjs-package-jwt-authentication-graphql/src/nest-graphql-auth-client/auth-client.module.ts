@@ -1,5 +1,5 @@
 /**
- *  NestGraphqlAuthClientModule is a testing module that verifies that
+ *  AuthClientModule is a testing module that verifies that
  *  NestGraphqlAuthModule was generated properly.
  *
  *  You can quickly verify this by running `npm run start:dev`, and then
@@ -10,12 +10,13 @@
  *  to delete this module.
  */
 import { Global, Module } from '@nestjs/common';
-import { NEST_GRAPHQL_USER_SERVICE } from '../auth.constants';
-import { NestGraphqlAuthModule } from '../auth.module';
+import { AuthModule } from '../auth.module';
 import { constants } from './constants';
-import { NestGraphqlAuthClientController } from './nest-graphql-auth-client.controller';
-import { UserService } from './nest-graphql-auth-user.service';
+import { AuthClientController } from './auth-client.controller';
+import { UserService } from './auth-user.service';
 
+// REQUIRED global else gives bellow error
+// Nest can't resolve dependencies of the Symbol(NEST_GRAPHQL_AUTH_OPTIONS) (?). Please make sure that the argument UserService at index [0] is available in the AuthModule context.
 @Global()
 @Module({
   providers: [
@@ -27,9 +28,9 @@ import { UserService } from './nest-graphql-auth-user.service';
     UserService, 
   ],
   imports: [
-    NestGraphqlAuthModule.registerAsync({
+    AuthModule.registerAsync({
       useFactory: async (userService: UserService) => ({
-        // TODO: use configService here, or leave it static, better is keep this poc simple as can be
+        // use configService here, or leave it static, better is keep this poc simple as can be
         secret: '90dcfcd8-d3bd-4af0-a8a3-f3e03181a828',
         expiresIn: '120s',
         adminUserPayload: constants.adminCurrentUser,
@@ -38,7 +39,7 @@ import { UserService } from './nest-graphql-auth-user.service';
       inject: [UserService],
     }),
   ],
-  controllers: [NestGraphqlAuthClientController],
+  controllers: [AuthClientController],
 })
 
-export class NestGraphqlAuthClientModule { }
+export class AuthClientModule { }

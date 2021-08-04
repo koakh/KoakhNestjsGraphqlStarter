@@ -1,5 +1,5 @@
 import { NestGraphqlAuthOptions } from './interfaces';
-import { NEST_GRAPHQL_AUTH_OPTIONS, NEST_GRAPHQL_USER_SERVICE } from './auth.constants';
+import { NEST_GRAPHQL_AUTH_OPTIONS, NEST_GRAPHQL_AUTH_USER_SERVICE } from './auth.constants';
 
 export function createNestGraphqlAuthProviders(
   options: NestGraphqlAuthOptions,
@@ -24,7 +24,7 @@ export const createNestGraphqlAuthModuleProviders = [
     inject: [NEST_GRAPHQL_AUTH_OPTIONS],
   },
   {
-    provide: NEST_GRAPHQL_USER_SERVICE,
+    provide: NEST_GRAPHQL_AUTH_USER_SERVICE,
     useFactory: async (authModuleOptions: NestGraphqlAuthOptions) => {
       return authModuleOptions.userService;
     },

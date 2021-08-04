@@ -6,7 +6,8 @@
   "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
-    "start:dev": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
+    "start:dev": "tsc-watch -p tsconfig.build.json",
+    "start:dev-and-app": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
     "build": "tsc",
     "prepare": "npm run build",
     "format": "prettier --write \"src/**/*.ts\"",

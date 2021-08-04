@@ -1,11 +1,11 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { NestGraphqlAuthService } from '../auth.service';
+import { AuthService } from '../auth.service';
 import { LoginUserInput } from '../input-types';
 
 @Injectable()
 export class GqlLocalAuthGuard implements CanActivate {
-  constructor(private readonly authService: NestGraphqlAuthService) { }
+  constructor(private readonly authService: AuthService) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context);

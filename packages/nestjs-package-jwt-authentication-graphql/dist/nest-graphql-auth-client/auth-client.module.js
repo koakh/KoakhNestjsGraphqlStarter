@@ -15,9 +15,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NestGraphqlAuthClientModule = void 0;
+exports.AuthClientModule = void 0;
 /**
- *  NestGraphqlAuthClientModule is a testing module that verifies that
+ *  AuthClientModule is a testing module that verifies that
  *  NestGraphqlAuthModule was generated properly.
  *
  *  You can quickly verify this by running `npm run start:dev`, and then
@@ -30,20 +30,22 @@ exports.NestGraphqlAuthClientModule = void 0;
 const common_1 = require("@nestjs/common");
 const auth_module_1 = require("../auth.module");
 const constants_1 = require("./constants");
-const nest_graphql_auth_client_controller_1 = require("./nest-graphql-auth-client.controller");
-const nest_graphql_auth_user_service_1 = require("./nest-graphql-auth-user.service");
-let NestGraphqlAuthClientModule = class NestGraphqlAuthClientModule {
+const auth_client_controller_1 = require("./auth-client.controller");
+const auth_user_service_1 = require("./auth-user.service");
+// REQUIRED global else gives bellow error
+// Nest can't resolve dependencies of the Symbol(NEST_GRAPHQL_AUTH_OPTIONS) (?). Please make sure that the argument UserService at index [0] is available in the AuthModule context.
+let AuthClientModule = class AuthClientModule {
 };
-NestGraphqlAuthClientModule = __decorate([
+AuthClientModule = __decorate([
     common_1.Global(),
     common_1.Module({
         providers: [
             // TODO the trick to inject usersService into NestGraphqlAuthModule is add UserService to providers and exports
-            nest_graphql_auth_user_service_1.UserService,
+            auth_user_service_1.UserService,
         ],
         exports: [
             // TODO the trick to inject usersService into NestGraphqlAuthModule is add UserService to providers and exports
-            nest_graphql_auth_user_service_1.UserService,
+            auth_user_service_1.UserService,
         ],
         imports: [
             auth_module_1.AuthModule.registerAsync({
@@ -56,10 +58,10 @@ NestGraphqlAuthClientModule = __decorate([
                         userService,
                     });
                 }),
-                inject: [nest_graphql_auth_user_service_1.UserService],
+                inject: [auth_user_service_1.UserService],
             }),
         ],
-        controllers: [nest_graphql_auth_client_controller_1.NestGraphqlAuthClientController],
+        controllers: [auth_client_controller_1.AuthClientController],
     })
-], NestGraphqlAuthClientModule);
-exports.NestGraphqlAuthClientModule = NestGraphqlAuthClientModule;
+], AuthClientModule);
+exports.AuthClientModule = AuthClientModule;

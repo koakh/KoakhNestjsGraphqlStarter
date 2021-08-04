@@ -53,6 +53,6 @@ let GqlLocalAuthGuard = class GqlLocalAuthGuard {
 };
 GqlLocalAuthGuard = __decorate([
     common_1.Injectable(),
-    __metadata("design:paramtypes", [auth_service_1.NestGraphqlAuthService])
+    __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], GqlLocalAuthGuard);
 exports.GqlLocalAuthGuard = GqlLocalAuthGuard;

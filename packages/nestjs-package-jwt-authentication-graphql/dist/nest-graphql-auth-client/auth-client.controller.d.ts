@@ -1,8 +1,8 @@
 import { AuthService } from '../auth.service';
 import { ValidateUserDto } from './dto';
-export declare class NestGraphqlAuthClientController {
+export declare class AuthClientController {
     private readonly nestGraphqlAuthService;
     constructor(nestGraphqlAuthService: AuthService);
     validateUser({ username, password }: ValidateUserDto): Promise<any>;
-    signRefreshToken(): Promise<import("../object-types").AccessToken>;
+    signRefreshToken(): Promise<import("..").AccessToken>;
 }

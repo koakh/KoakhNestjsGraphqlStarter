@@ -1,20 +1,20 @@
 import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { NEST_GRAPHQL_AUTH_OPTIONS } from './auth.constants';
-import { createNestGraphqlAuthModuleProviders, createNestGraphqlAuthProviders } from './auth.providers';
-import { NestGraphqlAuthResolver } from './auth.resolver';
-import { NestGraphqlAuthService } from './auth.service';
 import { NestGraphqlAuthAsyncOptions, NestGraphqlAuthOptions, NestGraphqlAuthOptionsFactory } from './interfaces';
+import { createNestGraphqlAuthModuleProviders, createNestGraphqlAuthProviders } from './auth.providers';
+import { AuthResolver } from './auth.resolver';
+import { AuthService } from './auth.service';
 
 @Global()
 @Module({
   providers: [
-    NestGraphqlAuthService,
-    NestGraphqlAuthResolver,
+    AuthService,
+    AuthResolver,
     ...createNestGraphqlAuthModuleProviders
   ],
   exports: [
-    NestGraphqlAuthService,
+    AuthService,
     ...createNestGraphqlAuthModuleProviders
   ],
   imports: [
@@ -30,7 +30,7 @@ import { NestGraphqlAuthAsyncOptions, NestGraphqlAuthOptions, NestGraphqlAuthOpt
   ],
 })
 
-export class NestGraphqlAuthModule {
+export class AuthModule {
   /**
    * Registers a configured NestGraphqlAuth Module for import into the current module
    */
@@ -38,7 +38,7 @@ export class NestGraphqlAuthModule {
     options: NestGraphqlAuthOptions,
   ): DynamicModule {
     return {
-      module: NestGraphqlAuthModule,
+      module: AuthModule,
       providers: createNestGraphqlAuthProviders(options),
     };
   }
@@ -51,7 +51,7 @@ export class NestGraphqlAuthModule {
     options: NestGraphqlAuthAsyncOptions,
   ): DynamicModule {
     return {
-      module: NestGraphqlAuthModule,
+      module: AuthModule,
       providers: [
         ...this.createProviders(options),
       ],

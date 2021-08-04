@@ -1,5 +1,4 @@
-import { CurrentUserPayload, User, UserRoles } from "@koakh/nestjs-package-jwt-authentication-graphql";
-import { UserServiceAbstract } from "@koakh/nestjs-package-jwt-authentication-graphql/dist/auth/abstracts";
+import { AuthUser, CurrentUserPayload, User, UserRoles, UserServiceAbstract } from "@koakh/nestjs-package-jwt-authentication-graphql";
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PaginationArgs } from '../common/arg-types';
 import { newUuid } from '../common/utils/main.util';
@@ -50,7 +49,7 @@ export class UserService implements UserServiceAbstract {
     return this.usersData.findAll(paginationArgs.skip, paginationArgs.take, currentUser);
   }
 
-  async findOneByField(key: string, value: string, currentUser?: CurrentUserPayload): Promise<User> {
+  async findOneByField(key: string, value: string, currentUser?: CurrentUserPayload): Promise<AuthUser> {
     const findUser = this.usersData.find((e: UserData) => e[key] === value, currentUser);
     if (!findUser) {
       // throw new HttpException({ status: HttpStatus.NO_CONTENT, error: 'no content' }, HttpStatus.NO_CONTENT);
@@ -63,7 +62,7 @@ export class UserService implements UserServiceAbstract {
     this.validateEmail(currentUser.userId, data.email);
     // double check if user Exists, or fail
     await this.findOneByField('id', data.id, currentUser);
-    this.usersData.update(data.id, data as User, currentUser);
+    this.usersData.update(data.id, data as AuthUser, currentUser);
     // return mutated data
     return this.usersData.find((e: UserData) => e.id === data.id, currentUser);
   }
@@ -84,7 +83,7 @@ export class UserService implements UserServiceAbstract {
     this.validateEmail(currentUser.userId, data.email);
     // double check if user Exists, or fail
     await this.findOneByField('id', currentUser.userId, currentUser);
-    this.usersData.update(currentUser.userId, data as User, currentUser);
+    this.usersData.update(currentUser.userId, data as AuthUser, currentUser);
     // return mutated data
     return this.usersData.find((e: UserData) => e.id === currentUser.userId, currentUser);
   }

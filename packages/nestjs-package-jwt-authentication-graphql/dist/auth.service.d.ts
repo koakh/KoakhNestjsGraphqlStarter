@@ -4,7 +4,7 @@ import { UserServiceAbstract } from './abstracts';
 import { AuthStore } from './auth.store';
 import { GqlContextPayload, NestGraphqlAuthOptions, SignJwtTokenPayload } from './interfaces';
 import { AccessToken } from './object-types';
-interface INestGraphqlAuthService {
+interface IAuthService {
     validateUser(username: string, pass: string): Promise<any>;
     signJwtToken(signPayload: SignJwtTokenPayload, options?: JwtSignOptions): Promise<AccessToken>;
     signRefreshToken(signPayload: SignJwtTokenPayload, tokenVersion: number, options?: JwtSignOptions): Promise<AccessToken>;
@@ -12,7 +12,7 @@ interface INestGraphqlAuthService {
     getJwtPayLoad(token: string): GqlContextPayload;
     bcryptValidate(password: string, hashPassword: string): boolean;
 }
-export declare class NestGraphqlAuthService implements INestGraphqlAuthService {
+export declare class AuthService implements IAuthService {
     private readonly jwtService;
     private authModuleOptions;
     private readonly userService;

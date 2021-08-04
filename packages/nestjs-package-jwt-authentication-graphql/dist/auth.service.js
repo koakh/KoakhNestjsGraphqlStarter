@@ -32,14 +32,14 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NestGraphqlAuthService = void 0;
+exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const bcrypt = require("bcrypt");
 const abstracts_1 = require("./abstracts");
 const auth_constants_1 = require("./auth.constants");
 const auth_store_1 = require("./auth.store");
-let NestGraphqlAuthService = class NestGraphqlAuthService {
+let AuthService = class AuthService {
     constructor(jwtService, authModuleOptions, userService) {
         this.jwtService = jwtService;
         this.authModuleOptions = authModuleOptions;
@@ -47,8 +47,8 @@ let NestGraphqlAuthService = class NestGraphqlAuthService {
         // init authStore inMemory refreshToken versions
         this.authStore = new auth_store_1.AuthStore();
         // log
-        this.logger = new common_1.Logger('NestGraphqlAuthService');
-        this.logger.log(`Options: ${JSON.stringify(this.authModuleOptions)}`);
+        // this.logger = new Logger('NestGraphqlAuthService');
+        // this.logger.log(`Options: ${JSON.stringify(this.authModuleOptions)}`);
     }
     // called by GqlLocalAuthGuard
     validateUser(username, pass) {
@@ -102,10 +102,10 @@ let NestGraphqlAuthService = class NestGraphqlAuthService {
         return bcrypt.compareSync(password, hashPassword);
     }
 };
-NestGraphqlAuthService = __decorate([
+AuthService = __decorate([
     common_1.Injectable(),
     __param(1, common_1.Inject(auth_constants_1.NEST_GRAPHQL_AUTH_OPTIONS)),
-    __param(2, common_1.Inject(auth_constants_1.NEST_GRAPHQL_USER_SERVICE)),
+    __param(2, common_1.Inject(auth_constants_1.NEST_GRAPHQL_AUTH_USER_SERVICE)),
     __metadata("design:paramtypes", [jwt_1.JwtService, Object, abstracts_1.UserServiceAbstract])
-], NestGraphqlAuthService);
-exports.NestGraphqlAuthService = NestGraphqlAuthService;
+], AuthService);
+exports.AuthService = AuthService;

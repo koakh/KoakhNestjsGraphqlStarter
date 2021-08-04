@@ -3,12 +3,12 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { UserServiceAbstract } from './abstracts';
-import { FIND_ONE_BY_FIELD, NEST_GRAPHQL_AUTH_OPTIONS, NEST_GRAPHQL_USER_SERVICE } from './auth.constants';
+import { FIND_ONE_BY_FIELD, NEST_GRAPHQL_AUTH_OPTIONS, NEST_GRAPHQL_AUTH_USER_SERVICE } from './auth.constants';
 import { AuthStore } from './auth.store';
 import { GqlContextPayload, NestGraphqlAuthOptions, SignJwtTokenPayload } from './interfaces';
 import { AccessToken } from './object-types';
 
-interface INestGraphqlAuthService {
+interface IAuthService {
   validateUser(username: string, pass: string):  Promise<any>;
   signJwtToken(signPayload: SignJwtTokenPayload, options?: JwtSignOptions): Promise<AccessToken>;
   signRefreshToken(signPayload: SignJwtTokenPayload, tokenVersion: number, options?: JwtSignOptions): Promise<AccessToken>;
@@ -18,7 +18,7 @@ interface INestGraphqlAuthService {
 }
 
 @Injectable()
-export class NestGraphqlAuthService implements INestGraphqlAuthService {
+export class AuthService implements IAuthService {
   private readonly logger: Logger;
   // public membeers
   authStore: AuthStore;
@@ -27,14 +27,14 @@ export class NestGraphqlAuthService implements INestGraphqlAuthService {
     private readonly jwtService: JwtService,
     @Inject(NEST_GRAPHQL_AUTH_OPTIONS)
     private authModuleOptions: NestGraphqlAuthOptions,
-    @Inject(NEST_GRAPHQL_USER_SERVICE)
+    @Inject(NEST_GRAPHQL_AUTH_USER_SERVICE)
     private readonly userService: UserServiceAbstract,
   ) {
     // init authStore inMemory refreshToken versions
     this.authStore = new AuthStore();
     // log
-    this.logger = new Logger('NestGraphqlAuthService');
-    this.logger.log(`Options: ${JSON.stringify(this.authModuleOptions)}`);
+    // this.logger = new Logger('NestGraphqlAuthService');
+    // this.logger.log(`Options: ${JSON.stringify(this.authModuleOptions)}`);
   }
 
   // called by GqlLocalAuthGuard
