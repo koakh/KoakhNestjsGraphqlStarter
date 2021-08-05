@@ -6,8 +6,10 @@ Backend:
     ✔ dynamic modules projects @done(21-08-05 21:29)
       ✔ move all to links-laptop, @done(21-08-05 21:29)
       ✔ create github repositories to all @done(21-08-05 21:29)
-      ✔ add project's path to Notable notes @done(21-08-05 21:30)
+      ✔ add project's path to Notable notes @done(21-08-05 21:30)    
     ☐ rename backend to koakh-nestjs-graphql-starter
+    ☐ rename NestGraphql.....AuthOptions
+    ☐ add all client.http auth operations like refresh-token nest-graphql-auth-client/auth-client.controller.ts
     
   Library nestjs-package-jwt-authentication-graphql:
     ☐ config properties injected from consumer

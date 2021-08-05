@@ -12,3 +12,4 @@ const paginateArray = (data, skip, take) => {
     }
 };
 exports.paginateArray = paginateArray;
+//# sourceMappingURL=main.util.js.map

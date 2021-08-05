@@ -1,20 +1,15 @@
-import { AccessToken, User } from './object-types';
-import { Controller, HttpStatus, Inject, Post, Request, Response } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, HttpStatus, Inject, Logger, Post, Request, Response } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserServiceAbstract } from './abstracts';
 import { NEST_GRAPHQL_AUTH_OPTIONS, NEST_GRAPHQL_AUTH_USER_SERVICE } from './auth.constants';
 import { AuthService } from './auth.service';
 import { GqlContextPayload, NestGraphqlAuthOptions, SignJwtTokenPayload } from './interfaces';
+import { AccessToken, User } from './object-types';
 
 @Controller()
 export class AuthController {
   constructor(
-    // private readonly configService: ConfigService,
-    // private readonly jwtService: JwtService,
-    // private readonly authService: AuthService,
-    // @Inject(NEST_GRAPHQL_AUTH_USER_SERVICE)
-    // private readonly userService: UserServiceAbstract,
+    private readonly authService: AuthService,
     private readonly jwtService: JwtService,
     @Inject(NEST_GRAPHQL_AUTH_OPTIONS)
     private authModuleOptions: NestGraphqlAuthOptions,
@@ -29,8 +24,8 @@ export class AuthController {
     @Request() req,
     @Response() res,
   ): Promise<any> {
-    // Logger.log('headers', JSON.stringify(req.headers, undefined, 2));
-    // Logger.log('cookies', JSON.stringify(req.cookies, undefined, 2));
+    // Logger.log(`headers: ${JSON.stringify(req.headers, undefined, 2)}`, AuthController.name);
+    // Logger.log(`cookies: ${JSON.stringify(req.cookies, undefined, 2)}`, AuthController.name);
     const invalidPayload = () => res.status(HttpStatus.UNAUTHORIZED).send({ valid: false, accessToken: '' });
     // get jid token from cookies
     const token: string = (req.cookies && req.cookies.jid) ? req.cookies.jid : null;
@@ -42,7 +37,7 @@ export class AuthController {
     let payload: GqlContextPayload;
     try {
       // warn this seems to use old way of send secret, in new versions we must send with `this.jwtService.verify(token, {secret: e.refreshTokenJwtSecret})`
-      payload = this.jwtService.verify(token, this.configService.get('refreshTokenJwtSecret'));
+      payload = this.jwtService.verify(token, {secret: this.authModuleOptions.refreshTokenJwtSecret});
     } catch (error) {
       // Logger.log(error);
       return invalidPayload();

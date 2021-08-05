@@ -66,3 +66,4 @@ User = __decorate([
     graphql_1.ObjectType()
 ], User);
 exports.User = User;
+//# sourceMappingURL=user.object-type.js.map

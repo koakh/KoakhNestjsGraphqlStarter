@@ -8,6 +8,8 @@ $ cd packages/nestjs-package-jwt-authentication-graphql/
 # launch tsc-watch in package and --onSuccess nestjs-package-jwt-authentication-graphql-client
 ```
 
+don't forget to enable soureMaps on packages/`nestjs-package-jwt-authentication-graphql/tsconfig.json`
+
 ## Launch some Queries
 
 see `packages/nestjs-package-jwt-authentication-graphql/src/nestjs-package-jwt-authentication-graphql-client/nestjs-package-jwt-authentication-graphql-client.controller.ts` or

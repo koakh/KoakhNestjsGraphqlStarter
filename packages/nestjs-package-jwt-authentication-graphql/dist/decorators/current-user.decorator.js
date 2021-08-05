@@ -15,3 +15,4 @@ exports.CurrentUser = common_1.createParamDecorator((data, context) => {
         return ctx.getContext().connection.context.jwtPayload.username;
     }
 });
+//# sourceMappingURL=current-user.decorator.js.map

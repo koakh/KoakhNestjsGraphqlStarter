@@ -12,3 +12,4 @@ var SubscriptionEvent;
     SubscriptionEvent["userCitizenCardUpserted"] = "userCitizenCardUpserted";
     SubscriptionEvent["userAttributeAdded"] = "userAttributeAdded";
 })(SubscriptionEvent = exports.SubscriptionEvent || (exports.SubscriptionEvent = {}));
+//# sourceMappingURL=subscription-event.enum.js.map

@@ -1,7 +1,8 @@
-import { AuthController, AuthModule, AuthService, GqlContext, GqlContextPayload } from '@koakh/nestjs-package-jwt-authentication-graphql';
+import { AuthController, AuthModule, AuthService, GqlContext, GqlContextPayload, NestGraphqlAuthOptions, NEST_GRAPHQL_AUTH_OPTIONS } from '@koakh/nestjs-package-jwt-authentication-graphql';
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthenticationError } from 'apollo-server-core';
 import { ConnectionParams } from 'subscriptions-transport-ws';
 import { configuration } from './common/config';
@@ -22,6 +23,29 @@ import { UserService } from './user/user.service';
       // TODO
       // validate,
     }),
+// TODO
+// duplicated code here and auth.module, this is waht permits that we inject JwtService in AuthController
+// see:https://stackoverflow.com/questions/57463523/nestjs-cant-resolve-dependencies-of-the-jwt-module-options
+// in the app.module.ts and auth.module.ts
+JwtModule.registerAsync({
+  useFactory: async (authModuleOptions: NestGraphqlAuthOptions) => ({
+    secret: authModuleOptions.secret,
+    signOptions: {
+      expiresIn: authModuleOptions.expiresIn,
+    }
+  }),
+  inject: [NEST_GRAPHQL_AUTH_OPTIONS],
+}),
+// JwtModule.registerAsync({
+//   imports: [ConfigModule],
+//   useFactory: async (configService: ConfigService) => ({
+//     secret: configService.get('accessTokenJwtSecret'),
+//     signOptions: {
+//       expiresIn: configService.get('accessTokenExpiresIn'),
+//     },
+//   }),
+//   inject: [ConfigService],
+// }),
     AuthModule.registerAsync({
       // this is required to else we have error
       // ERROR [ExceptionHandler] Nest can't resolve dependencies of the AuthService (ConfigService, JwtService, AUTH_MODULE_OPTIONS, ?). Please make sure that the argument NEST_GRAPHQL_AUTH_USER_SERVICE at index [3] is available in the AuthModule context.
@@ -30,8 +54,9 @@ import { UserService } from './user/user.service';
       inject: [ConfigService, UserService/*, JwtService*/],
       useFactory: async (configService: ConfigService, userService: UserService) => ({
         secret: configService.get<string>('accessTokenJwtSecret'),
-        refreshTokenJwtSecret: configService.get<string>('refreshTokenJwtSecret'),
         expiresIn: configService.get<string>('accessTokenExpiresIn'),
+        refreshTokenJwtSecret: configService.get<string>('refreshTokenJwtSecret'),
+        refreshTokenExpiresIn: configService.get<string>('refreshTokenExpiresIn'),
         adminUserPayload: userConstants.adminCurrentUser,
         // the trick to pass userService without di complexity, just use options to pass around, don't forget to import UserModule to inject UserService
         userService,
@@ -88,9 +113,9 @@ import { UserService } from './user/user.service';
   exports: [
     UserService,
   ],
-  // controllers: [
-  //   AuthController
-  // ],
+  controllers: [
+    AuthController
+  ],
 })
 
 export class AppModule { }

@@ -17,6 +17,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var AuthModule_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthModule = void 0;
+const cookie_parser_1 = require("@nest-middlewares/cookie-parser");
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const auth_constants_1 = require("./auth.constants");
@@ -25,6 +26,10 @@ const auth_resolver_1 = require("./auth.resolver");
 const auth_service_1 = require("./auth.service");
 const strategy_1 = require("./strategy");
 let AuthModule = AuthModule_1 = class AuthModule {
+    // requires configure middleware to read request cookies
+    configure(consumer) {
+        consumer.apply(cookie_parser_1.CookieParserMiddleware).forRoutes('/refresh-token');
+    }
     /**
      * Registers a configured NestGraphqlAuth Module for import into the current module
      */
@@ -104,3 +109,4 @@ AuthModule = AuthModule_1 = __decorate([
     })
 ], AuthModule);
 exports.AuthModule = AuthModule;
+//# sourceMappingURL=auth.module.js.map

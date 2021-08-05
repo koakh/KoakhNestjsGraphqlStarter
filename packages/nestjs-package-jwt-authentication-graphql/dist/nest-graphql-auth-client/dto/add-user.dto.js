@@ -18,3 +18,4 @@ __decorate([
     __metadata("design:type", String)
 ], AddUserDto.prototype, "username", void 0);
 exports.AddUserDto = AddUserDto;
+//# sourceMappingURL=add-user.dto.js.map

@@ -4,3 +4,4 @@ exports.UserServiceAbstract = void 0;
 class UserServiceAbstract {
 }
 exports.UserServiceAbstract = UserServiceAbstract;
+//# sourceMappingURL=users-service.abstract.js.map

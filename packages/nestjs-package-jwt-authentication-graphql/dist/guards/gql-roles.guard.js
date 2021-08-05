@@ -49,3 +49,4 @@ GqlRolesGuard = __decorate([
     __metadata("design:paramtypes", [core_1.Reflector])
 ], GqlRolesGuard);
 exports.GqlRolesGuard = GqlRolesGuard;
+//# sourceMappingURL=gql-roles.guard.js.map

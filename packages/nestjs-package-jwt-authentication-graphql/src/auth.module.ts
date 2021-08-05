@@ -1,5 +1,6 @@
-import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { CookieParserMiddleware } from '@nest-middlewares/cookie-parser';
+import { DynamicModule, Global, MiddlewareConsumer, Module, Provider } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { NEST_GRAPHQL_AUTH_OPTIONS } from './auth.constants';
 import { createNestGraphqlAuthModuleProviders, createNestGraphqlAuthProviders } from './auth.providers';
 import { AuthResolver } from './auth.resolver';
@@ -34,6 +35,11 @@ import { JwtStrategy } from './strategy';
 })
 
 export class AuthModule {
+  // requires configure middleware to read request cookies
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CookieParserMiddleware).forRoutes('/refresh-token');
+  }
+
   /**
    * Registers a configured NestGraphqlAuth Module for import into the current module
    */

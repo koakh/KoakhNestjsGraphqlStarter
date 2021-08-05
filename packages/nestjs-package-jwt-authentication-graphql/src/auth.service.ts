@@ -58,6 +58,13 @@ export class AuthService implements IAuthService {
   async signJwtToken(signPayload: SignJwtTokenPayload, options?: JwtSignOptions): Promise<AccessToken> {
     // note: we choose a property name of sub to hold our userId value to be consistent with JWT standards
     const payload = { username: signPayload.username, sub: signPayload.userId, roles: signPayload.roles };
+    // if not options, get options from config
+    if (!options) {
+      options = {
+        secret: this.authModuleOptions.secret,
+        expiresIn: this.authModuleOptions.expiresIn,
+      };
+    };
     return {
       // generate JWT from a subset of the user object properties
       accessToken: this.jwtService.sign(payload, options),
@@ -66,9 +73,16 @@ export class AuthService implements IAuthService {
 
   async signRefreshToken(signPayload: SignJwtTokenPayload, tokenVersion: number, options?: JwtSignOptions): Promise<AccessToken> {
     const payload = { username: signPayload.username, sub: signPayload.userId, roles: signPayload.roles, tokenVersion };
+    // if not options, get options from config
+    if (!options) {
+      options = {
+        secret: this.authModuleOptions.refreshTokenJwtSecret,
+        expiresIn: this.authModuleOptions.refreshTokenExpiresIn,
+      };
+    }
     return {
       // generate JWT from a subset of the user object properties
-      accessToken: this.jwtService.sign(payload, { ...options, expiresIn: this.authModuleOptions.expiresIn }),
+      accessToken: this.jwtService.sign(payload, options),
     };
   }
 

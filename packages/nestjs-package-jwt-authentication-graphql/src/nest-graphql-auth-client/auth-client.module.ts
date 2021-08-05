@@ -32,6 +32,7 @@ import { UserService } from './auth-user.service';
       useFactory: async (userService: UserService) => ({
         // use configService here, or leave it static, better is keep this poc simple as can be
         secret: '90dcfcd8-d3bd-4af0-a8a3-f3e03181a828',
+        refreshTokenJwtSecret: '11749141-ca9c-4107-97f4-c312cb11b012',
         expiresIn: '120s',
         adminUserPayload: constants.adminCurrentUser,
         userService,

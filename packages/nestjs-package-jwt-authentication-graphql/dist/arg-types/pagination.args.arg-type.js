@@ -33,3 +33,4 @@ PaginationArgs = __decorate([
     graphql_1.ArgsType()
 ], PaginationArgs);
 exports.PaginationArgs = PaginationArgs;
+//# sourceMappingURL=pagination.args.arg-type.js.map

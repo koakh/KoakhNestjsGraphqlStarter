@@ -21,3 +21,4 @@ AccessToken = __decorate([
     graphql_1.ObjectType()
 ], AccessToken);
 exports.AccessToken = AccessToken;
+//# sourceMappingURL=access-token.object-type.js.map

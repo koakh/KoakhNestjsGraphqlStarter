@@ -73,6 +73,14 @@ let AuthService = class AuthService {
         return __awaiter(this, void 0, void 0, function* () {
             // note: we choose a property name of sub to hold our userId value to be consistent with JWT standards
             const payload = { username: signPayload.username, sub: signPayload.userId, roles: signPayload.roles };
+            // if not options, get options from config
+            if (!options) {
+                options = {
+                    secret: this.authModuleOptions.secret,
+                    expiresIn: this.authModuleOptions.expiresIn,
+                };
+            }
+            ;
             return {
                 // generate JWT from a subset of the user object properties
                 accessToken: this.jwtService.sign(payload, options),
@@ -82,9 +90,16 @@ let AuthService = class AuthService {
     signRefreshToken(signPayload, tokenVersion, options) {
         return __awaiter(this, void 0, void 0, function* () {
             const payload = { username: signPayload.username, sub: signPayload.userId, roles: signPayload.roles, tokenVersion };
+            // if not options, get options from config
+            if (!options) {
+                options = {
+                    secret: this.authModuleOptions.refreshTokenJwtSecret,
+                    expiresIn: this.authModuleOptions.refreshTokenExpiresIn,
+                };
+            }
             return {
                 // generate JWT from a subset of the user object properties
-                accessToken: this.jwtService.sign(payload, Object.assign(Object.assign({}, options), { expiresIn: this.authModuleOptions.expiresIn })),
+                accessToken: this.jwtService.sign(payload, options),
             };
         });
     }
@@ -109,3 +124,4 @@ AuthService = __decorate([
     __metadata("design:paramtypes", [jwt_1.JwtService, Object, abstracts_1.UserServiceAbstract])
 ], AuthService);
 exports.AuthService = AuthService;
+//# sourceMappingURL=auth.service.js.map

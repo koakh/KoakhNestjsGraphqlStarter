@@ -39,3 +39,4 @@ exports.createNestGraphqlAuthModuleProviders = [
         inject: [auth_constants_1.NEST_GRAPHQL_AUTH_OPTIONS],
     }
 ];
+//# sourceMappingURL=auth.providers.js.map

@@ -1,6 +1,7 @@
-import { DynamicModule } from '@nestjs/common';
+import { DynamicModule, MiddlewareConsumer } from '@nestjs/common';
 import { NestGraphqlAuthAsyncOptions, NestGraphqlAuthOptions } from './interfaces';
 export declare class AuthModule {
+    configure(consumer: MiddlewareConsumer): void;
     /**
      * Registers a configured NestGraphqlAuth Module for import into the current module
      */

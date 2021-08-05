@@ -52,12 +52,14 @@ mutation userLogout {
 // @name authRefreshToken
 // when refresh token always sent new authTokens
 // authToken and refreshToken (cookie)
-// it will fail after we increase version with authRevokeRefreshToken, logout etc, 
+// it will fail after we logout or increase version with authRevokeRefreshToken, 
 // the version of inMemory doesn't match the version of refresh token
+// requires configure cookie middleware in AuthModules `configure(consumer: MiddlewareConsumer)`
 
 POST {{baseUri}}/refresh-token HTTP/1.1
 Content-Type: {{contentType}}
 Authorization: Bearer {{authToken}}
+
 
 ### mutation: revokeUserRefreshTokens
 // @name revokeUserRefreshTokens

@@ -20,3 +20,4 @@ __exportStar(require("./nest-graphql-auth-module-async-options.interface"), expo
 __exportStar(require("./nest-graphql-auth-options-factory.interface"), exports);
 __exportStar(require("./nest-graphql-auth-options.interface"), exports);
 __exportStar(require("./sign-jwt-token-payload.interface"), exports);
+//# sourceMappingURL=index.js.map
