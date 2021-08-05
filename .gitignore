@@ -4,3 +4,4 @@ packages/**/node_modules/
 .removed
 packages/nest-graphql-auth/dist/
 .oldcode/**/node_modules/
+packages/nestjs-package-jwt-authentication-graphql/dist/

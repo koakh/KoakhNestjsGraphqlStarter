@@ -12,8 +12,6 @@
 @userLoginJohnDoe = johndoe
 @authToken = {{userLogin.response.body.$.data.userLogin.accessToken}}
 
-
-
 ### mutation: userLogin
 // @name userLogin
 POST {{gqlUri}} HTTP/1.1

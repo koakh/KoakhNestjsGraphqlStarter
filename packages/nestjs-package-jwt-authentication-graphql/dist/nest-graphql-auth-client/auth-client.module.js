@@ -40,11 +40,11 @@ AuthClientModule = __decorate([
     common_1.Global(),
     common_1.Module({
         providers: [
-            // TODO the trick to inject usersService into NestGraphqlAuthModule is add UserService to providers and exports
+            // the trick to inject usersService into NestGraphqlAuthModule is add UserService to providers and exports
             auth_user_service_1.UserService,
         ],
         exports: [
-            // TODO the trick to inject usersService into NestGraphqlAuthModule is add UserService to providers and exports
+            // the trick to inject usersService into NestGraphqlAuthModule is add UserService to providers and exports
             auth_user_service_1.UserService,
         ],
         imports: [

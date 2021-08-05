@@ -20,11 +20,11 @@ import { UserService } from './auth-user.service';
 @Global()
 @Module({
   providers: [
-    // TODO the trick to inject usersService into NestGraphqlAuthModule is add UserService to providers and exports
+    // the trick to inject usersService into NestGraphqlAuthModule is add UserService to providers and exports
     UserService, 
   ],
   exports: [
-    // TODO the trick to inject usersService into NestGraphqlAuthModule is add UserService to providers and exports
+    // the trick to inject usersService into NestGraphqlAuthModule is add UserService to providers and exports
     UserService, 
   ],
   imports: [

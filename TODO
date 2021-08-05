@@ -1,41 +1,23 @@
 Add to Notes:
-  ☐ JwtStrategy requires a secret or key
-    https://github.com/mikenicholson/passport-jwt/issues/206
-    packages/nestjs-package-jwt-authentication-graphql/src/auth/strategy/jwt.strategy.ts
-    import { ExtractJwt } from 'passport-jwt';
-    import { Strategy } from 'passport-local';
-    // Check "local.strategy.ts" if you have one and replace
-    // import { Strategy } from 'passport-jwt'; with import { Strategy } from 'passport-local';
-    https://stackoverflow.com/questions/60884932/nestjs-jwt-strategy-requires-a-secret-or-key
-  ☐ NestJs Passport jwt unknown strategy
-    https://stackoverflow.com/questions/60405308/nestjs-passport-jwt-unknown-strategy
-      The issue was that autoimport imported Strategy from the wrong package
-      import {Strategy} from "@nest/passport-local";
-      instead of
-      import { Strategy } from "passport-jwt";
-      FUCK I replace the whole 
-      packages/nestjs-package-jwt-authentication-graphql/src/auth/strategy/jwt.strategy.ts
-      with the defaults from nest docs and it works
-      https://docs.nestjs.com/security/authentication#implementing-passport-jwt
-      the problem is this imports that are bad
-      // KO import { ExtractJwt } from 'passport-jwt';
-      // KO import { Strategy } from 'passport-local';
-      OK import { ExtractJwt, Strategy } from 'passport-jwt';
-      OK import { PassportStrategy } from '@nestjs/passport';
-      NOTE: Strategy must be imported from 'passport-local'
       
 Backend:
   AppLib and App project:
-    ☐ finish project and move to links-laptop
-    ☐ dynamic modules projects
-      ☐ move all to links-laptop, 
-      ☐ add project's path to Notable notes
-      ☐ create github repositories to all
+    ✔ finish project and move to links-laptop @done(21-08-05 21:29)
+    ✔ dynamic modules projects @done(21-08-05 21:29)
+      ✔ move all to links-laptop, @done(21-08-05 21:29)
+      ✔ create github repositories to all @done(21-08-05 21:29)
+      ✔ add project's path to Notable notes @done(21-08-05 21:30)
+    ☐ rename backend to koakh-nestjs-graphql-starter
     
   Library nestjs-package-jwt-authentication-graphql:
     ☐ config properties injected from consumer
-    ☐ relplace with options service
+    ☐ replace with options service
       secretOrKey: configService.get('accessTokenJwtSecret'),
+    ☐ update all packages to latest releases
+    ☐ clean up code, todo's and comments
+    ☐ create repo to house project
+    ☐ create readme with a nest new package using the package
+    ☐ move package from this repo? or leave it here
   Library app-lib:
     ☐ @high create simple sarter project and repository, llok to play with dynamic modules, like second project of it
     ✔ app and app-lib add abstract class to.... @done(21-07-24 22:04)

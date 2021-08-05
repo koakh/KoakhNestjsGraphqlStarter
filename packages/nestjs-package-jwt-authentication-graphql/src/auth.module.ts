@@ -1,21 +1,24 @@
 import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { NEST_GRAPHQL_AUTH_OPTIONS } from './auth.constants';
-import { NestGraphqlAuthAsyncOptions, NestGraphqlAuthOptions, NestGraphqlAuthOptionsFactory } from './interfaces';
 import { createNestGraphqlAuthModuleProviders, createNestGraphqlAuthProviders } from './auth.providers';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
+import { NestGraphqlAuthAsyncOptions, NestGraphqlAuthOptions, NestGraphqlAuthOptionsFactory } from './interfaces';
+import { JwtStrategy } from './strategy';
 
 @Global()
 @Module({
   providers: [
     AuthService,
     AuthResolver,
-    ...createNestGraphqlAuthModuleProviders
+    // require to add JwtStrategy to fix to `Unknown authentication strategy "jwt"`
+    JwtStrategy,
+    ...createNestGraphqlAuthModuleProviders,
   ],
   exports: [
     AuthService,
-    ...createNestGraphqlAuthModuleProviders
+    ...createNestGraphqlAuthModuleProviders,
   ],
   imports: [
     JwtModule.registerAsync({

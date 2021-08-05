@@ -11,13 +11,15 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./abstracts"), exports);
-__exportStar(require("./interfaces"), exports);
-__exportStar(require("./types"), exports);
 __exportStar(require("./decorators"), exports);
-__exportStar(require("./guards"), exports);
 __exportStar(require("./enums"), exports);
+__exportStar(require("./guards"), exports);
+__exportStar(require("./interfaces"), exports);
 __exportStar(require("./object-types"), exports);
+__exportStar(require("./strategy"), exports);
+__exportStar(require("./types"), exports);
 __exportStar(require("./auth.constants"), exports);
+__exportStar(require("./auth.controller"), exports);
 __exportStar(require("./auth.module"), exports);
 __exportStar(require("./auth.providers"), exports);
 __exportStar(require("./auth.resolver"), exports);

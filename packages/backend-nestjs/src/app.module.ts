@@ -1,15 +1,14 @@
-import { AuthResolver, AuthModule, AuthService, GqlContext, GqlContextPayload, NEST_GRAPHQL_AUTH_USER_SERVICE, NEST_GRAPHQL_AUTH_OPTIONS } from '@koakh/nestjs-package-jwt-authentication-graphql';
+import { AuthController, AuthModule, AuthService, GqlContext, GqlContextPayload } from '@koakh/nestjs-package-jwt-authentication-graphql';
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AuthenticationError } from 'apollo-server-core';
 import { ConnectionParams } from 'subscriptions-transport-ws';
-// import { AppResolver } from './app.resolver';
 import { configuration } from './common/config';
 import { mapKeysToLowerCase } from './common/utils';
+import { constants as userConstants } from './user/user.constants';
 import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
-import { constants as userConstants } from './user/user.constants'
 
 // REQUIRED global else gives bellow error
 // Nest can't resolve dependencies of the Symbol(NEST_GRAPHQL_AUTH_OPTIONS) (?). Please make sure that the argument UserService at index [0] is available in the AuthModule context.
@@ -26,10 +25,12 @@ import { constants as userConstants } from './user/user.constants'
     AuthModule.registerAsync({
       // this is required to else we have error
       // ERROR [ExceptionHandler] Nest can't resolve dependencies of the AuthService (ConfigService, JwtService, AUTH_MODULE_OPTIONS, ?). Please make sure that the argument NEST_GRAPHQL_AUTH_USER_SERVICE at index [3] is available in the AuthModule context.
-      imports: [AppModule, UserModule],
-      inject: [ConfigService, UserService],
+      imports: [AppModule, UserModule/*, JwtModule*/],
+      // required to inject both bellow services
+      inject: [ConfigService, UserService/*, JwtService*/],
       useFactory: async (configService: ConfigService, userService: UserService) => ({
         secret: configService.get<string>('accessTokenJwtSecret'),
+        refreshTokenJwtSecret: configService.get<string>('refreshTokenJwtSecret'),
         expiresIn: configService.get<string>('accessTokenExpiresIn'),
         adminUserPayload: userConstants.adminCurrentUser,
         // the trick to pass userService without di complexity, just use options to pass around, don't forget to import UserModule to inject UserService
@@ -40,7 +41,7 @@ import { constants as userConstants } from './user/user.constants'
     UserModule,
     // apolloServer config: use forRootAsync to import AuthModule and inject AuthService
     GraphQLModule.forRootAsync({
-    imports: [ConfigModule],
+      imports: [ConfigModule],
       // TODO trick for injecting custom providers is use NEST_GRAPHQL_AUTH_OPTIONS
       inject: [ConfigService, AuthService],
       useFactory: async (configService: ConfigService, authService: AuthService) => ({
@@ -80,12 +81,16 @@ import { constants as userConstants } from './user/user.constants'
     }),
   ],
   providers: [
+    // JwtModule,
+    // JwtService,
     UserService,
-    AuthResolver,
   ],
   exports: [
     UserService,
-  ]
+  ],
+  // controllers: [
+  //   AuthController
+  // ],
 })
 
 export class AppModule { }

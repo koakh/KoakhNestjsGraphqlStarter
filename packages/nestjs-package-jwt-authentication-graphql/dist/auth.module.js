@@ -23,6 +23,7 @@ const auth_constants_1 = require("./auth.constants");
 const auth_providers_1 = require("./auth.providers");
 const auth_resolver_1 = require("./auth.resolver");
 const auth_service_1 = require("./auth.service");
+const strategy_1 = require("./strategy");
 let AuthModule = AuthModule_1 = class AuthModule {
     /**
      * Registers a configured NestGraphqlAuth Module for import into the current module
@@ -79,11 +80,13 @@ AuthModule = AuthModule_1 = __decorate([
         providers: [
             auth_service_1.AuthService,
             auth_resolver_1.AuthResolver,
-            ...auth_providers_1.createNestGraphqlAuthModuleProviders
+            // require to add JwtStrategy to fix to `Unknown authentication strategy "jwt"`
+            strategy_1.JwtStrategy,
+            ...auth_providers_1.createNestGraphqlAuthModuleProviders,
         ],
         exports: [
             auth_service_1.AuthService,
-            ...auth_providers_1.createNestGraphqlAuthModuleProviders
+            ...auth_providers_1.createNestGraphqlAuthModuleProviders,
         ],
         imports: [
             jwt_1.JwtModule.registerAsync({
