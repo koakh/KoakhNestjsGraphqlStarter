@@ -1,7 +1,7 @@
 import { plainToClass } from 'class-transformer';
 import { IsBoolean, IsNumber, IsString, validateSync } from 'class-validator';
 
-// TODO: currently this is not stable in nest, waiting for fix
+// TODO: currently this configuration.validation is not stable in nest, waiting for fix
 
 export class EnvironmentVariables {
   @IsString()

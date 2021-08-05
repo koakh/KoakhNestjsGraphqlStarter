@@ -1,4 +1,4 @@
-import { Controller, HttpStatus, Inject, Logger, Post, Request, Response } from '@nestjs/common';
+import { Controller, HttpStatus, Inject, Post, Request, Response } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserServiceAbstract } from './abstracts';
 import { NEST_GRAPHQL_AUTH_OPTIONS, NEST_GRAPHQL_AUTH_USER_SERVICE } from './auth.constants';
