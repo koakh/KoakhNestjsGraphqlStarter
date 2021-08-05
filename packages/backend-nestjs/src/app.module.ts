@@ -23,29 +23,18 @@ import { UserService } from './user/user.service';
       // TODO
       // validate,
     }),
-// TODO
-// duplicated code here and auth.module, this is waht permits that we inject JwtService in AuthController
-// see:https://stackoverflow.com/questions/57463523/nestjs-cant-resolve-dependencies-of-the-jwt-module-options
-// in the app.module.ts and auth.module.ts
-JwtModule.registerAsync({
-  useFactory: async (authModuleOptions: NestGraphqlAuthOptions) => ({
-    secret: authModuleOptions.secret,
-    signOptions: {
-      expiresIn: authModuleOptions.expiresIn,
-    }
-  }),
-  inject: [NEST_GRAPHQL_AUTH_OPTIONS],
-}),
-// JwtModule.registerAsync({
-//   imports: [ConfigModule],
-//   useFactory: async (configService: ConfigService) => ({
-//     secret: configService.get('accessTokenJwtSecret'),
-//     signOptions: {
-//       expiresIn: configService.get('accessTokenExpiresIn'),
-//     },
-//   }),
-//   inject: [ConfigService],
-// }),
+    // require to duplicated code in app.module too, same as auth.module, this is what permits that we inject JwtService in AuthController
+    // see:https://stackoverflow.com/questions/57463523/nestjs-cant-resolve-dependencies-of-the-jwt-module-options
+    // update: export JwtModule don't require this duplication in auth.module
+    JwtModule.registerAsync({
+      useFactory: async (authModuleOptions: NestGraphqlAuthOptions) => ({
+        secret: authModuleOptions.secret,
+        signOptions: {
+          expiresIn: authModuleOptions.expiresIn,
+        }
+      }),
+      inject: [NEST_GRAPHQL_AUTH_OPTIONS],
+    }),
     AuthModule.registerAsync({
       // this is required to else we have error
       // ERROR [ExceptionHandler] Nest can't resolve dependencies of the AuthService (ConfigService, JwtService, AUTH_MODULE_OPTIONS, ?). Please make sure that the argument NEST_GRAPHQL_AUTH_USER_SERVICE at index [3] is available in the AuthModule context.
@@ -106,12 +95,12 @@ JwtModule.registerAsync({
     }),
   ],
   providers: [
-    // JwtModule,
-    // JwtService,
     UserService,
   ],
   exports: [
     UserService,
+    // if we export here JwtModule, we don't need the duplicated code in auth.module
+    JwtModule,
   ],
   controllers: [
     AuthController

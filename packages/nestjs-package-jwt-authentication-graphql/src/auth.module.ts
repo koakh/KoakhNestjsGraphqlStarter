@@ -1,6 +1,5 @@
 import { CookieParserMiddleware } from '@nest-middlewares/cookie-parser';
 import { DynamicModule, Global, MiddlewareConsumer, Module, Provider } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { NEST_GRAPHQL_AUTH_OPTIONS } from './auth.constants';
 import { createNestGraphqlAuthModuleProviders, createNestGraphqlAuthProviders } from './auth.providers';
 import { AuthResolver } from './auth.resolver';
@@ -21,17 +20,21 @@ import { JwtStrategy } from './strategy';
     AuthService,
     ...createNestGraphqlAuthModuleProviders,
   ],
-  imports: [
-    JwtModule.registerAsync({
-      useFactory: async (authModuleOptions: NestGraphqlAuthOptions) => ({
-        secret: authModuleOptions.secret,
-        signOptions: {
-          expiresIn: authModuleOptions.expiresIn,
-        }
-      }),
-      inject: [NEST_GRAPHQL_AUTH_OPTIONS],
-    }),
-  ],
+  // app.module export JwtModule, and this duplicated code is not need anymore, leaved here for future notes reference
+  // imports: [
+  //   // require to duplicated code in app.module too, same as auth.module, this is what permits that we inject JwtService in AuthController
+  //   // see:https://stackoverflow.com/questions/57463523/nestjs-cant-resolve-dependencies-of-the-jwt-module-options
+  //   // update: export JwtModule don't require this duplication in auth.module
+  //   JwtModule.registerAsync({
+  //     useFactory: async (authModuleOptions: NestGraphqlAuthOptions) => ({
+  //       secret: authModuleOptions.secret,
+  //       signOptions: {
+  //         expiresIn: authModuleOptions.expiresIn,
+  //       }
+  //     }),
+  //     inject: [NEST_GRAPHQL_AUTH_OPTIONS],
+  //   }),
+  // ],
 })
 
 export class AuthModule {
