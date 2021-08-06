@@ -19,7 +19,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthModule = void 0;
 const cookie_parser_1 = require("@nest-middlewares/cookie-parser");
 const common_1 = require("@nestjs/common");
-const jwt_1 = require("@nestjs/jwt");
 const auth_constants_1 = require("./auth.constants");
 const auth_providers_1 = require("./auth.providers");
 const auth_resolver_1 = require("./auth.resolver");
@@ -93,19 +92,21 @@ AuthModule = AuthModule_1 = __decorate([
             auth_service_1.AuthService,
             ...auth_providers_1.createNestGraphqlAuthModuleProviders,
         ],
-        imports: [
-            jwt_1.JwtModule.registerAsync({
-                useFactory: (authModuleOptions) => __awaiter(void 0, void 0, void 0, function* () {
-                    return ({
-                        secret: authModuleOptions.secret,
-                        signOptions: {
-                            expiresIn: authModuleOptions.expiresIn,
-                        }
-                    });
-                }),
-                inject: [auth_constants_1.NEST_GRAPHQL_AUTH_OPTIONS],
-            }),
-        ],
+        // app.module export JwtModule, and this duplicated code is not need anymore, leaved here for future notes reference
+        // imports: [
+        //   // require to duplicated code in app.module too, same as auth.module, this is what permits that we inject JwtService in AuthController
+        //   // see:https://stackoverflow.com/questions/57463523/nestjs-cant-resolve-dependencies-of-the-jwt-module-options
+        //   // update: export JwtModule don't require this duplication in auth.module
+        //   JwtModule.registerAsync({
+        //     useFactory: async (authModuleOptions: NestGraphqlAuthOptions) => ({
+        //       secret: authModuleOptions.secret,
+        //       signOptions: {
+        //         expiresIn: authModuleOptions.expiresIn,
+        //       }
+        //     }),
+        //     inject: [NEST_GRAPHQL_AUTH_OPTIONS],
+        //   }),
+        // ],
     })
 ], AuthModule);
 exports.AuthModule = AuthModule;

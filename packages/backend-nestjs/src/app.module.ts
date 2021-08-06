@@ -1,4 +1,4 @@
-import { AuthController, AuthModule, AuthService, GqlContext, GqlContextPayload, NestGraphqlAuthOptions, NEST_GRAPHQL_AUTH_OPTIONS } from '@koakh/nestjs-package-jwt-authentication-graphql';
+import { AuthController, AuthModule, AuthService, GqlContext, GqlContextPayload, AuthOptions, NEST_GRAPHQL_AUTH_OPTIONS } from '@koakh/nestjs-package-jwt-authentication-graphql';
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -27,7 +27,7 @@ import { UserService } from './user/user.service';
     // see:https://stackoverflow.com/questions/57463523/nestjs-cant-resolve-dependencies-of-the-jwt-module-options
     // update: export JwtModule don't require this duplication in auth.module
     JwtModule.registerAsync({
-      useFactory: async (authModuleOptions: NestGraphqlAuthOptions) => ({
+      useFactory: async (authModuleOptions: AuthOptions) => ({
         secret: authModuleOptions.secret,
         signOptions: {
           expiresIn: authModuleOptions.expiresIn,

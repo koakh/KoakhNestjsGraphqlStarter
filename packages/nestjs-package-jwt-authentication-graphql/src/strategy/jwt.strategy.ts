@@ -2,14 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { NEST_GRAPHQL_AUTH_OPTIONS } from '../auth.constants';
-import { NestGraphqlAuthOptions } from '../interfaces';
+import { AuthOptions } from '../interfaces';
 import { JwtValidatePayload } from '../interfaces/jwt-validate-payload.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @Inject(NEST_GRAPHQL_AUTH_OPTIONS)
-    private readonly authModuleOptions: NestGraphqlAuthOptions,
+    private readonly authModuleOptions: AuthOptions,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

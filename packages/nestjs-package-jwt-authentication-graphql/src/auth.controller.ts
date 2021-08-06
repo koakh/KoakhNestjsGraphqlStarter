@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserServiceAbstract } from './abstracts';
 import { NEST_GRAPHQL_AUTH_OPTIONS, NEST_GRAPHQL_AUTH_USER_SERVICE } from './auth.constants';
 import { AuthService } from './auth.service';
-import { GqlContextPayload, NestGraphqlAuthOptions, SignJwtTokenPayload } from './interfaces';
+import { GqlContextPayload, AuthOptions, SignJwtTokenPayload } from './interfaces';
 import { AccessToken, User } from './object-types';
 
 @Controller()
@@ -12,7 +12,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
     @Inject(NEST_GRAPHQL_AUTH_OPTIONS)
-    private authModuleOptions: NestGraphqlAuthOptions,
+    private authModuleOptions: AuthOptions,
     @Inject(NEST_GRAPHQL_AUTH_USER_SERVICE)
     private readonly userService: UserServiceAbstract,
   ) { }

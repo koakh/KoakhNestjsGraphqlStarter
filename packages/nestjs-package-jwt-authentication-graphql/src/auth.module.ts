@@ -4,7 +4,7 @@ import { NEST_GRAPHQL_AUTH_OPTIONS } from './auth.constants';
 import { createNestGraphqlAuthModuleProviders, createNestGraphqlAuthProviders } from './auth.providers';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
-import { NestGraphqlAuthAsyncOptions, NestGraphqlAuthOptions, NestGraphqlAuthOptionsFactory } from './interfaces';
+import { AuthAsyncOptions, AuthOptions, AuthOptionsFactory } from './interfaces';
 import { JwtStrategy } from './strategy';
 
 @Global()
@@ -47,7 +47,7 @@ export class AuthModule {
    * Registers a configured NestGraphqlAuth Module for import into the current module
    */
   public static register(
-    options: NestGraphqlAuthOptions,
+    options: AuthOptions,
   ): DynamicModule {
     return {
       module: AuthModule,
@@ -60,7 +60,7 @@ export class AuthModule {
    * using dynamic options (factory, etc)
    */
   public static registerAsync(
-    options: NestGraphqlAuthAsyncOptions,
+    options: AuthAsyncOptions,
   ): DynamicModule {
     return {
       module: AuthModule,
@@ -71,7 +71,7 @@ export class AuthModule {
   }
 
   private static createProviders(
-    options: NestGraphqlAuthAsyncOptions,
+    options: AuthAsyncOptions,
   ): Provider[] {
     if (options.useExisting || options.useFactory) {
       return [this.createOptionsProvider(options)];
@@ -87,7 +87,7 @@ export class AuthModule {
   }
 
   private static createOptionsProvider(
-    options: NestGraphqlAuthAsyncOptions,
+    options: AuthAsyncOptions,
   ): Provider {
     if (options.useFactory) {
       return {
@@ -100,7 +100,7 @@ export class AuthModule {
     // For useExisting...
     return {
       provide: NEST_GRAPHQL_AUTH_OPTIONS,
-      useFactory: async (optionsFactory: NestGraphqlAuthOptionsFactory) =>
+      useFactory: async (optionsFactory: AuthOptionsFactory) =>
         await optionsFactory.createNestGraphqlAuthOptions(),
       inject: [options.useExisting || options.useClass],
     };

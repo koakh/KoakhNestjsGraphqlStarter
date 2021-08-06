@@ -1,7 +1,7 @@
 import { UserServiceAbstract } from "../abstracts";
 import { CurrentUserPayload } from "./current-user-payload.interface";
 
-export interface NestGraphqlAuthOptions {
+export interface AuthOptions {
   secret: string;
   expiresIn: string;
   refreshTokenJwtSecret: string;

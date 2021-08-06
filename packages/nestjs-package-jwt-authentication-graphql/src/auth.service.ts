@@ -5,7 +5,7 @@ import { Response } from 'express';
 import { UserServiceAbstract } from './abstracts';
 import { FIND_ONE_BY_FIELD, NEST_GRAPHQL_AUTH_OPTIONS, NEST_GRAPHQL_AUTH_USER_SERVICE } from './auth.constants';
 import { AuthStore } from './auth.store';
-import { GqlContextPayload, NestGraphqlAuthOptions, SignJwtTokenPayload } from './interfaces';
+import { GqlContextPayload, AuthOptions, SignJwtTokenPayload } from './interfaces';
 import { AccessToken } from './object-types';
 
 interface IAuthService {
@@ -26,7 +26,7 @@ export class AuthService implements IAuthService {
   constructor(
     private readonly jwtService: JwtService,
     @Inject(NEST_GRAPHQL_AUTH_OPTIONS)
-    private authModuleOptions: NestGraphqlAuthOptions,
+    private authModuleOptions: AuthOptions,
     @Inject(NEST_GRAPHQL_AUTH_USER_SERVICE)
     private readonly userService: UserServiceAbstract,
   ) {
