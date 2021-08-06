@@ -1,3 +1,6 @@
+# README
+## @nestjsplus/dyn-schematics
+
 <h1 align="center"></h1>
 
 <div align="center">
@@ -51,3 +54,15 @@ You can read more about using the generator [here](https://github.com/nestjsplus
 ### About @nestjsplus/dyn-schematics
 
 [Nest Dynamic Package Generator Schematics](https://github.com/nestjsplus/dyn-schematics) generates a starter template for building NestJS dynamic packages.  It uses the `@nestjs/cli` core package, and provides customized schematics for generating modular NestJS applications.  See [here](https://github.com/nestjsplus/dyn-schematics) for the full set of available schematics, and documentation.
+
+## How to use Package
+
+this library purpose is to have a standalone package with graphql jwt authentication, where we can inject a `UserService` that implements the `UserServiceAbstract` contract, this way we can use diferent UserService implementations like inMemory users, used to test or quick start, and other kind data base/orm implemenattions like TypeOrm, Moogoose, Neo4J, Postgres etc
+
+`src/abstracts/users-service.abstract.ts`
+
+```typescript
+export abstract class UserServiceAbstract {
+  abstract findOneByField(field: string, value: string, currentUser?: CurrentUserPayload) : Promise<AuthUser | undefined>;
+}
+```
