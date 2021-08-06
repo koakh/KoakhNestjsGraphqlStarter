@@ -7,12 +7,12 @@ Backend:
       ✔ move all to links-laptop, @done(21-08-05 21:29)
       ✔ create github repositories to all @done(21-08-05 21:29)
       ✔ add project's path to Notable notes @done(21-08-05 21:30)    
+    ✔ rename NestGraphql.....AuthOptions @done(21-08-06 22:31)
     ☐ change README of @koakh/nestjs-package-jwt-authentication-graphql and publish it again
       ☐ json object https://registry.npmjs.org/@koakh%2Fnestjs-package-jwt-authentication-graphql
       ☐ change https://github.com/koakh/NestJsPackageJwtAuthentication url
     ☐ seems that backend-nestjs is already the starter for package, we can use it to create a repo and a template starter
     ☐ rename backend folder to koakh-nestjs-graphql-starter
-    ☐ rename NestGraphql.....AuthOptions
     ☐ add all client.http auth operations like refresh-token nest-graphql-auth-client/auth-client.controller.ts
     
   Library nestjs-package-jwt-authentication-graphql:

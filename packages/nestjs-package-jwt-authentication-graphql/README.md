@@ -57,6 +57,19 @@ You can read more about using the generator [here](https://github.com/nestjsplus
 
 ## How to use Package
 
+### Create a NestJs GraphQL Project
+
+tip can start from [12-graphql-schema-first](https://github.com/nestjs/nest/tree/master/sample/12-graphql-schema-first), or [23-graphql-code-first](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first)
+
+### Add Package to project
+
+- [@koakh/nestjs-package-jwt-authentication-graphql](https://www.npmjs.com/package/@koakh/nestjs-package-jwt-authentication-graphql)
+
+```shell
+$ npm i @koakh/nestjs-package-jwt-authentication-graphql
+```
+### Required UserService
+
 this library purpose is to have a standalone package with graphql jwt authentication, where we can inject a `UserService` that implements the `UserServiceAbstract` contract, this way we can use diferent UserService implementations like inMemory users, used to test or quick start, and other kind data base/orm implemenattions like TypeOrm, Moogoose, Neo4J, Postgres etc
 
 `src/abstracts/users-service.abstract.ts`
