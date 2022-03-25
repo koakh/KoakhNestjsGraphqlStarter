@@ -21,7 +21,9 @@
     "docker:build:dev": "docker-compose build",
     "docker:build:prod": "docker-compose -f docker-compose-production.yml build",
     "docker:run:dev": "docker-compose up -d",
-    "docker:run:prod": "docker-compose -f docker-compose-production.yml up -d"
+    "docker:run:prod": "docker-compose -f docker-compose-production.yml up -d",
+    "prepare": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "dependencies": {
     "@koakh/nestjs-package-jwt-authentication": "^1.0.3",
@@ -29,7 +31,7 @@
     "@nestjs/common": "^7.4.4",
     "@nestjs/config": "^0.5.0",
     "@nestjs/core": "^7.4.4",
-    "@nestjs/graphql": "^7.6.0",
+    "@nestjs/graphql": "^7.7.0",
     "@nestjs/jwt": "^7.1.0",
     "@nestjs/passport": "^7.1.0",
     "@nestjs/platform-express": "^7.4.4",
@@ -48,7 +50,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.2",
     "uuid": "^8.3.0",
-    "yup": "^0.29.3"
+    "yup": "^0.29.3",
+    "@snyk/protect": "latest"
   },
   "devDependencies": {
     "@nestjs/testing": "^7.4.4",
@@ -81,5 +84,6 @@
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "snyk": true
 }
