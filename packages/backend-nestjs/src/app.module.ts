@@ -69,7 +69,7 @@ import { UserService } from './user/user.service';
         context: ({ req, res, payload, connection }: GqlContext) => ({ req, res, payload, connection }),
         // configure graphql cors here, rest cors is configured in packages/server-graphql/src/main.ts
         cors: {
-          origin: configService.get<string>('server.corsOriginReactFrontend'),
+          origin: configService.get<string>('corsOriginReactFrontend'),
           credentials: true,
         },
         // subscriptions/webSockets authentication
